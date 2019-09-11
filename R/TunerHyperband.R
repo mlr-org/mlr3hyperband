@@ -1,7 +1,6 @@
 #' @title TunerHyperband
 #'
 #' @aliases mlr_tuners_hyperband
-#' @include Tuner.R
 #' @usage NULL
 #' @format [R6::R6Class] object inheriting from [Tuner].
 #'
