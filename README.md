@@ -17,3 +17,4 @@ remotes::install_github("mlr-org/mlr3hyperband")
 
 The function reference is can be found [here](https://mlr3hyperband.mlr-org.com/reference/).
 Further documentation lives in the [mlr3book](https://mlr3book.mlr-org.com/).
+ 
