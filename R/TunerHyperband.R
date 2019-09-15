@@ -104,7 +104,7 @@ TunerHyperband = R6Class(
           # overwrite active configurations with the current budget
           #FIXME: this will break for multi budgets
           budget_current_real = budget_current * budget_lower
-          active_configs[[budget_id]] = budget_current
+          active_configs[[budget_id]] = budget_current_real
 
           # evaluate active configurations
           # FIXME: vorsicht!!! hier können wir durch den terminator immer
