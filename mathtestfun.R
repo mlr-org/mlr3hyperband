@@ -68,7 +68,7 @@ LearnerMathTestFun = R6Class(
       k = getProblemDimen(tfun)
       ps = Map(
         function(i) ParamDbl$new(paste0("x", i), lower = b$lower[i], upper = b$upper[i]),
-        1:k
+        seq_len(k)
       )
       ps = ParamSet$new(ps)
       ps$add(ParamDbl$new("budget", lower = 0, upper = 100))
@@ -96,6 +96,7 @@ LearnerMathTestFun = R6Class(
 
 terminator = TerminatorEvals$new(20)
 
+# TODO: budget reduces noise
 # TODO: multi crit with ZDT and DTLZ family
 tfun = "Branin"
 mm = MeasureMathTestFun$new(tfun)
