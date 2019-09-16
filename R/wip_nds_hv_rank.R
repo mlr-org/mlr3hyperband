@@ -1,12 +1,12 @@
 
-points = rbind(
-  y1 = runif(10),
-  y2 = runif(10)
-)
-#?emoa::nds_hv_selection(points, 1)
-emoa::nds_rank(points)
-#emoa::dominated_hypervolume(points)
-ecr::selNondom(points, n.select = 9)
+# points = rbind(
+#   y1 = runif(10),
+#   y2 = runif(10)
+# )
+# #?emoa::nds_hv_selection(points, 1)
+# emoa::nds_rank(points)
+# #emoa::dominated_hypervolume(points)
+# ecr::selNondom(points, n.select = 9)
 
 nds_hv_rank = function(points, n_select) {
 
