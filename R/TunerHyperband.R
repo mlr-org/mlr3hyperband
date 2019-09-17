@@ -38,14 +38,13 @@ TunerHyperband = R6Class(
   public = list(
     info = NULL,
 
-    initialize = function(eta = 2) {#, config_max_budget = 1) {
+    initialize = function(eta = 2) {
 
       ps = ParamSet$new(list(
-        ParamInt$new("eta", lower = 1L)#,
-        #ParamInt$new("config_max_budget", lower = 0, upper = 100)
+        ParamInt$new("eta", lower = 1L)
       ))
 
-      ps$values = list(eta = eta)#, config_max_budget = config_max_budget)
+      ps$values = list(eta = eta)
 
       super$initialize(
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
@@ -75,10 +74,12 @@ TunerHyperband = R6Class(
       # rescale config max budget; note: cmb := R in the original paper
       cmb         = budget_upper/budget_lower
       eta         = self$param_set$values$eta
+
       # FIXME: we add half machine eps for stability
       # try this floor(log(8.1 / 0.1)) = 3 (!!!). it should be 4!
       bracket_max = floor(log(cmb, eta) + 1e-8) # eta^bracket_max = cmb
       messagef("cmb = %g, bracket_max = %i, ", cmb, bracket_max)
+
       # outer loop - iterating over brackets
       for (bracket in bracket_max:0) {
 
@@ -109,7 +110,6 @@ TunerHyperband = R6Class(
           # evaluate active configurations
           # FIXME: vorsicht!!! hier können wir durch den terminator immer
           # rausfliegen
-
           instance$eval_batch(active_configs)
 
           # store information of current iteration with hash as primary key

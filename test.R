@@ -51,3 +51,11 @@ tuner$info[, .(
   mu_end = min(mu)
 ), by = bracket]
 
+
+#################
+# multicrit
+#################
+library(nsga2R)
+
+y = matrix(runif(100, -5, 5), nrow=50, ncol=2)
+rankIdxList = fastNonDominatedSorting(y)
