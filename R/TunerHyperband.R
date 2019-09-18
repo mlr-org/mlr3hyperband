@@ -48,7 +48,8 @@ TunerHyperband = R6Class(
 
       super$initialize(
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
-        param_set = ps
+        param_set = ps,
+        properties = c("dependencies")
       )
     }
   ),
@@ -59,7 +60,8 @@ TunerHyperband = R6Class(
 
       # define aliases for better readability
       rr = instance$resampling
-      m  = instance$measures[[1L]]
+      to_minimize  = map_lgl(instance$measures, "minimize")
+      msr_ids = ids(instance$measures)
 
       # bool vector of which parameters is a budget parameter
       budget_id = instance$param_set$ids(tags = "budget")
@@ -96,7 +98,7 @@ TunerHyperband = R6Class(
         active_configs = design$data
 
         # inner loop - iterating over bracket stages
-        while(budget_current <= cmb && mu_current > 0L) {
+        for (stage in 0:bracket) {
 
           messagef(
             "Current budget = %g, mu = %i, ", budget_current, mu_current
@@ -129,11 +131,34 @@ TunerHyperband = R6Class(
           bracket_stage  = bracket_stage + 1L
 
           # get performance of each active configuration
-          configs_perf   = instance$bmr$performance()
-          # get the best ranked subset and reduce configs to it
-          ordered_perf   = order(configs_perf[[m$id]], decreasing = !m$minimize)
-          best_indeces   = ordered_perf[1:mu_current]
-          active_configs = active_configs[best_indeces, ]
+          configs_perf   = instance$bmr$score(msr_ids)
+
+          # only rank and pick configurations if we are not in the last stage
+          if (stage != bracket) {
+
+            # select best mu_current indeces
+            if (length(msr_ids) < 2) {
+
+              # single crit
+              ordered_perf = order(
+                configs_perf[[msr_ids]],
+                decreasing = !to_minimize
+              )
+              best_indeces = ordered_perf[1:mu_current]
+
+            } else {
+
+              # multi crit
+              best_indeces = nds_selection(
+                points = t(as.matrix(configs_perf[, msr_ids, with = FALSE])),
+                n_select = mu_current,
+                minimize = to_minimize
+              )
+            }
+
+            # update active configurations
+            active_configs = active_configs[best_indeces, ]
+          }
         }
       }
     }
