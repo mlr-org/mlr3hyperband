@@ -13,7 +13,9 @@ nds_selection = function(points, n_select, ref_point = NULL, minimize = TRUE) {
 
   # if no reference point is defined, use maximum of each dimensions
   if (is.null(ref_point)) {
-    ref_point = apply(points, 1, max)
+
+    minmax    = if (minimize) max else min
+    ref_point = apply(points, 1, minmax)
   }
 
   # front indeces of every point
