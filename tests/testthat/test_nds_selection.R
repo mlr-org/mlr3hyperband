@@ -169,7 +169,27 @@ test_that("nds_selection", {
     1:10
   )
 
-  # 4 dimensional
+  expect_subset(
+    nds_selection(points, 1),
+    1:10
+  )
+
+  expect_subset(
+    nds_selection(points, 1, rep(10, 3)),
+    1:10
+  )
+
+  expect_subset(
+    nds_selection(points, 1, minimize = FALSE),
+    1:10
+  )
+
+  expect_subset(
+    nds_selection(points, 1, rep(0, 3), FALSE),
+    1:10
+  )
+
+# 4 dimensional
   points = rbind(points, y4 = runif(10))
 
    expect_equal(
@@ -189,6 +209,26 @@ test_that("nds_selection", {
 
   expect_equal(
     nds_selection(points, 10, rep(0, 4), FALSE),
+    1:10
+  )
+
+  expect_subset(
+    nds_selection(points, 1),
+    1:10
+  )
+
+  expect_subset(
+    nds_selection(points, 1, rep(10, 4)),
+    1:10
+  )
+
+  expect_subset(
+    nds_selection(points, 1, minimize = FALSE),
+    1:10
+  )
+
+  expect_subset(
+    nds_selection(points, 1, rep(0, 4), FALSE),
     1:10
   )
 

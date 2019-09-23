@@ -9,9 +9,11 @@
 
 
 .onLoad = function(libname, pkgname) {
-  # nocov start
-  x = utils::getFromNamespace("mlr_reflections", ns = "mlr3")
-  x$tuner_properties = "dependencies"
+
+  # add hyperband to sugar
+  x = utils::getFromNamespace("mlr_tuners", ns = "mlr3tuning")
+  x$add("hyperband", TunerHyperband)
+
 
   assign("lg", lgr::get_logger("mlr3/mlr3tuning"), envir = parent.env(environment()))
   if (Sys.getenv("IN_PKGDOWN") == "true") {
