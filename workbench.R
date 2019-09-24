@@ -1,11 +1,11 @@
 devtools::load_all()
 library(mlr3learners)
+library(mlr3pipelines)
 
 set.seed(123)
 
 # define hyperparameter and budget parameter for tuning with hyperband
 params = list(
-  ParamInt$new("nrounds", lower = 1, upper = 16, tag = "budget"),
   ParamDbl$new("eta",     lower = 0, upper = 1),
   ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
 )
@@ -20,15 +20,8 @@ inst = TuningInstance$new(
   term("evals", n_evals = 100000)
 )
 
-# create custom sampler:
-# - beta distribution with alpha = 2 and beta = 5
-# - categorical distribution with custom probabilities
-sampler = SamplerJointIndep$new(list(
-  Sampler1DRfun$new(params[[2]], function(n) rbeta(n, 2, 5)),
-  Sampler1DCateg$new(params[[3]], prob = c(0.2, 0.3, 0.5))
-))
 
-tuner = TunerHyperband$new(eta = 2L, sampler = sampler)
+tuner = TunerHyperband$new(eta = 2L, use_subsamp = TRUE)
 tuner$tune(inst)
 
 print(inst$archive())
