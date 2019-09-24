@@ -4,29 +4,31 @@ library(mlr3learners)
 set.seed(123)
 
 # define hyperparameter and budget parameter for tuning with hyperband
-ps = ParamSet$new(list(
+params = list(
+  ParamInt$new("nrounds", lower = 1, upper = 16, tag = "budget"),
+  ParamDbl$new("eta",     lower = 0, upper = 1),
+  ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
+)
 
-  ParamInt$new("nrounds",           lower = 1, upper = 81, tag = "budget"),
-  ParamDbl$new("eta",               lower = 0, upper = 1),
-  ParamInt$new("num_parallel_tree", lower = 1, upper = 100),
-  ParamInt$new("max_depth",         lower = 1, upper = 100),
-  ParamFct$new("normalize_type", levels = c("tree", "forest")),
-  ParamFct$new("sample_type",    levels = c("uniform", "weighted")),
-  ParamFct$new("booster",        levels = c("gbtree", "gblinear", "dart"))
 
-))
-
-# FIXME: does each bracket receive its own holdout split?
 inst = TuningInstance$new(
   tsk("iris"),
   lrn("classif.xgboost"),
   rsmp("holdout"),
   msr("classif.ce"),
-  ps,
+  ParamSet$new(params),
   term("evals", n_evals = 100000)
 )
 
-tuner = TunerHyperband$new(eta = 3)
+# create custom sampler:
+# - beta distribution with alpha = 2 and beta = 5
+# - categorical distribution with custom probabilities
+sampler = SamplerJointIndep$new(list(
+  Sampler1DRfun$new(params[[2]], function(n) rbeta(n, 2, 5)),
+  Sampler1DCateg$new(params[[3]], prob = c(0.2, 0.3, 0.5))
+))
+
+tuner = TunerHyperband$new(eta = 2L, sampler = sampler)
 tuner$tune(inst)
 
 print(inst$archive())

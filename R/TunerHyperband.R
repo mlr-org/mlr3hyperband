@@ -37,18 +37,22 @@ TunerHyperband = R6Class(
 
   public = list(
     info = NULL,
+    sampler = NULL,
 
-    initialize = function(eta = 2) {
+    initialize = function(eta = 2, sampler = NULL) {
 
-      ps = ParamSet$new(list(
+      ps_hyperband = ParamSet$new(list(
         ParamInt$new("eta", lower = 1L)
       ))
 
-      ps$values = list(eta = eta)
+      ps_hyperband$values = list(eta = eta)
+    
+      # TODO: assert sampler
+      self$sampler = sampler
 
       super$initialize(
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
-        param_set = ps,
+        param_set = ps_hyperband,
         properties = c("dependencies")
       )
     }
@@ -60,8 +64,14 @@ TunerHyperband = R6Class(
 
       # define aliases for better readability
       rr = instance$resampling
+      ps = instance$param_set
       to_minimize  = map_lgl(instance$measures, "minimize")
       msr_ids = ids(instance$measures)
+
+      # construct unif sampler if non is given
+      if (is.null(self$sampler)) {
+        self$sampler = SamplerUnif$new(ps)
+      }
 
       # bool vector of which parameters is a budget parameter
       budget_id = instance$param_set$ids(tags = "budget")
@@ -92,9 +102,8 @@ TunerHyperband = R6Class(
         mu_current     = ceiling((B * eta^bracket) / (cmb * (bracket + 1)))
         budget_current = cmb * eta^(-bracket)
 
-        # generate random design based on given parameter set
-        ps             = instance$param_set
-        design         = generate_design_random(ps, mu_current)
+        # generate design based on given parameter set and sampler
+        design         = self$sampler$sample(mu_current)
         active_configs = design$data
 
         # inner loop - iterating over bracket stages
