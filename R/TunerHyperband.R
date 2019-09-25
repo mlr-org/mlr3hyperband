@@ -47,7 +47,7 @@ TunerHyperband = R6Class(
       ))
 
       ps_hyperband$values = list(eta = eta)
-    
+
       # TODO: missing asserts
       self$sampler = sampler
       self$use_subsampling = use_subsamp
@@ -80,6 +80,11 @@ TunerHyperband = R6Class(
       if (self$use_subsampling) {
         budget_lower = 0.1
         budget_upper = 1.0
+        lg$info(
+          "Using train set fraction as budget with lower budget = %g and upper budget = %g",
+          budget_lower,
+          budget_upper
+        )
 
       } else {
         # bool vector of which parameters is a budget parameter
@@ -94,24 +99,31 @@ TunerHyperband = R6Class(
       # we need the budget to start with a SMALL NONNEGATIVE value
       assert_number(budget_lower, lower = 1e-8)
 
-      # rescale config max budget; note: cmb := R in the original paper
-      cmb         = budget_upper/budget_lower
-      eta         = self$param_set$values$eta
+      # rescale config max budget := 'R' in the original paper
+      config_max_b = budget_upper/budget_lower
+      eta          = self$param_set$values$eta
 
       # FIXME: we add half machine eps for stability
       # try this floor(log(8.1 / 0.1)) = 3 (!!!). it should be 4!
-      bracket_max = floor(log(cmb, eta) + 1e-8) # eta^bracket_max = cmb
-      messagef("cmb = %g, bracket_max = %i, ", cmb, bracket_max)
+      bracket_max = floor(log(config_max_b, eta) + 1e-8) 
+      # eta^bracket_max = config_max_b
+      lg$info(
+        "Amount of brackets to be evaluated = %i, ", 
+        bracket_max + 1
+      )
 
       # outer loop - iterating over brackets
       for (bracket in bracket_max:0) {
 
+        # for less confusion of the user we start the print with bracket 1
+        lg$info("Start evaluation of bracket %i", bracket_max - bracket + 1)
+
         # initialize variables of the current bracket
         bracket_stage  = 1L
-        B              = (bracket_max + 1L) * cmb
+        B              = (bracket_max + 1L) * config_max_b
         # current nr of active configs in bracket
-        mu_current     = ceiling((B * eta^bracket) / (cmb * (bracket + 1)))
-        budget_current = cmb * eta^(-bracket)
+        mu_current     = ceiling((B * eta^bracket) / (config_max_b * (bracket + 1)))
+        budget_current = config_max_b * eta^(-bracket)
 
         # generate design based on given parameter set and sampler
         design         = self$sampler$sample(mu_current)
@@ -120,18 +132,20 @@ TunerHyperband = R6Class(
         # inner loop - iterating over bracket stages
         for (stage in 0:bracket) {
 
-          messagef(
-            "Current budget = %g, mu = %i, ", budget_current, mu_current
-          )
-
           # rescale budget
           budget_current_real = budget_current * budget_lower
+
+          lg$info(
+            "Training %i configs with budget of %g for each",
+            mu_current, 
+            budget_current_real
+          )
 
           # use subset of task according to budget
           if (self$use_subsampling) {
 
             po = mlr_pipeops$get(
-              "subsample", 
+              "subsample",
               param_vals = list(frac = budget_current_real)
             )
             instance$task = po$train(list(instance$task))$output
@@ -141,10 +155,12 @@ TunerHyperband = R6Class(
             active_configs[[budget_id]] = budget_current_real
           }
 
-          # evaluate active configurations
           # FIXME: vorsicht!!! hier können wir durch den terminator immer
           # rausfliegen
-          instance$eval_batch(active_configs)
+          # ignore logging in the next line - too much stuff flying around
+          lgr::without_logging(
+            instance$eval_batch(active_configs)
+          )
 
           # store information of current iteration with hash as primary key
           hash = tail(instance$bmr$hashes, mu_current)
@@ -163,7 +179,7 @@ TunerHyperband = R6Class(
           bracket_stage  = bracket_stage + 1L
 
           # get performance of each active configuration
-          configs_perf   = instance$bmr$score(msr_ids)
+          configs_perf   = instance$bmr$score(lapply(msr_ids, msr))
 
           # only rank and pick configurations if we are not in the last stage
           if (stage != bracket) {
@@ -192,6 +208,8 @@ TunerHyperband = R6Class(
             active_configs = active_configs[best_indeces, ]
           }
         }
+        # seems redundant
+        #lg$info("Finished evaluation of bracket %i", bracket_max - bracket + 1)
       }
     }
   )
