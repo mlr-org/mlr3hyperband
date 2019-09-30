@@ -29,9 +29,6 @@ expect_terminator = function(term) {
 # returns: tune_result and instance
 test_tuner = function(key, ..., n_dim = 1L, term_evals = 2L, real_evals = term_evals, lower_b, upper_b, measures = "classif.ce") {
 
-  #FIXME: xgboost unavailable otherwise
-  library(mlr3learners)
-
   ps = if (n_dim == 1) {
 
     ParamSet$new(params = list(
@@ -60,8 +57,8 @@ test_tuner = function(key, ..., n_dim = 1L, term_evals = 2L, real_evals = term_e
   expect_data_table(bmr$data, nrows = real_evals)
   expect_equal(inst$n_evals, real_evals)
 
-  r = inst$result()
-  sc = r$config
+  r = inst$result
+  sc = r$tune_x
   sp = r$perf
 
   expect_list(sc, len = n_dim + 1)
@@ -94,8 +91,8 @@ test_tuner_dependencies = function(key, ..., term_evals = 2L, lower_b, upper_b) 
   expect_data_table(bmr$data, nrows = term_evals)
   expect_equal(inst$n_evals, term_evals)
 
-  r = inst$result()
-  sc = r$config
+  r = inst$result
+  sc = r$tune_x
   sp = r$perf
   expect_list(sc)
   expect_names(names(sc), subset.of = c("xx", "yy", "cp", "nrounds"))

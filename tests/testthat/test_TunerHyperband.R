@@ -43,7 +43,7 @@ test_that("TunerHyperband using subsampling", {
   tuner = TunerHyperband$new(eta = 2L, use_subsamp = TRUE)
   tuner$tune(inst)
 
-  results = inst$archive()[, c("cp", "minsplit", "classif.ce")]
+  results = inst$archive()[, .(cp = sapply(params, "[", "cp"), minsplit = sapply(params, "[", "minsplit"), classif.ce)]
 
   expect_data_table(results, ncols = 3, nrows = 35)
 })

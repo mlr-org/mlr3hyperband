@@ -6,10 +6,10 @@
 \alias{mlr3hyperband-package}
 \title{mlr3hyperband: Hyperband for 'mlr3'}
 \description{
-Implements hyperband method for hyperparameter tuning. 
-    Various termination criteria can be set and combined. The class 'AutoTuner'
-    provides a convenient way to perform nested resampling in combination with
-    'mlr3'.
+Implements hyperband method for hyperparameter
+    tuning.  Various termination criteria can be set and combined. The
+    class 'AutoTuner' provides a convenient way to perform nested
+    resampling in combination with 'mlr3'.
 }
 \seealso{
 Useful links:
@@ -21,7 +21,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Sebastian Gruber \email{gruber_sebastian@t-online.de} (0000-0001-9754-0393)
+\strong{Maintainer}: Sebastian Gruber \email{gruber_sebastian@t-online.de} (0000-0002-8544-3470)
 
 Authors:
 \itemize{

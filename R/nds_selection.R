@@ -1,7 +1,11 @@
 
-# select top n_select points by non dominated sorting and hypervolume
-# contribution as tie breaker
-# points: matrix with each column corresponding to a point
+#' @title Select best subset of points by non dominated sorting with
+#' hypervolume contribution for tie breaking
+#' @param points: matrix with each column corresponding to a point
+#' @param n_select: Amount of points to select (integer(1L))
+#' @param ref_point: Reference point for hypervolume (integer())
+#' @param minimize: Should the ranking be based on minimization (single bool
+#' for all dimensions, or vector of bools corresponding to the dimensions)
 #' @return indeces of selected points
 nds_selection = function(points, n_select, ref_point = NULL, minimize = TRUE) {
 
