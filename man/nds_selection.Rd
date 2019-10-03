@@ -2,25 +2,35 @@
 % Please edit documentation in R/nds_selection.R
 \name{nds_selection}
 \alias{nds_selection}
-\title{Select best subset of points by non dominated sorting with
-hypervolume contribution for tie breaking}
+\title{Best points w.r.t. non dominated sorting with hypervolume contrib.}
 \usage{
 nds_selection(points, n_select, ref_point = NULL, minimize = TRUE)
 }
 \arguments{
-\item{points:}{matrix with each column corresponding to a point}
+\item{points}{Matrix with each column corresponding to a point}
 
-\item{n_select:}{Amount of points to select (integer(1L))}
+\item{n_select}{Amount of points to select (integer(1L))}
 
-\item{ref_point:}{Reference point for hypervolume (integer())}
+\item{ref_point}{Reference point for hypervolume (integer())}
 
-\item{minimize:}{Should the ranking be based on minimization (single bool
+\item{minimize}{Should the ranking be based on minimization? (Single bool
 for all dimensions, or vector of bools corresponding to the dimensions)}
 }
 \value{
-indeces of selected points
+Vector of indeces of selected points
 }
 \description{
 Select best subset of points by non dominated sorting with
-hypervolume contribution for tie breaking
+hypervolume contribution for tie breaking. Works on an arbitrary dimension
+of size two or higher.
+}
+\examples{
+set.seed(123)
+
+points = rbind(
+  y1 = runif(10),
+  y2 = runif(10)
+)
+
+nds_selection(points, 7, c(10, 10))
 }

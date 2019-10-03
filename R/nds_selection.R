@@ -1,13 +1,14 @@
 #' @title Best points w.r.t. non dominated sorting with hypervolume contrib.
 #'
 #' @description Select best subset of points by non dominated sorting with
-#' hypervolume contribution for tie breaking
-#' @param points: matrix with each column corresponding to a point
-#' @param n_select: Amount of points to select (integer(1L))
-#' @param ref_point: Reference point for hypervolume (integer())
-#' @param minimize: Should the ranking be based on minimization (single bool
+#' hypervolume contribution for tie breaking. Works on an arbitrary dimension
+#' of size two or higher.
+#' @param points Matrix with each column corresponding to a point
+#' @param n_select Amount of points to select (integer(1L))
+#' @param ref_point Reference point for hypervolume (integer())
+#' @param minimize Should the ranking be based on minimization? (Single bool
 #' for all dimensions, or vector of bools corresponding to the dimensions)
-#' @return indeces of selected points
+#' @return Vector of indeces of selected points
 #' 
 #' @examples
 #' set.seed(123)

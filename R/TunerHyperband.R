@@ -1,9 +1,8 @@
 #' @title TunerHyperband
 #'
 #' @aliases mlr_tuners_hyperband
-#' @include Tuner.R
 #' @usage NULL
-#' @format [R6::R6Class] object inheriting from [Tuner].
+#' @format [R6::R6Class] object inheriting from [mlr3tuning::Tuner].
 #'
 #' @description
 #' Subclass for hyperband tuning.
@@ -66,8 +65,9 @@
 #'   be ignored even if specified.
 #'
 #' @references \url{https://arxiv.org/abs/1603.06560}
-#' @family Tuner
-#' @export
+#' @family mlr3tuning::Tuner
+#' # see ?Tuner
+#'
 #' @examples
 #' library(mlr3hyperband)
 #' library(mlr3learners)
@@ -104,7 +104,7 @@
 #' print(inst$archive())
 #' print(tuner$info)
 #'
-#' # see ?Tuner
+#' @export
 TunerHyperband = R6Class(
   "TunerHyperband",
   inherit = Tuner,
