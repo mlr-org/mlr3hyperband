@@ -110,11 +110,21 @@ TunerHyperband = R6Class(
   inherit = Tuner,
 
   public = list(
+    # storing non-printed logging information
     info = NULL,
+    # Object defining sampling of each learner hyperparameter
     sampler = NULL,
+    # Bool: if we are using subsampling or the learner as budget
     use_subsampling = NULL,
 
-    initialize = function(eta = 2, use_subsamp = FALSE, sampler = NULL) {
+    # create hyperband parameters and init super class (Tuner)
+    initialize = function(eta = 2L, use_subsamp = FALSE, sampler = NULL) {
+
+      # check input for correctness
+      assert_int(eta, lower = 1)
+      assert_logical(use_subsamp)
+      assert_r6(sampler, classes = "Sampler", null.ok = TRUE)
+
 
       ps_hyperband = ParamSet$new(list(
         ParamInt$new("eta", lower = 1L)

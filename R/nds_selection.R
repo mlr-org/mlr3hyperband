@@ -22,6 +22,12 @@
 
 nds_selection = function(points, n_select, ref_point = NULL, minimize = TRUE) {
 
+  # check input for correctness
+  assert_matrix(points, mode = "numeric")
+  assert_int(n_select, lower = 1, upper = ncol(points))
+  assert_logical(minimize, min.len = 1, max.len = nrow(points))
+  assert_numeric(ref_point, len = nrow(points), null.ok = TRUE)
+
   # maximize/minimize preprocessing: switch sign in each dim to maximize
   points = points * (minimize * 2 - 1)
 
