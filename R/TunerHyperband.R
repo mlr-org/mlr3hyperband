@@ -121,7 +121,7 @@ TunerHyperband = R6Class(
     initialize = function(eta = 2L, use_subsamp = FALSE, sampler = NULL) {
 
       # check input for correctness
-      assert_int(eta, lower = 1)
+      assert_int(eta, lower = 2)
       assert_logical(use_subsamp)
       assert_r6(sampler, classes = "Sampler", null.ok = TRUE)
 
