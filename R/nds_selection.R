@@ -1,5 +1,6 @@
-
-#' @title Select best subset of points by non dominated sorting with
+#' @title Best points w.r.t. non dominated sorting with hypervolume contrib.
+#'
+#' @description Select best subset of points by non dominated sorting with
 #' hypervolume contribution for tie breaking
 #' @param points: matrix with each column corresponding to a point
 #' @param n_select: Amount of points to select (integer(1L))
@@ -7,6 +8,17 @@
 #' @param minimize: Should the ranking be based on minimization (single bool
 #' for all dimensions, or vector of bools corresponding to the dimensions)
 #' @return indeces of selected points
+#' 
+#' @examples
+#' set.seed(123)
+#'
+#' points = rbind(
+#'   y1 = runif(10),
+#'   y2 = runif(10)
+#' )
+#'
+#' nds_selection(points, 7, c(10, 10))
+
 nds_selection = function(points, n_select, ref_point = NULL, minimize = TRUE) {
 
   # maximize/minimize preprocessing: switch sign in each dim to maximize
@@ -48,7 +60,6 @@ nds_selection = function(points, n_select, ref_point = NULL, minimize = TRUE) {
       }
     )
 
-    # FIXME: randomize tied maxima selection (currently always the first one)
     # index of the tied case with the lowest hypervolume contribution
     to_remove = which.max(hypervolumes)
     tie_points = tie_points[, -to_remove]
@@ -62,36 +73,5 @@ nds_selection = function(points, n_select, ref_point = NULL, minimize = TRUE) {
   return(survivors)
 }
 
-###################
-
-#data_matrix = t(matrix(
-#  c(# front 1
-#    1, 4,
-#    2, 3,
-#    4, 1,
-#    # front 2
-#    2.2, 3.2,
-#    4, 3,
-#    4.2, 1,
-#    # front 3
-#    3, 5,
-#    3.2, 4.7,
-#    6, 2,
-#    # front 4
-#    6, 6
-#  ), byrow = TRUE, ncol = 2L
-#))
-
-#nds_selection(data_matrix, 1)
-
-
-#set.seed(123)
-
-#points = rbind(
-#  y1 = runif(10),
-#  y2 = runif(10)
-#)
-
-#nds_selection(points, 7, c(10, 10))
 
 

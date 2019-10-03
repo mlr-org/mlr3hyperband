@@ -1,5 +1,8 @@
 context("TunerHyperband")
 
+library(mlr3learners)
+library(mlr3pipelines)
+
 
 test_that("TunerHyperband singlecrit", {
 
@@ -20,7 +23,6 @@ test_that("TunerHyperband multicrit", {
 
 test_that("TunerHyperband using subsampling", {
 
-  library(mlr3pipelines)
   set.seed(123)
 
   # define hyperparameter for tuning with hyperband
