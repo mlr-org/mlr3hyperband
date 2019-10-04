@@ -7,30 +7,30 @@
 #' @description
 #' Subclass for hyperband tuning.
 #'
-#' Hyperband is a budget oriented procedure putting more ressources on more 
-#' promising configurations, increasing tuning efficiency as a consequence. 
-#' For this, several brackets are constructed with different starting 
-#' configurations in each. Each bracket has a different amount of stages 
-#' with a different starting budget -- in general the more stages 
-#' the lower the budget at first. Once a stage of a bracket is evaluated, the 
-#' best `1/eta` configurations are kept, while the rest is discarded. The 
-#' remaining configurations are then transfered to the next bracket stage, 
-#' where training is continued with an increase of the budget by the factor of 
-#' `eta`. This continuous iteratively for every bracket stage until the upper 
+#' Hyperband is a budget oriented procedure putting more ressources on more
+#' promising configurations, increasing tuning efficiency as a consequence.
+#' For this, several brackets are constructed with different starting
+#' configurations in each. Each bracket has a different amount of stages
+#' with a different starting budget -- in general the more stages
+#' the lower the budget at first. Once a stage of a bracket is evaluated, the
+#' best `1/eta` configurations are kept, while the rest is discarded. The
+#' remaining configurations are then transfered to the next bracket stage,
+#' where training is continued with an increase of the budget by the factor of
+#' `eta`. This continuous iteratively for every bracket stage until the upper
 #' limit of the budget is reached. In the end, and aggregated over all brackets,
-#' we have a lot of evaluated configurations with only a small handful being 
-#' trained on the upper limit of the budget. This safes a lot of training time 
-#' on configurations, that look unpromising on a low budget, as they are 
-#' skipped for further evaluation. 
+#' we have a lot of evaluated configurations with only a small handful being
+#' trained on the upper limit of the budget. This safes a lot of training time
+#' on configurations, that look unpromising on a low budget, as they are
+#' skipped for further evaluation.
 #' There are currently two ways to identify the
-#' budget during tuning. One is by using the size of the training set as the 
-#' budget, with the full set as the maximum budget (see the argument 
+#' budget during tuning. One is by using the size of the training set as the
+#' budget, with the full set as the maximum budget (see the argument
 #' `use_subsamp`).
-#' The other way is by explicitly specifying which learner's hyperparameter 
-#' is the budget (see in the examples of how to do this in an 
+#' The other way is by explicitly specifying which learner's hyperparameter
+#' is the budget (see in the examples of how to do this in an
 #' [paradox::ParamSet] object).
 #' Naturally, hyperband terminates once all of its brackets are evaluated,
-#' so a terminator in tuning instance acts as an upper bound and should be 
+#' so a terminator in tuning instance acts as an upper bound and should be
 #' only set to a low value if one is unsure how long hyperband will take to
 #' finish under the given settings.
 #'
@@ -63,6 +63,49 @@
 #'   mind either all parameters are handled in the [paradox::Sample] object
 #'   or none. The budget parameter (if one is given) is an expection and will
 #'   be ignored even if specified.
+#'
+#' @details The calculations of the brackets layout is quite unintuitive.
+#' A small overview will be given here, but for more details please check
+#' out the original paper (see `references`).
+#' To keep things uniform with the notation in the paper (and to safe space
+#' in the formulas) `R` is used for the upper budget.
+#' The formula to calculate the bracket amount is `floor(log(R, eta)) + 1`.
+#' To calculate the starting budget in each bracket use
+#' `R * eta^(-s)`, where `s` is the maximum bracket minus the current bracket
+#' index.
+#' For the starting configurations in each bracket it's
+#' `ceiling((B/R) * ((eta^s)/(s+1)))`, with `B = (bracket amount) * R`.
+#' To receive a table with the full brackets layout load the following function
+#' and execute it for the desired `R` and `eta`.
+#'
+#' ```
+#' hyperband_brackets = function(R, eta) {
+#'
+#'   result = data.frame()
+#'   smax = floor(log(R, eta))
+#'   B = (smax + 1) * R
+#'
+#'   # outer loop - iterate over brackets
+#'   for (s in smax:0) {
+#'
+#'     n = ceiling((B/R) * ((eta^s)/(s+1)))
+#'     r = R * eta^(-s)
+#'
+#'     # inner loop - iterate over bracket stages
+#'     for (i in 0:s) {
+#'
+#'       ni = floor(n * eta^(-i))
+#'       ri = r * eta^i
+#'       result = rbind(result, c(smax - s + 1, i + 1, ri, ni))
+#'     }
+#'   }
+#'
+#'   names(result) = c("bracket", "bracket_stage", "budget", "n.configs")
+#'   return(result)
+#' }
+#'
+#' hyperband_brackets(R = 81L, eta = 3L)
+#' ```
 #'
 #' @references \url{https://arxiv.org/abs/1603.06560}
 #' @family mlr3tuning::Tuner
@@ -188,10 +231,10 @@ TunerHyperband = R6Class(
 
       # we add half machine eps for stability
       # try this floor(log(8.1 / 0.1)) = 3 (!!!). it should be 4!
-      bracket_max = floor(log(config_max_b, eta) + 1e-8) 
+      bracket_max = floor(log(config_max_b, eta) + 1e-8)
       # eta^bracket_max = config_max_b
       lg$info(
-        "Amount of brackets to be evaluated = %i, ", 
+        "Amount of brackets to be evaluated = %i, ",
         bracket_max + 1
       )
 
@@ -220,7 +263,7 @@ TunerHyperband = R6Class(
 
           lg$info(
             "Training %i configs with budget of %g for each",
-            mu_current, 
+            mu_current,
             budget_current_real
           )
 

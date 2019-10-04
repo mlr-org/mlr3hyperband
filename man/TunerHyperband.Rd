@@ -36,6 +36,47 @@ so a terminator in tuning instance acts as an upper bound and should be
 only set to a low value if one is unsure how long hyperband will take to
 finish under the given settings.
 }
+\details{
+The calculations of the brackets layout is quite unintuitive.
+A small overview will be given here, but for more details please check
+out the original paper (see \code{references}).
+To keep things uniform with the notation in the paper (and to safe space
+in the formulas) \code{R} is used for the upper budget.
+The formula to calculate the bracket amount is \code{floor(log(R, eta)) + 1}.
+To calculate the starting budget in each bracket use
+\code{R * eta^(-s)}, where \code{s} is the maximum bracket minus the current bracket
+index.
+For the starting configurations in each bracket it's
+\code{ceiling((B/R) * ((eta^s)/(s+1)))}, with \code{B = (bracket amount) * R}.
+To receive a table with the full brackets layout load the following function
+and execute it for the desired \code{R} and \code{eta}.\preformatted{hyperband_brackets = function(R, eta) {
+
+  result = data.frame()
+  smax = floor(log(R, eta))
+  B = (smax + 1) * R
+
+  # outer loop - iterate over brackets
+  for (s in smax:0) {
+
+    n = ceiling((B/R) * ((eta^s)/(s+1)))
+    r = R * eta^(-s)
+
+    # inner loop - iterate over bracket stages
+    for (i in 0:s) {
+
+      ni = floor(n * eta^(-i))
+      ri = r * eta^i
+      result = rbind(result, c(smax - s + 1, i + 1, ri, ni))
+    }
+  }
+
+  names(result) = c("bracket", "bracket_stage", "budget", "n.configs")
+  return(result)
+}
+
+hyperband_brackets(R = 81L, eta = 3L)
+}
+}
 \section{Construction}{
 \preformatted{TunerHyperband$new(eta = 3L)
 tnr("hyperband")
