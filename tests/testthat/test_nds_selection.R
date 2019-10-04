@@ -1,7 +1,7 @@
 context("nds_selection")
 
 
-test_that("nds_selection", {
+test_that("nds_selection basics", {
 
   data_matrix = t(matrix(
     c(# front 1
@@ -139,6 +139,10 @@ test_that("nds_selection", {
     2:3
   )
 
+})
+
+
+test_that("nds_selection high dimensional", {
 
   # check if more dimensions break something
   # 3 dimensional
@@ -229,6 +233,16 @@ test_that("nds_selection", {
 
   expect_subset(
     nds_selection(points, 1, rep(0, 4), FALSE),
+    1:10
+  )
+
+  expect_subset(
+    nds_selection(points, 1, minimize = c(FALSE, TRUE, FALSE, TRUE)),
+    1:10
+  )
+
+  expect_subset(
+    nds_selection(points, 1, minimize = c(FALSE, FALSE, TRUE, FALSE)),
     1:10
   )
 

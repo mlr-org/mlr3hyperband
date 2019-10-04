@@ -6,6 +6,32 @@ lapply(
   source
 )
 
+
+# calculating bracket meta info for given R and eta based on hb paper
+hyperband_brackets = function(R, eta) {
+
+  result = data.frame()
+  smax = floor(log(R, eta))
+  B = (smax + 1) * R
+
+  for (s in smax:0) {
+
+    n = ceiling((B/R) * ((eta^s)/(s+1)))
+    r = R * eta^(-s)
+
+    for (i in 0:s) {
+
+      ni = floor(n * eta^(-i))
+      ri = r * eta^i
+      result = rbind(result, c(s, i + 1, ri, ri, ni))
+    }
+  }
+
+  names(result) = c("bracket", "bracket_stage", "budget", "budget_real", "mu")
+  return(result)
+}
+
+
 expect_tuner = function(tuner) {
   expect_r6(tuner, "Tuner",
     public = c("tune", "param_set"),
@@ -27,7 +53,10 @@ expect_terminator = function(term) {
 # term_evals: how we configure the Terminator
 # real_evals: how many evals we really expect (as the optim might early stop)
 # returns: tune_result and instance
-test_tuner = function(key, ..., n_dim = 1L, term_evals = 2L, real_evals = term_evals, lower_b, upper_b, measures = "classif.ce") {
+test_tuner = function(key, eta, n_dim = 1L, term_evals = NULL, lower_b, upper_b, measures = "classif.ce") {
+
+  # run for an (almost) arbitrary time if NULL is given
+  if (is.null(term_evals)) term_evals = 999999
 
   ps = if (n_dim == 1) {
 
@@ -49,13 +78,30 @@ test_tuner = function(key, ..., n_dim = 1L, term_evals = 2L, real_evals = term_e
 
   term = term("evals", n_evals = term_evals)
   inst = TuningInstance$new(task, lrn("classif.xgboost"), rsmp("holdout"), lapply(measures, msr), ps, term)
-  tuner = tnr(key, ...)
+  tuner = tnr(key, eta = eta)
   expect_tuner(tuner)
+
   tuner$tune(inst)
   bmr = inst$bmr
 
-  expect_data_table(bmr$data, nrows = real_evals)
-  expect_equal(inst$n_evals, real_evals)
+  real_evals = sum(tuner$info$mu)
+
+  # compare results with full hyperband brackets if tuner was fully evaluated
+  if (term_evals == 999999) {
+
+    hb_meta_info = hyperband_brackets(R = upper_b/lower_b, eta = eta)
+    hb_meta_info = as.data.table(hb_meta_info)
+
+    expect_equal(hb_meta_info, tuner$info)
+    expect_equal(real_evals, inst$n_evals)
+    expect_data_table(bmr$data, nrows = real_evals)
+
+  } else {
+
+    expect_data_table(bmr$data, min.rows = term_evals)
+    expect_gte(inst$n_evals, term_evals)
+  }
+
 
   r = inst$result
   sc = r$tune_x
@@ -76,27 +122,45 @@ test_tuner = function(key, ..., n_dim = 1L, term_evals = 2L, real_evals = term_e
 
 # test an implemented subclass tuner by running a test with dependent params
 # returns: tune_result and instance
-test_tuner_dependencies = function(key, ..., term_evals = 2L, lower_b, upper_b) {
+test_tuner_dependencies = function(key, eta, term_evals = NULL, lower_b, upper_b) {
+
+  # run for an (almost) arbitrary time if NULL is given
+  if (is.null(term_evals)) term_evals = 999999
+
   term = term("evals", n_evals = term_evals)
   ll = LearnerRegrDepParams$new()
   ll$param_set$add(
-    ParamInt$new("nrounds",   lower = lower_b, upper = upper_b, tags = "budget")
+    ParamInt$new("nrounds", lower = lower_b, upper = upper_b, tags = "budget")
   )
   inst = TuningInstance$new(tsk("boston_housing"), ll, rsmp("holdout"), msr("regr.mse"), ll$param_set, term)
-  tuner = tnr(key, ...)
+  tuner = tnr(key, eta)
   expect_tuner(tuner)
   tuner$tune(inst)
   bmr = inst$bmr
 
-  expect_data_table(bmr$data, nrows = term_evals)
-  expect_equal(inst$n_evals, term_evals)
+  real_evals = sum(tuner$info$mu)
+
+  # compare results with full hyperband brackets if tuner was fully evaluated
+  if (term_evals == 999999) {
+
+    hb_meta_info = hyperband_brackets(R = upper_b/lower_b, eta = eta)
+    hb_meta_info = as.data.table(hb_meta_info)
+
+    expect_equal(hb_meta_info, tuner$info)
+    expect_equal(real_evals, inst$n_evals)
+    expect_data_table(bmr$data, nrows = real_evals)
+
+  } else {
+
+    expect_data_table(bmr$data, min.rows = term_evals)
+    expect_gte(inst$n_evals, term_evals)
+  }
 
   r = inst$result
   sc = r$tune_x
   sp = r$perf
   expect_list(sc)
   expect_names(names(sc), subset.of = c("xx", "yy", "cp", "nrounds"))
-  expect_numeric(sp, len = 1L)
   expect_numeric(sp, len = 1L)
   expect_names(names(sp), identical.to = "regr.mse")
   list(tuner = tuner, inst = inst)
