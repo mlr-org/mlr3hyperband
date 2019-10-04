@@ -49,3 +49,47 @@ test_that("TunerHyperband using subsampling", {
 
   expect_data_table(results, ncols = 3, nrows = 35)
 })
+
+
+test_that("TunerHyperband using custom sampler", {
+
+  library(mlr3learners)
+  set.seed(123)
+
+  # define hyperparameter and budget parameter for tuning with hyperband
+  params = list(
+    ParamInt$new("nrounds", lower = 1, upper = 16, tags = "budget"),
+    ParamDbl$new("eta",     lower = 0, upper = 1),
+    ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
+  )
+
+
+  inst = TuningInstance$new(
+    tsk("iris"),
+    lrn("classif.xgboost"),
+    rsmp("holdout"),
+    msr("classif.ce"),
+    ParamSet$new(params),
+    term("evals", n_evals = 100000)
+  )
+
+  # create custom sampler:
+  # - beta distribution with alpha = 2 and beta = 5
+  # - categorical distribution with custom probabilities
+  sampler = SamplerJointIndep$new(list(
+    Sampler1DRfun$new(params[[2]], function(n) rbeta(n, 2, 5)),
+    Sampler1DCateg$new(params[[3]], prob = c(0.2, 0.3, 0.5))
+  ))
+
+  tuner = TunerHyperband$new(eta = 2L, sampler = sampler)
+  tuner$tune(inst)
+
+  results = inst$archive()[, .(
+    nrounds = sapply(params, "[", "nrounds"), 
+    eta = sapply(params, "[", "eta"), 
+    booster = sapply(params, "[", "booster"), 
+    classif.ce
+  )]
+
+  expect_data_table(results, ncols = 4, nrows = 72)
+})
