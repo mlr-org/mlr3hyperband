@@ -1,7 +1,7 @@
 # mlr3hyperband
 
 [![Build Status](https://travis-ci.org/mlr-org/mlr3hyperband.svg?branch=master)](https://travis-ci.org/mlr-org/mlr3hyperband)
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version-ago/mlr3hyperband)](https://cran.r-project.org/package=mlr3hyperband)
+[![CRAN Status Badge](https://www.r-pkg.org/badges/version-ago/mlr3hyperband)](https://cran.r-project.org/package=mlr3hyperband)
 [![cran checks](https://cranchecks.info/badges/worst/mlr3hyperband)](https://cran.r-project.org/web/checks/check_results_mlr3hyperband.html)
 [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/mlr3hyperband)](https://cran.rstudio.com/web/packages/mlr3hyperband/index.html)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
