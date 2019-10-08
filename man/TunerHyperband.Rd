@@ -4,7 +4,7 @@
 \name{TunerHyperband}
 \alias{TunerHyperband}
 \alias{mlr_tuners_hyperband}
-\title{TunerHyperband}
+\title{Tuner using the Hyperband algorithm}
 \format{\link[R6:R6Class]{R6::R6Class} object inheriting from \link[mlr3tuning:Tuner]{mlr3tuning::Tuner}.}
 \description{
 Subclass for hyperband tuning.
@@ -99,7 +99,8 @@ hyperband algorithm with a lower budget of \code{0.1} and a maximum budget of
 \code{1.0}. Keep in mind the lower budget may never be used for any bracket,
 while the maximum budget is always the budget in the last stage of a
 bracket. This is influenced by \code{eta}: The formula for calculating the
-starting budget of each bracket is \code{maximum_budget / lower_budget * eta^(-bracket)}.
+starting budget of each bracket is
+\code{maximum_budget / lower_budget * eta^(-bracket)}.
 \item \code{sampler} :: \code{[R6::R6Class] object inheriting from [paradox::Sampler]} \cr
 Object defining how the samples of the parameter space should be drawn
 during the initialization of each bracket. If no argument is given,
@@ -108,6 +109,32 @@ mind either all parameters are handled in the \link[paradox:Sample]{paradox::Sam
 or none. The budget parameter (if one is given) is an expection and will
 be ignored even if specified.
 }
+}
+
+\section{Return}{
+
+Using the \code{tune()} method of \code{mlr3tuning} does not return anything, but the
+results can be easily extracted from the (during tuning) modified
+\code{[mlr3tuning::TuningInstance]} object. To return the best evaluation so far, simply
+use the method \code{best()} on the tuned instance. If all the evaluations are
+desired to be explored, use the method \code{archive()} instead.
+}
+
+\section{Runtime scaling w.r.t. the chosen budget}{
+
+The calculation of each bracket currently assumes a linear runtime in the
+chosen budget parameter is always given. Hyperband is designed so each
+bracket requires approximately the same runtime as the sum of the budget
+over all configurations in each bracket is roughly the same. This won't
+hold true once the scaling in the budget parameter isn't linear
+anymore, even thought the sum of the budgets in each bracket remain the
+same. A basic example can be viewed by calling the function
+\code{hyperband_brackets} below with the arguments \code{R = 2} and \code{eta = 2}. If we
+run a learner with O(budget^2) time complexity, the runtime of the last
+bracket will be 33% longer than the first bracket
+(time of bracket 1 = 2 * 1^2 + 2^2 = 6; time of bracket 2 = 2 * 2^2 = 8).
+Of course, this won't break anything, but it should be kept in mind when
+applying Hyperband.
 }
 
 \examples{
@@ -143,7 +170,12 @@ sampler = SamplerJointIndep$new(list(
 tuner = TunerHyperband$new(eta = 2L, sampler = sampler)
 tuner$tune(inst)
 
+# return the best evaluation
+inst$best()
+
+# print all evaluations
 print(inst$archive())
+# print layout of the brackets
 print(tuner$info)
 
 }
