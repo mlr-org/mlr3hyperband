@@ -25,15 +25,17 @@ trained on the upper limit of the budget. This safes a lot of training time
 on configurations, that look unpromising on a low budget, as they are
 skipped for further evaluation.
 There are currently two ways to identify the
-budget during tuning. One is by using the size of the training set as the
-budget, with the full set as the maximum budget (see the argument
-\code{use_subsamp}).
-The other way is by explicitly specifying which learner's hyperparameter
-is the budget (see in the examples of how to do this in an
-\link[paradox:ParamSet]{paradox::ParamSet} object).
+To identify the budget for evaluating hyperband, the user has to specify
+explicitly which learner's hyperparameter should be used as the budget
+by adding \code{tags = "budget"} to the arguments of a single hyperparameter
+(see in the examples of how to do this in an
+\link[paradox:ParamSet]{paradox::ParamSet} object). An alternative approach would be to not use
+any hyperparameter of the learner at all. A short description of how to
+construct such a case
+is given in the section \code{[Hyperband without learner budget]}.
 Naturally, hyperband terminates once all of its brackets are evaluated,
-so a terminator in tuning instance acts as an upper bound and should be
-only set to a low value if one is unsure how long hyperband will take to
+so a terminator in the tuning instance acts as an upper bound and should be
+only set to a low value if one is unsure of how long hyperband will take to
 finish under the given settings.
 }
 \details{
@@ -91,16 +93,6 @@ This tuner currently supports the following hyperparameters:
 Fraction parameter of the successive halving algorithm: With every step
 the configuration budget is increased by a factor of \code{eta} and only the
 best \code{1/eta} configurations are used for the next step.
-\item \code{use_supsamp} :: \code{bool(1)} \cr
-(Experimental feature)
-Should subsampling be used instead of a budget parameter of the learner?
-If true, the fraction of the subsample will be used as the budget in the
-hyperband algorithm with a lower budget of \code{0.1} and a maximum budget of
-\code{1.0}. Keep in mind the lower budget may never be used for any bracket,
-while the maximum budget is always the budget in the last stage of a
-bracket. This is influenced by \code{eta}: The formula for calculating the
-starting budget of each bracket is
-\code{maximum_budget / lower_budget * eta^(-bracket)}.
 \item \code{sampler} :: \code{[R6::R6Class] object inheriting from [paradox::Sampler]} \cr
 Object defining how the samples of the parameter space should be drawn
 during the initialization of each bracket. If no argument is given,
@@ -113,11 +105,23 @@ be ignored even if specified.
 
 \section{Return}{
 
-Using the \code{tune()} method of \code{mlr3tuning} does not return anything, but the
+Using the \code{$tune()} method of \code{mlr3tuning} does not return anything, but the
 results can be easily extracted from the (during tuning) modified
 \code{[mlr3tuning::TuningInstance]} object. To return the best evaluation so far, simply
-use the method \code{best()} on the tuned instance. If all the evaluations are
-desired to be explored, use the method \code{archive()} instead.
+use the method \code{$best()} on the tuned instance. If all the evaluations are
+desired to be explored, use the method \code{$archive()} instead.
+}
+
+\section{Hyperband without learner budget}{
+
+Thanks to \code{mlr3pipelines} it is possible to use hyperband in combination
+with learners lacking a natural budget parameter. An example of when it is
+required and how to do this is given in the \code{[examples]} section, but a
+short description is given here none-the-less. We simply extend the learner
+with a preprocessing step (in the example a decision tree with subsampling)
+and as a return we receive a \code{[mlr3pipelines::GraphLearner]} object with
+an extended hyperparameter space. Then, we can pick a hyperparameter of the
+preprocessing step as budget and execute hyperband as usual.
 }
 
 \section{Runtime scaling w.r.t. the chosen budget}{
@@ -140,6 +144,9 @@ applying Hyperband.
 \examples{
 library(mlr3hyperband)
 library(mlr3learners)
+library(mlr3tuning)
+library(mlr3)
+library(paradox)
 set.seed(123)
 
 # define hyperparameter and budget parameter for tuning with hyperband
@@ -178,6 +185,40 @@ print(inst$archive())
 # print layout of the brackets
 print(tuner$info)
 
+
+### use data preprocessing (subsampling) parameter as budget
+
+library(mlr3pipelines)
+set.seed(123)
+
+# define Graph Learner from rpart with subsampling as preprocessing step
+pops = mlr_pipeops$get("subsample")
+graph_learner = GraphLearner$new(pops \%>>\% lrn("classif.rpart"))
+
+# define with extended hyperparameters with subsampling fraction as budget
+# ==> no learner budget is required
+params = list(
+  ParamDbl$new("classif.rpart.cp", lower = 0.001, upper = 0.1),
+  ParamInt$new("classif.rpart.minsplit", lower = 1, upper = 10),
+  ParamDbl$new("subsample.frac", lower = 0.1, upper = 1, tags = "budget")
+)
+
+# define TuningInstance with the Graph Learner and the extended hyperparams
+inst = TuningInstance$new(
+  tsk("iris"),
+  graph_learner,
+  rsmp("holdout"),
+  msr("classif.ce"),
+  ParamSet$new(params),
+  term("evals", n_evals = 100000)
+)
+
+# define and call hyperband as usual
+tuner = TunerHyperband$new(eta = 2L)
+tuner$tune(inst)
+
+# view all evaluations
+print(inst$archive())
 }
 \references{
 \url{https://arxiv.org/abs/1603.06560}

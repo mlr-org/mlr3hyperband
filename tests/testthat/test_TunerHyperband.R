@@ -24,30 +24,36 @@ test_that("TunerHyperband multicrit", {
 test_that("TunerHyperband using subsampling", {
 
   set.seed(123)
-
-  # define hyperparameter for tuning with hyperband
+   
+  # define Graph Learner from rpart with subsampling as preprocessing step
+  pops = mlr_pipeops$get("subsample")
+  graph_learner = GraphLearner$new(pops %>>% lrn("classif.rpart"))
+   
+  # define with extended hyperparameters with subsampling fraction as budget
+  # ==> no learner budget is required
   params = list(
-    ParamDbl$new("cp", lower = 0.001, upper = 0.1),
-    ParamInt$new("minsplit", lower = 1, upper = 10)
+    ParamDbl$new("classif.rpart.cp", lower = 0.001, upper = 0.1),
+    ParamInt$new("classif.rpart.minsplit", lower = 1, upper = 10),
+    ParamDbl$new("subsample.frac", lower = 0.1, upper = 1, tags = "budget")
   )
-
-
+   
+  # define TuningInstance with the Graph Learner and the extended hyperparams
   inst = TuningInstance$new(
     tsk("iris"),
-    lrn("classif.rpart"),
+    graph_learner,
     rsmp("holdout"),
     msr("classif.ce"),
     ParamSet$new(params),
     term("evals", n_evals = 100000)
   )
-
-
-  tuner = TunerHyperband$new(eta = 2L, use_subsamp = TRUE)
+   
+  # define and call hyperband as usual
+  tuner = TunerHyperband$new(eta = 2L)
   tuner$tune(inst)
 
-  results = inst$archive()[, .(cp = sapply(params, "[", "cp"), minsplit = sapply(params, "[", "minsplit"), classif.ce)]
+  results = inst$archive()[, .(frac = sapply(params, "[", "subsample.frac"), cp = sapply(params, "[", "classif.rpart.cp"), minsplit = sapply(params, "[", "classif.rpart.minsplit"), classif.ce)]
 
-  expect_data_table(results, ncols = 3, nrows = 35)
+  expect_data_table(results, ncols = 4, nrows = 35)
 })
 
 
