@@ -7,30 +7,36 @@
 #' @description
 #' Subclass for hyperband tuning.
 #'
-#' Hyperband is a budget oriented procedure putting more ressources on more
-#' promising configurations, increasing tuning efficiency as a consequence.
-#' For this, several brackets are constructed with different starting
-#' configurations in each. Each bracket has a different amount of stages
-#' with a different starting budget -- in general the more stages
-#' the lower the budget at first. Once a stage of a bracket is evaluated, the
-#' best `1/eta` configurations are kept, while the rest is discarded. The
-#' remaining configurations are then transfered to the next bracket stage,
-#' where training is continued with an increase of the budget by the factor of
-#' `eta`. This continuous iteratively for every bracket stage until the upper
-#' limit of the budget is reached. In the end, and aggregated over all brackets,
-#' we have a lot of evaluated configurations with only a small handful being
-#' trained on the upper limit of the budget. This safes a lot of training time
-#' on configurations, that look unpromising on a low budget, as they are
-#' skipped for further evaluation.
-#' There are currently two ways to identify the
+#' Hyperband is a budget oriented-procedure, weeding out suboptimally
+#' performing configurations early on during their training process, 
+#' increasing tuning efficiency as a consequence.
+#'
+#' For this, several brackets are constructed with an associated set of configurations
+#' for each bracket. These configuration are initialized by stochastic,
+#' often uniform, sampling. 
+#' Each bracket is divided into multiple stages, and configurations are 
+#' evaluated for a different, increasing budget in each stage.
+#' Note that currently all configurations are trained completely from the 
+#' beginning, so no online updates of models.
+#' Once a stage of a bracket is evaluated, the
+#' best proportion of `1/eta` configurations are kept for the next stage, 
+#' while the rest is discarded. 
+#' The remaining configurations are retrained in the next bracket stage,
+#' where budget is increased budget by the factor of `eta`. 
+#'
+#' Different brackets are initialized with different number of configurations, 
+#' and different initial budget sizes for the first stage, but each bracket is 
+#' assigned (approximately) the same global summed budget for all of its evaluations.
+#' Some brackets contain many configurations, with a small initial budget, 
+#' so that many are discarded after having been trained for only a short amount of time.
+#' Others are constructed with few configurations where discarding only takes place
+#' after a significant amount of budget. 
+#' 
 #' To identify the budget for evaluating hyperband, the user has to specify 
-#' explicitly which learner's hyperparameter should be used as the budget 
-#' by adding `tags = "budget"` to the arguments of a single hyperparameter
-#' (see in the examples of how to do this in an
-#' [paradox::ParamSet] object). An alternative approach would be to not use
-#' any hyperparameter of the learner at all. A short description of how to
-#' construct such a case
-#' is given in the section `[Hyperband without learner budget]`.
+#' explicitly which learner's hyperparameter influences the budget 
+#' by setting `tags = "budget"` of a single hyperparameter in the [paradox::ParamSet]. 
+#' An alternative approach using subsampling and pipelines is described below.
+#'
 #' Naturally, hyperband terminates once all of its brackets are evaluated,
 #' so a terminator in the tuning instance acts as an upper bound and should be
 #' only set to a low value if one is unsure of how long hyperband will take to
@@ -38,33 +44,19 @@
 #'
 #' @section Construction:
 #' ```
-#' TunerHyperband$new(eta = 3L)
+#' TunerHyperband$new(eta = 2L, sampler = NULL)
 #' tnr("hyperband")
 #' ```
 #'
 #' @section Parameters:
-#' This tuner currently supports the following hyperparameters:
-#'
 #' * `eta` :: `integer(1)` \cr
 #'   Fraction parameter of the successive halving algorithm: With every step
 #'   the configuration budget is increased by a factor of `eta` and only the
-#'   best `1/eta` configurations are used for the next step.
+#'   best `1/eta` configurations are used for the next stage.
 #'
 #' * `sampler` :: `[R6::R6Class] object inheriting from [paradox::Sampler]` \cr
 #'   Object defining how the samples of the parameter space should be drawn
-#'   during the initialization of each bracket. If no argument is given,
-#'   uniform samples will be drawn in each hyperparameter dimension. Keep in
-#'   mind either all parameters are handled in the [paradox::Sample] object
-#'   or none. The budget parameter (if one is given) is an expection and will
-#'   be ignored even if specified.
-#'
-#'
-#' @section Return:
-#' Using the `$tune()` method of `mlr3tuning` does not return anything, but the
-#' results can be easily extracted from the (during tuning) modified
-#' `[mlr3tuning::TuningInstance]` object. To return the best evaluation so far, simply
-#' use the method `$best()` on the tuned instance. If all the evaluations are
-#' desired to be explored, use the method `$archive()` instead.
+#'   during the initialization of each bracket. The default is uniform sampling.
 #'
 #' @section Hyperband without learner budget:
 #' Thanks to `mlr3pipelines` it is possible to use hyperband in combination
@@ -80,8 +72,8 @@
 #' The calculation of each bracket currently assumes a linear runtime in the
 #' chosen budget parameter is always given. Hyperband is designed so each
 #' bracket requires approximately the same runtime as the sum of the budget
-#' over all configurations in each bracket is roughly the same. This won't
-#' hold true once the scaling in the budget parameter isn't linear
+#' over all configurations in each bracket is roughly the same. This will not
+#' hold true once the scaling in the budget parameter is not linear
 #' anymore, even thought the sum of the budgets in each bracket remain the
 #' same. A basic example can be viewed by calling the function
 #' `hyperband_brackets` below with the arguments `R = 2` and `eta = 2`. If we
@@ -91,11 +83,12 @@
 #' Of course, this won't break anything, but it should be kept in mind when
 #' applying Hyperband.
 #'
-#' @details The calculations of the brackets layout is quite unintuitive.
+#' @details 
+#' This sections explains the calculation of the constants for each bracket. 
 #' A small overview will be given here, but for more details please check
 #' out the original paper (see `references`).
 #' To keep things uniform with the notation in the paper (and to safe space
-#' in the formulas) `R` is used for the upper budget.
+#' in the formulas) `R` is used for the upper budget that last remaining configuration should reach.
 #' The formula to calculate the bracket amount is `floor(log(R, eta)) + 1`.
 #' To calculate the starting budget in each bracket use
 #' `R * eta^(-s)`, where `s` is the maximum bracket minus the current bracket
@@ -183,14 +176,11 @@
 #' print(tuner$info)
 #'
 #'
-#' ### use data preprocessing (subsampling) parameter as budget
+#' ### use subsampling for budget
 #'
 #' library(mlr3pipelines)
 #' set.seed(123)
-#'
-#' # define Graph Learner from rpart with subsampling as preprocessing step
-#' pops = mlr_pipeops$get("subsample")
-#' graph_learner = GraphLearner$new(pops %>>% lrn("classif.rpart"))
+#' ll = po("subsample") %>>% lrn("classif.rpart")
 #'
 #' # define with extended hyperparameters with subsampling fraction as budget
 #' # ==> no learner budget is required
@@ -203,7 +193,7 @@
 #' # define TuningInstance with the Graph Learner and the extended hyperparams
 #' inst = TuningInstance$new(
 #'   tsk("iris"),
-#'   graph_learner,
+#'   ll,
 #'   rsmp("holdout"),
 #'   msr("classif.ce"),
 #'   ParamSet$new(params),
