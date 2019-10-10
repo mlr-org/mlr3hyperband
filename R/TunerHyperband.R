@@ -214,20 +214,15 @@ TunerHyperband = R6Class(
   public = list(
     # storing non-printed logging information
     info = NULL,
-    # Object defining sampling of each learner hyperparameter
-    sampler = NULL,
 
     # create hyperband parameters and init super class (Tuner)
     initialize = function(eta = 2L, sampler = NULL) {
-
-      # check input for correctness
       assert_int(eta, lower = 2)
-      assert_r6(sampler, classes = "Sampler", null.ok = TRUE)
-
-      self$sampler = sampler
 
       ps_hyperband = ParamSet$new(list(
-        ParamInt$new("eta", lower = 1L)
+        ParamInt$new("eta", lower = 1L, tags = "required"),
+        ParamUty$new("sampler",
+          custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE))
       ))
 
       ps_hyperband$values = list(eta = eta)
@@ -253,7 +248,7 @@ TunerHyperband = R6Class(
 
       # construct unif sampler if non is given
       if (is.null(self$sampler)) {
-        self$sampler = SamplerUnif$new(ps)
+        self$param_set$values$sampler = SamplerUnif$new(ps)
       }
 
       # name of the hyperparameters with a budget tag 
@@ -299,7 +294,7 @@ TunerHyperband = R6Class(
         budget_current = config_max_b * eta^(-bracket)
 
         # generate design based on given parameter set and sampler
-        design         = self$sampler$sample(mu_current)
+        design         = self$param_set$values$sampler$sample(mu_current)
         active_configs = design$data
 
         # inner loop - iterating over bracket stages
