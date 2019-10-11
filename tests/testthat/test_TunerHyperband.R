@@ -21,6 +21,41 @@ test_that("TunerHyperband multicrit", {
 })
 
 
+test_that("TunerHyperband using CV", {
+
+  set.seed(123)
+   
+  # define hyperparameter and budget parameter for tuning with hyperband
+  ps = ParamSet$new(list(
+
+    ParamInt$new("nrounds", lower = 1, upper = 16, tags = "budget"),
+    ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
+  ))
+
+  # tuning instance with 2-fold CV
+  inst = TuningInstance$new(
+    tsk("iris"),
+    lrn("classif.xgboost"),
+    rsmp("cv", folds = 2),
+    msr("classif.ce"),
+    ps,
+    term("evals", n_evals = 100000)
+  )
+
+  # hyperband + tuning
+  tuner = TunerHyperband$new(eta = 2L)
+  tuner$tune(inst)
+
+  results = inst$archive()[, .(
+    nrounds = sapply(params, "[", "nrounds"),
+    booster = sapply(params, "[", "booster"),
+    classif.ce
+  )]
+
+  expect_data_table(results, ncols = 3, nrows = 72)
+})
+
+
 test_that("TunerHyperband using subsampling", {
 
   set.seed(123)
@@ -86,7 +121,24 @@ test_that("TunerHyperband using custom sampler", {
     Sampler1DRfun$new(params[[2]], function(n) rbeta(n, 2, 5)),
     Sampler1DCateg$new(params[[3]], prob = c(0.2, 0.3, 0.5))
   ))
+  # not enough params defined
+  sampler_fail1 = SamplerJointIndep$new(list(
+    Sampler1DCateg$new(params[[3]], prob = c(0.2, 0.3, 0.5))
+  ))
+  # budget param defined
+  sampler_fail2 = SamplerJointIndep$new(list(
+    Sampler1D$new(params[[1]]),
+    Sampler1DRfun$new(params[[2]], function(n) rbeta(n, 2, 5)),
+    Sampler1DCateg$new(params[[3]], prob = c(0.2, 0.3, 0.5))
+  ))
 
+  # check if asserts throw errors on false samplers
+  tuner = TunerHyperband$new(eta = 2L, sampler = sampler_fail1)
+  expect_error(tuner$tune(inst), "Assertion on ")
+  tuner = TunerHyperband$new(eta = 2L, sampler = sampler_fail2)
+  expect_error(tuner$tune(inst), "Assertion on ")
+
+  # check if correct sampler works
   tuner = TunerHyperband$new(eta = 2L, sampler = sampler)
   tuner$tune(inst)
 

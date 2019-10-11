@@ -217,7 +217,9 @@ TunerHyperband = R6Class(
 
     # create hyperband parameters and init super class (Tuner)
     initialize = function(eta = 2L, sampler = NULL) {
-      assert_int(eta, lower = 2)
+
+      # eta has do be >1, otherwise log(R, eta) would break
+      assert_numeric(eta, lower = 1.0001)
 
       ps_hyperband = ParamSet$new(list(
         ParamInt$new("eta", lower = 1L, tags = "required"),
@@ -225,7 +227,7 @@ TunerHyperband = R6Class(
           custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE))
       ))
 
-      ps_hyperband$values = list(eta = eta)
+      ps_hyperband$values = list(eta = eta, sampler = sampler)
 
       super$initialize(
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
@@ -240,16 +242,13 @@ TunerHyperband = R6Class(
     tune_internal = function(instance) {
 
       # define aliases for better readability
-      rr = instance$resampling
-      ps = instance$param_set
-      task = instance$task
-      to_minimize  = map_lgl(instance$measures, "minimize")
+      eta     = self$param_set$values$eta
+      sampler = self$param_set$values$sampler
+      rr      = instance$resampling
+      ps      = instance$param_set
+      task    = instance$task
       msr_ids = ids(instance$measures)
-
-      # construct unif sampler if non is given
-      if (is.null(self$sampler)) {
-        self$param_set$values$sampler = SamplerUnif$new(ps)
-      }
+      to_minimize  = map_lgl(instance$measures, "minimize")
 
       # name of the hyperparameters with a budget tag 
       budget_id = instance$param_set$ids(tags = "budget")
@@ -260,16 +259,29 @@ TunerHyperband = R6Class(
         stop("More than one hyperparameter with a 'budget' tag")
       }
 
+      # construct unif sampler if non is given and get sampler ids
+      if (is.null(sampler)) {
+        sampler = SamplerUnif$new(ps)
+        smp_ids = sampler$param_set$ids()
+
+      } else {
+        smp_ids = sampler$param_set$ids()
+        # budget param is not allowed to be defined in sampler
+        assert_disjunct(budget_id, smp_ids)
+        smp_ids = c(smp_ids, budget_id)
+      }
+
       # use budget parameter as budget
       budget_lower = instance$param_set$lower[budget_id]
       budget_upper = instance$param_set$upper[budget_id]
 
       # we need the budget to start with a SMALL NONNEGATIVE value
       assert_number(budget_lower, lower = 1e-8)
+      # every parameter has to appear in the sampler
+      assert_set_equal(sort(ps$ids()), sort(smp_ids))
 
       # rescale config max budget := 'R' in the original paper
       config_max_b = budget_upper/budget_lower
-      eta          = self$param_set$values$eta
 
       # we add half machine eps for stability
       # try this floor(log(8.1 / 0.1)) = 3 (!!!). it should be 4!
@@ -294,7 +306,7 @@ TunerHyperband = R6Class(
         budget_current = config_max_b * eta^(-bracket)
 
         # generate design based on given parameter set and sampler
-        design         = self$param_set$values$sampler$sample(mu_current)
+        design         = sampler$sample(mu_current)
         active_configs = design$data
 
         # inner loop - iterating over bracket stages

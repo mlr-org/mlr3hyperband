@@ -4,24 +4,30 @@ library(mlr3pipelines)
 
 set.seed(123)
 
-# define hyperparameter and budget parameter for tuning with hyperband
+# define Graph Learner from rpart with subsampling as preprocessing step
+pops = po("subsample")
+graph_learner = pops %>>% lrn("classif.rpart")
+
+# define with extended hyperparameters with subsampling fraction as budget
+# ==> no learner budget is required
 params = list(
-  ParamDbl$new("eta",     lower = 0, upper = 1),
-  ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
+  ParamDbl$new("classif.rpart.cp", lower = 0.001, upper = 0.1),
+  ParamInt$new("classif.rpart.minsplit", lower = 1, upper = 10),
+  ParamDbl$new("subsample.frac", lower = 0.1, upper = 1, tags = "budget")
 )
-
-
+   
+# define TuningInstance with the Graph Learner and the extended hyperparams
 inst = TuningInstance$new(
   tsk("iris"),
-  lrn("classif.xgboost"),
+  graph_learner,
   rsmp("holdout"),
   msr("classif.ce"),
   ParamSet$new(params),
   term("evals", n_evals = 100000)
 )
-
-
-tuner = TunerHyperband$new(eta = 2L, use_subsamp = TRUE)
+ 
+# define and call hyperband as usual
+tuner = TunerHyperband$new(eta = 2L)
 tuner$tune(inst)
 
 print(inst$archive())
