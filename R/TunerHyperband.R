@@ -49,14 +49,41 @@
 #' ```
 #'
 #' @section Parameters:
-#' * `eta` :: `integer(1)` \cr
+#' * `eta` :: `numeric(1)` \cr
 #'   Fraction parameter of the successive halving algorithm: With every step
 #'   the configuration budget is increased by a factor of `eta` and only the
-#'   best `1/eta` configurations are used for the next stage.
+#'   best `1/eta` configurations are used for the next stage. Non-integer
+#'   values are supported, but `eta` is not allowed to be less or equal 1.
 #'
 #' * `sampler` :: `[R6::R6Class] object inheriting from [paradox::Sampler]` \cr
 #'   Object defining how the samples of the parameter space should be drawn
 #'   during the initialization of each bracket. The default is uniform sampling.
+#'
+#' @section Fields:
+#' * `info` :: [data.table::data.table] \cr
+#'   Datatable containing correcter information about the intermediate values
+#'   than given by the console logs. It holds the following columns:
+#'   * `bracket` :: `integer()` \cr
+#'     The console logs about the bracket index are actually false according
+#'     to the original hyperband algorithm, which counts down the brackets
+#'     and stops after evaluating bracket 0. The true bracket indeces are
+#'     given in this column.
+#'   * `bracket_stage` :: `integer()` \cr
+#'     The bracket stage of each bracket. Hyperband starts counting at 0.
+#'   * `budget_scaled` :: `integer()` \cr
+#'     The intermediate budget in each bracket stage calculated by hyperband.
+#'     Because hyperband is originally only considered for budgets starting at 1, some
+#'     rescaling is done to allow budgets not starting at different values. This is done by
+#'     using `lower_budget_new = 1` and 
+#'     `upper_budget_new = upper_budget / lower_budget`. Before the learner
+#'     receives its budgets for evaluation, they are retransformed to fit the
+#'     original scale again.
+#'   * `budget_real` :: `integer()` \cr
+#'     The real budget values the learner uses for evaluation after hyperband
+#'     calculated its scaled budget.
+#'   * `n_configs` :: `integer()` \cr
+#'     The amount of evaluated configurations in each stage. These correspond
+#'     to the `r_i` in the original paper.
 #'
 #' @section Hyperband without learner budget:
 #' Thanks to `mlr3pipelines` it is possible to use hyperband in combination
@@ -120,7 +147,7 @@
 #'     }
 #'   }
 #'
-#'   names(result) = c("bracket", "bracket_stage", "budget", "n.configs")
+#'   names(result) = c("bracket", "bracket_stage", "budget", "n_configs")
 #'   return(result)
 #' }
 #'
@@ -137,6 +164,7 @@
 #' library(mlr3tuning)
 #' library(mlr3)
 #' library(paradox)
+#'
 #' set.seed(123)
 #'
 #' # define hyperparameter and budget parameter for tuning with hyperband
@@ -165,16 +193,57 @@
 #' ))
 #'
 #' tuner = TunerHyperband$new(eta = 2L, sampler = sampler)
-#' tuner$tune(inst)
+#' \dontrun{
+#'   tuner$tune(inst)
 #'
-#' # return the best evaluation
-#' inst$best()
+#'   # return the best evaluation
+#'   inst$best()
 #'
-#' # print all evaluations
-#' print(inst$archive())
-#' # print layout of the brackets
-#' print(tuner$info)
+#'   # print all evaluations
+#'   print(inst$archive())
+#'   # print layout of the brackets
+#'   print(tuner$info)
+#' }
 #'
+#'
+#' ### use parameter trafo to convert non-integer intermediate budgets
+#'
+#' set.seed(123)
+#'
+#' # define hyperparameter and budget parameter for tuning with hyperband
+#' ps = ParamSet$new(list(
+#'   ParamInt$new("nrounds", lower = 1, upper = 10, tags = "budget"),
+#'   #ParamDbl$new("eta",     lower = 0, upper = 1),
+#'   ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
+#' ))
+#'
+#' ps$trafo = function(x, param_set) {
+#'   x$nrounds = round(x$nrounds)
+#'   return(x)
+#' }
+#'
+#' inst = TuningInstance$new(
+#'   tsk("iris"),
+#'   lrn("classif.xgboost"),
+#'   rsmp("holdout"),
+#'   msr("classif.ce"),
+#'   ps,
+#'   term("evals", n_evals = 100000)
+#' )
+#'
+#' # eta can be a double
+#' tuner = TunerHyperband$new(eta = 1.9)
+#' \dontrun{
+#'   tuner$tune(inst)
+#'
+#'   # return the best evaluation
+#'   inst$best()
+#'
+#'   # print all evaluations
+#'   print(inst$archive())
+#'   # print layout of the brackets
+#'   print(tuner$info)
+#' }
 #'
 #' ### use subsampling for budget
 #'
@@ -201,11 +270,18 @@
 #' )
 #'
 #' # define and call hyperband as usual
-#' tuner = TunerHyperband$new(eta = 2L)
-#' tuner$tune(inst)
+#' tuner = TunerHyperband$new(eta = 4L)
+#' \dontrun{
+#'   tuner$tune(inst)
 #'
-#' # view all evaluations
-#' print(inst$archive())
+#'   # return the best evaluation
+#'   inst$best()
+#'
+#'   # print all evaluations
+#'   print(inst$archive())
+#'   # print layout of the brackets
+#'   print(tuner$info)
+#' }
 #' @export
 TunerHyperband = R6Class(
   "TunerHyperband",
@@ -214,15 +290,17 @@ TunerHyperband = R6Class(
   public = list(
     # storing non-printed logging information
     info = NULL,
+    # class wide lower bound of eta (since eta >1)
+    lowest_eta = 1.0001,
 
     # create hyperband parameters and init super class (Tuner)
     initialize = function(eta = 2L, sampler = NULL) {
 
       # eta has do be >1, otherwise log(R, eta) would break
-      assert_numeric(eta, lower = 1.0001)
+      assert_numeric(eta, lower = self$lowest_eta)
 
       ps_hyperband = ParamSet$new(list(
-        ParamInt$new("eta", lower = 1L, tags = "required"),
+        ParamDbl$new("eta", lower = self$lowest_eta, tags = "required"),
         ParamUty$new("sampler",
           custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE))
       ))
@@ -299,11 +377,13 @@ TunerHyperband = R6Class(
         lg$info("Start evaluation of bracket %i", bracket_max - bracket + 1)
 
         # initialize variables of the current bracket
-        bracket_stage  = 1L
         B              = (bracket_max + 1L) * config_max_b
-        # current nr of active configs in bracket
-        mu_current     = ceiling((B * eta^bracket) / (config_max_b * (bracket + 1)))
-        budget_current = config_max_b * eta^(-bracket)
+        # amount of active configs and budget in bracket
+        mu_start = mu_current =
+            ceiling((B * eta^bracket) / (config_max_b * (bracket + 1)))
+
+        budget_start = budget_current = 
+            config_max_b / eta^bracket
 
         # generate design based on given parameter set and sampler
         design         = sampler$sample(mu_current)
@@ -311,6 +391,10 @@ TunerHyperband = R6Class(
 
         # inner loop - iterating over bracket stages
         for (stage in 0:bracket) {
+
+          # make configs smaller, increase budget and increment stage counter
+          mu_current     = floor(mu_start / eta^stage)
+          budget_current = budget_start * eta^stage
 
           # rescale budget
           budget_current_real = budget_current * budget_lower
@@ -321,36 +405,11 @@ TunerHyperband = R6Class(
             budget_current_real
           )
 
-          # overwrite active configurations with the current budget
-          active_configs[[budget_id]] = budget_current_real
+          # only rank and pick configurations if we are not in the first stage
+          if (stage > 0) {
 
-          # possible halt by terminator during evaluation
-          # ignore logging in the next line - too much stuff flying around
-          lgr::without_logging(
-            instance$eval_batch(active_configs)
-          )
-
-          # store information of current iteration with hash as primary key
-          hash = tail(instance$bmr$hashes, mu_current)
-          self$info = rbind(self$info, data.table(
-            hash          = hash,
-            bracket       = bracket,
-            bracket_stage = bracket_stage,
-            budget        = budget_current,
-            budget_real   = budget_current_real,
-            mu            = mu_current
-          ))
-
-          # make configs smaller, increase budget and increment stage counter
-          mu_current     = floor(mu_current / eta)
-          budget_current = budget_current * eta
-          bracket_stage  = bracket_stage + 1L
-
-          # get performance of each active configuration
-          configs_perf   = instance$bmr$score(lapply(msr_ids, msr))
-
-          # only rank and pick configurations if we are not in the last stage
-          if (stage != bracket) {
+            # get performance of each active configuration
+            configs_perf   = instance$bmr$score(lapply(msr_ids, msr))
 
             # select best mu_current indeces
             if (length(msr_ids) < 2) {
@@ -375,6 +434,24 @@ TunerHyperband = R6Class(
             # update active configurations
             active_configs = active_configs[best_indeces, ]
           }
+
+          # overwrite active configurations with the current budget
+          active_configs[[budget_id]] = budget_current_real
+
+          # possible halt by terminator during evaluation
+          # ignore logging in the next line - too much stuff flying around
+          lgr::without_logging(
+            instance$eval_batch(active_configs)
+          )
+
+          # store information of current iteration with hash as primary key
+          self$info = rbind(self$info, data.table(
+            bracket       = bracket,
+            bracket_stage = stage,
+            budget_scaled = budget_current,
+            budget_real   = budget_current_real,
+            n_configs     = mu_current
+          ))
         }
       }
     }

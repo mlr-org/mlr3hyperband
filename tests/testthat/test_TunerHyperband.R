@@ -1,7 +1,7 @@
-context("TunerHyperband")
-
 library(mlr3learners)
 library(mlr3pipelines)
+
+context("TunerHyperband")
 
 
 test_that("TunerHyperband singlecrit", {
@@ -44,6 +44,7 @@ test_that("TunerHyperband using CV", {
 
   # hyperband + tuning
   tuner = TunerHyperband$new(eta = 2L)
+  expect_tuner(tuner)
   tuner$tune(inst)
 
   results = inst$archive()[, .(
@@ -84,6 +85,7 @@ test_that("TunerHyperband using subsampling", {
    
   # define and call hyperband as usual
   tuner = TunerHyperband$new(eta = 2L)
+  expect_tuner(tuner)
   tuner$tune(inst)
 
   results = inst$archive()[, .(frac = sapply(params, "[", "subsample.frac"), cp = sapply(params, "[", "classif.rpart.cp"), minsplit = sapply(params, "[", "classif.rpart.minsplit"), classif.ce)]
@@ -92,9 +94,91 @@ test_that("TunerHyperband using subsampling", {
 })
 
 
+test_that("TunerHyperband using subsampling and non-integer eta", {
+
+  set.seed(123)
+   
+  # define Graph Learner from rpart with subsampling as preprocessing step
+  pops = mlr_pipeops$get("subsample")
+  graph_learner = GraphLearner$new(pops %>>% lrn("classif.rpart"))
+   
+  # define with extended hyperparameters with subsampling fraction as budget
+  # ==> no learner budget is required
+  params = list(
+    ParamDbl$new("classif.rpart.cp", lower = 0.001, upper = 0.1),
+    ParamInt$new("classif.rpart.minsplit", lower = 1, upper = 10),
+    ParamDbl$new("subsample.frac", lower = 0.1, upper = 1, tags = "budget")
+  )
+   
+  # define TuningInstance with the Graph Learner and the extended hyperparams
+  inst = TuningInstance$new(
+    tsk("iris"),
+    graph_learner,
+    rsmp("holdout"),
+    msr("classif.ce"),
+    ParamSet$new(params),
+    term("evals", n_evals = 100000)
+  )
+   
+  # define and call hyperband as usual
+  tuner = TunerHyperband$new(eta = 1.5)
+  expect_tuner(tuner)
+  tuner$tune(inst)
+
+  results = inst$archive()[, .(
+    frac = sapply(params, "[", "subsample.frac"),
+    cp = sapply(params, "[", "classif.rpart.cp"), 
+    minsplit = sapply(params, "[", "classif.rpart.minsplit"),
+    classif.ce
+  )]
+
+  expect_data_table(results, ncols = 4, nrows = 74)
+})
+
+
+test_that("TunerHyperband using param trafo and non-integer eta", {
+
+  set.seed(123)
+   
+  # define hyperparameter and budget parameter for tuning with hyperband
+  ps = ParamSet$new(list(
+    ParamInt$new("nrounds", lower = 1, upper = 10, tags = "budget"),
+    #ParamDbl$new("eta",     lower = 0, upper = 1),
+    ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
+  ))
+
+  ps$trafo = function(x, param_set) {
+    x$nrounds = round(x$nrounds)
+    return(x)
+  }
+
+  inst = TuningInstance$new(
+    tsk("iris"),
+    lrn("classif.xgboost"),
+    rsmp("holdout"),
+    msr("classif.ce"),
+    ps,
+    term("evals", n_evals = 100000)
+  )
+
+  # hyperband + tuning
+  tuner = TunerHyperband$new(eta = 1.9)
+  expect_tuner(tuner)
+  tuner$tune(inst)
+
+  results = inst$archive()[, .(
+    nrounds = sapply(params, "[", "nrounds"),
+    #eta     = sapply(params, "[", "eta"),
+    booster = sapply(params, "[", "booster"),
+    classif.ce
+  )]
+
+  expect_data_table(results, ncols = 3, nrows = 30)
+})
+
+
 test_that("TunerHyperband using custom sampler", {
 
-  library(mlr3learners)
   set.seed(123)
 
   # define hyperparameter and budget parameter for tuning with hyperband
@@ -134,12 +218,15 @@ test_that("TunerHyperband using custom sampler", {
 
   # check if asserts throw errors on false samplers
   tuner = TunerHyperband$new(eta = 2L, sampler = sampler_fail1)
+  expect_tuner(tuner)
   expect_error(tuner$tune(inst), "Assertion on ")
   tuner = TunerHyperband$new(eta = 2L, sampler = sampler_fail2)
+  expect_tuner(tuner)
   expect_error(tuner$tune(inst), "Assertion on ")
 
   # check if correct sampler works
   tuner = TunerHyperband$new(eta = 2L, sampler = sampler)
+  expect_tuner(tuner)
   tuner$tune(inst)
 
   results = inst$archive()[, .(

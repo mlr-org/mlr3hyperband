@@ -23,11 +23,11 @@ hyperband_brackets = function(R, eta) {
 
       ni = floor(n * eta^(-i))
       ri = r * eta^i
-      result = rbind(result, c(s, i + 1, ri, ri, ni))
+      result = rbind(result, c(s, i, ri, ni))
     }
   }
 
-  names(result) = c("bracket", "bracket_stage", "budget", "budget_real", "mu")
+  names(result) = c("bracket", "bracket_stage", "budget_scaled", "n_configs")
   return(result)
 }
 
@@ -74,7 +74,7 @@ test_tuner = function(key, eta, n_dim = 1L, term_evals = NULL, lower_b, upper_b,
     ))
   }
   
-  task = if (length(measures) > 1) tsk("pima") else tsk("iris")
+  task = tsk("pima")
 
   term = term("evals", n_evals = term_evals)
   inst = TuningInstance$new(task, lrn("classif.xgboost"), rsmp("holdout"), lapply(measures, msr), ps, term)
@@ -84,15 +84,16 @@ test_tuner = function(key, eta, n_dim = 1L, term_evals = NULL, lower_b, upper_b,
   tuner$tune(inst)
   bmr = inst$bmr
 
-  real_evals = sum(tuner$info$mu)
+  real_evals = sum(tuner$info$n_configs)
 
   # compare results with full hyperband brackets if tuner was fully evaluated
   if (term_evals == 999999) {
 
     hb_meta_info = hyperband_brackets(R = upper_b/lower_b, eta = eta)
     hb_meta_info = as.data.table(hb_meta_info)
+    tuner_info = tuner$info[, c(1:3, 5)]
 
-    expect_equal(hb_meta_info, tuner$info)
+    expect_equal(hb_meta_info, tuner_info)
     expect_equal(real_evals, inst$n_evals)
     expect_data_table(bmr$data, nrows = real_evals)
 
@@ -107,7 +108,8 @@ test_tuner = function(key, eta, n_dim = 1L, term_evals = NULL, lower_b, upper_b,
   sc = r$tune_x
   sp = r$perf
 
-  expect_list(sc, len = n_dim + 1)
+  # hotfix; remove "if" once R CMD works without
+  if (TRUE) expect_list(sc, len = n_dim + 1)
 
   if (n_dim == 1) {
     expect_named(sc, c("nrounds", "max_depth"))
@@ -138,15 +140,16 @@ test_tuner_dependencies = function(key, eta, term_evals = NULL, lower_b, upper_b
   tuner$tune(inst)
   bmr = inst$bmr
 
-  real_evals = sum(tuner$info$mu)
+  real_evals = sum(tuner$info$n_configs)
 
   # compare results with full hyperband brackets if tuner was fully evaluated
   if (term_evals == 999999) {
 
     hb_meta_info = hyperband_brackets(R = upper_b/lower_b, eta = eta)
     hb_meta_info = as.data.table(hb_meta_info)
+    tuner_info = tuner$info[, c(1:3, 5)]
 
-    expect_equal(hb_meta_info, tuner$info)
+    expect_equal(hb_meta_info, tuner_info)
     expect_equal(real_evals, inst$n_evals)
     expect_data_table(bmr$data, nrows = real_evals)
 
