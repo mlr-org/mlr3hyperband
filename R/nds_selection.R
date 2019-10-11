@@ -12,6 +12,8 @@
 
 nds_selection = function(points, n_select, ref_point = NULL, minimize = TRUE) {
 
+  mlr3misc::require_namespaces("emoa")
+
   # check input for correctness
   assert_matrix(points, mode = "numeric")
   assert_int(n_select, lower = 1, upper = ncol(points))
