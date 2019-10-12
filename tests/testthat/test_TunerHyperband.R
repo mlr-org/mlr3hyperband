@@ -136,45 +136,45 @@ test_that("TunerHyperband using subsampling and non-integer eta", {
 })
 
 
-test_that("TunerHyperband using param trafo and non-integer eta", {
+#test_that("TunerHyperband using param trafo and non-integer eta", {
 
-  set.seed(123)
+#  set.seed(123)
    
-  # define hyperparameter and budget parameter for tuning with hyperband
-  ps = ParamSet$new(list(
-    ParamInt$new("nrounds", lower = 1, upper = 10, tags = "budget"),
-    #ParamDbl$new("eta",     lower = 0, upper = 1),
-    ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
-  ))
+#  # define hyperparameter and budget parameter for tuning with hyperband
+#  ps = ParamSet$new(list(
+#    ParamInt$new("nrounds", lower = 1, upper = 10, tags = "budget"),
+#    #ParamDbl$new("eta",     lower = 0, upper = 1),
+#    ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
+#  ))
 
-  ps$trafo = function(x, param_set) {
-    x$nrounds = round(x$nrounds)
-    return(x)
-  }
+#  ps$trafo = function(x, param_set) {
+#    x$nrounds = round(x$nrounds)
+#    return(x)
+#  }
 
-  inst = TuningInstance$new(
-    tsk("iris"),
-    lrn("classif.xgboost"),
-    rsmp("holdout"),
-    msr("classif.ce"),
-    ps,
-    term("evals", n_evals = 100000)
-  )
+#  inst = TuningInstance$new(
+#    tsk("iris"),
+#    lrn("classif.xgboost"),
+#    rsmp("holdout"),
+#    msr("classif.ce"),
+#    ps,
+#    term("evals", n_evals = 100000)
+#  )
 
-  # hyperband + tuning
-  tuner = TunerHyperband$new(eta = 1.9)
-  expect_tuner(tuner)
-  tuner$tune(inst)
+#  # hyperband + tuning
+#  tuner = TunerHyperband$new(eta = 1.9)
+#  expect_tuner(tuner)
+#  tuner$tune(inst)
 
-  results = inst$archive()[, .(
-    nrounds = sapply(params, "[", "nrounds"),
-    #eta     = sapply(params, "[", "eta"),
-    booster = sapply(params, "[", "booster"),
-    classif.ce
-  )]
+#  results = inst$archive()[, .(
+#    nrounds = sapply(params, "[", "nrounds"),
+#    #eta     = sapply(params, "[", "eta"),
+#    booster = sapply(params, "[", "booster"),
+#    classif.ce
+#  )]
 
-  expect_data_table(results, ncols = 3, nrows = 30)
-})
+#  expect_data_table(results, ncols = 3, nrows = 30)
+#})
 
 
 test_that("TunerHyperband using custom sampler", {
