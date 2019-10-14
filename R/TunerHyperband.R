@@ -450,6 +450,13 @@ TunerHyperband = R6Class("TunerHyperband",
           ))
         }
       }
+
+      # after hyperband termination:
+      # expand instance resampling data with info table
+      instance$bmr$rr_data = cbind(
+        instance$bmr$rr_data,
+        self$info[instance$bmr$rr_data$batch_nr]
+      )
     }
   )
 )
