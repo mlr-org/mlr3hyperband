@@ -358,9 +358,8 @@ TunerHyperband = R6Class("TunerHyperband",
       # rescale config max budget := 'R' in the original paper
       config_max_b = budget_upper/budget_lower
 
-      # we add sqrt(machine eps) for stability
-      # try this floor(log(8.1 / 0.1)) = 3 (!!!). it should be 4!
-      bracket_max = floor(log(config_max_b, eta) + sqrt(.Machine$double.eps))
+      # cannot use config_max_b due to stability reasons
+      bracket_max = floor(log(budget_upper, eta) - log(budget_lower, eta))
       # eta^bracket_max = config_max_b
       lg$info(
         "Amount of brackets to be evaluated = %i, ",
