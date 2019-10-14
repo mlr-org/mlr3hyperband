@@ -6,17 +6,17 @@ context("TunerHyperband")
 
 test_that("TunerHyperband singlecrit", {
 
-  test_tuner("hyperband", eta = 3L, lower_b = 1, upper_b = 81)
-  test_tuner("hyperband", eta = 2L, lower_b = 1, upper_b = 16, term_evals = 10, n_dim = 2L)
-  test_tuner_dependencies("hyperband", eta = 3L, lower_b = 1, upper_b = 81)
+  test_tuner("hyperband", eta = 3L, lower_b = 1, upper_b = 27)
+  test_tuner("hyperband", eta = 2L, lower_b = 1, upper_b = 8, term_evals = 10, n_dim = 2L)
+  test_tuner_dependencies("hyperband", eta = 3L, lower_b = 1, upper_b = 27)
 
 })
 
 
 test_that("TunerHyperband multicrit", {
 
-  test_tuner("hyperband", eta = 3L, lower_b = 1, upper_b = 81, measures = c("classif.fpr", "classif.tpr"))
-  test_tuner("hyperband", eta = 2L, lower_b = 1, upper_b = 16, term_evals = 10, n_dim = 2L, measures = c("classif.fpr", "classif.tpr"))
+  test_tuner("hyperband", eta = 3L, lower_b = 1, upper_b = 27, measures = c("classif.fpr", "classif.tpr"))
+  test_tuner("hyperband", eta = 2L, lower_b = 1, upper_b = 8, term_evals = 10, n_dim = 2L, measures = c("classif.fpr", "classif.tpr"))
 
 })
 
@@ -28,7 +28,7 @@ test_that("TunerHyperband using CV", {
   # define hyperparameter and budget parameter for tuning with hyperband
   ps = ParamSet$new(list(
 
-    ParamInt$new("nrounds", lower = 1, upper = 16, tags = "budget"),
+    ParamInt$new("nrounds", lower = 1, upper = 8, tags = "budget"),
     ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
   ))
 
@@ -53,7 +53,7 @@ test_that("TunerHyperband using CV", {
     classif.ce
   )]
 
-  expect_data_table(results, ncols = 3, nrows = 72)
+  expect_data_table(results, ncols = 3, nrows = 35)
 })
 
 
@@ -84,13 +84,13 @@ test_that("TunerHyperband using subsampling", {
   )
    
   # define and call hyperband as usual
-  tuner = TunerHyperband$new(eta = 2L)
+  tuner = TunerHyperband$new(eta = 4L)
   expect_tuner(tuner)
   tuner$tune(inst)
 
   results = inst$archive()[, .(frac = sapply(params, "[", "subsample.frac"), cp = sapply(params, "[", "classif.rpart.cp"), minsplit = sapply(params, "[", "classif.rpart.minsplit"), classif.ce)]
 
-  expect_data_table(results, ncols = 4, nrows = 35)
+  expect_data_table(results, ncols = 4, nrows = 7)
 })
 
 
@@ -99,8 +99,8 @@ test_that("TunerHyperband using subsampling and non-integer eta", {
   set.seed(123)
    
   # define Graph Learner from rpart with subsampling as preprocessing step
-  pops = mlr_pipeops$get("subsample")
-  graph_learner = GraphLearner$new(pops %>>% lrn("classif.rpart"))
+  pops = po("subsample")
+  graph_learner = pops %>>% lrn("classif.rpart")
    
   # define with extended hyperparameters with subsampling fraction as budget
   # ==> no learner budget is required
@@ -121,7 +121,7 @@ test_that("TunerHyperband using subsampling and non-integer eta", {
   )
    
   # define and call hyperband as usual
-  tuner = TunerHyperband$new(eta = 1.5)
+  tuner = TunerHyperband$new(eta = 3.5)
   expect_tuner(tuner)
   tuner$tune(inst)
 
@@ -132,7 +132,7 @@ test_that("TunerHyperband using subsampling and non-integer eta", {
     classif.ce
   )]
 
-  expect_data_table(results, ncols = 4, nrows = 74)
+  expect_data_table(results, ncols = 4, nrows = 7)
 })
 
 
@@ -162,7 +162,7 @@ test_that("TunerHyperband using param trafo and non-integer eta", {
   )
 
   # hyperband + tuning
-  tuner = TunerHyperband$new(eta = 1.9)
+  tuner = TunerHyperband$new(eta = 3.9)
   expect_tuner(tuner)
   tuner$tune(inst)
 
@@ -173,7 +173,7 @@ test_that("TunerHyperband using param trafo and non-integer eta", {
     classif.ce
   )]
 
-  expect_data_table(results, ncols = 3, nrows = 30)
+  expect_data_table(results, ncols = 3, nrows = 7)
 })
 
 
@@ -183,7 +183,7 @@ test_that("TunerHyperband using custom sampler", {
 
   # define hyperparameter and budget parameter for tuning with hyperband
   params = list(
-    ParamInt$new("nrounds", lower = 1, upper = 16, tags = "budget"),
+    ParamInt$new("nrounds", lower = 1, upper = 8, tags = "budget"),
     ParamDbl$new("eta",     lower = 0, upper = 1),
     ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
   )
@@ -236,5 +236,5 @@ test_that("TunerHyperband using custom sampler", {
     classif.ce
   )]
 
-  expect_data_table(results, ncols = 4, nrows = 72)
+  expect_data_table(results, ncols = 4, nrows = 35)
 })
