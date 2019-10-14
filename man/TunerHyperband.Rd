@@ -17,14 +17,14 @@ For this, several brackets are constructed with an associated set of configurati
 for each bracket. These configuration are initialized by stochastic,
 often uniform, sampling.
 Each bracket is divided into multiple stages, and configurations are
-evaluated for a different, increasing budget in each stage.
+evaluated for a increasing budget in each stage.
 Note that currently all configurations are trained completely from the
 beginning, so no online updates of models.
 Once a stage of a bracket is evaluated, the
-best proportion of \code{1/eta} configurations are kept for the next stage,
-while the rest is discarded.
+best proportion of \eqn{\frac{1}{\eta}}{1/eta} configurations are kept
+for the next stage, while the rest is discarded.
 The remaining configurations are retrained in the next bracket stage,
-where budget is increased budget by the factor of \code{eta}.
+with budget increased by the factor \eqn{\eta}{eta}.
 
 Different brackets are initialized with different number of configurations,
 and different initial budget sizes for the first stage, but each bracket is
@@ -35,14 +35,14 @@ Others are constructed with few configurations where discarding only takes place
 after a significant amount of budget.
 
 To identify the budget for evaluating hyperband, the user has to specify
-explicitly which learner's hyperparameter influences the budget
-by setting \code{tags = "budget"} of a single hyperparameter in the \link[paradox:ParamSet]{paradox::ParamSet}.
+explicitly which hyperparameter of the learner influences the budget
+by tagging a single hyperparameter in the \link[paradox:ParamSet]{paradox::ParamSet} with \code{"budget"}.
 An alternative approach using subsampling and pipelines is described below.
 
 Naturally, hyperband terminates once all of its brackets are evaluated,
-so a terminator in the tuning instance acts as an upper bound and should be
-only set to a low value if one is unsure of how long hyperband will take to
-finish under the given settings.
+so a \link[mlr3tuning:Terminator]{Terminator} in the tuning instance acts as an upper
+bound and should be only set to a low value if one is unsure of how long
+hyperband will take to finish under the given settings.
 }
 \details{
 This sections explains the calculation of the constants for each bracket.
@@ -86,7 +86,7 @@ hyperband_brackets(R = 81L, eta = 3L)
 }
 }
 \section{Construction}{
-\preformatted{TunerHyperband$new(eta = 2L, sampler = NULL)
+\preformatted{TunerHyperband$new(eta = 2, sampler = NULL)
 tnr("hyperband")
 }
 }
@@ -94,12 +94,12 @@ tnr("hyperband")
 \section{Parameters}{
 
 \itemize{
-\item \code{eta} :: \code{numeric(1)} \cr
+\item \code{eta} :: \code{numeric(1)}\cr
 Fraction parameter of the successive halving algorithm: With every step
 the configuration budget is increased by a factor of \code{eta} and only the
 best \code{1/eta} configurations are used for the next stage. Non-integer
 values are supported, but \code{eta} is not allowed to be less or equal 1.
-\item \code{sampler} :: \code{[R6::R6Class] object inheriting from [paradox::Sampler]} \cr
+\item \code{sampler} :: \link[R6:R6Class]{R6::R6Class} object inheriting from \link[paradox:Sampler]{paradox::Sampler}\cr
 Object defining how the samples of the parameter space should be drawn
 during the initialization of each bracket. The default is uniform sampling.
 }
@@ -108,29 +108,29 @@ during the initialization of each bracket. The default is uniform sampling.
 \section{Fields}{
 
 \itemize{
-\item \code{info} :: \link[data.table:data.table]{data.table::data.table} \cr
-Datatable containing correcter information about the intermediate values
+\item \code{info} :: \code{\link[data.table:data.table]{data.table::data.table()}}\cr
+Table containing correcter information about the intermediate values
 than given by the console logs. It holds the following columns:
 \itemize{
-\item \code{bracket} :: \code{integer()} \cr
+\item \code{bracket} :: \code{integer()}\cr
 The console logs about the bracket index are actually false according
 to the original hyperband algorithm, which counts down the brackets
-and stops after evaluating bracket 0. The true bracket indeces are
+and stops after evaluating bracket 0. The true bracket indices are
 given in this column.
-\item \code{bracket_stage} :: \code{integer()} \cr
+\item \code{bracket_stage} :: \code{integer()}\cr
 The bracket stage of each bracket. Hyperband starts counting at 0.
-\item \code{budget_scaled} :: \code{integer()} \cr
+\item \code{budget_scaled} :: \code{integer()}\cr
 The intermediate budget in each bracket stage calculated by hyperband.
 Because hyperband is originally only considered for budgets starting at 1, some
-rescaling is done to allow budgets not starting at different values. This is done by
+rescaling is done to allow budgets starting at different values. This is done by
 using \code{lower_budget_new = 1} and
 \code{upper_budget_new = upper_budget / lower_budget}. Before the learner
-receives its budgets for evaluation, they are retransformed to fit the
-original scale again.
-\item \code{budget_real} :: \code{integer()} \cr
+receives its budgets for evaluation, the budget is transformed back to
+match the original scale again.
+\item \code{budget_real} :: \code{integer()}\cr
 The real budget values the learner uses for evaluation after hyperband
 calculated its scaled budget.
-\item \code{n_configs} :: \code{integer()} \cr
+\item \code{n_configs} :: \code{integer()}\cr
 The amount of evaluated configurations in each stage. These correspond
 to the \code{r_i} in the original paper.
 }
@@ -139,14 +139,14 @@ to the \code{r_i} in the original paper.
 
 \section{Hyperband without learner budget}{
 
-Thanks to \code{mlr3pipelines} it is possible to use hyperband in combination
-with learners lacking a natural budget parameter. An example of when it is
-required and how to do this is given in the \code{[examples]} section, but a
-short description is given here none-the-less. We simply extend the learner
-with a preprocessing step (in the example a decision tree with subsampling)
-and as a return we receive a \code{[mlr3pipelines::GraphLearner]} object with
-an extended hyperparameter space. Then, we can pick a hyperparameter of the
-preprocessing step as budget and execute hyperband as usual.
+Thanks to \CRANpkg{mlr3pipelines} it is possible to use hyperband in combination
+with learners lacking a natural budget parameter.
+For example, any \link[mlr3:Learner]{mlr3::Learner} can be augmented with a
+\link[mlr3pipelines:PipeOp]{PipeOp} operator such as \link[mlr3pipelines:PipeOpSubsample]{PipeOpSubsample}.
+With the subsampling rate as budget parameter, the resulting \link[mlr3pipelines:GraphLearner]{GraphLearner}
+is fitted on small proportions of the \link[mlr3:Task]{Task} in the first brackets, and on the
+complete task in last brackets.
+See examples for some code.
 }
 
 \section{Runtime scaling w.r.t. the chosen budget}{
@@ -163,7 +163,7 @@ run a learner with O(budget^2) time complexity, the runtime of the last
 bracket will be 33% longer than the first bracket
 (time of bracket 1 = 2 * 1^2 + 2^2 = 6; time of bracket 2 = 2 * 2^2 = 8).
 Of course, this won't break anything, but it should be kept in mind when
-applying Hyperband.
+applying hyperband.
 }
 
 \examples{
@@ -292,8 +292,6 @@ tuner = TunerHyperband$new(eta = 4L)
 }
 }
 \references{
-\url{https://arxiv.org/abs/1603.06560}
+\cite{mlr3hyperband}{li_2018}
 }
-\concept{mlr3tuning::Tuner
-# see ?Tuner}
 \keyword{datasets}
