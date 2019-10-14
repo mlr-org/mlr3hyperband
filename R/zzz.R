@@ -9,14 +9,8 @@
 
 
 .onLoad = function(libname, pkgname) {
-
   # add hyperband to sugar
   x = utils::getFromNamespace("mlr_tuners", ns = "mlr3tuning")
   x$add("hyperband", TunerHyperband)
-
-
   assign("lg", lgr::get_logger("mlr3/mlr3tuning"), envir = parent.env(environment()))
-  if (Sys.getenv("IN_PKGDOWN") == "true") {
-    lg$set_threshold("warn")
-  }
 } # nocov end

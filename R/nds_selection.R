@@ -8,7 +8,7 @@
 # @param ref_point Reference point for hypervolume (integer())
 # @param minimize Should the ranking be based on minimization? (Single bool
 # for all dimensions, or vector of bools corresponding to the dimensions)
-# @return Vector of indeces of selected points
+# @return Vector of indices of selected points
 
 nds_selection = function(points, n_select, ref_point = NULL, minimize = TRUE) {
 
@@ -19,32 +19,33 @@ nds_selection = function(points, n_select, ref_point = NULL, minimize = TRUE) {
   assert_int(n_select, lower = 1, upper = ncol(points))
   assert_logical(minimize, min.len = 1, max.len = nrow(points))
   assert_numeric(ref_point, len = nrow(points), null.ok = TRUE)
+  assert_logical(minimize, any.missing = FALSE)
 
   # maximize/minimize preprocessing: switch sign in each dim to maximize
   points = points * (minimize * 2 - 1)
 
-  # init output indeces
-  survivors = 1:ncol(points)
+  # init output indices
+  survivors = seq_col(points)
 
   # if no reference point is defined, use maximum of each dimensions
   if (is.null(ref_point)) {
-
     ref_point = apply(points, 1, max)
   }
 
-  # front indeces of every point
+  # front indices of every point
   front_ranks = emoa::nds_rank(points)
   # the index of the highest front in the end selection
   last_sel_front = min(which(cumsum(table(front_ranks)) >= n_select))
 
-  # non-tied indeces by nds rank
+  # non-tied indices by nds rank
   sel_surv = survivors[front_ranks < last_sel_front]
-  # tied subselection of indeces/points
+
+  # tied subselection of indices/points
   tie_surv = survivors[front_ranks == last_sel_front]
   tie_points = points[, front_ranks == last_sel_front]
 
-  # remove tied indeces/points as long as we are bigger than n_select
-  while (length(c(tie_surv, sel_surv)) > n_select) {
+  # remove tied indices/points as long as we are bigger than n_select
+  while (length(tie_surv) + length(sel_surv) > n_select) {
 
     # tie points extended with the reference point to never end up with a two
     # point matrix (this would break the following sapply)
@@ -52,24 +53,19 @@ nds_selection = function(points, n_select, ref_point = NULL, minimize = TRUE) {
 
     # calculate the hypervolume with each point excluded separately
     hypervolumes = sapply(
-      seq_len(ncol(tie_points_ext) - 1),
+      seq_len(ncol(tie_points_ext) - 1L),
       function(i) {
-        emoa::dominated_hypervolume(tie_points_ext[, -i], ref = ref_point)
+        emoa::dominated_hypervolume(tie_points_ext[, -i, drop = FALSE], ref = ref_point)
       }
     )
 
     # index of the tied case with the lowest hypervolume contribution
     to_remove = which.max(hypervolumes)
-    tie_points = tie_points[, -to_remove]
+    tie_points = tie_points[, -to_remove, drop = FALSE]
     tie_surv = tie_surv[-to_remove]
   }
 
   # since we only have the true ranks of the ties, we sort to make the output
   # not misleading
-  survivors = sort(c(sel_surv, tie_surv))
-
-  return(survivors)
+  sort(c(sel_surv, tie_surv))
 }
-
-
-
