@@ -1,7 +1,7 @@
 do_package_checks(error_on = "error")
 
 get_stage("install") %>%
-  add_step(step_install_xcran("bibtex"))
+  add_step(step_install_cran("bibtex"))
 
 if (ci_has_env("BUILD_PKGDOWN")) {
   get_stage("install") %>%
