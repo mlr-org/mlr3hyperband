@@ -154,6 +154,25 @@
 #' hyperband_brackets(R = 81L, eta = 3L)
 #' ```
 #'
+#' @section Logging:
+#' When loading the [mlr3hyperband] package, two loggers based on the [lgr] package are made available.
+#' One is called `mlr3`, the other `mlr3/mlr3tuning`. The first one is the
+#' original one of [mlr3], while the latter was modified of [mlr3tuning]. The modification
+#' is of the form of a added level called `info hb` (value `350`), that sits
+#' between `warn` and `info`. All info logs printed by the hyperband algorithm
+#' receive the level `info hb` and the default threshold for logs is set to
+#' this level. The default threshold for `mlr3` is set to `warn`.
+#' This means, the `info` logs of function/method calls of both [mlr3] and
+#' [mlr3tuning] are by default not part of the logging. To change this,
+#' execute 
+#' ```
+#' # mlr3tuning logs
+#' lg$set_threshold("info")
+#' # mlr3 logs
+#' lgr::get_logger("mlr3")$set_threshold("info")
+#' ```
+#' But be careful as this will add a lot of clutter to the logs.
+#'
 #' @references
 #' \cite{mlr3hyperband}{li_2018}
 #'

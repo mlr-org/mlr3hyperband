@@ -166,6 +166,26 @@ Of course, this won't break anything, but it should be kept in mind when
 applying hyperband.
 }
 
+\section{Logging}{
+
+When loading the \link{mlr3hyperband} package, two loggers based on the \link{lgr} package are made available.
+One is called \code{mlr3}, the other \code{mlr3/mlr3tuning}. The first one is the
+original one of \link{mlr3}, while the latter was modified of \link{mlr3tuning}. The modification
+is of the form of a added level called \code{info hb} (value \code{350}), that sits
+between \code{warn} and \code{info}. All info logs printed by the hyperband algorithm
+receive the level \code{info hb} and the default threshold for logs is set to
+this level. The default threshold for \code{mlr3} is set to \code{warn}.
+This means, the \code{info} logs of function/method calls of both \link{mlr3} and
+\link{mlr3tuning} are by default not part of the logging. To change this,
+execute\preformatted{# mlr3tuning logs
+lg$set_threshold("info")
+# mlr3 logs
+lgr::get_logger("mlr3")$set_threshold("info")
+}
+
+But be careful as this will add a lot of clutter to the logs.
+}
+
 \examples{
 library(mlr3hyperband)
 library(mlr3learners)
