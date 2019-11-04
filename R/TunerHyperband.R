@@ -101,7 +101,7 @@
 #' bracket requires approximately the same runtime as the sum of the budget
 #' over all configurations in each bracket is roughly the same. This will not
 #' hold true once the scaling in the budget parameter is not linear
-#' anymore, even thought the sum of the budgets in each bracket remain the
+#' anymore, even though the sum of the budgets in each bracket remains the
 #' same. A basic example can be viewed by calling the function
 #' `hyperband_brackets` below with the arguments `R = 2` and `eta = 2`. If we
 #' run a learner with O(budget^2) time complexity, the runtime of the last
@@ -346,9 +346,9 @@ TunerHyperband = R6Class("TunerHyperband",
         smp_ids = c(smp_ids, budget_id)
       }
 
-      # use budget parameter as budget
-      budget_lower = instance$param_set$lower[budget_id]
-      budget_upper = instance$param_set$upper[budget_id]
+      # use parameter tagged with budget as budget for hyperband
+      budget_lower = ps$lower[budget_id]
+      budget_upper = ps$upper[budget_id]
 
       # we need the budget to start with a SMALL NONNEGATIVE value
       assert_number(budget_lower, lower = 1e-8)
@@ -356,7 +356,7 @@ TunerHyperband = R6Class("TunerHyperband",
       assert_set_equal(ps$ids(), smp_ids)
 
       # rescale config max budget := 'R' in the original paper
-      config_max_b = budget_upper/budget_lower
+      config_max_b = budget_upper / budget_lower
 
       # cannot use config_max_b due to stability reasons
       bracket_max = floor(log(budget_upper, eta) - log(budget_lower, eta))
@@ -392,8 +392,9 @@ TunerHyperband = R6Class("TunerHyperband",
           mu_current     = floor(mu_start / eta^stage)
           budget_current = budget_start * eta^stage
 
-          # rescale budget
-          budget_current_real = budget_current * budget_lower
+          # rescale budget and round if an integer as budget is desired
+          round_if_int = if (ps$class[budget_id] == "ParamInt") round else c
+          budget_current_real = round_if_int(budget_current * budget_lower)
 
           lg$info(
             "Training %i configs with budget of %g for each",

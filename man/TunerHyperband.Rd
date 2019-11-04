@@ -156,7 +156,7 @@ chosen budget parameter is always given. Hyperband is designed so each
 bracket requires approximately the same runtime as the sum of the budget
 over all configurations in each bracket is roughly the same. This will not
 hold true once the scaling in the budget parameter is not linear
-anymore, even thought the sum of the budgets in each bracket remain the
+anymore, even though the sum of the budgets in each bracket remains the
 same. A basic example can be viewed by calling the function
 \code{hyperband_brackets} below with the arguments \code{R = 2} and \code{eta = 2}. If we
 run a learner with O(budget^2) time complexity, the runtime of the last
