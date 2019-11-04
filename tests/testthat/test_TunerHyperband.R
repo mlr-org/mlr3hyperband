@@ -240,3 +240,55 @@ test_that("TunerHyperband using custom sampler", {
 
   expect_data_table(results, ncols = 4, nrows = 35)
 })
+
+
+test_that("TunerHyperband invalid input", {
+
+  set.seed(123)
+
+  # non numberish budget param
+  params = list(
+    ParamInt$new("nrounds", lower = 1, upper = 8),
+    ParamDbl$new("eta",     lower = 0, upper = 1),
+    ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"), tags = "budget")
+  )
+
+
+  inst = TuningInstance$new(
+    tsk("iris"),
+    lrn("classif.xgboost"),
+    rsmp("holdout"),
+    msr("classif.ce"),
+    ParamSet$new(params),
+    term("evals", n_evals = 100000)
+  )
+
+  tuner = TunerHyperband$new(eta = 2L)
+  expect_tuner(tuner)
+  expect_error(tuner$tune(inst), "Assertion on ")
+
+
+  ### two budget parameters
+  params = list(
+    ParamInt$new("nrounds", lower = 1, upper = 8, tags = "budget"),
+    ParamDbl$new("eta",     lower = 0, upper = 1, tags = "budget"),
+    ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
+  )
+
+
+  inst = TuningInstance$new(
+    tsk("iris"),
+    lrn("classif.xgboost"),
+    rsmp("holdout"),
+    msr("classif.ce"),
+    ParamSet$new(params),
+    term("evals", n_evals = 100000)
+  )
+
+  tuner = TunerHyperband$new(eta = 2L)
+  expect_tuner(tuner)
+  expect_error(
+    tuner$tune(inst),
+    "Exactly one hyperparameter must be tagged with 'budget'"
+  )
+})

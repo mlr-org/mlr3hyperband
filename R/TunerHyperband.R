@@ -329,6 +329,8 @@ TunerHyperband = R6Class("TunerHyperband",
 
       # name of the hyperparameters with a budget tag
       budget_id = instance$param_set$ids(tags = "budget")
+      # budget parameter MUST be defined as integer or double in paradox
+      assert_subset(ps$class[budget_id], c("ParamInt", "ParamDbl"))
       # check if we have EXACTLY 1 budget parameter, or else throw an informative error
       if (length(budget_id) != 1) {
         stopf("Exactly one hyperparameter must be tagged with 'budget'")
