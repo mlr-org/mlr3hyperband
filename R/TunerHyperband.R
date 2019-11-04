@@ -361,7 +361,8 @@ TunerHyperband = R6Class("TunerHyperband",
       # cannot use config_max_b due to stability reasons
       bracket_max = floor(log(budget_upper, eta) - log(budget_lower, eta))
       # eta^bracket_max = config_max_b
-      lg$info(
+      lg$log(
+        "info hb",
         "Amount of brackets to be evaluated = %i, ",
         bracket_max + 1
       )
@@ -370,7 +371,11 @@ TunerHyperband = R6Class("TunerHyperband",
       for (bracket in bracket_max:0) {
 
         # for less confusion of the user we start the print with bracket 1
-        lg$info("Start evaluation of bracket %i", bracket_max - bracket + 1)
+        lg$log(
+          "info hb",
+          "Start evaluation of bracket %i",
+          bracket_max - bracket + 1
+        )
 
         # initialize variables of the current bracket
         B = (bracket_max + 1L) * config_max_b
@@ -396,7 +401,8 @@ TunerHyperband = R6Class("TunerHyperband",
           round_if_int = if (ps$class[budget_id] == "ParamInt") round else c
           budget_current_real = round_if_int(budget_current * budget_lower)
 
-          lg$info(
+          lg$log(
+            "info hb",
             "Training %i configs with budget of %g for each",
             mu_current,
             budget_current_real
@@ -436,10 +442,9 @@ TunerHyperband = R6Class("TunerHyperband",
           active_configs[[budget_id]] = budget_current_real
 
           # possible halt by terminator during evaluation
-          # ignore logging in the next line - too much stuff flying around
-          lgr::without_logging(
-            instance$eval_batch(active_configs)
-          )
+          # INFO logs in the following function call are ignored by default
+          # set lgr::lgr$set_threshold(400) to include them
+          instance$eval_batch(active_configs)
 
           # store information of current iteration with hash as primary key
           self$info = rbind(self$info, data.table(
