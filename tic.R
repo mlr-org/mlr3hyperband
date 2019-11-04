@@ -1,7 +1,12 @@
 do_package_checks(error_on = "error")
 
+get_stage("install") %>%
+  add_step(step_install_cran("bibtex"))
+
 if (ci_has_env("BUILD_PKGDOWN")) {
-  do_pkgdown(orphan = TRUE, install = TRUE)
+  get_stage("install") %>%
+    add_step(step_install_github("mlr-org/mlr3pkgdowntemplate"))
+  do_pkgdown(orphan = TRUE)
 }
 
 get_stage("after_success") %>%
