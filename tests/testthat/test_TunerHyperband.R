@@ -48,6 +48,7 @@ test_that("TunerHyperband using CV", {
   tuner = TunerHyperband$new(eta = 2L)
   expect_tuner(tuner)
   tuner$tune(inst)
+  expect_resample_result(inst$best())
 
   results = inst$archive()[, .(
     nrounds = sapply(params, "[", "nrounds"),
@@ -89,8 +90,14 @@ test_that("TunerHyperband using subsampling", {
   tuner = TunerHyperband$new(eta = 4L)
   expect_tuner(tuner)
   tuner$tune(inst)
+  expect_resample_result(inst$best())
 
-  results = inst$archive()[, .(frac = sapply(params, "[", "subsample.frac"), cp = sapply(params, "[", "classif.rpart.cp"), minsplit = sapply(params, "[", "classif.rpart.minsplit"), classif.ce)]
+  results = inst$archive()[, .(
+    frac = sapply(params, "[", "subsample.frac"), 
+    cp = sapply(params, "[", "classif.rpart.cp"), 
+    minsplit = sapply(params, "[", "classif.rpart.minsplit"), 
+    classif.ce
+  )]
 
   expect_data_table(results, ncols = 4, nrows = 7)
 })
@@ -126,6 +133,7 @@ test_that("TunerHyperband using subsampling and non-integer eta", {
   tuner = TunerHyperband$new(eta = 3.5)
   expect_tuner(tuner)
   tuner$tune(inst)
+  expect_resample_result(inst$best())
 
   results = inst$archive()[, .(
     frac = sapply(params, "[", "subsample.frac"),
@@ -167,6 +175,7 @@ test_that("TunerHyperband using param trafo and non-integer eta", {
   tuner = TunerHyperband$new(eta = 3.9)
   expect_tuner(tuner)
   tuner$tune(inst)
+  expect_resample_result(inst$best())
 
   results = inst$archive()[, .(
     nrounds = sapply(params, "[", "nrounds"),
@@ -230,6 +239,7 @@ test_that("TunerHyperband using custom sampler", {
   tuner = TunerHyperband$new(eta = 2L, sampler = sampler)
   expect_tuner(tuner)
   tuner$tune(inst)
+  expect_resample_result(inst$best())
 
   results = inst$archive()[, .(
     nrounds = sapply(params, "[", "nrounds"), 

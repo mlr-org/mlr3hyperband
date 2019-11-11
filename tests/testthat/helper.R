@@ -1,7 +1,8 @@
 lapply(
   list.files(
-    system.file("tests", package = "mlr3"),
-    pattern = "^helper.*\\.[rR]$", full.names = TRUE
+    system.file("testthat", package = "mlr3"),
+    pattern = "^helper.*\\.[rR]$",
+    full.names = TRUE
   ),
   source
 )
@@ -40,6 +41,20 @@ expect_tuner = function(tuner) {
   expect_is(tuner$param_set, "ParamSet")
   expect_function(tuner$tune, args = "instance")
 }
+
+
+expect_resampleresult = function(resampleresult) {
+  # test for existence of the most important resampling result elements
+  # let's try to not be too specific since resampling is still in development
+  expect_r6(resampleresult, "ResampleResult", 
+    public = c("resampling", "learners", "task", "data", "predictions", "score")
+  )
+  expect_data_table(resampleresult$data, min.rows = 1L, min.cols = 1L)
+  expect_list(resampleresult$learners, min.len = 1L)
+  expect_r6(resampleresult$task)
+  expect_r6(resampleresult$resampling)
+}
+
 
 expect_terminator = function(term) {
   expect_r6(term, "Terminator",

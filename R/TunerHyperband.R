@@ -344,7 +344,7 @@ TunerHyperband = R6Class("TunerHyperband",
       ps      = instance$param_set
       task    = instance$task
       msr_ids = ids(instance$measures)
-      to_minimize  = map_lgl(instance$measures, "minimize")
+      to_minimize = map_lgl(instance$measures, "minimize")
 
       # name of the hyperparameters with a budget tag
       budget_id = instance$param_set$ids(tags = "budget")
@@ -367,7 +367,7 @@ TunerHyperband = R6Class("TunerHyperband",
         smp_ids = c(smp_ids, budget_id)
       }
 
-      # use parameter tagged with budget as budget for hyperband
+      # use parameter tagged with 'budget' as budget for hyperband
       budget_lower = ps$lower[budget_id]
       budget_upper = ps$upper[budget_id]
 
@@ -376,17 +376,25 @@ TunerHyperband = R6Class("TunerHyperband",
       # every parameter has to appear in the sampler
       assert_set_equal(ps$ids(), smp_ids)
 
-      # rescale config max budget := 'R' in the original paper
+      # rescale config max budget (:= 'R' in the original paper)
+      # this represents the maximum budget a single configuration
+      # will run for in the last stage of each bracket
       config_max_b = budget_upper / budget_lower
 
       # cannot use config_max_b due to stability reasons
       bracket_max = floor(log(budget_upper, eta) - log(budget_lower, eta))
-      # eta^bracket_max = config_max_b
+      # <=> eta^bracket_max = config_max_b
       lg$log(
         "info hb",
         "Amount of brackets to be evaluated = %i, ",
         bracket_max + 1
       )
+
+      # 'B' is approximately the used budget of an entire bracket.
+      # The reference states a single execution of hyperband uses (smax+1) * B
+      # amount of budget, and with (smax+1) as the amount of brackets follows
+      # the claim. (smax is 'bracket_max' here)
+      B = (bracket_max + 1L) * config_max_b
 
       # outer loop - iterating over brackets
       for (bracket in bracket_max:0) {
@@ -398,8 +406,6 @@ TunerHyperband = R6Class("TunerHyperband",
           bracket_max - bracket + 1
         )
 
-        # initialize variables of the current bracket
-        B = (bracket_max + 1L) * config_max_b
         # amount of active configs and budget in bracket
         mu_start = mu_current =
             ceiling((B * eta^bracket) / (config_max_b * (bracket + 1)))
@@ -418,9 +424,12 @@ TunerHyperband = R6Class("TunerHyperband",
           mu_current     = floor(mu_start / eta^stage)
           budget_current = budget_start * eta^stage
 
-          # rescale budget and round if an integer as budget is desired
-          round_if_int = if (ps$class[budget_id] == "ParamInt") round else c
-          budget_current_real = round_if_int(budget_current * budget_lower)
+          # rescale budget back to real world scale
+          budget_current_real = budget_current * budget_lower
+          # round if the budget is an integer parameter
+          if (ps$class[budget_id] == "ParamInt") {
+            budget_current_real = round(budget_current_real)
+          }
 
           lg$log(
             "info hb",
@@ -433,7 +442,7 @@ TunerHyperband = R6Class("TunerHyperband",
           if (stage > 0) {
 
             # get performance of each active configuration
-            configs_perf   = instance$bmr$score(instance$measures)
+            configs_perf = instance$bmr$score(instance$measures)
 
             # select best mu_current indeces
             if (length(msr_ids) < 2) {
