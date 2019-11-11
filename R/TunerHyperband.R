@@ -493,6 +493,15 @@ TunerHyperband = R6Class("TunerHyperband",
         instance$bmr$rr_data,
         self$info[instance$bmr$rr_data$batch_nr]
       )
+
+      lg$log(
+        "info hb",
+        "Done." 
+        ### useful or just clutter?:
+        # Total evaluations: %i with a total budget spend of %f.",
+        #sum(self$info$n_configs),
+        #sum(self$info$budget_real * self$info$n_configs)
+      )
     }
   )
 )
