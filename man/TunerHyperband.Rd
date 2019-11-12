@@ -178,13 +178,11 @@ original one of \link{mlr3}, while the latter was modified from \link{mlr3tuning
 is of the form of an added level called \code{info hb} (value \code{350}), that sits
 between \code{warn} and \code{info}. All info logs printed by the hyperband algorithm
 receive the level \code{info hb} and the default threshold for logs is set to
-this level. The default threshold for \code{mlr3} is set to \code{warn}.
-This means, the \code{info} logs of function/method calls of both \link{mlr3} and
+this level.
+This means, the \code{info} logs of function/method calls of
 \link{mlr3tuning} are not part of the logging by default. To change this,
 run\preformatted{# mlr3tuning logs
 lg$set_threshold("info")
-# mlr3 logs
-lgr::get_logger("mlr3")$set_threshold("info")
 }
 
 But be careful as this will add a lot of clutter to the logs.
@@ -238,7 +236,7 @@ tuner = TunerHyperband$new(eta = 2L, sampler = sampler)
 }
 
 
-### use parameter trafo to convert non-integer intermediate budgets
+### use parameter trafo to convert budget parameter
 
 set.seed(123)
 
@@ -250,7 +248,7 @@ ps = ParamSet$new(list(
 ))
 
 ps$trafo = function(x, param_set) {
-  x$nrounds = round(x$nrounds)
+  x$nrounds = round(log(x$nrounds))
   return(x)
 }
 

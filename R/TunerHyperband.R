@@ -226,7 +226,7 @@
 #' }
 #'
 #'
-#' ### use parameter trafo to convert non-integer intermediate budgets
+#' ### use parameter trafo to convert budget parameter
 #'
 #' set.seed(123)
 #'
@@ -238,7 +238,7 @@
 #' ))
 #'
 #' ps$trafo = function(x, param_set) {
-#'   x$nrounds = round(x$nrounds)
+#'   x$nrounds = round(log(x$nrounds))
 #'   return(x)
 #' }
 #'
