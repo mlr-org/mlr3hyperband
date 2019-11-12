@@ -17,50 +17,54 @@ Extends the [mlr3](https://mlr3.mlr-org.com) package with hyperband tuning.
 remotes::install_github("mlr-org/mlr3hyperband")
 ```
 
-## Using Hyperband in mlr3
 
-Hyperband is a budget oriented procedure putting more ressources on more promising configurations, increasing tuning efficiency as a consequence.
-For this, several brackets are constructed with different starting configurations in each.
-Each bracket has a different amount of stages depending with a different starting budget -- in general the more stages the lower the budget at first.
-Once a stage of a bracket is evaluated, the best `1/eta` configurations are kept, while the rest is discarded.
-The remaining configurations are then transfered to the next bracket stage, where training is continued with an increase of the budget by the factor of `eta`.
-This continuous iteratively for every bracket stage until the upper limit of the budget is reached.
-In the end, and aggregated over all brackets, we have a lot of evaluated configurations with only a small handful being trained on the upper limit of the budget.
-This safes a lot of training time on configurations, that look unpromising on a low budget, as they are skipped for further evaluation.
-There are currently two ways to identify the budget during tuning.
-One is by using the size of the training set as the budget, with the full set as the maximum budget:
+## Quickstart
+
+
+If you are already familiar with `mlr3tuning`, then the only change compared to other tuners is to give a numeric hyperparameter a `"budget"` tag.
+Afterwards, you can handle hyperband like all other tuners:
 
 ```
 library(mlr3hyperband)
-set.seed(123)
 
-# define hyperparameter for tuning with hyperband
+# give a hyperparameter the "budget" tag
 params = list(
-  ParamDbl$new("cp", lower = 0.001, upper = 0.1),
-  ParamInt$new("minsplit", lower = 1, upper = 10)
+  ParamInt$new("nrounds", lower = 1, upper = 16, tags = "budget"),
+  ParamDbl$new("eta",     lower = 0, upper = 1),
+  ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
 )
 
-# initialize TuningInstance as usual
-inst = TuningInstance$new(
-  task = tsk("iris"),
-  learner = lrn("classif.rpart"),
-  resampling = rsmp("holdout"),
-  measures = msr("classif.ce"),
-  ParamSet$new(params),
-  term("evals", n_evals = 100000L) # hyperband stops on its own
-)
+#inst = ... here goes the usual mlr3tuning TuningInstance constructor
 
-# initialize Hyperband Tuner and tune
-tuner = TunerHyperband$new(eta = 2L, use_subsampling = TRUE)
-result = tuner$tune(inst)
+# initialize hyperband tuner 
+tuner = TunerHyperband$new(eta = 2L)
 
-# view results
-instance$archive()[, c("cp", "minsplit", "classif.ce")]
+# tune the previously defined TuningInstance
+#tuner$tune(inst)
 ```
 
-While the other way is by explicitly specifying which learner's hyperparameter is the budget (here, we use XGBoost with `nrounds` as budget parameter):
+For the full working example, please check out the `Examples` section below.
+
+
+## Using Hyperband in mlr3
+
+Hyperband is a budget oriented-procedure, weeding out suboptimally performing configurations early on during their training process, increasing tuning efficiency as a consequence.
+For this, several brackets are constructed with an associated set of configurations for each bracket. These configuration are initialized by stochastic, often uniform, sampling.
+Each bracket is divided into multiple stages, and configurations are evaluated for a increasing budget in each stage.
+Note that currently all configurations are trained completely from the beginning, so no online updates of models.
+
+Different brackets are initialized with different number of configurations, and different budget sizes.
+
+To identify the budget for evaluating hyperband, the user has to specify explicitly which hyperparameter of the learner influences the budget by tagging a single hyperparameter in the [paradox::ParamSet] with `"budget"`.
+An alternative approach using subsampling and pipelines is described below.
+
+
+## Examples
+
+Originally, hyperband was created with a "natural" fidelity parameter of the learner as the budget parameter, like `nrounds` of the XGBoost learner:
 
 ```
+library(mlr3hyperband)
 library(mlr3learners)
 set.seed(123)
 
@@ -72,21 +76,58 @@ params = list(
 )
 
 # initialize TuningInstance as usual
+# hyperband terminates on its own, so the terminator acts as a upper bound
 inst = TuningInstance$new(
   task = tsk("iris"),
   learner = lrn("classif.xgboost"),
   resampling = rsmp("holdout"),
   measures = msr("classif.ce"),
   ParamSet$new(params),
-  term("evals", n_evals = 100000L)
+  term("evals", n_evals = 100000L) # high value to let hyperband finish
 )
 
 # initialize Hyperband Tuner and tune
 tuner = TunerHyperband$new(eta = 2L)
-result = tuner$tune(inst)
+tuner$tune(inst)
 
-# view results
-instance$archive()[, c("nrounds", "eta", "booster", "classif.ce")]
+# return best result
+inst$best()
+```
+
+Additionally, our framework also supports the case when no natural fidelity parameter is given by the learner.
+In this case, one can use `mlr3pipelines` to define subsampling as a preprocessing step.
+Then, the `frac` parameter of subsampling, defining the fraction of the training data to be used, can act as the budget parameter:
+
+```
+library(mlr3hyperband)
+library(mlr3pipelines)
+set.seed(123)
+
+ll = po("subsample") %>>% lrn("classif.rpart")
+
+# define extended hyperparameters with subsampling fraction as budget
+# ==> no learner budget is required
+params = list(
+  ParamDbl$new("classif.rpart.cp", lower = 0.001, upper = 0.1),
+  ParamInt$new("classif.rpart.minsplit", lower = 1, upper = 10),
+  ParamDbl$new("subsample.frac", lower = 0.1, upper = 1, tags = "budget")
+)
+
+# define TuningInstance with the Graph Learner and the extended hyperparams
+inst = TuningInstance$new(
+  tsk("iris"),
+  ll,
+  rsmp("holdout"),
+  msr("classif.ce"),
+  ParamSet$new(params),
+  term("evals", n_evals = 100000L) # high value to let hyperband finish
+)
+
+tuner = TunerHyperband$new(eta = 4L)
+tuner$tune(inst)
+
+# return best result
+inst$best()
 ```
 
 
@@ -94,4 +135,4 @@ instance$archive()[, c("nrounds", "eta", "booster", "classif.ce")]
 
 The function reference is can be found [here](https://mlr3hyperband.mlr-org.com/reference/).
 Further documentation lives in the [mlr3book](https://mlr3book.mlr-org.com/).
- 
+The original paper introducing the hyperband algorithm is given [here](https://arxiv.org/abs/1603.06560). 

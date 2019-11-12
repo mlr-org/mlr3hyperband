@@ -12,25 +12,13 @@
 #' increasing tuning efficiency as a consequence.
 #'
 #' For this, several brackets are constructed with an associated set of configurations
-#' for each bracket. These configuration are initialized by stochastic,
-#' often uniform, sampling.
-#' Each bracket is divided into multiple stages, and configurations are
-#' evaluated for a increasing budget in each stage.
-#' Note that currently all configurations are trained completely from the
-#' beginning, so no online updates of models.
-#' Once a stage of a bracket is evaluated, the
-#' best proportion of \eqn{\frac{1}{\eta}}{1/eta} configurations are kept
-#' for the next stage, while the rest is discarded.
-#' The remaining configurations are retrained in the next bracket stage,
-#' with budget increased by the factor \eqn{\eta}{eta}.
+#' for each bracket. Each bracket as several stages.
 #'
-#' Different brackets are initialized with different number of configurations,
-#' and different initial budget sizes for the first stage, but each bracket is
-#' assigned (approximately) the same global summed budget for all of its evaluations.
-#' Some brackets contain many configurations, with a small initial budget,
-#' so that many are discarded after having been trained for only a short amount of time.
-#' Others are constructed with few configurations where discarding only takes place
-#' after a significant amount of budget.
+#' Different brackets are initialized with different number of configurations
+#' and different budget sizes. To get an idea of how the bracket 
+#' layout looks like for a given
+#' argument set, please have a look in the `details`.
+#' For more information about the algorithm, please check out the mlr3book. (ADD MISSING REFERENCE)
 #'
 #' To identify the budget for evaluating hyperband, the user has to specify
 #' explicitly which hyperparameter of the learner influences the budget
@@ -94,6 +82,20 @@
 #' is fitted on small proportions of the [Task][mlr3::Task] in the first brackets, and on the
 #' complete task in last brackets.
 #' See examples for some code.
+#'
+#' @section Custom sampler:
+#' Hyperband supports custom [Sampler][paradox::Sampler] object for initial
+#' configurations in each bracket.
+#' A custom sampler may look like this (the full example is given in the 
+#' `examples` section):
+#' ```
+#' # - beta distribution with alpha = 2 and beta = 5
+#' # - categorical distribution with custom probabilities
+#' sampler = SamplerJointIndep$new(list(
+#'   Sampler1DRfun$new(params[[2]], function(n) rbeta(n, 2, 5)),
+#'   Sampler1DCateg$new(params[[3]], prob = c(0.2, 0.3, 0.5))
+#' ))
+#' ```
 #'
 #' @section Runtime scaling w.r.t. the chosen budget:
 #' The calculation of each bracket currently assumes a linear runtime in the
