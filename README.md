@@ -11,7 +11,10 @@ Extends the [mlr3](https://mlr3.mlr-org.com) package with hyperband tuning.
 [![StackOverflow](https://img.shields.io/badge/stackoverflow-mlr3-orange.svg)](https://stackoverflow.com/questions/tagged/mlr3)
 [![Dependencies](https://tinyverse.netlify.com/badge/mlr3hyperband)](https://cran.r-project.org/package=mlr3hyperband)
 
+
 ## Installation
+
+Install from github by running the following line:
 
 ```r
 remotes::install_github("mlr-org/mlr3hyperband")
@@ -43,10 +46,10 @@ tuner = TunerHyperband$new(eta = 2L)
 #tuner$tune(inst)
 ```
 
-For the full working example, please check out the `Examples` section below.
+For the full working example, please check out the Examples section below.
 
 
-## Using Hyperband in mlr3
+## A short description of hyperband
 
 Hyperband is a budget oriented-procedure, weeding out suboptimally performing configurations early on during their training process, increasing tuning efficiency as a consequence.
 For this, several brackets are constructed with an associated set of configurations for each bracket. These configuration are initialized by stochastic, often uniform, sampling.
@@ -55,13 +58,13 @@ Note that currently all configurations are trained completely from the beginning
 
 Different brackets are initialized with different number of configurations, and different budget sizes.
 
-To identify the budget for evaluating hyperband, the user has to specify explicitly which hyperparameter of the learner influences the budget by tagging a single hyperparameter in the [paradox::ParamSet] with `"budget"`.
-An alternative approach using subsampling and pipelines is described below.
+To identify the budget for evaluating hyperband, the user has to specify explicitly which hyperparameter of the learner influences the budget by tagging a single hyperparameter in the parameter set with `"budget"`.
+An alternative approach using subsampling and pipelines is described further below.
 
 
 ## Examples
 
-Originally, hyperband was created with a "natural" fidelity parameter of the learner as the budget parameter, like `nrounds` of the XGBoost learner:
+Originally, hyperband was created with a "natural" learning parameter as the budget parameter in mind, like `nrounds` of the XGBoost learner:
 
 ```
 library(mlr3hyperband)
@@ -135,4 +138,5 @@ inst$best()
 
 The function reference is can be found [here](https://mlr3hyperband.mlr-org.com/reference/).
 Further documentation lives in the [mlr3book](https://mlr3book.mlr-org.com/).
+
 The original paper introducing the hyperband algorithm is given [here](https://arxiv.org/abs/1603.06560). 
