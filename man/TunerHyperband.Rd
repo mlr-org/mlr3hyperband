@@ -10,29 +10,17 @@
 Subclass for hyperband tuning.
 
 Hyperband is a budget oriented-procedure, weeding out suboptimally
-performing configurations early on during their training process,
+performing configurations early in a sequential training process,
 increasing tuning efficiency as a consequence.
 
 For this, several brackets are constructed with an associated set of configurations
-for each bracket. These configuration are initialized by stochastic,
-often uniform, sampling.
-Each bracket is divided into multiple stages, and configurations are
-evaluated for a increasing budget in each stage.
-Note that currently all configurations are trained completely from the
-beginning, so no online updates of models.
-Once a stage of a bracket is evaluated, the
-best proportion of \eqn{\frac{1}{\eta}}{1/eta} configurations are kept
-for the next stage, while the rest is discarded.
-The remaining configurations are retrained in the next bracket stage,
-with budget increased by the factor \eqn{\eta}{eta}.
+for each bracket. Each bracket as several stages.
 
-Different brackets are initialized with different number of configurations,
-and different initial budget sizes for the first stage, but each bracket is
-assigned (approximately) the same global summed budget for all of its evaluations.
-Some brackets contain many configurations, with a small initial budget,
-so that many are discarded after having been trained for only a short amount of time.
-Others are constructed with few configurations where discarding only takes place
-after a significant amount of budget.
+Different brackets are initialized with different amounts of configurations
+and different budget sizes. To get an idea of how the bracket
+layout looks like for a given
+argument set, please have a look in the \code{details}.
+For more information about the algorithm, please check out the mlr3book. (ADD MISSING REFERENCE)
 
 To identify the budget for evaluating hyperband, the user has to specify
 explicitly which hyperparameter of the learner influences the budget
@@ -49,14 +37,14 @@ This sections explains the calculation of the constants for each bracket.
 A small overview will be given here, but for more details please check
 out the original paper (see \code{references}).
 To keep things uniform with the notation in the paper (and to safe space
-in the formulas) \code{R} is used for the upper budget that last remaining configuration should reach.
-The formula to calculate the bracket amount is \code{floor(log(R, eta)) + 1}.
-To calculate the starting budget in each bracket use
+in the formulas), \code{R} is used for the upper budget that last remaining configuration should reach.
+The formula to calculate the amount of brackets is \code{floor(log(R, eta)) + 1}.
+To calculate the starting budget in each bracket, use
 \code{R * eta^(-s)}, where \code{s} is the maximum bracket minus the current bracket
 index.
-For the starting configurations in each bracket it's
+For the starting configurations in each bracket it is
 \code{ceiling((B/R) * ((eta^s)/(s+1)))}, with \code{B = (bracket amount) * R}.
-To receive a table with the full brackets layout load the following function
+To receive a table with the full brackets layout, load the following function
 and execute it for the desired \code{R} and \code{eta}.\preformatted{hyperband_brackets = function(R, eta) {
 
   result = data.frame()
@@ -109,12 +97,13 @@ during the initialization of each bracket. The default is uniform sampling.
 
 \itemize{
 \item \code{info} :: \code{\link[data.table:data.table]{data.table::data.table()}}\cr
-Table containing correcter information about the intermediate values
-than given by the console logs. It holds the following columns:
+Table containing information about the intermediate values, matching the
+the indices of the original reference instead of the console logs.
+It holds the following columns:
 \itemize{
 \item \code{bracket} :: \code{integer()}\cr
-The console logs about the bracket index are actually false according
-to the original hyperband algorithm, which counts down the brackets
+The console logs about the bracket index are actually not matching
+with the original hyperband algorithm, which counts down the brackets
 and stops after evaluating bracket 0. The true bracket indices are
 given in this column.
 \item \code{bracket_stage} :: \code{integer()}\cr
@@ -122,9 +111,9 @@ The bracket stage of each bracket. Hyperband starts counting at 0.
 \item \code{budget_scaled} :: \code{integer()}\cr
 The intermediate budget in each bracket stage calculated by hyperband.
 Because hyperband is originally only considered for budgets starting at 1, some
-rescaling is done to allow budgets starting at different values. This is done by
-using \code{lower_budget_new = 1} and
-\code{upper_budget_new = upper_budget / lower_budget}. Before the learner
+rescaling is done to allow budgets starting at different values.
+For this, budgets are internally divided by the lower budget bound to
+get a lower budget of 1. Before the learner
 receives its budgets for evaluation, the budget is transformed back to
 match the original scale again.
 \item \code{budget_real} :: \code{integer()}\cr
@@ -139,14 +128,28 @@ to the \code{r_i} in the original paper.
 
 \section{Hyperband without learner budget}{
 
-Thanks to \CRANpkg{mlr3pipelines} it is possible to use hyperband in combination
+Thanks to \CRANpkg{mlr3pipelines}, it is possible to use hyperband in combination
 with learners lacking a natural budget parameter.
 For example, any \link[mlr3:Learner]{mlr3::Learner} can be augmented with a
 \link[mlr3pipelines:PipeOp]{PipeOp} operator such as \link[mlr3pipelines:PipeOpSubsample]{PipeOpSubsample}.
 With the subsampling rate as budget parameter, the resulting \link[mlr3pipelines:GraphLearner]{GraphLearner}
 is fitted on small proportions of the \link[mlr3:Task]{Task} in the first brackets, and on the
-complete task in last brackets.
+complete Task in last brackets.
 See examples for some code.
+}
+
+\section{Custom sampler}{
+
+Hyperband supports custom \link[paradox:Sampler]{Sampler} object for initial
+configurations in each bracket.
+A custom sampler may look like this (the full example is given in the
+\code{examples} section):\preformatted{# - beta distribution with alpha = 2 and beta = 5
+# - categorical distribution with custom probabilities
+sampler = SamplerJointIndep$new(list(
+  Sampler1DRfun$new(params[[2]], function(n) rbeta(n, 2, 5)),
+  Sampler1DCateg$new(params[[3]], prob = c(0.2, 0.3, 0.5))
+))
+}
 }
 
 \section{Runtime scaling w.r.t. the chosen budget}{
@@ -163,21 +166,22 @@ run a learner with O(budget^2) time complexity, the runtime of the last
 bracket will be 33% longer than the first bracket
 (time of bracket 1 = 2 * 1^2 + 2^2 = 6; time of bracket 2 = 2 * 2^2 = 8).
 Of course, this won't break anything, but it should be kept in mind when
-applying hyperband.
+applying hyperband. A possible adaption would be to introduce a trafo,
+like it is shown in the \code{examples}.
 }
 
 \section{Logging}{
 
 When loading the \link{mlr3hyperband} package, two loggers based on the \link{lgr} package are made available.
 One is called \code{mlr3}, the other \code{mlr3/mlr3tuning}. The first one is the
-original one of \link{mlr3}, while the latter was modified of \link{mlr3tuning}. The modification
-is of the form of a added level called \code{info hb} (value \code{350}), that sits
+original one of \link{mlr3}, while the latter was modified from \link{mlr3tuning}. The modification
+is of the form of an added level called \code{info hb} (value \code{350}), that sits
 between \code{warn} and \code{info}. All info logs printed by the hyperband algorithm
 receive the level \code{info hb} and the default threshold for logs is set to
 this level. The default threshold for \code{mlr3} is set to \code{warn}.
 This means, the \code{info} logs of function/method calls of both \link{mlr3} and
-\link{mlr3tuning} are by default not part of the logging. To change this,
-execute\preformatted{# mlr3tuning logs
+\link{mlr3tuning} are not part of the logging by default. To change this,
+run\preformatted{# mlr3tuning logs
 lg$set_threshold("info")
 # mlr3 logs
 lgr::get_logger("mlr3")$set_threshold("info")

@@ -22,5 +22,4 @@
   lgr::add_log_levels(c("info hb" = 350))
   # ignore "info" level loggings as they clutter the logs too much
   lg$set_threshold("info hb")
-  lgr::get_logger("mlr3")$set_threshold("warn")
 } # nocov end

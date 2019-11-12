@@ -1,14 +1,21 @@
-# @title Best points w.r.t. non dominated sorting with hypervolume contrib.
-#
-# @description Select best subset of points by non dominated sorting with
-# hypervolume contribution for tie breaking. Works on an arbitrary dimension
-# of size two or higher.
-# @param points Matrix with each column corresponding to a point
-# @param n_select Amount of points to select (integer(1L))
-# @param ref_point Reference point for hypervolume (integer())
-# @param minimize Should the ranking be based on minimization? (Single bool
-# for all dimensions, or vector of bools corresponding to the dimensions)
-# @return Vector of indices of selected points
+#' @title Best points w.r.t. non dominated sorting with hypervolume contrib.
+#'
+#' @description Select best subset of points by non dominated sorting with
+#' hypervolume contribution for tie breaking. Works on an arbitrary dimension
+#' of size two or higher.
+#' @section Parameters:
+#' * `points` :: `matrix()`\cr
+#'   Numeric matrix with each column corresponding to a point
+#' * `n_select` :: `integer(1L)`\cr
+#'   Amount of points to select
+#' * `ref_point` :: `integer()`\cr
+#'   Reference point for hypervolume
+#' * `minimize` :: `logical()`\cr
+#'   Should the ranking be based on minimization? (Single bool
+#'   for all dimensions, or vector of bools with each entry corresponding to 
+#' each dimension)
+#' @return Vector of indices of selected points
+#' @usage NULL
 
 nds_selection = function(points, n_select, ref_point = NULL, minimize = TRUE) {
 
@@ -17,9 +24,11 @@ nds_selection = function(points, n_select, ref_point = NULL, minimize = TRUE) {
   # check input for correctness
   assert_matrix(points, mode = "numeric")
   assert_int(n_select, lower = 1, upper = ncol(points))
-  assert_logical(minimize, min.len = 1, max.len = nrow(points))
+  assert_logical(
+    minimize, min.len = 1, max.len = nrow(points), any.missing = FALSE
+  )
   assert_numeric(ref_point, len = nrow(points), null.ok = TRUE)
-  assert_logical(minimize, any.missing = FALSE)
+  assert_logical(minimize)
 
   # maximize/minimize preprocessing: switch sign in each dim to maximize
   points = points * (minimize * 2 - 1)
@@ -42,7 +51,7 @@ nds_selection = function(points, n_select, ref_point = NULL, minimize = TRUE) {
 
   # tied subselection of indices/points
   tie_surv = survivors[front_ranks == last_sel_front]
-  tie_points = points[, front_ranks == last_sel_front]
+  tie_points = points[, front_ranks == last_sel_front, drop = FALSE]
 
   # remove tied indices/points as long as we are bigger than n_select
   while (length(tie_surv) + length(sel_surv) > n_select) {
@@ -52,10 +61,13 @@ nds_selection = function(points, n_select, ref_point = NULL, minimize = TRUE) {
     tie_points_ext = cbind(tie_points, ref_point)
 
     # calculate the hypervolume with each point excluded separately
-    hypervolumes = sapply(
+    hypervolumes = mlr3misc::map_dbl(
       seq_len(ncol(tie_points_ext) - 1L),
       function(i) {
-        emoa::dominated_hypervolume(tie_points_ext[, -i, drop = FALSE], ref = ref_point)
+        emoa::dominated_hypervolume(
+          tie_points_ext[, -i, drop = FALSE],
+          ref = ref_point
+        )
       }
     )
 

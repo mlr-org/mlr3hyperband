@@ -8,13 +8,13 @@
 #' Subclass for hyperband tuning.
 #'
 #' Hyperband is a budget oriented-procedure, weeding out suboptimally
-#' performing configurations early on during their training process,
+#' performing configurations early in a sequential training process,
 #' increasing tuning efficiency as a consequence.
 #'
 #' For this, several brackets are constructed with an associated set of configurations
 #' for each bracket. Each bracket as several stages.
 #'
-#' Different brackets are initialized with different number of configurations
+#' Different brackets are initialized with different amounts of configurations
 #' and different budget sizes. To get an idea of how the bracket 
 #' layout looks like for a given
 #' argument set, please have a look in the `details`.
@@ -49,11 +49,12 @@
 #'
 #' @section Fields:
 #' * `info` :: [data.table::data.table()]\cr
-#'   Table containing correcter information about the intermediate values
-#'   than given by the console logs. It holds the following columns:
+#'   Table containing information about the intermediate values, matching the
+#'   the indices of the original reference instead of the console logs.
+#'   It holds the following columns:
 #'   * `bracket` :: `integer()`\cr
-#'     The console logs about the bracket index are actually false according
-#'     to the original hyperband algorithm, which counts down the brackets
+#'     The console logs about the bracket index are actually not matching
+#'     with the original hyperband algorithm, which counts down the brackets
 #'     and stops after evaluating bracket 0. The true bracket indices are
 #'     given in this column.
 #'   * `bracket_stage` :: `integer()`\cr
@@ -61,9 +62,9 @@
 #'   * `budget_scaled` :: `integer()`\cr
 #'     The intermediate budget in each bracket stage calculated by hyperband.
 #'     Because hyperband is originally only considered for budgets starting at 1, some
-#'     rescaling is done to allow budgets starting at different values. This is done by
-#'     using `lower_budget_new = 1` and
-#'     `upper_budget_new = upper_budget / lower_budget`. Before the learner
+#'     rescaling is done to allow budgets starting at different values.
+#'     For this, budgets are internally divided by the lower budget bound to
+#'     get a lower budget of 1. Before the learner
 #'     receives its budgets for evaluation, the budget is transformed back to
 #'     match the original scale again.
 #'   * `budget_real` :: `integer()`\cr
@@ -74,13 +75,13 @@
 #'     to the `r_i` in the original paper.
 #'
 #' @section Hyperband without learner budget:
-#' Thanks to \CRANpkg{mlr3pipelines} it is possible to use hyperband in combination
+#' Thanks to \CRANpkg{mlr3pipelines}, it is possible to use hyperband in combination
 #' with learners lacking a natural budget parameter.
 #' For example, any [mlr3::Learner] can be augmented with a
 #' [PipeOp][mlr3pipelines::PipeOp] operator such as [PipeOpSubsample][mlr3pipelines::PipeOpSubsample].
 #' With the subsampling rate as budget parameter, the resulting [GraphLearner][mlr3pipelines::GraphLearner]
 #' is fitted on small proportions of the [Task][mlr3::Task] in the first brackets, and on the
-#' complete task in last brackets.
+#' complete Task in last brackets.
 #' See examples for some code.
 #'
 #' @section Custom sampler:
@@ -110,21 +111,22 @@
 #' bracket will be 33% longer than the first bracket
 #' (time of bracket 1 = 2 * 1^2 + 2^2 = 6; time of bracket 2 = 2 * 2^2 = 8).
 #' Of course, this won't break anything, but it should be kept in mind when
-#' applying hyperband.
+#' applying hyperband. A possible adaption would be to introduce a trafo,
+#' like it is shown in the `examples`.
 #'
 #' @details
 #' This sections explains the calculation of the constants for each bracket.
 #' A small overview will be given here, but for more details please check
 #' out the original paper (see `references`).
 #' To keep things uniform with the notation in the paper (and to safe space
-#' in the formulas) `R` is used for the upper budget that last remaining configuration should reach.
-#' The formula to calculate the bracket amount is `floor(log(R, eta)) + 1`.
-#' To calculate the starting budget in each bracket use
+#' in the formulas), `R` is used for the upper budget that last remaining configuration should reach.
+#' The formula to calculate the amount of brackets is `floor(log(R, eta)) + 1`.
+#' To calculate the starting budget in each bracket, use
 #' `R * eta^(-s)`, where `s` is the maximum bracket minus the current bracket
 #' index.
-#' For the starting configurations in each bracket it's
+#' For the starting configurations in each bracket it is
 #' `ceiling((B/R) * ((eta^s)/(s+1)))`, with `B = (bracket amount) * R`.
-#' To receive a table with the full brackets layout load the following function
+#' To receive a table with the full brackets layout, load the following function
 #' and execute it for the desired `R` and `eta`.
 #'
 #' ```
@@ -159,19 +161,17 @@
 #' @section Logging:
 #' When loading the [mlr3hyperband] package, two loggers based on the [lgr] package are made available.
 #' One is called `mlr3`, the other `mlr3/mlr3tuning`. The first one is the
-#' original one of [mlr3], while the latter was modified of [mlr3tuning]. The modification
-#' is of the form of a added level called `info hb` (value `350`), that sits
+#' original one of [mlr3], while the latter was modified from [mlr3tuning]. The modification
+#' is of the form of an added level called `info hb` (value `350`), that sits
 #' between `warn` and `info`. All info logs printed by the hyperband algorithm
 #' receive the level `info hb` and the default threshold for logs is set to
-#' this level. The default threshold for `mlr3` is set to `warn`.
-#' This means, the `info` logs of function/method calls of both [mlr3] and
-#' [mlr3tuning] are by default not part of the logging. To change this,
-#' execute 
+#' this level.
+#' This means, the `info` logs of function/method calls of
+#' [mlr3tuning] are not part of the logging by default. To change this,
+#' run 
 #' ```
 #' # mlr3tuning logs
 #' lg$set_threshold("info")
-#' # mlr3 logs
-#' lgr::get_logger("mlr3")$set_threshold("info")
 #' ```
 #' But be careful as this will add a lot of clutter to the logs.
 #'
@@ -446,7 +446,7 @@ TunerHyperband = R6Class("TunerHyperband",
             # get performance of each active configuration
             configs_perf = instance$bmr$score(instance$measures)
 
-            # select best mu_current indeces
+            # select best mu_current indices
             if (length(msr_ids) < 2) {
 
               # single crit
@@ -454,12 +454,12 @@ TunerHyperband = R6Class("TunerHyperband",
                 configs_perf[[msr_ids]],
                 decreasing = !to_minimize
               )
-              best_indeces = ordered_perf[seq_len(mu_current)]
+              best_indices = ordered_perf[seq_len(mu_current)]
 
             } else {
 
               # multi crit
-              best_indeces = nds_selection(
+              best_indices = nds_selection(
                 points = t(as.matrix(configs_perf[, msr_ids, with = FALSE])),
                 n_select = mu_current,
                 minimize = to_minimize
@@ -467,7 +467,7 @@ TunerHyperband = R6Class("TunerHyperband",
             }
 
             # update active configurations
-            active_configs = active_configs[best_indeces]
+            active_configs = active_configs[best_indices]
           }
 
           # overwrite active configurations with the current budget
