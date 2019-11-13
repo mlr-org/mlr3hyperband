@@ -238,7 +238,7 @@
 #' ))
 #'
 #' ps$trafo = function(x, param_set) {
-#'   x$nrounds = round(log(x$nrounds))
+#'   x$nrounds = round(log(x$nrounds)) + 1L
 #'   return(x)
 #' }
 #'
