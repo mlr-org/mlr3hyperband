@@ -22,7 +22,7 @@
   )
 
   if (Sys.getenv("IN_PKGDOWN") == "true") {
-    #lg$set_threshold("warn")
+    lg$set_threshold("warn")
   }
 
   lgr::get_logger("mlr3")$set_threshold("warn")
