@@ -21,11 +21,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Sebastian Gruber \email{gruber_sebastian@t-online.de} (0000-0002-8544-3470)
+\strong{Maintainer}: Sebastian Gruber \email{gruber_sebastian@t-online.de} (\href{https://orcid.org/0000-0002-8544-3470}{ORCID})
 
 Authors:
 \itemize{
-  \item Bernd Bischl \email{bernd_bischl@gmx.net} (0000-0001-6002-6980)
+  \item Bernd Bischl \email{bernd_bischl@gmx.net} (\href{https://orcid.org/0000-0001-6002-6980}{ORCID})
 }
 
 }

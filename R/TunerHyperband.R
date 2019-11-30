@@ -387,7 +387,7 @@ TunerHyperband = R6Class("TunerHyperband",
       bracket_max = floor(log(budget_upper, eta) - log(budget_lower, eta))
       # <=> eta^bracket_max = config_max_b
       lg$log(
-        "info hb",
+        "info",
         "Amount of brackets to be evaluated = %i, ",
         bracket_max + 1
       )
@@ -403,7 +403,7 @@ TunerHyperband = R6Class("TunerHyperband",
 
         # for less confusion of the user we start the print with bracket 1
         lg$log(
-          "info hb",
+          "info",
           "Start evaluation of bracket %i",
           bracket_max - bracket + 1
         )
@@ -434,7 +434,7 @@ TunerHyperband = R6Class("TunerHyperband",
           }
 
           lg$log(
-            "info hb",
+            "info",
             "Training %i configs with budget of %g for each",
             mu_current,
             budget_current_real
@@ -497,7 +497,7 @@ TunerHyperband = R6Class("TunerHyperband",
       )
 
       lg$log(
-        "info hb",
+        "info",
         "Done." 
         ### useful or just clutter?:
         # Total evaluations: %i with a total budget spend of %f.",
