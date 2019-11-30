@@ -19,7 +19,34 @@ test_that("TunerHyperband multicrit", {
   set.seed(1234)
   test_tuner("hyperband", eta = 3L, lower_b = 1, upper_b = 27, measures = c("classif.fpr", "classif.tpr"))
   test_tuner("hyperband", eta = 2L, lower_b = 1, upper_b = 8, term_evals = 10, n_dim = 2L, measures = c("classif.fpr", "classif.tpr"))
+   
+  params = list(
+    ParamDbl$new("cp", lower = 0.001, upper = 0.1),
+    ParamInt$new("minsplit", lower = 1, upper = 10, tags = "budget")
+  )
+   
+  inst = TuningInstance$new(
+    tsk("pima"),
+    lrn("classif.rpart"),
+    rsmp("holdout"),
+    lapply(c("classif.tpr", "classif.fpr"), msr),
+    ParamSet$new(params),
+    term("evals", n_evals = 100000)
+  )
+   
+  tuner = TunerHyperband$new(eta = 4L)
+  expect_tuner(tuner)
+  tuner$tune(inst)
+  #lapply(inst$pareto_front(), expect_resample_result)
 
+  results = inst$archive()[, .(
+    cp = sapply(params, "[", "cp"), 
+    minsplit = sapply(params, "[", "minsplit"), 
+    classif.tpr,
+    classif.fpr
+  )]
+
+  expect_data_table(results, ncols = 4, nrows = 7)
 })
 
 
