@@ -42,7 +42,7 @@ expect_tuner = function(tuner) {
   expect_function(tuner$tune, args = "instance")
 }
 
-
+# deprecated - remove this?
 expect_resampleresult = function(resampleresult) {
   # test for existence of the most important resampling result elements
   # let's try to not be too specific since resampling is still in development
