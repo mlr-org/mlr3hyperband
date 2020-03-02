@@ -337,7 +337,7 @@ TunerHyperband = R6Class("TunerHyperband",
 
   private = list(
 
-    tune_internal = function(instance) {
+    .tune = function(instance) {
 
       # define aliases for better readability
       eta     = self$param_set$values$eta

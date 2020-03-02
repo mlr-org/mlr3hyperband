@@ -36,7 +36,7 @@ hyperband_brackets = function(R, eta) {
 expect_tuner = function(tuner) {
   expect_r6(tuner, "Tuner",
     public = c("tune", "param_set"),
-    private = "tune_internal"
+    private = ".tune"
   )
   expect_is(tuner$param_set, "ParamSet")
   expect_function(tuner$tune, args = "instance")
