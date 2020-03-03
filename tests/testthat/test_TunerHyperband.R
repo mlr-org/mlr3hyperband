@@ -1,5 +1,6 @@
 library(mlr3learners)
 library(mlr3pipelines)
+library(checkmate)
 
 context("TunerHyperband")
 
