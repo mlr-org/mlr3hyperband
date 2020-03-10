@@ -2,9 +2,8 @@ context("nds_selection")
 
 
 test_that("nds_selection basics", {
-
   data_matrix = t(matrix(
-    c(# front 1
+    c( # front 1
       1, 4,
       2, 3,
       4, 1,
@@ -160,7 +159,6 @@ test_that("nds_selection basics", {
     nds_selection(data_matrix, 2, ref_point = c(0, 0)),
     1:2
   )
-
 })
 
 
@@ -223,11 +221,11 @@ test_that("nds_selection high dimensional", {
     1:10
   )
 
-# 4 dimensional
+  # 4 dimensional
   points = rbind(points, y4 = runif(10))
 
   set.seed(123)
-   expect_equal(
+  expect_equal(
     nds_selection(points, 10),
     1:10
   )
@@ -285,5 +283,4 @@ test_that("nds_selection high dimensional", {
     nds_selection(points, 1, minimize = c(FALSE, FALSE, TRUE, FALSE)),
     1:10
   )
-
 })

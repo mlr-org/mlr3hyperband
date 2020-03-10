@@ -12,7 +12,7 @@
 #'   Reference point for hypervolume
 #' * `minimize` :: `logical()`\cr
 #'   Should the ranking be based on minimization? (Single bool
-#'   for all dimensions, or vector of bools with each entry corresponding to 
+#'   for all dimensions, or vector of bools with each entry corresponding to
 #' each dimension)
 #' @return Vector of indices of selected points
 #' @usage NULL

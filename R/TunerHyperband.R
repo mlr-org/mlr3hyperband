@@ -15,7 +15,7 @@
 #' for each bracket. Each bracket as several stages.
 #'
 #' Different brackets are initialized with different amounts of configurations
-#' and different budget sizes. To get an idea of how the bracket 
+#' and different budget sizes. To get an idea of how the bracket
 #' layout looks like for a given
 #' argument set, please have a look in the `details`.
 #' For more information about the algorithm, please check out the mlr3book. (ADD MISSING REFERENCE)
@@ -87,7 +87,7 @@
 #' @section Custom sampler:
 #' Hyperband supports custom [Sampler][paradox::Sampler] object for initial
 #' configurations in each bracket.
-#' A custom sampler may look like this (the full example is given in the 
+#' A custom sampler may look like this (the full example is given in the
 #' `examples` section):
 #' ```
 #' # - beta distribution with alpha = 2 and beta = 5
@@ -168,7 +168,7 @@
 #' this level.
 #' This means, the `info` logs of function/method calls of
 #' [mlr3tuning] are not part of the logging by default. To change this,
-#' run 
+#' run
 #' ```
 #' # mlr3tuning logs
 #' lg$set_threshold("info")
@@ -190,7 +190,7 @@
 #' # define hyperparameter and budget parameter for tuning with hyperband
 #' params = list(
 #'   ParamInt$new("nrounds", lower = 1, upper = 16, tag = "budget"),
-#'   ParamDbl$new("eta",     lower = 0, upper = 1),
+#'   ParamDbl$new("eta", lower = 0, upper = 1),
 #'   ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
 #' )
 #'
@@ -214,15 +214,15 @@
 #'
 #' tuner = TunerHyperband$new(eta = 2L, sampler = sampler)
 #' \dontrun{
-#'   tuner$tune(inst)
+#' tuner$tune(inst)
 #'
-#'   # return the best evaluation
-#'   inst$best()
+#' # return the best evaluation
+#' inst$best()
 #'
-#'   # print all evaluations
-#'   print(inst$archive())
-#'   # print layout of the brackets
-#'   print(tuner$info)
+#' # print all evaluations
+#' print(inst$archive())
+#' # print layout of the brackets
+#' print(tuner$info)
 #' }
 #'
 #'
@@ -233,7 +233,7 @@
 #' # define hyperparameter and budget parameter for tuning with hyperband
 #' ps = ParamSet$new(list(
 #'   ParamInt$new("nrounds", lower = 1, upper = 10, tags = "budget"),
-#'   #ParamDbl$new("eta",     lower = 0, upper = 1),
+#'   # ParamDbl$new("eta",     lower = 0, upper = 1),
 #'   ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
 #' ))
 #'
@@ -254,15 +254,15 @@
 #' # eta can be a double
 #' tuner = TunerHyperband$new(eta = 1.9)
 #' \dontrun{
-#'   tuner$tune(inst)
+#' tuner$tune(inst)
 #'
-#'   # return the best evaluation
-#'   inst$best()
+#' # return the best evaluation
+#' inst$best()
 #'
-#'   # print all evaluations
-#'   print(inst$archive())
-#'   # print layout of the brackets
-#'   print(tuner$info)
+#' # print all evaluations
+#' print(inst$archive())
+#' # print layout of the brackets
+#' print(tuner$info)
 #' }
 #'
 #' ### use subsampling for budget
@@ -292,15 +292,15 @@
 #' # define and call hyperband as usual
 #' tuner = TunerHyperband$new(eta = 4L)
 #' \dontrun{
-#'   tuner$tune(inst)
+#' tuner$tune(inst)
 #'
-#'   # return the best evaluation
-#'   inst$best()
+#' # return the best evaluation
+#' inst$best()
 #'
-#'   # print all evaluations
-#'   print(inst$archive())
-#'   # print layout of the brackets
-#'   print(tuner$info)
+#' # print all evaluations
+#' print(inst$archive())
+#' # print layout of the brackets
+#' print(tuner$info)
 #' }
 #' @export
 TunerHyperband = R6Class("TunerHyperband",
@@ -340,11 +340,11 @@ TunerHyperband = R6Class("TunerHyperband",
     .tune = function(instance) {
 
       # define aliases for better readability
-      eta     = self$param_set$values$eta
+      eta = self$param_set$values$eta
       sampler = self$param_set$values$sampler
-      rr      = instance$resampling
-      ps      = instance$param_set
-      task    = instance$task
+      rr = instance$resampling
+      ps = instance$param_set
+      task = instance$task
       msr_ids = ids(instance$measures)
       to_minimize = map_lgl(instance$measures, "minimize")
 
@@ -410,20 +410,20 @@ TunerHyperband = R6Class("TunerHyperband",
 
         # amount of active configs and budget in bracket
         mu_start = mu_current =
-            ceiling((B * eta^bracket) / (config_max_b * (bracket + 1)))
+          ceiling((B * eta^bracket) / (config_max_b * (bracket + 1)))
 
         budget_start = budget_current =
-            config_max_b / eta^bracket
+          config_max_b / eta^bracket
 
         # generate design based on given parameter set and sampler
-        design         = sampler$sample(mu_current)
+        design = sampler$sample(mu_current)
         active_configs = design$data
 
         # inner loop - iterating over bracket stages
         for (stage in 0:bracket) {
 
           # make configs smaller, increase budget and increment stage counter
-          mu_current     = floor(mu_start / eta^stage)
+          mu_current = floor(mu_start / eta^stage)
           budget_current = budget_start * eta^stage
 
           # rescale budget back to real world scale
@@ -480,11 +480,11 @@ TunerHyperband = R6Class("TunerHyperband",
 
           # store information of current iteration with hash as primary key
           self$info = rbind(self$info, data.table(
-            bracket       = bracket,
+            bracket = bracket,
             bracket_stage = stage,
             budget_scaled = budget_current,
-            budget_real   = budget_current_real,
-            n_configs     = mu_current
+            budget_real = budget_current_real,
+            n_configs = mu_current
           ))
         }
       }
@@ -498,11 +498,11 @@ TunerHyperband = R6Class("TunerHyperband",
 
       lg$log(
         "info",
-        "Done." 
+        "Done."
         ### useful or just clutter?:
         # Total evaluations: %i with a total budget spend of %f.",
-        #sum(self$info$n_configs),
-        #sum(self$info$budget_real * self$info$n_configs)
+        # sum(self$info$n_configs),
+        # sum(self$info$budget_real * self$info$n_configs)
       )
     }
   )
