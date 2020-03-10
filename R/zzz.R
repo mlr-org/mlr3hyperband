@@ -9,6 +9,7 @@
 
 
 .onLoad = function(libname, pkgname) {
+
   # add hyperband to sugar
   x = utils::getFromNamespace("mlr_tuners", ns = "mlr3tuning")
   x$add("hyperband", TunerHyperband)
@@ -29,7 +30,7 @@
   lg$set_threshold("info")
 
   # use custom logging level for hyperband between "warn" and "info" level
-  #lgr::add_log_levels(c("info hb" = 350))
+  # lgr::add_log_levels(c("info hb" = 350))
   # ignore "info" level loggings as they clutter the logs too much
-  #lg$set_threshold("info hb")
+  # lg$set_threshold("info hb")
 } # nocov end

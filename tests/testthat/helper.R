@@ -10,14 +10,13 @@ lapply(
 
 # calculating bracket meta info for given R and eta based on hb paper
 hyperband_brackets = function(R, eta) {
-
   result = data.frame()
   smax = floor(log(R, eta))
   B = (smax + 1) * R
 
   for (s in smax:0) {
 
-    n = ceiling((B/R) * ((eta^s)/(s+1)))
+    n = ceiling((B / R) * ((eta^s) / (s + 1)))
     r = R * eta^(-s)
 
     for (i in 0:s) {
@@ -46,7 +45,7 @@ expect_tuner = function(tuner) {
 expect_resampleresult = function(resampleresult) {
   # test for existence of the most important resampling result elements
   # let's try to not be too specific since resampling is still in development
-  expect_r6(resampleresult, "ResampleResult", 
+  expect_r6(resampleresult, "ResampleResult",
     public = c("resampling", "learners", "task", "data", "predictions", "score")
   )
   expect_data_table(resampleresult$data, min.rows = 1L, min.cols = 1L)
@@ -76,19 +75,19 @@ test_tuner = function(key, eta, n_dim = 1L, term_evals = NULL, lower_b, upper_b,
   ps = if (n_dim == 1) {
 
     ParamSet$new(params = list(
-      ParamInt$new("nrounds",   lower = lower_b, upper = upper_b, tags = "budget"),
+      ParamInt$new("nrounds", lower = lower_b, upper = upper_b, tags = "budget"),
       ParamInt$new("max_depth", lower = 1, upper = 100)
     ))
 
   } else if (n_dim == 2) {
 
     ParamSet$new(params = list(
-      ParamInt$new("nrounds",   lower = lower_b, upper = upper_b, tags = "budget"),
-      ParamDbl$new("eta",       lower = 0, upper = 1),
+      ParamInt$new("nrounds", lower = lower_b, upper = upper_b, tags = "budget"),
+      ParamDbl$new("eta", lower = 0, upper = 1),
       ParamInt$new("max_depth", lower = 1, upper = 100)
     ))
   }
-  
+
   task = tsk("pima")
 
   term = term("evals", n_evals = term_evals)
@@ -104,7 +103,7 @@ test_tuner = function(key, eta, n_dim = 1L, term_evals = NULL, lower_b, upper_b,
   # compare results with full hyperband brackets if tuner was fully evaluated
   if (term_evals == 999999) {
 
-    hb_meta_info = hyperband_brackets(R = upper_b/lower_b, eta = eta)
+    hb_meta_info = hyperband_brackets(R = upper_b / lower_b, eta = eta)
     hb_meta_info = as.data.table(hb_meta_info)
     tuner_info = tuner$info[, c(1:3, 5)]
 
@@ -113,7 +112,6 @@ test_tuner = function(key, eta, n_dim = 1L, term_evals = NULL, lower_b, upper_b,
     expect_data_table(bmr$data, nrows = real_evals)
 
   } else {
-
     expect_data_table(bmr$data, min.rows = term_evals)
     expect_gte(inst$n_evals, term_evals)
   }
@@ -160,7 +158,7 @@ test_tuner_dependencies = function(key, eta, term_evals = NULL, lower_b, upper_b
   # compare results with full hyperband brackets if tuner was fully evaluated
   if (term_evals == 999999) {
 
-    hb_meta_info = hyperband_brackets(R = upper_b/lower_b, eta = eta)
+    hb_meta_info = hyperband_brackets(R = upper_b / lower_b, eta = eta)
     hb_meta_info = as.data.table(hb_meta_info)
     tuner_info = tuner$info[, c(1:3, 5)]
 
@@ -169,7 +167,6 @@ test_tuner_dependencies = function(key, eta, term_evals = NULL, lower_b, upper_b
     expect_data_table(bmr$data, nrows = real_evals)
 
   } else {
-
     expect_data_table(bmr$data, min.rows = term_evals)
     expect_gte(inst$n_evals, term_evals)
   }
@@ -297,4 +294,3 @@ LearnerRegrDepParams = R6Class("LearnerRegrDepParams", inherit = LearnerRegr,
     }
   )
 )
-
