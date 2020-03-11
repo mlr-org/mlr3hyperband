@@ -422,6 +422,9 @@ TunerHyperband = R6Class("TunerHyperband",
         # inner loop - iterating over bracket stages
         for (stage in 0:bracket) {
 
+          # amount of configs of the previous stage
+          mu_previous = mu_current
+
           # make configs smaller, increase budget and increment stage counter
           mu_current = floor(mu_start / eta^stage)
           budget_current = budget_start * eta^stage
@@ -445,6 +448,8 @@ TunerHyperband = R6Class("TunerHyperband",
 
             # get performance of each active configuration
             configs_perf = instance$bmr$score(instance$measures)
+            n_rows       = nrow(configs_perf)
+            configs_perf = configs_perf[(n_rows - mu_previous + 1):n_rows]
 
             # select best mu_current indices
             if (length(msr_ids) < 2) {
@@ -467,6 +472,9 @@ TunerHyperband = R6Class("TunerHyperband",
             }
 
             # update active configurations
+            assert_integer(
+              best_indices, lower = 1, upper = nrow(active_configs)
+            )
             active_configs = active_configs[best_indices]
           }
 
