@@ -1,4 +1,4 @@
-do_package_checks(error_on = "error")
+do_package_checks(error_on = "warning")
 
 get_stage("install") %>%
   add_step(step_install_cran("bibtex"))
