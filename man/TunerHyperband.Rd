@@ -4,7 +4,9 @@
 \alias{TunerHyperband}
 \alias{mlr_tuners_hyperband}
 \title{Tuner using the Hyperband algorithm}
-\format{\link[R6:R6Class]{R6::R6Class} object inheriting from \link[mlr3tuning:Tuner]{mlr3tuning::Tuner}.}
+\format{
+\link[R6:R6Class]{R6::R6Class} object inheriting from \link[mlr3tuning:Tuner]{mlr3tuning::Tuner}.
+}
 \description{
 Subclass for hyperband tuning.
 
@@ -199,7 +201,7 @@ set.seed(123)
 # define hyperparameter and budget parameter for tuning with hyperband
 params = list(
   ParamInt$new("nrounds", lower = 1, upper = 16, tag = "budget"),
-  ParamDbl$new("eta",     lower = 0, upper = 1),
+  ParamDbl$new("eta", lower = 0, upper = 1),
   ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
 )
 
@@ -223,15 +225,15 @@ sampler = SamplerJointIndep$new(list(
 
 tuner = TunerHyperband$new(eta = 2L, sampler = sampler)
 \dontrun{
-  tuner$tune(inst)
+tuner$tune(inst)
 
-  # return the best evaluation
-  inst$best()
+# return the best evaluation
+inst$best()
 
-  # print all evaluations
-  print(inst$archive())
-  # print layout of the brackets
-  print(tuner$info)
+# print all evaluations
+print(inst$archive())
+# print layout of the brackets
+print(tuner$info)
 }
 
 
@@ -242,7 +244,7 @@ set.seed(123)
 # define hyperparameter and budget parameter for tuning with hyperband
 ps = ParamSet$new(list(
   ParamInt$new("nrounds", lower = 1, upper = 10, tags = "budget"),
-  #ParamDbl$new("eta",     lower = 0, upper = 1),
+  # ParamDbl$new("eta",     lower = 0, upper = 1),
   ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
 ))
 
@@ -263,15 +265,15 @@ inst = TuningInstance$new(
 # eta can be a double
 tuner = TunerHyperband$new(eta = 1.9)
 \dontrun{
-  tuner$tune(inst)
+tuner$tune(inst)
 
-  # return the best evaluation
-  inst$best()
+# return the best evaluation
+inst$best()
 
-  # print all evaluations
-  print(inst$archive())
-  # print layout of the brackets
-  print(tuner$info)
+# print all evaluations
+print(inst$archive())
+# print layout of the brackets
+print(tuner$info)
 }
 
 ### use subsampling for budget
@@ -301,15 +303,15 @@ inst = TuningInstance$new(
 # define and call hyperband as usual
 tuner = TunerHyperband$new(eta = 4L)
 \dontrun{
-  tuner$tune(inst)
+tuner$tune(inst)
 
-  # return the best evaluation
-  inst$best()
+# return the best evaluation
+inst$best()
 
-  # print all evaluations
-  print(inst$archive())
-  # print layout of the brackets
-  print(tuner$info)
+# print all evaluations
+print(inst$archive())
+# print layout of the brackets
+print(tuner$info)
 }
 }
 \references{
@@ -336,6 +338,7 @@ tuner = TunerHyperband$new(eta = 4L)
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{TunerHyperband$new(eta = 2, sampler = NULL)}\if{html}{\out{</div>}}
@@ -344,6 +347,7 @@ tuner = TunerHyperband$new(eta = 4L)
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{
