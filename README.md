@@ -3,7 +3,7 @@
 Extends the [mlr3](https://mlr3.mlr-org.com) package with hyperband tuning.
 
 <!-- badges: start -->
-[![R CMD Check via {tic}](https://img.shields.io/github/workflow/status/mlr-org/mlr3hyperband/R%20CMD%20Check%20via%20%7Btic%7D?logo=github&label=R%20CMD%20Check%20via%20{tic}&style=flat-square)](https://github.com/mlr-org/mlr3hyperband/actions)
+[![R CMD Check via {tic}](https://github.com/mlr-org/mlr3hyperband/workflows/R%20CMD%20Check%20via%20{tic}/badge.svg?branch=master)](https://github.com/mlr-org/mlr3hyperband/actions)
 [![CRAN Status Badge](https://www.r-pkg.org/badges/version-ago/mlr3hyperband)](https://cran.r-project.org/package=mlr3hyperband)
 [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/mlr3hyperband)](https://cran.rstudio.com/web/packages/mlr3hyperband/index.html)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
@@ -36,7 +36,7 @@ params = list(
 
 #inst = ... here goes the usual mlr3tuning TuningInstance constructor
 
-# initialize hyperband tuner 
+# initialize hyperband tuner
 tuner = TunerHyperband$new(eta = 2L)
 
 # tune the previously defined TuningInstance
@@ -136,4 +136,4 @@ inst$best()
 The function reference is can be found [here](https://mlr3hyperband.mlr-org.com/reference/).
 Further documentation lives in the [mlr3book](https://mlr3book.mlr-org.com/).
 
-The original paper introducing the hyperband algorithm is given [here](https://arxiv.org/abs/1603.06560). 
+The original paper introducing the hyperband algorithm is given [here](https://arxiv.org/abs/1603.06560).
