@@ -22,7 +22,7 @@
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
-<body>
+<body data-spy="scroll" data-target="#toc">
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -48,7 +48,7 @@
   <a href="news/index.html">Changelog</a>
 </li>
         <li>
-  <a href="https://github.com/mlr-org/mlr3hyperband">
+  <a href="https://github.com/mlr-org/mlr3hyperband/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -88,18 +88,18 @@
 <a href="#mlr3hyperband" class="anchor"></a>mlr3hyperband</h1></div>
 <p>Extends the <a href="https://mlr3.mlr-org.com">mlr3</a> package with hyperband tuning.</p>
 <!-- badges: start -->
-
+<p><a href="https://github.com/mlr-org/mlr3hyperband/actions"><img src="https://github.com/mlr-org/mlr3hyperband/workflows/R%20CMD%20Check%20via%20%7Btic%7D/badge.svg?branch=master" alt="R CMD Check via {tic}"></a> <a href="https://cran.r-project.org/package=mlr3hyperband"><img src="https://www.r-pkg.org/badges/version-ago/mlr3hyperband" alt="CRAN Status Badge"></a> <a href="https://cran.rstudio.com/web/packages/mlr3hyperband/index.html"><img src="https://cranlogs.r-pkg.org/badges/mlr3hyperband" alt="CRAN Downloads"></a> <a href="https://www.tidyverse.org/lifecycle/#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a> <a href="https://codecov.io/gh/mlr-org/mlr3hyperband"><img src="https://codecov.io/gh/mlr-org/mlr3hyperband/branch/master/graph/badge.svg" alt="codecov"></a> <a href="https://stackoverflow.com/questions/tagged/mlr3"><img src="https://img.shields.io/badge/stackoverflow-mlr3-orange.svg" alt="StackOverflow"></a> <!-- badges: end --></p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>Install from github by running the following line:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>remotes<span class="op">::</span><span class="kw"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"mlr-org/mlr3hyperband"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="r"><span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"mlr-org/mlr3hyperband"</span>)</pre></div>
 </div>
 <div id="quickstart" class="section level2">
 <h2 class="hasAnchor">
 <a href="#quickstart" class="anchor"></a>Quickstart</h2>
 <p>If you are already familiar with <code>mlr3tuning</code>, then the only change compared to other tuners is to give a numeric hyperparameter a <code>"budget"</code> tag. Afterwards, you can handle hyperband like all other tuners:</p>
-<pre><code><a href="https://rdrr.io/r/base/library.html">library(mlr3hyperband)
+<pre><code><a href="https://mlr3hyperband.mlr-org.com/reference">library(mlr3hyperband)
 
 # give a hyperparameter the "budget" tag
 params = list(
@@ -110,7 +110,7 @@ params = list(
 
 #inst = ... here goes the usual mlr3tuning TuningInstance constructor
 
-# initialize hyperband tuner 
+# initialize hyperband tuner
 tuner = TunerHyperband$new(eta = 2L)
 
 # tune the previously defined TuningInstance
@@ -128,7 +128,7 @@ tuner = TunerHyperband$new(eta = 2L)
 <h2 class="hasAnchor">
 <a href="#examples" class="anchor"></a>Examples</h2>
 <p>Originally, hyperband was created with a “natural” learning parameter as the budget parameter in mind, like <code>nrounds</code> of the XGBoost learner:</p>
-<pre><code><a href="https://rdrr.io/r/base/library.html">library(mlr3hyperband)
+<pre><code><a href="https://mlr3hyperband.mlr-org.com/reference">library(mlr3hyperband)
 library(mlr3learners)
 set.seed(123)
 
@@ -157,7 +157,7 @@ tuner$tune(inst)
 # return best result
 inst$best()</a></code></pre>
 <p>Additionally, our framework also supports the case when no natural fidelity parameter is given by the learner. In this case, one can use <code>mlr3pipelines</code> to define subsampling as a preprocessing step. Then, the <code>frac</code> parameter of subsampling, defining the fraction of the training data to be used, can act as the budget parameter:</p>
-<pre><code><a href="https://rdrr.io/r/base/library.html">library(mlr3hyperband)
+<pre><code><a href="https://mlr3hyperband.mlr-org.com/reference">library(mlr3hyperband)
 library(mlr3pipelines)
 set.seed(123)
 
@@ -196,11 +196,11 @@ inst$best()</a></code></pre>
 </div>
   </div>
 
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
 <h2>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/mlr-org/mlr3hyperband">https://​github.com/​mlr-org/​mlr3hyperband</a>
+<li>Browse source code at <br><a href="https://github.com/mlr-org/mlr3hyperband/">https://​github.com/​mlr-org/​mlr3hyperband/​</a>
 </li>
 <li>Report a bug at <br><a href="https://github.com/mlr-org/mlr3hyperband/issues">https://​github.com/​mlr-org/​mlr3hyperband/​issues</a>
 </li>
@@ -215,23 +215,12 @@ inst$best()</a></code></pre>
 <div class="developers">
 <h2>Developers</h2>
 <ul class="list-unstyled">
-<li>Sebastian Gruber <br><small class="roles"> Maintainer, author </small> <a href="https://orcid.org/0000-0002-8544-3470" target="orcid.widget"><img src="https://members.orcid.org/sites/default/files/vector_iD_icon.svg" class="orcid" alt="ORCID"></a> </li>
-<li>Bernd Bischl <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0001-6002-6980" target="orcid.widget"><img src="https://members.orcid.org/sites/default/files/vector_iD_icon.svg" class="orcid" alt="ORCID"></a> </li>
+<li>Sebastian Gruber <br><small class="roles"> Maintainer, author </small> <a href="https://orcid.org/0000-0002-8544-3470" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Bernd Bischl <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0001-6002-6980" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://github.com/mlr-org/mlr3hyperband/actions"><img src="https://img.shields.io/github/workflow/status/mlr-org/mlr3hyperband/R%20CMD%20Check%20via%20%7Btic%7D?logo=github&amp;label=R%20CMD%20Check%20via%20%7Btic%7D&amp;style=flat-square" alt="R CMD Check via {tic}"></a></li>
-<li><a href="https://cran.r-project.org/package=mlr3hyperband"><img src="https://www.r-pkg.org/badges/version-ago/mlr3hyperband" alt="CRAN Status Badge"></a></li>
-<li><a href="https://cran.rstudio.com/web/packages/mlr3hyperband/index.html"><img src="https://cranlogs.r-pkg.org/badges/mlr3hyperband" alt="CRAN Downloads"></a></li>
-<li><a href="https://www.tidyverse.org/lifecycle/#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
-<li><a href="https://codecov.io/gh/mlr-org/mlr3hyperband"><img src="https://codecov.io/gh/mlr-org/mlr3hyperband/branch/master/graph/badge.svg" alt="codecov"></a></li>
-<li><a href="https://stackoverflow.com/questions/tagged/mlr3"><img src="https://img.shields.io/badge/stackoverflow-mlr3-orange.svg" alt="StackOverflow"></a></li>
-</ul>
-</div>
-</div>
+  </div>
 </div>
 
 
@@ -240,7 +229,7 @@ inst$best()</a></code></pre>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.</p>
 </div>
 
       </footer>

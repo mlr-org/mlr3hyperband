@@ -74,7 +74,7 @@ hyperband will take to finish under the given settings." />
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -101,7 +101,7 @@ hyperband will take to finish under the given settings." />
   <a href="../news/index.html">Changelog</a>
 </li>
         <li>
-  <a href="https://github.com/mlr-org/mlr3hyperband">
+  <a href="https://github.com/mlr-org/mlr3hyperband/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -183,40 +183,38 @@ index.
 For the starting configurations in each bracket it is
 <code><a href='https://rdrr.io/r/base/Round.html'>ceiling((B/R) * ((eta^s)/(s+1)))</a></code>, with <code>B = (bracket amount) * R</code>.
 To receive a table with the full brackets layout, load the following function
-and execute it for the desired <code>R</code> and <code>eta</code>.</p><pre>hyperband_brackets = function(R, eta) {
+and execute it for the desired <code>R</code> and <code>eta</code>.</p><pre><span class='no'>hyperband_brackets</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>R</span>, <span class='no'>eta</span>) {
 
-  result = data.frame()
-  smax = floor(log(R, eta))
-  B = (smax + 1) * R
+  <span class='no'>result</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>()
+  <span class='no'>smax</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>floor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span>(<span class='no'>R</span>, <span class='no'>eta</span>))
+  <span class='no'>B</span> <span class='kw'>=</span> (<span class='no'>smax</span> + <span class='fl'>1</span>) * <span class='no'>R</span>
 
-  # outer loop - iterate over brackets
-  for (s in smax:0) {
+  <span class='co'># outer loop - iterate over brackets</span>
+  <span class='kw'>for</span> (<span class='no'>s</span> <span class='kw'>in</span> <span class='no'>smax</span>:<span class='fl'>0</span>) {
 
-    n = ceiling((B/R) * ((eta^s)/(s+1)))
-    r = R * eta^(-s)
+    <span class='no'>n</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>ceiling</a></span>((<span class='no'>B</span>/<span class='no'>R</span>) * ((<span class='no'>eta</span>^<span class='no'>s</span>)/(<span class='no'>s</span>+<span class='fl'>1</span>)))
+    <span class='no'>r</span> <span class='kw'>=</span> <span class='no'>R</span> * <span class='no'>eta</span>^(-<span class='no'>s</span>)
 
-    # inner loop - iterate over bracket stages
-    for (i in 0:s) {
+    <span class='co'># inner loop - iterate over bracket stages</span>
+    <span class='kw'>for</span> (<span class='no'>i</span> <span class='kw'>in</span> <span class='fl'>0</span>:<span class='no'>s</span>) {
 
-      ni = floor(n * eta^(-i))
-      ri = r * eta^i
-      result = rbind(result, c(smax - s + 1, i + 1, ri, ni))
+      <span class='no'>ni</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>floor</a></span>(<span class='no'>n</span> * <span class='no'>eta</span>^(-<span class='no'>i</span>))
+      <span class='no'>ri</span> <span class='kw'>=</span> <span class='no'>r</span> * <span class='no'>eta</span>^<span class='no'>i</span>
+      <span class='no'>result</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='no'>result</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>smax</span> - <span class='no'>s</span> + <span class='fl'>1</span>, <span class='no'>i</span> + <span class='fl'>1</span>, <span class='no'>ri</span>, <span class='no'>ni</span>))
     }
   }
 
-  names(result) = c("bracket", "bracket_stage", "budget", "n_configs")
-  return(result)
+  <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>result</span>) <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"bracket"</span>, <span class='st'>"bracket_stage"</span>, <span class='st'>"budget"</span>, <span class='st'>"n_configs"</span>)
+  <span class='fu'><a href='https://rdrr.io/r/base/function.html'>return</a></span>(<span class='no'>result</span>)
 }
 
-hyperband_brackets(R = 81L, eta = 3L)
-</pre>
+<span class='fu'>hyperband_brackets</span>(<span class='kw'>R</span> <span class='kw'>=</span> <span class='fl'>81L</span>, <span class='kw'>eta</span> <span class='kw'>=</span> <span class='fl'>3L</span>)</pre>
 
     <h2 class="hasAnchor" id="construction"><a class="anchor" href="#construction"></a>Construction</h2>
 
     
-<pre>TunerHyperband$new(eta = 2, sampler = NULL)
-tnr("hyperband")
-</pre>
+<pre><span class='no'>TunerHyperband</span>$<span class='fu'>new</span>(<span class='kw'>eta</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>sampler</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+<span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/tnr.html'>tnr</a></span>(<span class='st'>"hyperband"</span>)</pre>
 
     <h2 class="hasAnchor" id="parameters"><a class="anchor" href="#parameters"></a>Parameters</h2>
 
@@ -285,13 +283,12 @@ See examples for some code.</p>
 <p>Hyperband supports custom <a href='https://paradox.mlr-org.com/reference/Sampler.html'>Sampler</a> object for initial
 configurations in each bracket.
 A custom sampler may look like this (the full example is given in the
-<code>examples</code> section):</p><pre># - beta distribution with alpha = 2 and beta = 5
-# - categorical distribution with custom probabilities
-sampler = SamplerJointIndep$new(list(
-  Sampler1DRfun$new(params[[2]], function(n) rbeta(n, 2, 5)),
-  Sampler1DCateg$new(params[[3]], prob = c(0.2, 0.3, 0.5))
-))
-</pre>
+<code>examples</code> section):</p><pre><span class='co'># - beta distribution with alpha = 2 and beta = 5</span>
+<span class='co'># - categorical distribution with custom probabilities</span>
+<span class='no'>sampler</span> <span class='kw'>=</span> <span class='no'>SamplerJointIndep</span>$<span class='fu'>new</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
+  <span class='no'>Sampler1DRfun</span>$<span class='fu'>new</span>(<span class='no'>params</span><span class='kw'>[[</span><span class='fl'>2</span>]], <span class='kw'>function</span>(<span class='no'>n</span>) <span class='fu'><a href='https://rdrr.io/r/stats/Beta.html'>rbeta</a></span>(<span class='no'>n</span>, <span class='fl'>2</span>, <span class='fl'>5</span>)),
+  <span class='no'>Sampler1DCateg</span>$<span class='fu'>new</span>(<span class='no'>params</span><span class='kw'>[[</span><span class='fl'>3</span>]], <span class='kw'>prob</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.2</span>, <span class='fl'>0.3</span>, <span class='fl'>0.5</span>))
+))</pre>
 
     <h2 class="hasAnchor" id="runtime-scaling-w-r-t-the-chosen-budget"><a class="anchor" href="#runtime-scaling-w-r-t-the-chosen-budget"></a>Runtime scaling w.r.t. the chosen budget</h2>
 
@@ -324,9 +321,8 @@ receive the level <code>info hb</code> and the default threshold for logs is set
 this level.
 This means, the <code>info</code> logs of function/method calls of
 <a href='https://mlr3tuning.mlr-org.com/reference/mlr3tuning-package.html'>mlr3tuning</a> are not part of the logging by default. To change this,
-run</p><pre># mlr3tuning logs
-lg$set_threshold("info")
-</pre>
+run</p><pre><span class='co'># mlr3tuning logs</span>
+<span class='no'>lg</span>$<span class='fu'>set_threshold</span>(<span class='st'>"info"</span>)</pre>
 
 <p>But be careful as this will add a lot of clutter to the logs.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
@@ -359,15 +355,15 @@ lg$set_threshold("info")
 <a id="method-new"></a></p><h3>Method <code>new()</code></h3>
 
 <h3>Usage</h3>
-<p><div class="r"></p><pre>TunerHyperband$new(eta = 2, sampler = NULL)</pre><p></div></p>
+<p><div class="r"></p><pre><span class='no'>TunerHyperband</span>$<span class='fu'>new</span>(<span class='kw'>eta</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>sampler</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre><p></div></p>
 
 <p><hr>
 <a id="method-clone"></a></p><h3>Method <code>clone()</code></h3>
 <p>The objects of this class are cloneable with this method.</p><h3>Usage</h3>
-<p><div class="r"></p><pre>TunerHyperband$clone(deep = FALSE)</pre><p></div></p>
+<p><div class="r"></p><pre><span class='no'>TunerHyperband</span>$<span class='fu'>clone</span>(<span class='kw'>deep</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre><p></div></p>
 
 <h3>Arguments</h3>
-<p><div class="arguments"></p><dl class='dl-horizontal'>
+<p><div class="arguments"></p><dl'>
 <dt><code>deep</code></dt><dd><p>Whether to make a deep clone.</p></dd>
 
 </dl><p></div></p>
@@ -501,24 +497,10 @@ lg$set_threshold("info")
 <span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>tuner</span>$<span class='no'>info</span>)
 }</div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#format">Format</a></li>
-      <li><a href="#details">Details</a></li>
-      <li><a href="#construction">Construction</a></li>
-      <li><a href="#parameters">Parameters</a></li>
-      <li><a href="#fields">Fields</a></li>
-      <li><a href="#hyperband-without-learner-budget">Hyperband without learner budget</a></li>
-      <li><a href="#custom-sampler">Custom sampler</a></li>
-      <li><a href="#runtime-scaling-w-r-t-the-chosen-budget">Runtime scaling w.r.t. the chosen budget</a></li>
-      <li><a href="#logging">Logging</a></li>
-      <li><a href="#references">References</a></li>
-      <li><a href="#super-class">Super class</a></li>
-      <li><a href="#methods">Methods</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -529,7 +511,7 @@ lg$set_threshold("info")
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.</p>
 </div>
 
       </footer>
