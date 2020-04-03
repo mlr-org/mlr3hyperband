@@ -71,7 +71,7 @@ autoplot.TuningInstance = function(object, # nolint
 
   tab = fortify(model = object, measure = measure, params = params)
   if (!is.null(hb_bracket))
-    tab = tab[bracket == hb_bracket, ]
+    tab = tab[bracket %in% hb_bracket, ]
 
   switch(type,
     "boxplot" = {
@@ -94,7 +94,7 @@ autoplot.TuningInstance = function(object, # nolint
 
       if (length(params) == 1L) {
         p = ggplot(tab, aes_string(x = params, y = measure_id))
-        p = p + geom_line() + geom_point()
+        p = p + geom_point() + geom_point()
       }
       if (length(params) > 1L) {
         p = ggplot(tab, aes_string(x = params[1], y = params[2], colour = measure_id))

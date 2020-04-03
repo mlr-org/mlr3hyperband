@@ -10,24 +10,45 @@ context("plot_TuningInstance")
 test_that("Plotting works", {
   
 	ps = ParamSet$new(params = list(
-	  ParamInt$new("nrounds", lower = 1L, upper = 8L, tags = "budget"),
+	  ParamInt$new("nrounds", lower = 1L, upper = 16L, tags = "budget"),
 	  ParamInt$new("max_depth", lower = 1L, upper = 10L)
 	))
 
 	task = tsk("pima")
 
-	term = term("evals", n_evals = 100000L)
-	inst = TuningInstance$new(task, lrn("classif.xgboost"), rsmp("holdout"), msr("classif.acc"), ps, term)
-	tuner = tnr("hyperband", eta = 3L)
+	inst = TuningInstance$new(
+		task, 
+		lrn("classif.xgboost"), 
+		rsmp("holdout"), 
+		c(msr("classif.acc"), msr("classif.fpr")), 
+		ps, 
+		term("evals", n_evals = 100L)
+	)
+
+	tuner = tnr("hyperband", eta = 2L)
 
 	tuner$tune(inst)
 
 	g = autoplot(inst)
 	expect_true(is.ggplot(g))	
 
-	g = autoplot(inst, "budget")
+	g = autoplot(inst, facet_per_bracket = FALSE)
+	expect_true(is.ggplot(g))	
+
+	g = autoplot(inst, hb_bracket = 4L)
+	expect_true(is.ggplot(g))	
+	g = autoplot(inst, hb_bracket = c(3L:4L))
+	expect_true(is.ggplot(g))	
+
+	g = autoplot(inst, type = "budget")
 	expect_true(is.ggplot(g))
 
-	g = autoplot(inst, "input", params = "max_depth")
+	g = autoplot(inst, type = "input", params = "max_depth")
+	expect_true(is.ggplot(g))
+
+	g = autoplot(inst, type = "input", facet_per_bracket = FALSE)
+	expect_true(is.ggplot(g))
+
+	g = autoplot(inst, measure = "classif.fpr")
 	expect_true(is.ggplot(g))
 })
