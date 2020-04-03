@@ -12,7 +12,6 @@
 #'   Additional arguments, passed down to the respective `geom`.
 #'
 #' @return [ggplot2::ggplot()] object.
-#' @export
 #' @examples
 #' library(mlr3hyperband)
 #'
@@ -23,7 +22,7 @@
 #'
 #' ps = ParamSet$new(
 #'    params = list(
-#'       ParamInt$new("nrounds", lower = 1L, upper = 270L, tags = "budget"),
+#'       ParamInt$new("nrounds", lower = 10L, upper = 270L, tags = "budget"),
 #'       ParamInt$new("max_depth", lower = 1, upper = 100)
 #'    )
 #' )
@@ -31,8 +30,12 @@
 #' inst = TuningInstance$new(task, learner, resampling, measure, ps, term)
 #' tuner = tnr("hyperband", eta = 3L)
 #'
-#' head(fortify(object))
-#' autoplot(object)
+#' tuner$tune(inst)
+#' 
+#' head(fortify(inst))
+#' autoplot(inst)
+#' @export
+
 autoplot.TuningInstance = function(object, # nolint
   type = "boxplot",
   measure = NULL,
@@ -42,22 +45,24 @@ autoplot.TuningInstance = function(object, # nolint
   ...) {
 
   assert_string(type)
+  assert_string(measure, null.ok = TRUE)
   assert_integer(hb_bracket, null.ok = TRUE)
 
   measures = object$measures
   measure_ids = unlist(lapply(measures, function(x) x$id))
   assert_choice(measure, measure_ids, null.ok = TRUE)
 
-  if (!is.null(measure))
-    measure = measures[[measure %in% measure_ids]]
-  else 
+  if (is.null(measure)) 
     measure = measures[[1]]
+  else 
+    measure = measures[[which(measure == measure_ids)]]
 
   measure_id = measure$id
 
   ps = object$param_set
   pids = ps$ids()
   assert_subset(params, pids, empty.ok = TRUE)
+  # plots work for numeric and integer parameters only 
   assert_param_set(ps, c("ParamDbl", "ParamInt"))
 
   if (is.null(params)) {
@@ -70,8 +75,8 @@ autoplot.TuningInstance = function(object, # nolint
 
   switch(type,
     "boxplot" = {
-      p = ggplot(tab, mapping = aes_string(x = "bracket_stage", y = measure_ids[[1]])) + geom_boxplot()
-      p = p + geom_point(data = tab[isbest == TRUE, ], aes_string(x = "bracket_stage", y = measure_ids[[1]]), colour = "blue")
+      p = ggplot(tab, mapping = aes_string(x = "bracket_stage", y = measure_id)) + geom_boxplot()
+      p = p + geom_point(data = tab[isbest == TRUE, ], aes_string(x = "bracket_stage", y = measure_id), colour = "blue")
       if (facet_per_bracket)
         p = p + facet_grid(cols = vars(bracket), labeller = label_both) 
       p + theme_bw()      
@@ -106,27 +111,17 @@ autoplot.TuningInstance = function(object, # nolint
 
 #' @export
 fortify.TuningInstance = function(model, measure, params = NULL, ...) { # nolint
+  
   minimize = measure$minimize
   mid = measure$id 
 
-  archive = model$archive()
-  archive = cbind(archive, do.call(rbind, archive$tune_x))
-  archive$tune_x = NULL
-  # archive = cbind(archive, do.call(rbind, archive$params))
-  archive$params = NULL
+  archive = model$archive("tune_x")
   archive$bracket_stage = as.factor(archive$bracket_stage)
   archive$bracket = factor(archive$bracket, levels = sort(unique(archive$bracket), decreasing = TRUE))
 
-  if (minimize) 
-    archive[measure$id] = archive[measure$id] * - 1 
+  fun = ifelse(minimize, min, max)
 
-  archive[, isbest := (get(mid) == max(get(mid))), by = c("bracket", "bracket_stage")]
-
-  if (minimize) 
-    archive[measure$id] = archive[measure$id] * - 1 
-
-  if (!is.null(params))
-    archive[, (params) := lapply(.SD, as.numeric), .SDcols = params]
+  archive[, isbest := (get(mid) == fun(get(mid))), by = c("bracket", "bracket_stage")]
 
   return(archive)
 }
