@@ -8,7 +8,7 @@
   object,
   type = "boxplot",
   measure = NULL,
-  hbbracket = NULL,
+  hb_bracket = NULL,
   params = NULL,
   facet_per_bracket = TRUE,
   ...
@@ -40,7 +40,7 @@ measure = msr("classif.acc")
 
 ps = ParamSet$new(
    params = list(
-      ParamInt$new("nrounds", lower = 1L, upper = 270L, tags = "budget"),
+      ParamInt$new("nrounds", lower = 10L, upper = 270L, tags = "budget"),
       ParamInt$new("max_depth", lower = 1, upper = 100)
    )
 )
@@ -48,6 +48,8 @@ term = term("evals", n_evals = 100000L)
 inst = TuningInstance$new(task, learner, resampling, measure, ps, term)
 tuner = tnr("hyperband", eta = 3L)
 
-head(fortify(object))
-autoplot(object)
+tuner$tune(inst)
+
+head(fortify(inst))
+autoplot(inst)
 }
