@@ -14,7 +14,10 @@
 #' @return [ggplot2::ggplot()] object.
 #' @examples
 #' library(mlr3hyperband)
-#'
+#' library(mlr3)
+#' library(mlr3learners)
+#' library(mlr3tuning)
+#' 
 #' task = tsk("pima")
 #' learner = lrn("classif.xgboost")
 #' resampling = rsmp("holdout")
@@ -32,7 +35,6 @@
 #'
 #' tuner$tune(inst)
 #' 
-#' head(fortify(inst))
 #' autoplot(inst)
 #' @export
 

@@ -32,6 +32,9 @@ respective hyperparameter configurations if tuning was performed by \link[mlr3hy
 }
 \examples{
 library(mlr3hyperband)
+library(mlr3)
+library(mlr3learners)
+library(mlr3tuning)
 
 task = tsk("pima")
 learner = lrn("classif.xgboost")
@@ -50,6 +53,5 @@ tuner = tnr("hyperband", eta = 3L)
 
 tuner$tune(inst)
 
-head(fortify(inst))
 autoplot(inst)
 }
