@@ -7,7 +7,7 @@
 #' @description
 #' Subclass for hyperband tuning.
 #'
-#' Hyperband is a budget oriented-procedure, weeding out suboptimally
+#' Hyperband is a budget oriented-procedure, weeding out suboptimal
 #' performing configurations early in a sequential training process,
 #' increasing tuning efficiency as a consequence.
 #'
