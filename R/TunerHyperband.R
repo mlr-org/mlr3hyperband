@@ -26,7 +26,7 @@
 #' An alternative approach using subsampling and pipelines is described below.
 #'
 #' Naturally, hyperband terminates once all of its brackets are evaluated,
-#' so a [Terminator][mlr3tuning::Terminator] in the tuning instance acts as an upper
+#' so a [mlr3tuning::Terminator] in the tuning instance acts as an upper
 #' bound and should be only set to a low value if one is unsure of how long
 #' hyperband will take to finish under the given settings.
 #'

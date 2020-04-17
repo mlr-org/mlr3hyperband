@@ -29,7 +29,7 @@ by tagging a single hyperparameter in the \link[paradox:ParamSet]{paradox::Param
 An alternative approach using subsampling and pipelines is described below.
 
 Naturally, hyperband terminates once all of its brackets are evaluated,
-so a \link[mlr3tuning:Terminator]{Terminator} in the tuning instance acts as an upper
+so a \link[mlr3tuning:Terminator]{mlr3tuning::Terminator} in the tuning instance acts as an upper
 bound and should be only set to a low value if one is unsure of how long
 hyperband will take to finish under the given settings.
 }
