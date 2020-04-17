@@ -4,9 +4,7 @@
 \alias{TunerHyperband}
 \alias{mlr_tuners_hyperband}
 \title{Tuner using the Hyperband algorithm}
-\format{
-\link[R6:R6Class]{R6::R6Class} object inheriting from \link[mlr3tuning:Tuner]{mlr3tuning::Tuner}.
-}
+\format{\link[R6:R6Class]{R6::R6Class} object inheriting from \link[mlr3tuning:Tuner]{mlr3tuning::Tuner}.}
 \description{
 Subclass for hyperband tuning.
 
@@ -173,16 +171,20 @@ like it is shown in the \code{examples}.
 
 \section{Logging}{
 
-When loading the \link{mlr3hyperband} package, two loggers based on the \link{lgr} package are made available.
-One is called \code{mlr3}, the other \code{mlr3/mlr3tuning}. The first one is the
-original one of \link{mlr3}, while the latter was modified from \link{mlr3tuning}. The modification
-is of the form of an added level called \verb{info hb} (value \code{350}), that sits
-between \code{warn} and \code{info}. All info logs printed by the hyperband algorithm
-receive the level \verb{info hb} and the default threshold for logs is set to
-this level.
-This means, the \code{info} logs of function/method calls of
-\link{mlr3tuning} are not part of the logging by default. To change this,
-run\preformatted{# mlr3tuning logs
+When loading the \link{mlr3hyperband} package, three loggers based on the \link{lgr}
+package are made available.
+One is called \code{mlr3}, the other \code{mlr3/mlr3tuning} and the last
+\code{mlr3/mlr3tuning/mlr3hyperband}. The first tow are the
+original ones of \link{mlr3} and \link{mlr3tuning}, while the latter was added
+especially for \link{mlr3hyperband}.
+Each logger is responsible for loggings in executed code of each respective
+package. This means \link{mlr3tuning} code executed in \link{mlr3hyperband} is logged
+by \code{mlr3/mlr3tuning} and NOT \code{mlr3/mlr3tuning/mlr3hyperband}.
+To change the behaviour of each logger, run\preformatted{# mlr3 add info logs
+lgr::get_logger("mlr3")$set_threshold("info")
+# mlr3tuning add info logs
+lgr::get_logger("mlr3/mlr3tuning")$set_threshold("info")
+# mlr3hyperband add info logs (already set by default)
 lg$set_threshold("info")
 }
 
@@ -338,7 +340,6 @@ print(tuner$info)
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{TunerHyperband$new(eta = 2, sampler = NULL)}\if{html}{\out{</div>}}
@@ -347,7 +348,6 @@ print(tuner$info)
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{
