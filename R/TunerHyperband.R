@@ -451,7 +451,7 @@ TunerHyperband = R6Class("TunerHyperband",
           if (stage > 0) {
 
             # get performance of each active configuration
-            configs_perf = instance$bmr$score(instance$measures)
+            configs_perf = instance$bmr$aggregate(instance$measures)
             n_rows       = nrow(configs_perf)
             configs_perf = configs_perf[(n_rows - mu_previous + 1):n_rows]
 
