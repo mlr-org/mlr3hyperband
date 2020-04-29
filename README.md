@@ -24,7 +24,7 @@ remotes::install_github("mlr-org/mlr3hyperband")
 If you are already familiar with `mlr3tuning`, then the only change compared to other tuners is to give a numeric hyperparameter a `"budget"` tag.
 Afterwards, you can handle hyperband like all other tuners:
 
-```
+```r
 library(paradox)
 library(mlr3hyperband)
 
@@ -64,7 +64,7 @@ An alternative approach using subsampling and pipelines is described further bel
 
 Originally, hyperband was created with a "natural" learning parameter as the budget parameter in mind, like `nrounds` of the XGBoost learner:
 
-```
+```r
 library(mlr3hyperband)
 library(mlr3tuning)
 library(mlr3learners)
@@ -101,7 +101,7 @@ Additionally, our framework also supports the case when no natural fidelity para
 In this case, one can use `mlr3pipelines` to define subsampling as a preprocessing step.
 Then, the `frac` parameter of subsampling, defining the fraction of the training data to be used, can act as the budget parameter:
 
-```
+```r
 library(mlr3hyperband)
 library(mlr3pipelines)
 set.seed(123)
