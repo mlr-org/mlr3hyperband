@@ -32,17 +32,11 @@ test_that("TunerHyperband multicrit", {
     term("evals", n_evals = 100000)
   )
 
-  tuner = TunerHyperband$new(eta = 4L)
-  expect_tuner(tuner)
-  tuner$tune(inst)
+  tuner = tnr("hyperband", eta = 4L)
+  tuner$optimize(inst)
   # lapply(inst$pareto_front(), expect_resample_result)
 
-  results = inst$archive()[, .(
-    cp = sapply(params, "[", "cp"),
-    minsplit = sapply(params, "[", "minsplit"),
-    classif.tpr,
-    classif.fpr
-  )]
+  results = inst$archive$data[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
 
   expect_data_table(results, ncols = 4, nrows = 7)
 })
@@ -53,7 +47,6 @@ test_that("TunerHyperband using CV", {
 
   # define hyperparameter and budget parameter for tuning with hyperband
   ps = ParamSet$new(list(
-
     ParamInt$new("nrounds", lower = 1, upper = 8, tags = "budget"),
     ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
   ))
@@ -69,16 +62,10 @@ test_that("TunerHyperband using CV", {
   )
 
   # hyperband + tuning
-  tuner = TunerHyperband$new(eta = 2L)
-  expect_tuner(tuner)
-  tuner$tune(inst)
-  expect_resample_result(inst$best())
+  tuner = tnr("hyperband", eta = 2L)
+  tuner$optimize(inst)
 
-  results = inst$archive()[, .(
-    nrounds = sapply(params, "[", "nrounds"),
-    booster = sapply(params, "[", "booster"),
-    classif.ce
-  )]
+  results = inst$archive$data[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
 
   expect_data_table(results, ncols = 3, nrows = 35)
 })
@@ -110,18 +97,10 @@ test_that("TunerHyperband using subsampling", {
   )
 
   # define and call hyperband as usual
-  tuner = TunerHyperband$new(eta = 4L)
-  expect_tuner(tuner)
-  tuner$tune(inst)
-  expect_resample_result(inst$best())
+  tuner = tnr("hyperband", eta = 4L)
+  tuner$optimize(inst)
 
-  results = inst$archive()[, .(
-    frac = sapply(params, "[", "subsample.frac"),
-    cp = sapply(params, "[", "classif.rpart.cp"),
-    minsplit = sapply(params, "[", "classif.rpart.minsplit"),
-    classif.ce
-  )]
-
+  results = inst$archive$data[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
   expect_data_table(results, ncols = 4, nrows = 7)
 })
 
@@ -152,24 +131,18 @@ test_that("TunerHyperband using subsampling and non-integer eta", {
   )
 
   # define and call hyperband as usual
-  tuner = TunerHyperband$new(eta = 3.5)
-  expect_tuner(tuner)
-  tuner$tune(inst)
-  expect_resample_result(inst$best())
+  tuner = tnr("hyperband", eta = 3.5)
+  tuner$optimize(inst)
 
-  results = inst$archive()[, .(
-    frac = sapply(params, "[", "subsample.frac"),
-    cp = sapply(params, "[", "classif.rpart.cp"),
-    minsplit = sapply(params, "[", "classif.rpart.minsplit"),
-    classif.ce
-  )]
-
+  results = inst$archive$data[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
   expect_data_table(results, ncols = 4, nrows = 7)
 })
 
 
 test_that("TunerHyperband using param trafo and non-integer eta", {
   set.seed(123)
+
+  #FIXME: This Test does not what it is intendet to do
 
   # define hyperparameter and budget parameter for tuning with hyperband
   ps = ParamSet$new(list(
@@ -193,18 +166,10 @@ test_that("TunerHyperband using param trafo and non-integer eta", {
   )
 
   # hyperband + tuning
-  tuner = TunerHyperband$new(eta = 3.9)
-  expect_tuner(tuner)
-  tuner$tune(inst)
-  expect_resample_result(inst$best())
+  tuner = tnr("hyperband", eta = 3.9)
+  tuner$optimize(inst)
 
-  results = inst$archive()[, .(
-    nrounds = sapply(params, "[", "nrounds"),
-    eta     = sapply(params, "[", "eta"),
-    booster = sapply(params, "[", "booster"),
-    classif.ce
-  )]
-
+  results = inst$archive$data[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
   expect_data_table(results, ncols = 4, nrows = 7)
 })
 
@@ -248,17 +213,17 @@ test_that("TunerHyperband using custom sampler", {
   ))
 
   # check if asserts throw errors on false samplers
-  tuner = TunerHyperband$new(eta = 2L, sampler = sampler_fail1)
+  tuner = tnr("hyperband", eta = 2L, sampler = sampler_fail1)
   expect_tuner(tuner)
-  expect_error(tuner$tune(inst), "Assertion on ")
-  tuner = TunerHyperband$new(eta = 2L, sampler = sampler_fail2)
+  expect_error(tuner$optimize(inst), "Assertion on ")
+  tuner = tnr("hyperband", eta = 2L, sampler = sampler_fail2)
   expect_tuner(tuner)
-  expect_error(tuner$tune(inst), "Assertion on ")
+  expect_error(tuner$optimize(inst), "Assertion on ")
 
   # check if correct sampler works
-  tuner = TunerHyperband$new(eta = 2L, sampler = sampler)
+  tuner = tnr("hyperband", eta = 2L, sampler = sampler)
   expect_tuner(tuner)
-  tuner$tune(inst)
+  tuner$optimize(inst)
   expect_resample_result(inst$best())
 
   results = inst$archive()[, .(
@@ -292,9 +257,9 @@ test_that("TunerHyperband invalid input", {
     term("evals", n_evals = 100000)
   )
 
-  tuner = TunerHyperband$new(eta = 2L)
+  tuner = tnr("hyperband", eta = 2L)
   expect_tuner(tuner)
-  expect_error(tuner$tune(inst), "Assertion on ")
+  expect_error(tuner$optimize(inst), "Assertion on ")
 
 
   ### two budget parameters
@@ -314,10 +279,10 @@ test_that("TunerHyperband invalid input", {
     term("evals", n_evals = 100000)
   )
 
-  tuner = TunerHyperband$new(eta = 2L)
+  tuner = tnr("hyperband", eta = 2L)
   expect_tuner(tuner)
   expect_error(
-    tuner$tune(inst),
+    tuner$optimize(inst),
     "Exactly one hyperparameter must be tagged with 'budget'"
   )
 })

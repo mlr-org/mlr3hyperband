@@ -41,31 +41,43 @@ expect_tuner = function(tuner) {
   expect_function(tuner$optimize, args = "inst")
 }
 
-test_tuner_hyperband = function(eta, n_dim = 1L, term_evals = NULL, lower_b, upper_b, measures = "classif.ce") {
+expect_info = function(eta, lower_b, upper_b, archive) {
+  hb_meta_info = hyperband_brackets(R = upper_b / lower_b, eta = eta)
+  hb_meta_info = as.data.table(hb_meta_info)
+  tuner_info = archive$data[, colnames(hb_meta_info), with = FALSE]
+  tuner_info = unique(tuner_info) #becasue info for all x is duplicated in each bracket
+  real_evals = sum(tuner_info$n_configs)
+
+  expect_equal(hb_meta_info, tuner_info)
+  expect_equal(real_evals, archive$n_evals)
+  expect_data_table(archive$data, nrows = real_evals)
+}
+
+test_tuner_hyperband = function(eta, n_dim = 1L, term_evals = NULL, lower_b, upper_b, measures = "classif.ce", learner = lrn("classif.xgboost"), task = tsk("pima"), ps = NULL) {
 
   # run for an (almost) arbitrary time if NULL is given
-  if (is.null(term_evals)) term_evals = 999999
-
-  ps = if (n_dim == 1) {
-
-    ParamSet$new(params = list(
-      ParamInt$new("nrounds", lower = lower_b, upper = upper_b, tags = "budget"),
-      ParamInt$new("max_depth", lower = 1, upper = 100)
-    ))
-
-  } else if (n_dim == 2) {
-
-    ParamSet$new(params = list(
-      ParamInt$new("nrounds", lower = lower_b, upper = upper_b, tags = "budget"),
-      ParamDbl$new("eta", lower = 0, upper = 1),
-      ParamInt$new("max_depth", lower = 1, upper = 100)
-    ))
+  if (is.null(term_evals)) {
+    term = term("none")
+  } else {
+    term = term("evals", n_evals = term_evals)
   }
 
-  task = tsk("pima")
+  if (is.null(ps)) {
+    if (n_dim == 1) {
+      ps = ParamSet$new(params = list(
+        ParamInt$new("nrounds", lower = lower_b, upper = upper_b, tags = "budget"),
+        ParamInt$new("max_depth", lower = 1, upper = 100)
+      ))
+    } else if (n_dim == 2) {
+      ps = ParamSet$new(params = list(
+        ParamInt$new("nrounds", lower = lower_b, upper = upper_b, tags = "budget"),
+        ParamDbl$new("eta", lower = 0, upper = 1),
+        ParamInt$new("max_depth", lower = 1, upper = 100)
+      ))
+    }
+  }
 
-  term = term("evals", n_evals = term_evals)
-  inst = TuningInstance$new(task, lrn("classif.xgboost"), rsmp("holdout"), lapply(measures, msr), ps, term)
+  inst = TuningInstance$new(task, learner, rsmp("holdout"), lapply(measures, msr), ps, term)
   tuner = tnr("hyperband", eta = eta)
   expect_tuner(tuner)
 
@@ -73,87 +85,33 @@ test_tuner_hyperband = function(eta, n_dim = 1L, term_evals = NULL, lower_b, upp
   archive = inst$archive
 
   # compare results with full hyperband brackets if tuner was fully evaluated
-  if (term_evals == 999999) {
-    hb_meta_info = hyperband_brackets(R = upper_b / lower_b, eta = eta)
-    hb_meta_info = as.data.table(hb_meta_info)
-    tuner_info = inst$archive$data[, colnames(hb_meta_info), with = FALSE]
-    tuner_info = unique(tuner_info) #becasue info for all x is duplicated in each bracket
-    real_evals = sum(tuner_info$n_configs)
-
-    expect_equal(hb_meta_info, tuner_info)
-    expect_equal(real_evals, inst$archive$n_evals)
-    expect_data_table(archive$data, nrows = real_evals)
-
+  if (!inst$is_terminated) {
+    expect_info(eta, lower_b, upper_b, archive)
   } else {
     expect_data_table(archive$data, min.rows = term_evals)
-    expect_gte(inst$archive$n_evals, term_evals)
+    expect_gte(archive$n_evals, term_evals)
   }
 
+  sc = inst$result$tune_x
+  sp = inst$result$perf
 
-  r = inst$result
-  sc = r$tune_x
-  sp = r$perf
+  expect_list(sc, len = ps$length)
 
-  # hotfix; remove "if" once R CMD works without
-  if (TRUE) expect_list(sc, len = n_dim + 1)
-
-  if (n_dim == 1) {
-    expect_named(sc, c("nrounds", "max_depth"))
-  } else if (n_dim == 2) {
-    expect_named(sc, c("nrounds", "eta", "max_depth"))
-  }
-
+  expect_names(names(sc), identical.to = ps$ids())
   expect_numeric(sp, len = length(measures))
-  expect_named(sp, measures)
+  expect_names(names(sp), identical.to = measures)
   list(tuner = tuner, inst = inst)
 }
 
-check_hyperband_info = function()
-
 # test an implemented subclass tuner by running a test with dependent params
 # returns: tune_result and instance
-test_tuner_hyperband_dependencies = function(key, eta, term_evals = NULL, lower_b, upper_b) {
-
-  # run for an (almost) arbitrary time if NULL is given
-  if (is.null(term_evals)) term_evals = 999999
-
-  term = term("evals", n_evals = term_evals)
+test_tuner_hyperband_dependencies = function(eta, term_evals = NULL, lower_b, upper_b) {
   ll = LearnerRegrDepParams$new()
   ll$param_set$add(
     ParamInt$new("nrounds", lower = lower_b, upper = upper_b, tags = "budget")
   )
-  inst = TuningInstance$new(tsk("boston_housing"), ll, rsmp("holdout"), msr("regr.mse"), ll$param_set, term)
-  tuner = tnr(key, eta)
-  expect_tuner(tuner)
-  tuner$optimize(inst)
-  archive = inst$archive
-
-  real_evals = sum(tuner$info$n_configs)
-
-  # compare results with full hyperband brackets if tuner was fully evaluated
-  if (term_evals == 999999) {
-
-    hb_meta_info = hyperband_brackets(R = upper_b / lower_b, eta = eta)
-    hb_meta_info = as.data.table(hb_meta_info)
-    tuner_info = tuner$info[, c(1:3, 5)]
-
-    expect_equal(hb_meta_info, tuner_info)
-    expect_equal(real_evals, inst$archive$n_evals)
-    expect_data_table(archive$data, nrows = real_evals)
-
-  } else {
-    expect_data_table(archive$data, min.rows = term_evals)
-    expect_gte(inst$archive$n_evals, term_evals)
-  }
-
-  r = inst$result
-  sc = r$tune_x
-  sp = r$perf
-  expect_list(sc)
-  expect_names(names(sc), subset.of = c("xx", "yy", "cp", "nrounds"))
-  expect_numeric(sp, len = 1L)
-  expect_names(names(sp), identical.to = "regr.mse")
-  list(tuner = tuner, inst = inst)
+  test_res = test_tuner_hyperband(eta, term_evals, lower_b, upper_b, measures = "regr.mse", learner = ll, task = tsk("boston_housing"), ps = ll$param_set)
+  test_res
 }
 
 

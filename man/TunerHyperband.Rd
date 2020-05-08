@@ -4,7 +4,9 @@
 \alias{TunerHyperband}
 \alias{mlr_tuners_hyperband}
 \title{Tuner using the Hyperband algorithm}
-\format{\link[R6:R6Class]{R6::R6Class} object inheriting from \link[mlr3tuning:Tuner]{mlr3tuning::Tuner}.}
+\format{
+\link[R6:R6Class]{R6::R6Class} object inheriting from \link[mlr3tuning:Tuner]{mlr3tuning::Tuner}.
+}
 \description{
 Subclass for hyperband tuning.
 
@@ -319,8 +321,8 @@ print(tuner$info)
 \references{
 \cite{mlr3hyperband}{li_2018}
 }
-\section{Super class}{
-\code{\link[mlr3tuning:Tuner]{mlr3tuning::Tuner}} -> \code{TunerHyperband}
+\section{Super classes}{
+\code{\link[bbotk:Optimizer]{bbotk::Optimizer}} -> \code{\link[mlr3tuning:Tuner]{mlr3tuning::Tuner}} -> \code{TunerHyperband}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -332,22 +334,24 @@ print(tuner$info)
 \if{html}{
 \out{<details open ><summary>Inherited methods</summary>}
 \itemize{
-\item \out{<span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="format">}\href{../../mlr3tuning/html/Tuner.html#method-format}{\code{mlr3tuning::Tuner$format()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="print">}\href{../../mlr3tuning/html/Tuner.html#method-print}{\code{mlr3tuning::Tuner$print()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="tune">}\href{../../mlr3tuning/html/Tuner.html#method-tune}{\code{mlr3tuning::Tuner$tune()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="format">}\href{../../bbotk/html/Optimizer.html#method-format}{\code{bbotk::Optimizer$format()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="print">}\href{../../bbotk/html/Optimizer.html#method-print}{\code{bbotk::Optimizer$print()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="optimize">}\href{../../mlr3tuning/html/Tuner.html#method-optimize}{\code{mlr3tuning::Tuner$optimize()}}\out{</span>}
 }
 \out{</details>}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TunerHyperband$new(eta = 2, sampler = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{TunerHyperband$new()}\if{html}{\out{</div>}}
 }
 
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{
