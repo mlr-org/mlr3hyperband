@@ -478,10 +478,8 @@ TunerHyperband = R6Class("TunerHyperband",
           # INFO logs in the following function call are ignored by default
           # set lgr::lgr$set_threshold(400) to include them
           inst$eval_batch(active_configs)
-
-          )
-        }
-      }
+        } #close inner loop
+      } #close outer loop
 
       lg$log(
         "info",
