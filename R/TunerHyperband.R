@@ -159,14 +159,14 @@
 #' ```
 #'
 #' @section Logging:
-#' When loading the [mlr3hyperband] package, three loggers based on the [lgr] 
+#' When loading the [mlr3hyperband] package, three loggers based on the [lgr]
 #' package are made available.
-#' One is called `mlr3`, the other `mlr3/mlr3tuning` and the last 
+#' One is called `mlr3`, the other `mlr3/mlr3tuning` and the last
 #' `mlr3/mlr3tuning/mlr3hyperband`. The first tow are the
 #' original ones of [mlr3] and [mlr3tuning], while the latter was added
-#' especially for [mlr3hyperband]. 
+#' especially for [mlr3hyperband].
 #' Each logger is responsible for loggings in executed code of each respective
-#' package. This means [mlr3tuning] code executed in [mlr3hyperband] is logged 
+#' package. This means [mlr3tuning] code executed in [mlr3hyperband] is logged
 #' by `mlr3/mlr3tuning` and NOT `mlr3/mlr3tuning/mlr3hyperband`.
 #' To change the behaviour of each logger, run
 #' ```
@@ -311,25 +311,18 @@ TunerHyperband = R6Class("TunerHyperband",
   inherit = Tuner,
 
   public = list(
+
     # storing non-printed logging information
-    info = NULL,
+    info = NULL, #FIXME should all be in opt archive
 
     # create hyperband parameters and init super class (Tuner)
-    initialize = function(eta = 2, sampler = NULL) {
-
-      # class wide lower bound of eta (since eta >1)
-      lowest_eta = 1.0001
-
-      # eta has do be >1, otherwise log(R, eta) would break
-      assert_numeric(eta, lower = lowest_eta)
+    initialize = function() {
 
       ps_hyperband = ParamSet$new(list(
-        ParamDbl$new("eta", lower = lowest_eta, tags = "required"),
-        ParamUty$new("sampler",
-          custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE))
+        ParamDbl$new("eta", lower = 1.0001, tags = "required", default = 2),
       ))
 
-      ps_hyperband$values = list(eta = eta, sampler = sampler)
+      ps_hyperband$values = list(eta = 2)
 
       super$initialize(
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
@@ -341,46 +334,34 @@ TunerHyperband = R6Class("TunerHyperband",
 
   private = list(
 
-    .tune = function(instance) {
+    .optimize = function(inst) {
 
       # define aliases for better readability
       eta = self$param_set$values$eta
-      sampler = self$param_set$values$sampler
-      rr = instance$resampling
-      ps = instance$param_set
-      task = instance$task
-      msr_ids = ids(instance$measures)
-      to_minimize = map_lgl(instance$measures, "minimize")
+      rr = inst$resampling
+      ps = inst$param_set
+      task = inst$task
+      msr_ids = ids(inst$measures)
+      to_minimize = map_lgl(inst$measures, "minimize")
 
       # name of the hyperparameters with a budget tag
-      budget_id = instance$param_set$ids(tags = "budget")
-      # budget parameter MUST be defined as integer or double in paradox
-      assert_subset(ps$class[budget_id], c("ParamInt", "ParamDbl"))
+      budget_id = ps$ids(tags = "budget")
       # check if we have EXACTLY 1 budget parameter, or else throw an informative error
       if (length(budget_id) != 1) {
         stopf("Exactly one hyperparameter must be tagged with 'budget'")
       }
 
-      # construct unif sampler if non is given and get sampler ids
-      if (is.null(sampler)) {
-        sampler = SamplerUnif$new(ps)
-        smp_ids = sampler$param_set$ids()
-
-      } else {
-        smp_ids = sampler$param_set$ids()
-        # budget param is not allowed to be defined in sampler
-        assert_disjunct(budget_id, smp_ids)
-        smp_ids = c(smp_ids, budget_id)
-      }
+      # budget parameter MUST be defined as integer or double in paradox
+      assert_choice(ps$class[[budget_id]], c("ParamInt", "ParamDbl"))
+      ps_sampler = ps$subset(setdiff(ps$ids(), budget_id))
+      sampler = SamplerUnif$new(ps_sampler)
 
       # use parameter tagged with 'budget' as budget for hyperband
-      budget_lower = ps$lower[budget_id]
-      budget_upper = ps$upper[budget_id]
+      budget_lower = ps$lower[[budget_id]]
+      budget_upper = ps$upper[[budget_id]]
 
       # we need the budget to start with a SMALL NONNEGATIVE value
       assert_number(budget_lower, lower = 1e-8)
-      # every parameter has to appear in the sampler
-      assert_set_equal(ps$ids(), smp_ids)
 
       # rescale config max budget (:= 'R' in the original paper)
       # this represents the maximum budget a single configuration
@@ -403,7 +384,7 @@ TunerHyperband = R6Class("TunerHyperband",
       B = (bracket_max + 1L) * config_max_b
 
       # outer loop - iterating over brackets
-      for (bracket in bracket_max:0) {
+      for (bracket in seq(bracket_max,0)) {
 
         # for less confusion of the user we start the print with bracket 1
         lg$log(
@@ -420,11 +401,10 @@ TunerHyperband = R6Class("TunerHyperband",
           config_max_b / eta^bracket
 
         # generate design based on given parameter set and sampler
-        design = sampler$sample(mu_current)
-        active_configs = design$data
+        active_configs = sampler$sample(mu_current)$data
 
         # inner loop - iterating over bracket stages
-        for (stage in 0:bracket) {
+        for (stage in seq(0,bracket)) {
 
           # amount of configs of the previous stage
           mu_previous = mu_current
@@ -451,7 +431,7 @@ TunerHyperband = R6Class("TunerHyperband",
           if (stage > 0) {
 
             # get performance of each active configuration
-            configs_perf = instance$bmr$score(instance$measures)
+            configs_perf = inst$bmr$score(inst$measures)
             n_rows       = nrow(configs_perf)
             configs_perf = configs_perf[(n_rows - mu_previous + 1):n_rows]
 
@@ -485,28 +465,23 @@ TunerHyperband = R6Class("TunerHyperband",
           # overwrite active configurations with the current budget
           active_configs[[budget_id]] = budget_current_real
 
-          # possible halt by terminator during evaluation
-          # INFO logs in the following function call are ignored by default
-          # set lgr::lgr$set_threshold(400) to include them
-          instance$eval_batch(active_configs)
-
-          # store information of current iteration with hash as primary key
-          self$info = rbind(self$info, data.table(
+          # extend active_configs with extras
+          rbind(active_configs,
             bracket = bracket,
             bracket_stage = stage,
             budget_scaled = budget_current,
             budget_real = budget_current_real,
             n_configs = mu_current
-          ))
+          )
+
+          # possible halt by terminator during evaluation
+          # INFO logs in the following function call are ignored by default
+          # set lgr::lgr$set_threshold(400) to include them
+          inst$eval_batch(active_configs)
+
+          )
         }
       }
-
-      # after hyperband termination:
-      # expand instance resampling data with info table
-      instance$bmr$rr_data = cbind(
-        instance$bmr$rr_data,
-        self$info[instance$bmr$rr_data$batch_nr]
-      )
 
       lg$log(
         "info",
