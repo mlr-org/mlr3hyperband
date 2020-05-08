@@ -319,7 +319,7 @@ TunerHyperband = R6Class("TunerHyperband",
     initialize = function() {
 
       ps_hyperband = ParamSet$new(list(
-        ParamDbl$new("eta", lower = 1.0001, tags = "required", default = 2),
+        ParamDbl$new("eta", lower = 1.0001, tags = "required", default = 2)
       ))
 
       ps_hyperband$values = list(eta = 2)
@@ -338,11 +338,12 @@ TunerHyperband = R6Class("TunerHyperband",
 
       # define aliases for better readability
       eta = self$param_set$values$eta
-      rr = inst$resampling
-      ps = inst$param_set
-      task = inst$task
-      msr_ids = ids(inst$measures)
-      to_minimize = map_lgl(inst$measures, "minimize")
+      rr = inst$objective$resampling
+      ps = inst$search_space
+      task = inst$objective$task
+      measures = inst$objective$measures
+      msr_ids = ids(measures)
+      to_minimize = map_lgl(measures, "minimize")
 
       # name of the hyperparameters with a budget tag
       budget_id = ps$ids(tags = "budget")
@@ -353,7 +354,7 @@ TunerHyperband = R6Class("TunerHyperband",
 
       # budget parameter MUST be defined as integer or double in paradox
       assert_choice(ps$class[[budget_id]], c("ParamInt", "ParamDbl"))
-      ps_sampler = ps$subset(setdiff(ps$ids(), budget_id))
+      ps_sampler = ps$clone()$subset(setdiff(ps$ids(), budget_id))
       sampler = SamplerUnif$new(ps_sampler)
 
       # use parameter tagged with 'budget' as budget for hyperband
@@ -416,7 +417,7 @@ TunerHyperband = R6Class("TunerHyperband",
           # rescale budget back to real world scale
           budget_current_real = budget_current * budget_lower
           # round if the budget is an integer parameter
-          if (ps$class[budget_id] == "ParamInt") {
+          if (ps$class[[budget_id]] == "ParamInt") {
             budget_current_real = round(budget_current_real)
           }
 
@@ -431,7 +432,7 @@ TunerHyperband = R6Class("TunerHyperband",
           if (stage > 0) {
 
             # get performance of each active configuration
-            configs_perf = inst$bmr$score(inst$measures)
+            configs_perf = inst$archive$data[,msr_ids,with=FALSE]
             n_rows       = nrow(configs_perf)
             configs_perf = configs_perf[(n_rows - mu_previous + 1):n_rows]
 
@@ -466,8 +467,8 @@ TunerHyperband = R6Class("TunerHyperband",
           active_configs[[budget_id]] = budget_current_real
 
           # extend active_configs with extras
-          rbind(active_configs,
-            bracket = bracket,
+          xdt = cbind(active_configs,
+            bracket = bracket, # recycling puts this info in each column, ie for each x value we have the same hyperband info
             bracket_stage = stage,
             budget_scaled = budget_current,
             budget_real = budget_current_real,
@@ -477,7 +478,7 @@ TunerHyperband = R6Class("TunerHyperband",
           # possible halt by terminator during evaluation
           # INFO logs in the following function call are ignored by default
           # set lgr::lgr$set_threshold(400) to include them
-          inst$eval_batch(active_configs)
+          inst$eval_batch(xdt)
         } #close inner loop
       } #close outer loop
 

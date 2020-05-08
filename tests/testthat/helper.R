@@ -34,40 +34,14 @@ hyperband_brackets = function(R, eta) {
 
 expect_tuner = function(tuner) {
   expect_r6(tuner, "Tuner",
-    public = c("tune", "param_set"),
-    private = ".tune"
+    public = c("optimize", "param_set"),
+    private = ".optimize"
   )
   expect_is(tuner$param_set, "ParamSet")
-  expect_function(tuner$tune, args = "instance")
+  expect_function(tuner$optimize, args = "inst")
 }
 
-# deprecated - remove this?
-expect_resampleresult = function(resampleresult) {
-  # test for existence of the most important resampling result elements
-  # let's try to not be too specific since resampling is still in development
-  expect_r6(resampleresult, "ResampleResult",
-    public = c("resampling", "learners", "task", "data", "predictions", "score")
-  )
-  expect_data_table(resampleresult$data, min.rows = 1L, min.cols = 1L)
-  expect_list(resampleresult$learners, min.len = 1L)
-  expect_r6(resampleresult$task)
-  expect_r6(resampleresult$resampling)
-}
-
-
-expect_terminator = function(term) {
-  expect_r6(term, "Terminator",
-    public = c("is_terminated", "param_set")
-  )
-  expect_is(term$param_set, "ParamSet")
-}
-
-# test an implemented subclass tuner by running a couple of standard tests
-# on a simple example
-# term_evals: how we configure the Terminator
-# real_evals: how many evals we really expect (as the optim might early stop)
-# returns: tune_result and instance
-test_tuner = function(key, eta, n_dim = 1L, term_evals = NULL, lower_b, upper_b, measures = "classif.ce") {
+test_tuner_hyperband = function(eta, n_dim = 1L, term_evals = NULL, lower_b, upper_b, measures = "classif.ce") {
 
   # run for an (almost) arbitrary time if NULL is given
   if (is.null(term_evals)) term_evals = 999999
@@ -92,28 +66,27 @@ test_tuner = function(key, eta, n_dim = 1L, term_evals = NULL, lower_b, upper_b,
 
   term = term("evals", n_evals = term_evals)
   inst = TuningInstance$new(task, lrn("classif.xgboost"), rsmp("holdout"), lapply(measures, msr), ps, term)
-  tuner = tnr(key, eta = eta)
+  tuner = tnr("hyperband", eta = eta)
   expect_tuner(tuner)
 
-  tuner$tune(inst)
-  bmr = inst$bmr
-
-  real_evals = sum(tuner$info$n_configs)
+  tuner$optimize(inst)
+  archive = inst$archive
 
   # compare results with full hyperband brackets if tuner was fully evaluated
   if (term_evals == 999999) {
-
     hb_meta_info = hyperband_brackets(R = upper_b / lower_b, eta = eta)
     hb_meta_info = as.data.table(hb_meta_info)
-    tuner_info = tuner$info[, c(1:3, 5)]
+    tuner_info = inst$archive$data[, colnames(hb_meta_info), with = FALSE]
+    tuner_info = unique(tuner_info) #becasue info for all x is duplicated in each bracket
+    real_evals = sum(tuner_info$n_configs)
 
     expect_equal(hb_meta_info, tuner_info)
-    expect_equal(real_evals, inst$n_evals)
-    expect_data_table(bmr$data, nrows = real_evals)
+    expect_equal(real_evals, inst$archive$n_evals)
+    expect_data_table(archive$data, nrows = real_evals)
 
   } else {
-    expect_data_table(bmr$data, min.rows = term_evals)
-    expect_gte(inst$n_evals, term_evals)
+    expect_data_table(archive$data, min.rows = term_evals)
+    expect_gte(inst$archive$n_evals, term_evals)
   }
 
 
@@ -135,9 +108,11 @@ test_tuner = function(key, eta, n_dim = 1L, term_evals = NULL, lower_b, upper_b,
   list(tuner = tuner, inst = inst)
 }
 
+check_hyperband_info = function()
+
 # test an implemented subclass tuner by running a test with dependent params
 # returns: tune_result and instance
-test_tuner_dependencies = function(key, eta, term_evals = NULL, lower_b, upper_b) {
+test_tuner_hyperband_dependencies = function(key, eta, term_evals = NULL, lower_b, upper_b) {
 
   # run for an (almost) arbitrary time if NULL is given
   if (is.null(term_evals)) term_evals = 999999
@@ -150,8 +125,8 @@ test_tuner_dependencies = function(key, eta, term_evals = NULL, lower_b, upper_b
   inst = TuningInstance$new(tsk("boston_housing"), ll, rsmp("holdout"), msr("regr.mse"), ll$param_set, term)
   tuner = tnr(key, eta)
   expect_tuner(tuner)
-  tuner$tune(inst)
-  bmr = inst$bmr
+  tuner$optimize(inst)
+  archive = inst$archive
 
   real_evals = sum(tuner$info$n_configs)
 
@@ -163,12 +138,12 @@ test_tuner_dependencies = function(key, eta, term_evals = NULL, lower_b, upper_b
     tuner_info = tuner$info[, c(1:3, 5)]
 
     expect_equal(hb_meta_info, tuner_info)
-    expect_equal(real_evals, inst$n_evals)
-    expect_data_table(bmr$data, nrows = real_evals)
+    expect_equal(real_evals, inst$archive$n_evals)
+    expect_data_table(archive$data, nrows = real_evals)
 
   } else {
-    expect_data_table(bmr$data, min.rows = term_evals)
-    expect_gte(inst$n_evals, term_evals)
+    expect_data_table(archive$data, min.rows = term_evals)
+    expect_gte(inst$archive$n_evals, term_evals)
   }
 
   r = inst$result

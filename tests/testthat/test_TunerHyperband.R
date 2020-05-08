@@ -7,16 +7,16 @@ context("TunerHyperband")
 
 test_that("TunerHyperband singlecrit", {
   set.seed(1234)
-  test_tuner("hyperband", eta = 3L, lower_b = 1, upper_b = 27)
-  test_tuner("hyperband", eta = 2L, lower_b = 1, upper_b = 8, term_evals = 10, n_dim = 2L)
-  test_tuner_dependencies("hyperband", eta = 3L, lower_b = 1, upper_b = 27)
+  test_tuner_hyperband(eta = 3L, lower_b = 1, upper_b = 27)
+  test_tuner_hyperband(eta = 2L, lower_b = 1, upper_b = 8, term_evals = 10, n_dim = 2L)
+  test_tuner_hyperband_dependencies(eta = 3L, lower_b = 1, upper_b = 27)
 })
 
 
 test_that("TunerHyperband multicrit", {
   set.seed(1234)
-  test_tuner("hyperband", eta = 3L, lower_b = 1, upper_b = 27, measures = c("classif.fpr", "classif.tpr"))
-  test_tuner("hyperband", eta = 2L, lower_b = 1, upper_b = 8, term_evals = 10, n_dim = 2L, measures = c("classif.fpr", "classif.tpr"))
+  test_tuner_hyperband(eta = 3L, lower_b = 1, upper_b = 27, measures = c("classif.fpr", "classif.tpr"))
+  test_tuner_hyperband(eta = 2L, lower_b = 1, upper_b = 8, term_evals = 10, n_dim = 2L, measures = c("classif.fpr", "classif.tpr"))
 
   params = list(
     ParamDbl$new("cp", lower = 0.001, upper = 0.1),
