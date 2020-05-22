@@ -1,0 +1,129 @@
+#' @title Plot for TuningInstance
+#'
+#' @description
+#' Generates plots for [mlr3tuning::TuningInstance], depending on argument `type`:
+#'
+#' * `"boxplot"` (default): Boxplots of evaluated performance for the
+#' respective hyperparameter configurations if tuning was performed by [mlr3hyperband::TunerHyperband]. Boxplots are shown in facets per bracket. Additionaly, the budget spent is shown.
+#'
+#' @param object ([mlr3::TuningInstance]).
+# @param measure ([mlr3::Measure]).
+#' @param ... (`any`):
+#'   Additional arguments, passed down to the respective `geom`.
+#'
+#' @return [ggplot2::ggplot()] object.
+#' @examples
+#' library(mlr3hyperband)
+#' library(mlr3)
+#' library(mlr3learners)
+#' library(mlr3tuning)
+#' 
+#' task = tsk("pima")
+#' learner = lrn("classif.xgboost")
+#' resampling = rsmp("holdout")
+#' measure = msr("classif.acc")
+#'
+#' ps = ParamSet$new(
+#'    params = list(
+#'       ParamInt$new("nrounds", lower = 10L, upper = 270L, tags = "budget"),
+#'       ParamInt$new("max_depth", lower = 1, upper = 100)
+#'    )
+#' )
+#' term = term("evals", n_evals = 100000L)
+#' inst = TuningInstance$new(task, learner, resampling, measure, ps, term)
+#' tuner = tnr("hyperband", eta = 3L)
+#'
+#' tuner$tune(inst)
+#' 
+#' autoplot(inst)
+#' @export
+
+autoplot.TuningInstance = function(object, # nolint
+  type = "boxplot",
+  measure = NULL,
+  hb_bracket = NULL,
+  params = NULL, 
+  facet_per_bracket = TRUE,
+  ...) {
+
+  assert_string(type)
+  assert_string(measure, null.ok = TRUE)
+  assert_integer(hb_bracket, null.ok = TRUE)
+
+  measures = object$measures
+  measure_ids = unlist(lapply(measures, function(x) x$id))
+  assert_choice(measure, measure_ids, null.ok = TRUE)
+
+  if (is.null(measure)) 
+    measure = measures[[1]]
+  else 
+    measure = measures[[which(measure == measure_ids)]]
+
+  measure_id = measure$id
+
+  ps = object$param_set
+  pids = ps$ids()
+  assert_subset(params, pids, empty.ok = TRUE)
+  # plots work for numeric and integer parameters only 
+  assert_param_set(ps, c("ParamDbl", "ParamInt"))
+
+  if (is.null(params)) {
+    params = pids[1:2]
+  }
+
+  tab = fortify(model = object, measure = measure, params = params)
+  if (!is.null(hb_bracket))
+    tab = tab[bracket %in% hb_bracket, ]
+
+  switch(type,
+    "boxplot" = {
+      p = ggplot(tab, mapping = aes_string(x = "bracket_stage", y = measure_id)) + geom_boxplot()
+      p = p + geom_point(data = tab[isbest == TRUE, ], aes_string(x = "bracket_stage", y = measure_id), colour = "blue")
+      if (facet_per_bracket)
+        p = p + facet_grid(cols = vars(bracket), labeller = label_both) 
+      p + theme_bw()      
+    },
+
+    "budget" = {
+      p = ggplot() 
+      p = p + geom_bar(tab, mapping = aes(x = bracket_stage, y = budget_real, fill = classif.acc), stat = "identity", colour = "white")
+      if (facet_per_bracket)
+        p = p + facet_grid(cols = vars(bracket), labeller = label_both) 
+      p + theme_bw()      
+    },
+
+    "input" = {
+
+      if (length(params) == 1L) {
+        p = ggplot(tab, aes_string(x = params, y = measure_id))
+        p = p + geom_point() + geom_point()
+      }
+      if (length(params) > 1L) {
+        p = ggplot(tab, aes_string(x = params[1], y = params[2], colour = measure_id))
+        p = p + geom_point()
+      }
+      if (facet_per_bracket)
+        p = p + facet_grid(cols = vars(bracket), labeller = label_both) 
+      p + theme_bw()      
+    },
+
+    stopf("Unknown plot type '%s'", type)
+  )
+}
+
+#' @export
+fortify.TuningInstance = function(model, measure, params = NULL, ...) { # nolint
+  
+  minimize = measure$minimize
+  mid = measure$id 
+
+  archive = model$archive("tune_x")
+  archive$bracket_stage = as.factor(archive$bracket_stage)
+  archive$bracket = factor(archive$bracket, levels = sort(unique(archive$bracket), decreasing = TRUE))
+
+  fun = ifelse(minimize, min, max)
+
+  archive[, isbest := (get(mid) == fun(get(mid))), by = c("bracket", "bracket_stage")]
+
+  return(archive)
+}
