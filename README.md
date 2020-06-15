@@ -3,7 +3,7 @@
 Extends the [mlr3](https://mlr3.mlr-org.com) package with hyperband tuning.
 
 <!-- badges: start -->
-[![R CMD Check via {tic}](https://github.com/mlr-org/mlr3hyperband/workflows/R%20CMD%20Check%20via%20{tic}/badge.svg?branch=master)](https://github.com/mlr-org/mlr3hyperband/actions)
+[![tic](https://github.com/mlr-org/mlr3hyperband/workflows/tic/badge.svg?branch=master)](https://github.com/mlr-org/mlr3hyperband/actions)
 [![CRAN Status Badge](https://www.r-pkg.org/badges/version-ago/mlr3hyperband)](https://cran.r-project.org/package=mlr3hyperband)
 [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/mlr3hyperband)](https://cran.rstudio.com/web/packages/mlr3hyperband/index.html)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
