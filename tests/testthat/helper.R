@@ -44,13 +44,13 @@ expect_tuner = function(tuner) {
 expect_info = function(eta, lower_b, upper_b, archive) {
   hb_meta_info = hyperband_brackets(R = upper_b / lower_b, eta = eta)
   hb_meta_info = as.data.table(hb_meta_info)
-  tuner_info = archive$data[, colnames(hb_meta_info), with = FALSE]
+  tuner_info = archive$data()[, colnames(hb_meta_info), with = FALSE]
   tuner_info = unique(tuner_info) #becasue info for all x is duplicated in each bracket
   real_evals = sum(tuner_info$n_configs)
 
   expect_equal(hb_meta_info, tuner_info)
   expect_equal(real_evals, archive$n_evals)
-  expect_data_table(archive$data, nrows = real_evals)
+  expect_data_table(archive$data(), nrows = real_evals)
 }
 
 test_tuner_hyperband = function(eta, n_dim = 1L, term_evals = NULL, lower_b, upper_b, measures = "classif.ce", learner = lrn("classif.xgboost"), task = tsk("pima"), ps = NULL) {
@@ -77,7 +77,14 @@ test_tuner_hyperband = function(eta, n_dim = 1L, term_evals = NULL, lower_b, upp
     }
   }
 
-  inst = TuningInstance$new(task, learner, rsmp("holdout"), lapply(measures, msr), ps, term)
+  msrs = lapply(measures, msr)
+
+  if (length(msrs) == 1) {
+    inst = TuningInstance$new(task, learner, rsmp("holdout"), lapply(measures, msr)[[1]], ps, term)
+  } else {
+    inst = TuningInstanceMulticrit$new(task, learner, rsmp("holdout"), lapply(measures, msr), ps, term)
+  }
+
   tuner = tnr("hyperband", eta = eta)
   expect_tuner(tuner)
 
@@ -88,14 +95,14 @@ test_tuner_hyperband = function(eta, n_dim = 1L, term_evals = NULL, lower_b, upp
   if (!inst$is_terminated) {
     expect_info(eta, lower_b, upper_b, archive)
   } else {
-    expect_data_table(archive$data, min.rows = term_evals)
+    expect_data_table(archive$data(), min.rows = term_evals)
     expect_gte(archive$n_evals, term_evals)
   }
 
-  sc = inst$result$tune_x
-  sp = inst$result$perf
+  sc = inst$result_x_seach_space
+  sp = inst$result_y
 
-  expect_list(sc, len = ps$length)
+  expect_data_table(sc, ncols = ps$length)
 
   expect_names(names(sc), identical.to = ps$ids())
   expect_numeric(sp, len = length(measures))

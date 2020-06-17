@@ -65,7 +65,7 @@ test_that("TunerHyperband using CV", {
   tuner = tnr("hyperband", eta = 2L)
   tuner$optimize(inst)
 
-  results = inst$archive$data[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
+  results = inst$archive$data()[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
 
   expect_data_table(results, ncols = 3, nrows = 35)
 })
@@ -100,7 +100,7 @@ test_that("TunerHyperband using subsampling", {
   tuner = tnr("hyperband", eta = 4L)
   tuner$optimize(inst)
 
-  results = inst$archive$data[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
+  results = inst$archive$data()[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
   expect_data_table(results, ncols = 4, nrows = 7)
 })
 
@@ -134,7 +134,7 @@ test_that("TunerHyperband using subsampling and non-integer eta", {
   tuner = tnr("hyperband", eta = 3.5)
   tuner$optimize(inst)
 
-  results = inst$archive$data[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
+  results = inst$archive$data()[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
   expect_data_table(results, ncols = 4, nrows = 7)
 })
 
@@ -169,7 +169,7 @@ test_that("TunerHyperband using param trafo and non-integer eta", {
   tuner = tnr("hyperband", eta = 3.9)
   tuner$optimize(inst)
 
-  results = inst$archive$data[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
+  results = inst$archive$data()[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
   expect_data_table(results, ncols = 4, nrows = 7)
 })
 
