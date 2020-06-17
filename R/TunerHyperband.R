@@ -316,18 +316,18 @@ TunerHyperband = R6Class("TunerHyperband",
     info = NULL, #FIXME should all be in opt archive
 
     # create hyperband parameters and init super class (Tuner)
-    initialize = function() {
+    initialize = function(eta = 2) {
 
       ps_hyperband = ParamSet$new(list(
         ParamDbl$new("eta", lower = 1.0001, tags = "required", default = 2)
       ))
 
-      ps_hyperband$values = list(eta = 2)
+      ps_hyperband$values = list(eta = eta)
 
       super$initialize(
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
         param_set = ps_hyperband,
-        properties = c("dependencies")
+        properties = c("dependencies", "single-crit", "multi-crit")
       )
     }
   ),
@@ -432,7 +432,7 @@ TunerHyperband = R6Class("TunerHyperband",
           if (stage > 0) {
 
             # get performance of each active configuration
-            configs_perf = inst$archive$data[,msr_ids,with=FALSE]
+            configs_perf = inst$archive$data()[,msr_ids,with=FALSE]
             n_rows       = nrow(configs_perf)
             configs_perf = configs_perf[(n_rows - mu_previous + 1):n_rows]
 
