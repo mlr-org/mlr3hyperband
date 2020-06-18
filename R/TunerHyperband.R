@@ -26,7 +26,7 @@
 #' An alternative approach using subsampling and pipelines is described below.
 #'
 #' Naturally, hyperband terminates once all of its brackets are evaluated,
-#' so a [mlr3tuning::Terminator] in the tuning instance acts as an upper
+#' so a [bbotk::Terminator] in the tuning instance acts as an upper
 #' bound and should be only set to a low value if one is unsure of how long
 #' hyperband will take to finish under the given settings.
 #'
@@ -216,17 +216,15 @@
 #'   Sampler1DCateg$new(params[[3]], prob = c(0.2, 0.3, 0.5))
 #' ))
 #'
-#' tuner = TunerHyperband$new(eta = 2L, sampler = sampler)
+#' tuner = tnr("hyperband", eta = 2L, sampler = sampler)
 #' \dontrun{
 #' tuner$tune(inst)
 #'
 #' # return the best evaluation
-#' inst$best()
+#' inst$result
 #'
 #' # print all evaluations
-#' print(inst$archive())
-#' # print layout of the brackets
-#' print(tuner$info)
+#' print(inst$archive$data())
 #' }
 #'
 #'
@@ -256,17 +254,15 @@
 #' )
 #'
 #' # eta can be a double
-#' tuner = TunerHyperband$new(eta = 1.9)
+#' tuner = tnr("hyperband", eta = 1.9)
 #' \dontrun{
 #' tuner$tune(inst)
 #'
 #' # return the best evaluation
-#' inst$best()
+#' inst$result
 #'
 #' # print all evaluations
-#' print(inst$archive())
-#' # print layout of the brackets
-#' print(tuner$info)
+#' print(inst$archive$data())
 #' }
 #'
 #' ### use subsampling for budget
@@ -294,17 +290,15 @@
 #' )
 #'
 #' # define and call hyperband as usual
-#' tuner = TunerHyperband$new(eta = 4L)
+#' tuner = tnr("hyperband", eta = 4L)
 #' \dontrun{
 #' tuner$tune(inst)
 #'
 #' # return the best evaluation
-#' inst$best()
+#' inst$result
 #'
 #' # print all evaluations
-#' print(inst$archive())
-#' # print layout of the brackets
-#' print(tuner$info)
+#' print(inst$archive$data())
 #' }
 #' @export
 TunerHyperband = R6Class("TunerHyperband",
