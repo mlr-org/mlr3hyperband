@@ -105,7 +105,12 @@ test_tuner_hyperband = function(eta, n_dim = 1L, term_evals = NULL, lower_b, upp
   expect_data_table(sc, ncols = ps$length)
 
   expect_names(names(sc), identical.to = ps$ids())
-  expect_numeric(sp, len = length(measures))
+  
+  if (length(measures) == 1)
+    expect_numeric(sp, len = length(measures))
+  else 
+    expect_data_table(sp, ncols = length(measures))
+
   expect_names(names(sp), identical.to = measures)
   list(tuner = tuner, inst = inst)
 }

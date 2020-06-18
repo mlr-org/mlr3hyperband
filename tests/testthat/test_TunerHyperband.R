@@ -23,7 +23,7 @@ test_that("TunerHyperband multicrit", {
     ParamInt$new("minsplit", lower = 1, upper = 10, tags = "budget")
   )
 
-  inst = TuningInstance$new(
+  inst = TuningInstanceMulticrit$new(
     tsk("pima"),
     lrn("classif.rpart"),
     rsmp("holdout"),
@@ -36,7 +36,7 @@ test_that("TunerHyperband multicrit", {
   tuner$optimize(inst)
   # lapply(inst$pareto_front(), expect_resample_result)
 
-  results = inst$archive$data[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
+  results = inst$archive$data()[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
 
   expect_data_table(results, ncols = 4, nrows = 7)
 })
