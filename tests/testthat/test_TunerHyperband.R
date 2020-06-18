@@ -23,7 +23,7 @@ test_that("TunerHyperband multicrit", {
     ParamInt$new("minsplit", lower = 1, upper = 10, tags = "budget")
   )
 
-  inst = TuningInstance$new(
+  inst = TuningInstanceMulticrit$new(
     tsk("pima"),
     lrn("classif.rpart"),
     rsmp("holdout"),
@@ -36,7 +36,7 @@ test_that("TunerHyperband multicrit", {
   tuner$optimize(inst)
   # lapply(inst$pareto_front(), expect_resample_result)
 
-  results = inst$archive$data[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
+  results = inst$archive$data()[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
 
   expect_data_table(results, ncols = 4, nrows = 7)
 })
@@ -65,7 +65,7 @@ test_that("TunerHyperband using CV", {
   tuner = tnr("hyperband", eta = 2L)
   tuner$optimize(inst)
 
-  results = inst$archive$data[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
+  results = inst$archive$data()[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
 
   expect_data_table(results, ncols = 3, nrows = 35)
 })
@@ -100,7 +100,7 @@ test_that("TunerHyperband using subsampling", {
   tuner = tnr("hyperband", eta = 4L)
   tuner$optimize(inst)
 
-  results = inst$archive$data[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
+  results = inst$archive$data()[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
   expect_data_table(results, ncols = 4, nrows = 7)
 })
 
@@ -134,7 +134,7 @@ test_that("TunerHyperband using subsampling and non-integer eta", {
   tuner = tnr("hyperband", eta = 3.5)
   tuner$optimize(inst)
 
-  results = inst$archive$data[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
+  results = inst$archive$data()[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
   expect_data_table(results, ncols = 4, nrows = 7)
 })
 
@@ -169,7 +169,7 @@ test_that("TunerHyperband using param trafo and non-integer eta", {
   tuner = tnr("hyperband", eta = 3.9)
   tuner$optimize(inst)
 
-  results = inst$archive$data[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
+  results = inst$archive$data()[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
   expect_data_table(results, ncols = 4, nrows = 7)
 })
 
@@ -224,15 +224,9 @@ test_that("TunerHyperband using custom sampler", {
   tuner = tnr("hyperband", eta = 2L, sampler = sampler)
   expect_tuner(tuner)
   tuner$optimize(inst)
-  expect_resample_result(inst$best())
+  expect_resample_result(inst$archive$best()$resample_result[[1]])
 
-  results = inst$archive()[, .(
-    nrounds = sapply(params, "[", "nrounds"),
-    eta = sapply(params, "[", "eta"),
-    booster = sapply(params, "[", "booster"),
-    classif.ce
-  )]
-
+  results = inst$archive$data()[, .(nrounds, eta, booster, classif.ce)]
   expect_data_table(results, ncols = 4, nrows = 35)
 })
 

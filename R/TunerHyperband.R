@@ -319,15 +319,17 @@ TunerHyperband = R6Class("TunerHyperband",
     initialize = function() {
 
       ps_hyperband = ParamSet$new(list(
-        ParamDbl$new("eta", lower = 1.0001, tags = "required", default = 2)
+        ParamDbl$new("eta", lower = 1.0001, tags = "required", default = 2),
+        ParamUty$new("sampler",
+          custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE))
       ))
 
-      ps_hyperband$values = list(eta = 2)
+      ps_hyperband$values = list(eta = 2, sampler = NULL)
 
       super$initialize(
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
         param_set = ps_hyperband,
-        properties = c("dependencies")
+        properties = c("dependencies", "single-crit", "multi-crit")
       )
     }
   ),
@@ -338,6 +340,7 @@ TunerHyperband = R6Class("TunerHyperband",
 
       # define aliases for better readability
       eta = self$param_set$values$eta
+      sampler = self$param_set$values$sampler
       rr = inst$objective$resampling
       ps = inst$search_space
       task = inst$objective$task
@@ -355,7 +358,13 @@ TunerHyperband = R6Class("TunerHyperband",
       # budget parameter MUST be defined as integer or double in paradox
       assert_choice(ps$class[[budget_id]], c("ParamInt", "ParamDbl"))
       ps_sampler = ps$clone()$subset(setdiff(ps$ids(), budget_id))
-      sampler = SamplerUnif$new(ps_sampler)
+
+      # construct unif sampler if non is given
+      if (is.null(sampler)) {
+        sampler = SamplerUnif$new(ps_sampler)
+      } else {
+        assert_set_equal(sampler$param_set$ids(), ps_sampler$ids())
+      }
 
       # use parameter tagged with 'budget' as budget for hyperband
       budget_lower = ps$lower[[budget_id]]
@@ -432,7 +441,7 @@ TunerHyperband = R6Class("TunerHyperband",
           if (stage > 0) {
 
             # get performance of each active configuration
-            configs_perf = inst$archive$data[,msr_ids,with=FALSE]
+            configs_perf = inst$archive$data()[,msr_ids,with=FALSE]
             n_rows       = nrow(configs_perf)
             configs_perf = configs_perf[(n_rows - mu_previous + 1):n_rows]
 
