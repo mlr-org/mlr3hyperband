@@ -42,7 +42,7 @@
 
 <meta property="og:title" content="Tuner using the Hyperband algorithm — TunerHyperband" />
 <meta property="og:description" content="Subclass for hyperband tuning.
-Hyperband is a budget oriented-procedure, weeding out suboptimally
+Hyperband is a budget oriented-procedure, weeding out suboptimal
 performing configurations early in a sequential training process,
 increasing tuning efficiency as a consequence.
 For this, several brackets are constructed with an associated set of configurations
@@ -57,7 +57,7 @@ explicitly which hyperparameter of the learner influences the budget
 by tagging a single hyperparameter in the paradox::ParamSet with &quot;budget&quot;.
 An alternative approach using subsampling and pipelines is described below.
 Naturally, hyperband terminates once all of its brackets are evaluated,
-so a Terminator in the tuning instance acts as an upper
+so a bbotk::Terminator in the tuning instance acts as an upper
 bound and should be only set to a low value if one is unsure of how long
 hyperband will take to finish under the given settings." />
 <meta name="twitter:card" content="summary" />
@@ -148,7 +148,7 @@ hyperband will take to finish under the given settings." />
 
     <div class="ref-description">
     <p>Subclass for hyperband tuning.</p>
-<p>Hyperband is a budget oriented-procedure, weeding out suboptimally
+<p>Hyperband is a budget oriented-procedure, weeding out suboptimal
 performing configurations early in a sequential training process,
 increasing tuning efficiency as a consequence.</p>
 <p>For this, several brackets are constructed with an associated set of configurations
@@ -163,7 +163,7 @@ explicitly which hyperparameter of the learner influences the budget
 by tagging a single hyperparameter in the <a href='https://paradox.mlr-org.com/reference/ParamSet.html'>paradox::ParamSet</a> with <code>"budget"</code>.
 An alternative approach using subsampling and pipelines is described below.</p>
 <p>Naturally, hyperband terminates once all of its brackets are evaluated,
-so a <a href='https://mlr3tuning.mlr-org.com/reference/Terminator.html'>Terminator</a> in the tuning instance acts as an upper
+so a <a href='https://rdrr.io/pkg/bbotk/man/Terminator.html'>bbotk::Terminator</a> in the tuning instance acts as an upper
 bound and should be only set to a low value if one is unsure of how long
 hyperband will take to finish under the given settings.</p>
     </div>
@@ -316,16 +316,20 @@ like it is shown in the <code>examples</code>.</p>
 
     
 
-<p>When loading the <a href='mlr3hyperband-package.html'>mlr3hyperband</a> package, two loggers based on the lgr package are made available.
-One is called <code>mlr3</code>, the other <code>mlr3/mlr3tuning</code>. The first one is the
-original one of <a href='https://mlr3.mlr-org.com/reference/mlr3-package.html'>mlr3</a>, while the latter was modified from <a href='https://mlr3tuning.mlr-org.com/reference/mlr3tuning-package.html'>mlr3tuning</a>. The modification
-is of the form of an added level called <code>info hb</code> (value <code>350</code>), that sits
-between <code>warn</code> and <code>info</code>. All info logs printed by the hyperband algorithm
-receive the level <code>info hb</code> and the default threshold for logs is set to
-this level.
-This means, the <code>info</code> logs of function/method calls of
-<a href='https://mlr3tuning.mlr-org.com/reference/mlr3tuning-package.html'>mlr3tuning</a> are not part of the logging by default. To change this,
-run</p><pre><span class='co'># mlr3tuning logs</span>
+<p>When loading the <a href='mlr3hyperband-package.html'>mlr3hyperband</a> package, three loggers based on the lgr
+package are made available.
+One is called <code>mlr3</code>, the other <code>mlr3/mlr3tuning</code> and the last
+<code>mlr3/mlr3tuning/mlr3hyperband</code>. The first tow are the
+original ones of <a href='https://mlr3.mlr-org.com/reference/mlr3-package.html'>mlr3</a> and <a href='https://mlr3tuning.mlr-org.com/reference/mlr3tuning-package.html'>mlr3tuning</a>, while the latter was added
+especially for <a href='mlr3hyperband-package.html'>mlr3hyperband</a>.
+Each logger is responsible for loggings in executed code of each respective
+package. This means <a href='https://mlr3tuning.mlr-org.com/reference/mlr3tuning-package.html'>mlr3tuning</a> code executed in <a href='mlr3hyperband-package.html'>mlr3hyperband</a> is logged
+by <code>mlr3/mlr3tuning</code> and NOT <code>mlr3/mlr3tuning/mlr3hyperband</code>.
+To change the behaviour of each logger, run</p><pre><span class='co'># mlr3 add info logs</span>
+<span class='kw pkg'>lgr</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/lgr/man/get_logger.html'>get_logger</a></span>(<span class='st'>"mlr3"</span>)$<span class='fu'>set_threshold</span>(<span class='st'>"info"</span>)
+<span class='co'># mlr3tuning add info logs</span>
+<span class='kw pkg'>lgr</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/lgr/man/get_logger.html'>get_logger</a></span>(<span class='st'>"mlr3/mlr3tuning"</span>)$<span class='fu'>set_threshold</span>(<span class='st'>"info"</span>)
+<span class='co'># mlr3hyperband add info logs (already set by default)</span>
 <span class='no'>lg</span>$<span class='fu'>set_threshold</span>(<span class='st'>"info"</span>)</pre>
 
 <p>But be careful as this will add a lot of clutter to the logs.</p>
@@ -335,9 +339,9 @@ run</p><pre><span class='co'># mlr3tuning logs</span>
 &#8220;Hyperband: A Novel Bandit-Based Approach to Hyperparameter Optimization.&#8221;
 <em>Journal of Machine Learning Research</em>, <b>18</b>(185), 1-52.
 <a href='http://jmlr.org/papers/v18/16-558.html'>http://jmlr.org/papers/v18/16-558.html</a>.</p>
-    <h2 class="hasAnchor" id="super-class"><a class="anchor" href="#super-class"></a>Super class</h2>
+    <h2 class="hasAnchor" id="super-classes"><a class="anchor" href="#super-classes"></a>Super classes</h2>
 
-    <p><code><a href='https://mlr3tuning.mlr-org.com/reference/Tuner.html'>mlr3tuning::Tuner</a></code> -&gt; <code>TunerHyperband</code></p>
+    <p><code><a href='https://rdrr.io/pkg/bbotk/man/Optimizer.html'>bbotk::Optimizer</a></code> -&gt; <code><a href='https://mlr3tuning.mlr-org.com/reference/Tuner.html'>mlr3tuning::Tuner</a></code> -&gt; <code>TunerHyperband</code></p>
     <h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
 
     
@@ -349,9 +353,9 @@ run</p><pre><span class='co'># mlr3tuning logs</span>
 </ul>
 <p><details open ><summary>Inherited methods</summary>
 <ul>
-<li><p><span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="format"><a href='../../mlr3tuning/html/Tuner.html#method-format'><code>mlr3tuning::Tuner$format()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="print"><a href='../../mlr3tuning/html/Tuner.html#method-print'><code>mlr3tuning::Tuner$print()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="tune"><a href='../../mlr3tuning/html/Tuner.html#method-tune'><code>mlr3tuning::Tuner$tune()</code></a></span></p></li>
+<li><p><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="format"><a href='../../bbotk/html/Optimizer.html#method-format'><code>bbotk::Optimizer$format()</code></a></span></p></li>
+<li><p><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="print"><a href='../../bbotk/html/Optimizer.html#method-print'><code>bbotk::Optimizer$print()</code></a></span></p></li>
+<li><p><span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="optimize"><a href='../../mlr3tuning/html/Tuner.html#method-optimize'><code>mlr3tuning::Tuner$optimize()</code></a></span></p></li>
 </ul>
 </details>
 
@@ -359,7 +363,7 @@ run</p><pre><span class='co'># mlr3tuning logs</span>
 <a id="method-new"></a></p><h3>Method <code>new()</code></h3>
 
 <h3>Usage</h3>
-<p><div class="r"></p><pre><span class='no'>TunerHyperband</span>$<span class='fu'>new</span>(<span class='kw'>eta</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>sampler</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre><p></div></p>
+<p><div class="r"></p><pre><span class='no'>TunerHyperband</span>$<span class='fu'>new</span>()</pre><p></div></p>
 
 <p><hr>
 <a id="method-clone"></a></p><h3>Method <code>clone()</code></h3>
@@ -377,10 +381,8 @@ run</p><pre><span class='co'># mlr3tuning logs</span>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>mlr3hyperband</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>mlr3learners</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>mlr3tuning</span>)</div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'>Attaching package: ‘mlr3tuning’</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:stats’:</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    terms</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>mlr3</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>mlr3tuning</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>mlr3</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>paradox</span>)
 
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>123</span>)
@@ -399,7 +401,7 @@ run</p><pre><span class='co'># mlr3tuning logs</span>
   <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>rsmp</a></span>(<span class='st'>"holdout"</span>),
   <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>msr</a></span>(<span class='st'>"classif.ce"</span>),
   <span class='no'>ParamSet</span>$<span class='fu'>new</span>(<span class='no'>params</span>),
-  <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/tnr.html'>term</a></span>(<span class='st'>"evals"</span>, <span class='kw'>n_evals</span> <span class='kw'>=</span> <span class='fl'>100000</span>)
+  <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/term.html'>term</a></span>(<span class='st'>"evals"</span>, <span class='kw'>n_evals</span> <span class='kw'>=</span> <span class='fl'>100000</span>)
 )
 
 <span class='co'># create custom sampler (optional):</span>
@@ -410,17 +412,15 @@ run</p><pre><span class='co'># mlr3tuning logs</span>
   <span class='no'>Sampler1DCateg</span>$<span class='fu'>new</span>(<span class='no'>params</span><span class='kw'>[[</span><span class='fl'>3</span>]], <span class='kw'>prob</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.2</span>, <span class='fl'>0.3</span>, <span class='fl'>0.5</span>))
 ))
 
-<span class='no'>tuner</span> <span class='kw'>=</span> <span class='no'>TunerHyperband</span>$<span class='fu'>new</span>(<span class='kw'>eta</span> <span class='kw'>=</span> <span class='fl'>2L</span>, <span class='kw'>sampler</span> <span class='kw'>=</span> <span class='no'>sampler</span>)
+<span class='no'>tuner</span> <span class='kw'>=</span> <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/tnr.html'>tnr</a></span>(<span class='st'>"hyperband"</span>, <span class='kw'>eta</span> <span class='kw'>=</span> <span class='fl'>2L</span>, <span class='kw'>sampler</span> <span class='kw'>=</span> <span class='no'>sampler</span>)
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='no'>tuner</span>$<span class='fu'>tune</span>(<span class='no'>inst</span>)
 
 <span class='co'># return the best evaluation</span>
-<span class='no'>inst</span>$<span class='fu'>best</span>()
+<span class='no'>inst</span>$<span class='no'>result</span>
 
 <span class='co'># print all evaluations</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>inst</span>$<span class='fu'>archive</span>())
-<span class='co'># print layout of the brackets</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>tuner</span>$<span class='no'>info</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>inst</span>$<span class='no'>archive</span>$<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>())
 }
 
 
@@ -446,21 +446,19 @@ run</p><pre><span class='co'># mlr3tuning logs</span>
   <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>rsmp</a></span>(<span class='st'>"holdout"</span>),
   <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>msr</a></span>(<span class='st'>"classif.ce"</span>),
   <span class='no'>ps</span>,
-  <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/tnr.html'>term</a></span>(<span class='st'>"evals"</span>, <span class='kw'>n_evals</span> <span class='kw'>=</span> <span class='fl'>100000</span>)
+  <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/term.html'>term</a></span>(<span class='st'>"evals"</span>, <span class='kw'>n_evals</span> <span class='kw'>=</span> <span class='fl'>100000</span>)
 )
 
 <span class='co'># eta can be a double</span>
-<span class='no'>tuner</span> <span class='kw'>=</span> <span class='no'>TunerHyperband</span>$<span class='fu'>new</span>(<span class='kw'>eta</span> <span class='kw'>=</span> <span class='fl'>1.9</span>)
+<span class='no'>tuner</span> <span class='kw'>=</span> <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/tnr.html'>tnr</a></span>(<span class='st'>"hyperband"</span>, <span class='kw'>eta</span> <span class='kw'>=</span> <span class='fl'>1.9</span>)
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='no'>tuner</span>$<span class='fu'>tune</span>(<span class='no'>inst</span>)
 
 <span class='co'># return the best evaluation</span>
-<span class='no'>inst</span>$<span class='fu'>best</span>()
+<span class='no'>inst</span>$<span class='no'>result</span>
 
 <span class='co'># print all evaluations</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>inst</span>$<span class='fu'>archive</span>())
-<span class='co'># print layout of the brackets</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>tuner</span>$<span class='no'>info</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>inst</span>$<span class='no'>archive</span>$<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>())
 }
 
 <span class='co'>### use subsampling for budget</span>
@@ -484,21 +482,19 @@ run</p><pre><span class='co'># mlr3tuning logs</span>
   <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>rsmp</a></span>(<span class='st'>"holdout"</span>),
   <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>msr</a></span>(<span class='st'>"classif.ce"</span>),
   <span class='no'>ParamSet</span>$<span class='fu'>new</span>(<span class='no'>params</span>),
-  <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/tnr.html'>term</a></span>(<span class='st'>"evals"</span>, <span class='kw'>n_evals</span> <span class='kw'>=</span> <span class='fl'>100000</span>)
+  <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/term.html'>term</a></span>(<span class='st'>"evals"</span>, <span class='kw'>n_evals</span> <span class='kw'>=</span> <span class='fl'>100000</span>)
 )
 
 <span class='co'># define and call hyperband as usual</span>
-<span class='no'>tuner</span> <span class='kw'>=</span> <span class='no'>TunerHyperband</span>$<span class='fu'>new</span>(<span class='kw'>eta</span> <span class='kw'>=</span> <span class='fl'>4L</span>)
+<span class='no'>tuner</span> <span class='kw'>=</span> <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/tnr.html'>tnr</a></span>(<span class='st'>"hyperband"</span>, <span class='kw'>eta</span> <span class='kw'>=</span> <span class='fl'>4L</span>)
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='no'>tuner</span>$<span class='fu'>tune</span>(<span class='no'>inst</span>)
 
 <span class='co'># return the best evaluation</span>
-<span class='no'>inst</span>$<span class='fu'>best</span>()
+<span class='no'>inst</span>$<span class='no'>result</span>
 
 <span class='co'># print all evaluations</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>inst</span>$<span class='fu'>archive</span>())
-<span class='co'># print layout of the brackets</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>tuner</span>$<span class='no'>info</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>inst</span>$<span class='no'>archive</span>$<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>())
 }</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -511,7 +507,7 @@ run</p><pre><span class='co'># mlr3tuning logs</span>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Sebastian Gruber, Bernd Bischl.</p>
+  <p>Developed by Sebastian Gruber, Jakob Richter, Bernd Bischl.</p>
 </div>
 
 <div class="pkgdown">
