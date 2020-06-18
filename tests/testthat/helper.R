@@ -34,181 +34,101 @@ hyperband_brackets = function(R, eta) {
 
 expect_tuner = function(tuner) {
   expect_r6(tuner, "Tuner",
-    public = c("tune", "param_set"),
-    private = ".tune"
+    public = c("optimize", "param_set"),
+    private = ".optimize"
   )
   expect_is(tuner$param_set, "ParamSet")
-  expect_function(tuner$tune, args = "instance")
+  expect_function(tuner$optimize, args = "inst")
 }
 
-# deprecated - remove this?
-expect_resampleresult = function(resampleresult) {
-  # test for existence of the most important resampling result elements
-  # let's try to not be too specific since resampling is still in development
-  expect_r6(resampleresult, "ResampleResult",
-    public = c("resampling", "learners", "task", "data", "predictions", "score")
-  )
-  expect_data_table(resampleresult$data, min.rows = 1L, min.cols = 1L)
-  expect_list(resampleresult$learners, min.len = 1L)
-  expect_r6(resampleresult$task)
-  expect_r6(resampleresult$resampling)
+expect_info = function(eta, lower_b, upper_b, archive) {
+  hb_meta_info = hyperband_brackets(R = upper_b / lower_b, eta = eta)
+  hb_meta_info = as.data.table(hb_meta_info)
+  tuner_info = archive$data()[, colnames(hb_meta_info), with = FALSE]
+  tuner_info = unique(tuner_info) #becasue info for all x is duplicated in each bracket
+  real_evals = sum(tuner_info$n_configs)
+
+  expect_equal(hb_meta_info, tuner_info)
+  expect_equal(real_evals, archive$n_evals)
+  expect_data_table(archive$data(), nrows = real_evals)
 }
 
-
-expect_terminator = function(term) {
-  expect_r6(term, "Terminator",
-    public = c("is_terminated", "param_set")
-  )
-  expect_is(term$param_set, "ParamSet")
-}
-
-# test an implemented subclass tuner by running a couple of standard tests
-# on a simple example
-# term_evals: how we configure the Terminator
-# real_evals: how many evals we really expect (as the optim might early stop)
-# returns: tune_result and instance
-test_tuner = function(key, eta, n_dim = 1L, term_evals = NULL, lower_b, upper_b, measures = "classif.ce") {
+# single crit test
+test_tuner_hyperband = function(eta, n_dim = 1L, term_evals = NULL, lower_b, upper_b, measures = "classif.ce", learner = lrn("classif.xgboost"), task = tsk("pima"), ps = NULL) {
 
   # run for an (almost) arbitrary time if NULL is given
-  if (is.null(term_evals)) term_evals = 999999
-
-  ps = if (n_dim == 1) {
-
-    ParamSet$new(params = list(
-      ParamInt$new("nrounds", lower = lower_b, upper = upper_b, tags = "budget"),
-      ParamInt$new("max_depth", lower = 1, upper = 100)
-    ))
-
-  } else if (n_dim == 2) {
-
-    ParamSet$new(params = list(
-      ParamInt$new("nrounds", lower = lower_b, upper = upper_b, tags = "budget"),
-      ParamDbl$new("eta", lower = 0, upper = 1),
-      ParamInt$new("max_depth", lower = 1, upper = 100)
-    ))
+  if (is.null(term_evals)) {
+    term = term("none")
+  } else {
+    term = term("evals", n_evals = term_evals)
   }
 
-  task = tsk("pima")
+  if (is.null(ps)) {
+    if (n_dim == 1) {
+      ps = ParamSet$new(params = list(
+        ParamInt$new("nrounds", lower = lower_b, upper = upper_b, tags = "budget"),
+        ParamInt$new("max_depth", lower = 1, upper = 100)
+      ))
+    } else if (n_dim == 2) {
+      ps = ParamSet$new(params = list(
+        ParamInt$new("nrounds", lower = lower_b, upper = upper_b, tags = "budget"),
+        ParamDbl$new("eta", lower = 0, upper = 1),
+        ParamInt$new("max_depth", lower = 1, upper = 100)
+      ))
+    }
+  }
 
-  term = term("evals", n_evals = term_evals)
-  inst = TuningInstance$new(task, lrn("classif.xgboost"), rsmp("holdout"), lapply(measures, msr), ps, term)
-  tuner = tnr(key, eta = eta)
+  if (length(measures) == 1) {
+    inst = TuningInstance$new(task, learner, rsmp("holdout"), msr(measures), ps, term)
+  } else {
+    inst = TuningInstanceMulticrit$new(task, learner, rsmp("holdout"), lapply(measures, msr), ps, term)
+  }
+
+  tuner = tnr("hyperband", eta = eta)
   expect_tuner(tuner)
 
-  tuner$tune(inst)
-  bmr = inst$bmr
-
-  real_evals = sum(tuner$info$n_configs)
+  tuner$optimize(inst)
+  archive = inst$archive
 
   # compare results with full hyperband brackets if tuner was fully evaluated
-  if (term_evals == 999999) {
-
-    hb_meta_info = hyperband_brackets(R = upper_b / lower_b, eta = eta)
-    hb_meta_info = as.data.table(hb_meta_info)
-    tuner_info = tuner$info[, c(1:3, 5)]
-
-    expect_equal(hb_meta_info, tuner_info)
-    expect_equal(real_evals, inst$n_evals)
-    expect_data_table(bmr$data, nrows = real_evals)
-
+  if (!inst$is_terminated) {
+    expect_info(eta, lower_b, upper_b, archive)
   } else {
-    expect_data_table(bmr$data, min.rows = term_evals)
-    expect_gte(inst$n_evals, term_evals)
+    expect_data_table(archive$data(), min.rows = term_evals)
+    expect_gte(archive$n_evals, term_evals)
   }
 
+  sc = inst$result_x_domain
+  sp = inst$result_y
 
-  r = inst$result
-  sc = r$tune_x
-  sp = r$perf
-
-  # hotfix; remove "if" once R CMD works without
-  if (TRUE) expect_list(sc, len = n_dim + 1)
-
-  if (n_dim == 1) {
-    expect_named(sc, c("nrounds", "max_depth"))
-  } else if (n_dim == 2) {
-    expect_named(sc, c("nrounds", "eta", "max_depth"))
+  if (inherits(inst, "TuningInstanceMulticrit")) {
+    expect_list(sc)
+    expect_list(sc[[1]])
+    expect_names(colnames(inst$result_x_search_space), identical.to = ps$ids())
+    expect_data_table(sp, ncols = length(measures))
+  } else {
+    expect_list(sc, len = ps$length)
+    expect_names(names(sc), identical.to = ps$ids())
+    expect_number(sp)
   }
-
-  expect_numeric(sp, len = length(measures))
-  expect_named(sp, measures)
   list(tuner = tuner, inst = inst)
 }
 
 # test an implemented subclass tuner by running a test with dependent params
 # returns: tune_result and instance
-test_tuner_dependencies = function(key, eta, term_evals = NULL, lower_b, upper_b) {
-
-  # run for an (almost) arbitrary time if NULL is given
-  if (is.null(term_evals)) term_evals = 999999
-
-  term = term("evals", n_evals = term_evals)
+test_tuner_hyperband_dependencies = function(eta, term_evals = NULL, lower_b, upper_b) {
   ll = LearnerRegrDepParams$new()
   ll$param_set$add(
     ParamInt$new("nrounds", lower = lower_b, upper = upper_b, tags = "budget")
   )
-  inst = TuningInstance$new(tsk("boston_housing"), ll, rsmp("holdout"), msr("regr.mse"), ll$param_set, term)
-  tuner = tnr(key, eta)
-  expect_tuner(tuner)
-  tuner$tune(inst)
-  bmr = inst$bmr
-
-  real_evals = sum(tuner$info$n_configs)
-
-  # compare results with full hyperband brackets if tuner was fully evaluated
-  if (term_evals == 999999) {
-
-    hb_meta_info = hyperband_brackets(R = upper_b / lower_b, eta = eta)
-    hb_meta_info = as.data.table(hb_meta_info)
-    tuner_info = tuner$info[, c(1:3, 5)]
-
-    expect_equal(hb_meta_info, tuner_info)
-    expect_equal(real_evals, inst$n_evals)
-    expect_data_table(bmr$data, nrows = real_evals)
-
-  } else {
-    expect_data_table(bmr$data, min.rows = term_evals)
-    expect_gte(inst$n_evals, term_evals)
-  }
-
-  r = inst$result
-  sc = r$tune_x
-  sp = r$perf
-  expect_list(sc)
-  expect_names(names(sc), subset.of = c("xx", "yy", "cp", "nrounds"))
-  expect_numeric(sp, len = 1L)
-  expect_names(names(sp), identical.to = "regr.mse")
-  list(tuner = tuner, inst = inst)
+  test_res = test_tuner_hyperband(eta, term_evals, lower_b, upper_b, measures = "regr.mse", learner = ll, task = tsk("boston_housing"), ps = ll$param_set)
+  test_res
 }
 
 
-# create a simple inst object for rpart with cp param and 2CV resampling
-TEST_MAKE_PS1 = function(n_dim = 1L) {
-  if (n_dim == 1) {
-    ParamSet$new(params = list(
-      ParamDbl$new("cp", lower = 0.1, upper = 0.3)
-    ))
-  } else if (n_dim == 2) {
-    ParamSet$new(params = list(
-      ParamDbl$new("cp", lower = 0.1, upper = 0.3),
-      ParamInt$new("minsplit", lower = 1, upper = 9)
-    ))
-  }
-}
-TEST_MAKE_INST1 = function(values = NULL, folds = 2L, measures = msr("classif.ce"), n_dim = 1L, term_evals = 5L) {
-  ps = TEST_MAKE_PS1(n_dim = n_dim)
-  lrn = mlr_learners$get("classif.rpart")
-  if (!is.null(values)) {
-    lrn$param_set$values = values
-  }
-  rs = rsmp("cv", folds = folds)
-  term = term("evals", n_evals = term_evals)
-  inst = TuningInstance$new(tsk("iris"), lrn, rs, measures, ps, term)
-  return(inst)
-}
 
 # create inst object with dependencies
-TEST_MAKE_PS2 = function() {
+PS_DEPS = function() {
   ps = ParamSet$new(
     params = list(
       ParamFct$new("xx", levels = c("a", "b"), default = "a"),
@@ -218,14 +138,6 @@ TEST_MAKE_PS2 = function() {
   )
   ps$add_dep("yy", on = "xx", cond = CondEqual$new("a"))
   return(ps)
-}
-TEST_MAKE_INST2 = function(measures = msr("dummy.cp.regr"), term_evals = 5L) {
-  ps = TEST_MAKE_PS2()
-  ll = LearnerRegrDepParams$new()
-  rs = rsmp("holdout")
-  term = term("evals", n_evals = term_evals)
-  inst = TuningInstance$new(tsk("boston_housing"), ll, rs, measures, ps, term)
-  return(inst)
 }
 
 # a dummy measure which simply returns the cp value of rpart
@@ -272,7 +184,7 @@ mlr3::mlr_measures$add("dummy.cp.regr", MeasureDummyCPRegr)
 LearnerRegrDepParams = R6Class("LearnerRegrDepParams", inherit = LearnerRegr,
   public = list(
     initialize = function(id = "regr.depparams") {
-      param_set = TEST_MAKE_PS2()
+      param_set = PS_DEPS()
       super$initialize(
         id = id,
         feature_types = c("logical", "integer", "numeric", "character", "factor", "ordered"),

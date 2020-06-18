@@ -4,6 +4,7 @@
 #' @import mlr3
 #' @import mlr3misc
 #' @import mlr3tuning
+#' @import bbotk
 #' @importFrom R6 R6Class
 "_PACKAGE"
 

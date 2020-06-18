@@ -4,7 +4,9 @@
 \alias{TunerHyperband}
 \alias{mlr_tuners_hyperband}
 \title{Tuner using the Hyperband algorithm}
-\format{\link[R6:R6Class]{R6::R6Class} object inheriting from \link[mlr3tuning:Tuner]{mlr3tuning::Tuner}.}
+\format{
+\link[R6:R6Class]{R6::R6Class} object inheriting from \link[mlr3tuning:Tuner]{mlr3tuning::Tuner}.
+}
 \description{
 Subclass for hyperband tuning.
 
@@ -27,7 +29,7 @@ by tagging a single hyperparameter in the \link[paradox:ParamSet]{paradox::Param
 An alternative approach using subsampling and pipelines is described below.
 
 Naturally, hyperband terminates once all of its brackets are evaluated,
-so a \link[mlr3tuning:Terminator]{mlr3tuning::Terminator} in the tuning instance acts as an upper
+so a \link[bbotk:Terminator]{bbotk::Terminator} in the tuning instance acts as an upper
 bound and should be only set to a low value if one is unsure of how long
 hyperband will take to finish under the given settings.
 }
@@ -225,17 +227,15 @@ sampler = SamplerJointIndep$new(list(
   Sampler1DCateg$new(params[[3]], prob = c(0.2, 0.3, 0.5))
 ))
 
-tuner = TunerHyperband$new(eta = 2L, sampler = sampler)
+tuner = tnr("hyperband", eta = 2L, sampler = sampler)
 \dontrun{
 tuner$tune(inst)
 
 # return the best evaluation
-inst$best()
+inst$result
 
 # print all evaluations
-print(inst$archive())
-# print layout of the brackets
-print(tuner$info)
+print(inst$archive$data())
 }
 
 
@@ -265,17 +265,15 @@ inst = TuningInstance$new(
 )
 
 # eta can be a double
-tuner = TunerHyperband$new(eta = 1.9)
+tuner = tnr("hyperband", eta = 1.9)
 \dontrun{
 tuner$tune(inst)
 
 # return the best evaluation
-inst$best()
+inst$result
 
 # print all evaluations
-print(inst$archive())
-# print layout of the brackets
-print(tuner$info)
+print(inst$archive$data())
 }
 
 ### use subsampling for budget
@@ -303,24 +301,22 @@ inst = TuningInstance$new(
 )
 
 # define and call hyperband as usual
-tuner = TunerHyperband$new(eta = 4L)
+tuner = tnr("hyperband", eta = 4L)
 \dontrun{
 tuner$tune(inst)
 
 # return the best evaluation
-inst$best()
+inst$result
 
 # print all evaluations
-print(inst$archive())
-# print layout of the brackets
-print(tuner$info)
+print(inst$archive$data())
 }
 }
 \references{
 \cite{mlr3hyperband}{li_2018}
 }
-\section{Super class}{
-\code{\link[mlr3tuning:Tuner]{mlr3tuning::Tuner}} -> \code{TunerHyperband}
+\section{Super classes}{
+\code{\link[bbotk:Optimizer]{bbotk::Optimizer}} -> \code{\link[mlr3tuning:Tuner]{mlr3tuning::Tuner}} -> \code{TunerHyperband}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -332,22 +328,24 @@ print(tuner$info)
 \if{html}{
 \out{<details open ><summary>Inherited methods</summary>}
 \itemize{
-\item \out{<span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="format">}\href{../../mlr3tuning/html/Tuner.html#method-format}{\code{mlr3tuning::Tuner$format()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="print">}\href{../../mlr3tuning/html/Tuner.html#method-print}{\code{mlr3tuning::Tuner$print()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="tune">}\href{../../mlr3tuning/html/Tuner.html#method-tune}{\code{mlr3tuning::Tuner$tune()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="format">}\href{../../bbotk/html/Optimizer.html#method-format}{\code{bbotk::Optimizer$format()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="print">}\href{../../bbotk/html/Optimizer.html#method-print}{\code{bbotk::Optimizer$print()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="optimize">}\href{../../mlr3tuning/html/Tuner.html#method-optimize}{\code{mlr3tuning::Tuner$optimize()}}\out{</span>}
 }
 \out{</details>}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TunerHyperband$new(eta = 2, sampler = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{TunerHyperband$new()}\if{html}{\out{</div>}}
 }
 
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{
