@@ -435,9 +435,10 @@ TunerHyperband = R6Class("TunerHyperband",
           if (stage > 0) {
 
             # get performance of each active configuration
-            configs_perf = inst$archive$data()[,msr_ids,with=FALSE]
-            n_rows       = nrow(configs_perf)
-            configs_perf = configs_perf[(n_rows - mu_previous + 1):n_rows]
+            configs_perf = inst$archive$data()[,c(msr_ids, "bracket", "bracket_stage"),with=FALSE]
+            # n_rows       = nrow(configs_perf)
+            curr_brack = bracket
+            configs_perf = configs_perf[bracket == curr_brack & bracket_stage == stage - 1, ]
 
             # select best mu_current indices
             if (length(msr_ids) < 2) {
