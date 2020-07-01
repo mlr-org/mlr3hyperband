@@ -30,16 +30,19 @@ nds_selection = function(points, n_select, ref_point = NULL, minimize = TRUE) {
   assert_numeric(ref_point, len = nrow(points), null.ok = TRUE)
   assert_logical(minimize)
 
-  # maximize/minimize preprocessing: switch sign in each dim to maximize
+  # maximize/minimize preprocessing: switch sign in each dim to minimize
   points = points * (minimize * 2 - 1)
+
+  # also switch sign for the reference point if reference point is given
+  # otherwise use the maximum values in each dimension
+  if (!is.null(ref_point)) {
+    ref_point = ref_point * (minimize * 2 - 1)
+  } else {
+    ref_point = apply(points, 1, max)    
+  }
 
   # init output indices
   survivors = seq_col(points)
-
-  # if no reference point is defined, use maximum of each dimensions
-  if (is.null(ref_point)) {
-    ref_point = apply(points, 1, max)
-  }
 
   # front indices of every point
   front_ranks = emoa::nds_rank(points)
