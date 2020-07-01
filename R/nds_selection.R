@@ -59,23 +59,12 @@ nds_selection = function(points, n_select, ref_point = NULL, minimize = TRUE) {
   # remove tied indices/points as long as we are bigger than n_select
   while (length(tie_surv) + length(sel_surv) > n_select) {
 
-    # tie points extended with the reference point to never end up with a two
-    # point matrix (this would break the following sapply)
-    tie_points_ext = cbind(tie_points, ref_point)
-
-    # calculate the hypervolume with each point excluded separately
-    hypervolumes = mlr3misc::map_dbl(
-      seq_len(ncol(tie_points_ext) - 1L),
-      function(i) {
-        emoa::dominated_hypervolume(
-          tie_points_ext[, -i, drop = FALSE],
-          ref = ref_point
-        )
-      }
-    )
+    # compute hypervolume contribution 
+    hv_contrib = emoa::hypervolume_contribution(tie_points, ref_point)
 
     # index of the tied case with the lowest hypervolume contribution
-    to_remove = which(hypervolumes == max(hypervolumes))
+    to_remove = which(hv_contrib == min(hv_contrib))
+
     # sample the index as tie breaker
     to_remove = sample(to_remove, 1)
     tie_points = tie_points[, -to_remove, drop = FALSE]
