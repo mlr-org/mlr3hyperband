@@ -1,7 +1,3 @@
----
-output: github_document
----
-
 # mlr3hyperband
 
 Extends the [mlr3](https://mlr3.mlr-org.com) package with hyperband tuning.
