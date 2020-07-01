@@ -1,3 +1,7 @@
+---
+output: github_document
+---
+
 # mlr3hyperband
 
 Extends the [mlr3](https://mlr3.mlr-org.com) package with hyperband tuning.
@@ -26,6 +30,7 @@ Afterwards, you can handle hyperband like all other tuners:
 
 ```r
 library(paradox)
+library(mlr3tuning)
 library(mlr3hyperband)
 
 # give a hyperparameter the "budget" tag
@@ -38,10 +43,10 @@ params = list(
 #inst = ... here goes the usual mlr3tuning TuningInstance constructor
 
 # initialize hyperband tuner
-tuner = TunerHyperband$new(eta = 2L)
+tuner = tnr("hyperband", eta = 2L)
 
 # tune the previously defined TuningInstance
-#tuner$tune(inst)
+# tuner$optimize(inst)
 ```
 
 For the full working example, please check out the Examples section below.
@@ -49,10 +54,10 @@ For the full working example, please check out the Examples section below.
 
 ## A short description of hyperband
 
-Hyperband is a budget oriented-procedure, weeding out suboptimally performing configurations early on during their training process, increasing tuning efficiency as a consequence.
+Hyperband is a budget oriented-procedure, weeding out suboptimally performing configurations early on during their training process aiming at increasing the efficiency of the tuning procedure. 
 For this, several brackets are constructed with an associated set of configurations for each bracket. These configuration are initialized by stochastic, often uniform, sampling.
 Each bracket is divided into multiple stages, and configurations are evaluated for a increasing budget in each stage.
-Note that currently all configurations are trained completely from the beginning, so no online updates of models.
+Note that currently all configurations are trained completely from the beginning, so no online updates to the models are performed.
 
 Different brackets are initialized with different number of configurations, and different budget sizes.
 
@@ -84,21 +89,21 @@ inst = TuningInstance$new(
   task = tsk("iris"),
   learner = lrn("classif.xgboost"),
   resampling = rsmp("holdout"),
-  measures = msr("classif.ce"),
+  measure = msr("classif.ce"),
   ParamSet$new(params),
   term("evals", n_evals = 100000L) # high value to let hyperband finish
 )
 
 # initialize Hyperband Tuner and tune
-tuner = TunerHyperband$new(eta = 2L)
-tuner$tune(inst)
+tuner = tnr("hyperband", eta = 2L)
+tuner$optimize(inst)
 
 # return best result
-inst$best()
+inst$result
 ```
 
-Additionally, our framework also supports the case when no natural fidelity parameter is given by the learner.
-In this case, one can use `mlr3pipelines` to define subsampling as a preprocessing step.
+Additionally, it is also possible to use `mlr3hyperband` to tune learners that do not have a natural fidelity parameter. 
+In such a case `mlr3pipelines` can be used to define data subsampling as a preprocessing step.
 Then, the `frac` parameter of subsampling, defining the fraction of the training data to be used, can act as the budget parameter:
 
 ```r
@@ -126,11 +131,11 @@ inst = TuningInstance$new(
   term("evals", n_evals = 100000L) # high value to let hyperband finish
 )
 
-tuner = TunerHyperband$new(eta = 4L)
-tuner$tune(inst)
+tuner = tnr("hyperband", eta = 4L)
+tuner$optimize(inst)
 
 # return best result
-inst$best()
+inst$result
 ```
 
 
