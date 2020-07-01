@@ -65,8 +65,10 @@ nds_selection = function(points, n_select, ref_point = NULL, minimize = TRUE) {
     # index of the tied case with the lowest hypervolume contribution
     to_remove = which(hv_contrib == min(hv_contrib))
 
-    # sample the index as tie breaker
-    to_remove = sample(to_remove, 1)
+    # if two points have the exact same hypervolume contribution, the point is sampled
+    if (length(to_remove) > 1)
+      to_remove = sample(to_remove, 1)
+
     tie_points = tie_points[, -to_remove, drop = FALSE]
     tie_surv = tie_surv[-to_remove]
   }
