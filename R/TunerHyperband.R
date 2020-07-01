@@ -48,10 +48,9 @@
 #'   during the initialization of each bracket. The default is uniform sampling.
 #'
 #' @section Fields:
-#' * `info` :: [data.table::data.table()]\cr
-#'   Table containing information about the intermediate values, matching the
-#'   the indices of the original reference instead of the console logs.
-#'   It holds the following columns:
+#' * `archive` :: [R6::R6Class] inheriting from [bbotk::Archive] \cr
+#'   The archive is a field of the tuned instance and contains logging information about the tuning process. 
+#'   The archive holds the following additional columns that are specific to the hyperband tuner:
 #'   * `bracket` :: `integer()`\cr
 #'     The console logs about the bracket index are actually not matching
 #'     with the original hyperband algorithm, which counts down the brackets

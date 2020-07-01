@@ -97,10 +97,9 @@ during the initialization of each bracket. The default is uniform sampling.
 \section{Fields}{
 
 \itemize{
-\item \code{info} :: \code{\link[data.table:data.table]{data.table::data.table()}}\cr
-Table containing information about the intermediate values, matching the
-the indices of the original reference instead of the console logs.
-It holds the following columns:
+\item \code{archive} :: \link[R6:R6Class]{R6::R6Class} inheriting from \link[bbotk:Archive]{bbotk::Archive} \cr
+The archive is a field of the tuned instance and contains logging information about the tuning process.
+The archive holds the following additional columns that are specific to the hyperband tuner:
 \itemize{
 \item \code{bracket} :: \code{integer()}\cr
 The console logs about the bracket index are actually not matching
