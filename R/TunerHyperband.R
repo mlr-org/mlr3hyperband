@@ -32,8 +32,8 @@
 #'
 #' @section Construction:
 #' ```
-#' TunerHyperband$new(eta = 2, sampler = NULL)
-#' tnr("hyperband")
+#' TunerHyperband$new()
+#' tnr("hyperband", eta = 2L, sampler = NULL)
 #' ```
 #'
 #' @section Parameters:
@@ -218,7 +218,7 @@
 #'
 #' tuner = tnr("hyperband", eta = 2L, sampler = sampler)
 #' \dontrun{
-#' tuner$tune(inst)
+#' tuner$optimize(inst)
 #'
 #' # return the best evaluation
 #' inst$result
@@ -256,7 +256,7 @@
 #' # eta can be a double
 #' tuner = tnr("hyperband", eta = 1.9)
 #' \dontrun{
-#' tuner$tune(inst)
+#' tuner$optimize(inst)
 #'
 #' # return the best evaluation
 #' inst$result
@@ -292,7 +292,7 @@
 #' # define and call hyperband as usual
 #' tuner = tnr("hyperband", eta = 4L)
 #' \dontrun{
-#' tuner$tune(inst)
+#' tuner$optimize(inst)
 #'
 #' # return the best evaluation
 #' inst$result
