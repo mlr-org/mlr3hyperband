@@ -67,6 +67,7 @@ test_that("TunerHyperband using CV", {
 
   results = inst$archive$data()[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
 
+  #FIXME: Check that results are also good, i.e. the correct individuals survive (https://github.com/mlr-org/mlr3hyperband/issues/50)
   expect_data_table(results, ncols = 3, nrows = 35)
 })
 
