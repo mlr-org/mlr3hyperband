@@ -145,21 +145,21 @@
 
 <span class="co"># initialize TuningInstance as usual</span>
 <span class="co"># hyperband terminates on its own, so the terminator acts as a upper bound</span>
-<span class="no">inst</span> <span class="kw">=</span> <span class="no">TuningInstance</span>$<span class="fu">new</span>(
+<span class="no">inst</span> <span class="kw">=</span> <span class="no">TuningInstanceSingleCrit</span>$<span class="fu">new</span>(
   <span class="kw">task</span> <span class="kw">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">tsk</a></span>(<span class="st">"iris"</span>),
   <span class="kw">learner</span> <span class="kw">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">lrn</a></span>(<span class="st">"classif.xgboost"</span>),
   <span class="kw">resampling</span> <span class="kw">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">rsmp</a></span>(<span class="st">"holdout"</span>),
-  <span class="kw">measures</span> <span class="kw">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">msr</a></span>(<span class="st">"classif.ce"</span>),
-  <span class="no">ParamSet</span>$<span class="fu">new</span>(<span class="no">params</span>),
-  <span class="fu"><a href="https://mlr3tuning.mlr-org.com/reference/term.html">term</a></span>(<span class="st">"evals"</span>, <span class="kw">n_evals</span> <span class="kw">=</span> <span class="fl">100000L</span>) <span class="co"># high value to let hyperband finish</span>
+  <span class="kw">measure</span> <span class="kw">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">msr</a></span>(<span class="st">"classif.ce"</span>),
+  <span class="kw">search_space</span> <span class="kw">=</span> <span class="no">ParamSet</span>$<span class="fu">new</span>(<span class="no">params</span>),
+  <span class="kw">terminator</span> <span class="kw">=</span> <span class="fu"><a href="https://mlr3tuning.mlr-org.com/reference/term.html">term</a></span>(<span class="st">"none"</span>) <span class="co"># hyperband terminates on its own</span>
 )
 
 <span class="co"># initialize Hyperband Tuner and tune</span>
 <span class="no">tuner</span> <span class="kw">=</span> <span class="no">TunerHyperband</span>$<span class="fu">new</span>(<span class="kw">eta</span> <span class="kw">=</span> <span class="fl">2L</span>)
-<span class="no">tuner</span>$<span class="fu">tune</span>(<span class="no">inst</span>)
+<span class="no">tuner</span>$<span class="fu"><a href="https://rdrr.io/r/stats/optimize.html">optimize</a></span>(<span class="no">inst</span>)
 
 <span class="co"># return best result</span>
-<span class="no">inst</span>$<span class="fu">best</span>()</pre></div>
+<span class="no">inst</span>$<span class="no">result</span></pre></div>
 <p>Additionally, our framework also supports the case when no natural fidelity parameter is given by the learner. In this case, one can use <code>mlr3pipelines</code> to define subsampling as a preprocessing step. Then, the <code>frac</code> parameter of subsampling, defining the fraction of the training data to be used, can act as the budget parameter:</p>
 <div class="sourceCode" id="cb4"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">mlr3hyperband</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">mlr3pipelines</span>)
@@ -176,20 +176,20 @@
 )
 
 <span class="co"># define TuningInstance with the Graph Learner and the extended hyperparams</span>
-<span class="no">inst</span> <span class="kw">=</span> <span class="no">TuningInstance</span>$<span class="fu">new</span>(
+<span class="no">inst</span> <span class="kw">=</span> <span class="no">TuningInstanceSingleCrit</span>$<span class="fu">new</span>(
   <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">tsk</a></span>(<span class="st">"iris"</span>),
   <span class="no">ll</span>,
   <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">rsmp</a></span>(<span class="st">"holdout"</span>),
   <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">msr</a></span>(<span class="st">"classif.ce"</span>),
   <span class="no">ParamSet</span>$<span class="fu">new</span>(<span class="no">params</span>),
-  <span class="fu"><a href="https://mlr3tuning.mlr-org.com/reference/term.html">term</a></span>(<span class="st">"evals"</span>, <span class="kw">n_evals</span> <span class="kw">=</span> <span class="fl">100000L</span>) <span class="co"># high value to let hyperband finish</span>
+  <span class="fu"><a href="https://mlr3tuning.mlr-org.com/reference/term.html">term</a></span>(<span class="st">"none"</span>) <span class="co"># hyperband terminates on its own</span>
 )
 
 <span class="no">tuner</span> <span class="kw">=</span> <span class="no">TunerHyperband</span>$<span class="fu">new</span>(<span class="kw">eta</span> <span class="kw">=</span> <span class="fl">4L</span>)
-<span class="no">tuner</span>$<span class="fu">tune</span>(<span class="no">inst</span>)
+<span class="no">tuner</span>$<span class="fu"><a href="https://rdrr.io/r/stats/optimize.html">optimize</a></span>(<span class="no">inst</span>)
 
 <span class="co"># return best result</span>
-<span class="no">inst</span>$<span class="fu">best</span>()</pre></div>
+<span class="no">inst</span>$<span class="no">result</span></pre></div>
 </div>
 <div id="documentation" class="section level2">
 <h2 class="hasAnchor">
