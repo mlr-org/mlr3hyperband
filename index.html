@@ -84,120 +84,10 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="mlr3hyperband" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#mlr3hyperband" class="anchor"></a>mlr3hyperband</h1></div>
-<p>Extends the <a href="https://mlr3.mlr-org.com">mlr3</a> package with hyperband tuning.</p>
-<!-- badges: start -->
-<p><a href="https://github.com/mlr-org/mlr3hyperband/actions"><img src="https://github.com/mlr-org/mlr3hyperband/workflows/tic/badge.svg?branch=master" alt="tic"></a> <a href="https://cran.r-project.org/package=mlr3hyperband"><img src="https://www.r-pkg.org/badges/version-ago/mlr3hyperband" alt="CRAN Status Badge"></a> <a href="https://cran.rstudio.com/web/packages/mlr3hyperband/index.html"><img src="https://cranlogs.r-pkg.org/badges/mlr3hyperband" alt="CRAN Downloads"></a> <a href="https://www.tidyverse.org/lifecycle/#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a> <a href="https://codecov.io/gh/mlr-org/mlr3hyperband"><img src="https://codecov.io/gh/mlr-org/mlr3hyperband/branch/master/graph/badge.svg" alt="codecov"></a> <a href="https://stackoverflow.com/questions/tagged/mlr3"><img src="https://img.shields.io/badge/stackoverflow-mlr3-orange.svg" alt="StackOverflow"></a> <!-- badges: end --></p>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
-<p>Install from github by running the following line:</p>
-<div class="sourceCode" id="cb1"><pre class="r"><span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"mlr-org/mlr3hyperband"</span>)</pre></div>
-</div>
-<div id="quickstart" class="section level2">
-<h2 class="hasAnchor">
-<a href="#quickstart" class="anchor"></a>Quickstart</h2>
-<p>If you are already familiar with <code>mlr3tuning</code>, then the only change compared to other tuners is to give a numeric hyperparameter a <code>"budget"</code> tag. Afterwards, you can handle hyperband like all other tuners:</p>
-<div class="sourceCode" id="cb2"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">paradox</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">mlr3hyperband</span>)
-
-<span class="co"># give a hyperparameter the "budget" tag</span>
-<span class="no">params</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(
-  <span class="no">ParamInt</span>$<span class="fu">new</span>(<span class="st">"nrounds"</span>, <span class="kw">lower</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">upper</span> <span class="kw">=</span> <span class="fl">16</span>, <span class="kw">tags</span> <span class="kw">=</span> <span class="st">"budget"</span>),
-  <span class="no">ParamDbl</span>$<span class="fu">new</span>(<span class="st">"eta"</span>,     <span class="kw">lower</span> <span class="kw">=</span> <span class="fl">0</span>, <span class="kw">upper</span> <span class="kw">=</span> <span class="fl">1</span>),
-  <span class="no">ParamFct</span>$<span class="fu">new</span>(<span class="st">"booster"</span>, <span class="kw">levels</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"gbtree"</span>, <span class="st">"gblinear"</span>, <span class="st">"dart"</span>))
-)
-
-<span class="co">#inst = ... here goes the usual mlr3tuning TuningInstance constructor</span>
-
-<span class="co"># initialize hyperband tuner</span>
-<span class="no">tuner</span> <span class="kw">=</span> <span class="no">TunerHyperband</span>$<span class="fu">new</span>(<span class="kw">eta</span> <span class="kw">=</span> <span class="fl">2L</span>)
-
-<span class="co"># tune the previously defined TuningInstance</span>
-<span class="co">#tuner$tune(inst)</span></pre></div>
-<p>For the full working example, please check out the Examples section below.</p>
-</div>
-<div id="a-short-description-of-hyperband" class="section level2">
-<h2 class="hasAnchor">
-<a href="#a-short-description-of-hyperband" class="anchor"></a>A short description of hyperband</h2>
-<p>Hyperband is a budget oriented-procedure, weeding out suboptimally performing configurations early on during their training process, increasing tuning efficiency as a consequence. For this, several brackets are constructed with an associated set of configurations for each bracket. These configuration are initialized by stochastic, often uniform, sampling. Each bracket is divided into multiple stages, and configurations are evaluated for a increasing budget in each stage. Note that currently all configurations are trained completely from the beginning, so no online updates of models.</p>
-<p>Different brackets are initialized with different number of configurations, and different budget sizes.</p>
-<p>To identify the budget for evaluating hyperband, the user has to specify explicitly which hyperparameter of the learner influences the budget by tagging a single hyperparameter in the parameter set with <code>"budget"</code>. An alternative approach using subsampling and pipelines is described further below.</p>
-</div>
-<div id="examples" class="section level2">
-<h2 class="hasAnchor">
-<a href="#examples" class="anchor"></a>Examples</h2>
-<p>Originally, hyperband was created with a “natural” learning parameter as the budget parameter in mind, like <code>nrounds</code> of the XGBoost learner:</p>
-<div class="sourceCode" id="cb3"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">mlr3hyperband</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">mlr3tuning</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">mlr3learners</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">mlr3</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">123</span>)
-
-<span class="co"># define hyperparameter and budget parameter for tuning with hyperband</span>
-<span class="no">params</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(
-  <span class="no">ParamInt</span>$<span class="fu">new</span>(<span class="st">"nrounds"</span>, <span class="kw">lower</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">upper</span> <span class="kw">=</span> <span class="fl">16</span>, <span class="kw">tags</span> <span class="kw">=</span> <span class="st">"budget"</span>),
-  <span class="no">ParamDbl</span>$<span class="fu">new</span>(<span class="st">"eta"</span>,     <span class="kw">lower</span> <span class="kw">=</span> <span class="fl">0</span>, <span class="kw">upper</span> <span class="kw">=</span> <span class="fl">1</span>),
-  <span class="no">ParamFct</span>$<span class="fu">new</span>(<span class="st">"booster"</span>, <span class="kw">levels</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"gbtree"</span>, <span class="st">"gblinear"</span>, <span class="st">"dart"</span>))
-)
-
-<span class="co"># initialize TuningInstance as usual</span>
-<span class="co"># hyperband terminates on its own, so the terminator acts as a upper bound</span>
-<span class="no">inst</span> <span class="kw">=</span> <span class="no">TuningInstanceSingleCrit</span>$<span class="fu">new</span>(
-  <span class="kw">task</span> <span class="kw">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">tsk</a></span>(<span class="st">"iris"</span>),
-  <span class="kw">learner</span> <span class="kw">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">lrn</a></span>(<span class="st">"classif.xgboost"</span>),
-  <span class="kw">resampling</span> <span class="kw">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">rsmp</a></span>(<span class="st">"holdout"</span>),
-  <span class="kw">measure</span> <span class="kw">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">msr</a></span>(<span class="st">"classif.ce"</span>),
-  <span class="kw">search_space</span> <span class="kw">=</span> <span class="no">ParamSet</span>$<span class="fu">new</span>(<span class="no">params</span>),
-  <span class="kw">terminator</span> <span class="kw">=</span> <span class="fu"><a href="https://mlr3tuning.mlr-org.com/reference/term.html">term</a></span>(<span class="st">"none"</span>) <span class="co"># hyperband terminates on its own</span>
-)
-
-<span class="co"># initialize Hyperband Tuner and tune</span>
-<span class="no">tuner</span> <span class="kw">=</span> <span class="no">TunerHyperband</span>$<span class="fu">new</span>(<span class="kw">eta</span> <span class="kw">=</span> <span class="fl">2L</span>)
-<span class="no">tuner</span>$<span class="fu"><a href="https://rdrr.io/r/stats/optimize.html">optimize</a></span>(<span class="no">inst</span>)
-
-<span class="co"># return best result</span>
-<span class="no">inst</span>$<span class="no">result</span></pre></div>
-<p>Additionally, our framework also supports the case when no natural fidelity parameter is given by the learner. In this case, one can use <code>mlr3pipelines</code> to define subsampling as a preprocessing step. Then, the <code>frac</code> parameter of subsampling, defining the fraction of the training data to be used, can act as the budget parameter:</p>
-<div class="sourceCode" id="cb4"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">mlr3hyperband</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">mlr3pipelines</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">123</span>)
-
-<span class="no">ll</span> <span class="kw">=</span> <span class="fu"><a href="https://mlr3pipelines.mlr-org.com//reference/po.html">po</a></span>(<span class="st">"subsample"</span>) <span class="kw">%&gt;&gt;%</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">lrn</a></span>(<span class="st">"classif.rpart"</span>)
-
-<span class="co"># define extended hyperparameters with subsampling fraction as budget</span>
-<span class="co"># ==&gt; no learner budget is required</span>
-<span class="no">params</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(
-  <span class="no">ParamDbl</span>$<span class="fu">new</span>(<span class="st">"classif.rpart.cp"</span>, <span class="kw">lower</span> <span class="kw">=</span> <span class="fl">0.001</span>, <span class="kw">upper</span> <span class="kw">=</span> <span class="fl">0.1</span>),
-  <span class="no">ParamInt</span>$<span class="fu">new</span>(<span class="st">"classif.rpart.minsplit"</span>, <span class="kw">lower</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">upper</span> <span class="kw">=</span> <span class="fl">10</span>),
-  <span class="no">ParamDbl</span>$<span class="fu">new</span>(<span class="st">"subsample.frac"</span>, <span class="kw">lower</span> <span class="kw">=</span> <span class="fl">0.1</span>, <span class="kw">upper</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">tags</span> <span class="kw">=</span> <span class="st">"budget"</span>)
-)
-
-<span class="co"># define TuningInstance with the Graph Learner and the extended hyperparams</span>
-<span class="no">inst</span> <span class="kw">=</span> <span class="no">TuningInstanceSingleCrit</span>$<span class="fu">new</span>(
-  <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">tsk</a></span>(<span class="st">"iris"</span>),
-  <span class="no">ll</span>,
-  <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">rsmp</a></span>(<span class="st">"holdout"</span>),
-  <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">msr</a></span>(<span class="st">"classif.ce"</span>),
-  <span class="no">ParamSet</span>$<span class="fu">new</span>(<span class="no">params</span>),
-  <span class="fu"><a href="https://mlr3tuning.mlr-org.com/reference/term.html">term</a></span>(<span class="st">"none"</span>) <span class="co"># hyperband terminates on its own</span>
-)
-
-<span class="no">tuner</span> <span class="kw">=</span> <span class="no">TunerHyperband</span>$<span class="fu">new</span>(<span class="kw">eta</span> <span class="kw">=</span> <span class="fl">4L</span>)
-<span class="no">tuner</span>$<span class="fu"><a href="https://rdrr.io/r/stats/optimize.html">optimize</a></span>(<span class="no">inst</span>)
-
-<span class="co"># return best result</span>
-<span class="no">inst</span>$<span class="no">result</span></pre></div>
-</div>
-<div id="documentation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#documentation" class="anchor"></a>Documentation</h2>
-<p>The function reference is can be found <a href="https://mlr3hyperband.mlr-org.com/reference/">here</a>. Further documentation lives in the <a href="https://mlr3book.mlr-org.com/">mlr3book</a>.</p>
-<p>The original paper introducing the hyperband algorithm is given <a href="https://arxiv.org/abs/1603.06560">here</a>.</p>
-</div>
-</div>
+Implements hyperband method for hyperparameter
+    tuning.  Various termination criteria can be set and combined. The
+    class 'AutoTuner' provides a convenient way to perform nested
+    resampling in combination with 'mlr3'.
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -221,6 +111,7 @@
 <ul class="list-unstyled">
 <li>Sebastian Gruber <br><small class="roles"> Maintainer, author </small> <a href="https://orcid.org/0000-0002-8544-3470" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 <li>Jakob Richter <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-4481-5554" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Julia Moosbauer <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-0000-9297" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 <li>Bernd Bischl <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0001-6002-6980" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 </ul>
 </div>
@@ -230,7 +121,7 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Sebastian Gruber, Jakob Richter, Bernd Bischl.</p>
+  <p>Developed by Sebastian Gruber, Jakob Richter, Julia Moosbauer, Bernd Bischl.</p>
 </div>
 
 <div class="pkgdown">
