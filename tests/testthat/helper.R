@@ -79,9 +79,9 @@ test_tuner_hyperband = function(eta, n_dim = 1L, term_evals = NULL, lower_b, upp
   }
 
   if (length(measures) == 1) {
-    inst = TuningInstance$new(task, learner, rsmp("holdout"), msr(measures), ps, term)
+    inst = TuningInstanceSingleCrit$new(task, learner, rsmp("holdout"), msr(measures), ps, term)
   } else {
-    inst = TuningInstanceMulticrit$new(task, learner, rsmp("holdout"), lapply(measures, msr), ps, term)
+    inst = TuningInstanceMultiCrit$new(task, learner, rsmp("holdout"), lapply(measures, msr), ps, term)
   }
 
   tuner = tnr("hyperband", eta = eta)
@@ -89,7 +89,6 @@ test_tuner_hyperband = function(eta, n_dim = 1L, term_evals = NULL, lower_b, upp
 
   tuner$optimize(inst)
   archive = inst$archive
-
   # compare results with full hyperband brackets if tuner was fully evaluated
   if (!inst$is_terminated) {
     expect_info(eta, lower_b, upper_b, archive)
@@ -101,14 +100,14 @@ test_tuner_hyperband = function(eta, n_dim = 1L, term_evals = NULL, lower_b, upp
   sc = inst$result_x_domain
   sp = inst$result_y
 
-  if (inherits(inst, "TuningInstanceMulticrit")) {
-    expect_list(sc)
+  expect_list(sc)
+  expect_names(colnames(inst$result_x_search_space), identical.to = ps$ids())
+  if (inherits(inst, "TuningInstanceMultiCrit")) {
     expect_list(sc[[1]])
-    expect_names(colnames(inst$result_x_search_space), identical.to = ps$ids())
+    expect_names(names(sc[[1]]), subset.of = inst$objective$domain$ids())
     expect_data_table(sp, ncols = length(measures))
   } else {
-    expect_list(sc, len = ps$length)
-    expect_names(names(sc), identical.to = ps$ids())
+    expect_names(names(sc), subset.of = inst$objective$domain$ids())
     expect_number(sp)
   }
   list(tuner = tuner, inst = inst)
@@ -121,7 +120,7 @@ test_tuner_hyperband_dependencies = function(eta, term_evals = NULL, lower_b, up
   ll$param_set$add(
     ParamInt$new("nrounds", lower = lower_b, upper = upper_b, tags = "budget")
   )
-  test_res = test_tuner_hyperband(eta, term_evals, lower_b, upper_b, measures = "regr.mse", learner = ll, task = tsk("boston_housing"), ps = ll$param_set)
+  test_res = test_tuner_hyperband(eta = eta, term_evals = term_evals, lower_b = lower_b, upper_b = upper_b, measures = "regr.mse", learner = ll, task = tsk("boston_housing"), ps = ll$param_set)
   test_res
 }
 

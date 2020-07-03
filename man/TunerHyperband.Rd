@@ -173,21 +173,15 @@ like it is shown in the \code{examples}.
 
 \section{Logging}{
 
-When loading the \link{mlr3hyperband} package, three loggers based on the \link{lgr}
+When loading the \link{mlr3hyperband} package, two loggers based on the \link{lgr}
 package are made available.
-One is called \code{mlr3}, the other \code{mlr3/mlr3tuning} and the last
-\code{mlr3/mlr3tuning/mlr3hyperband}. The first tow are the
-original ones of \link{mlr3} and \link{mlr3tuning}, while the latter was added
-especially for \link{mlr3hyperband}.
-Each logger is responsible for loggings in executed code of each respective
-package. This means \link{mlr3tuning} code executed in \link{mlr3hyperband} is logged
-by \code{mlr3/mlr3tuning} and NOT \code{mlr3/mlr3tuning/mlr3hyperband}.
+One is called \code{mlr3}, the other \code{bbotk}.
+All \link{mlr3} methods log into the \code{mlr3} logger.
+All optimization methods form the packags \link{bbotk}, \link{mlr3tuning} and \link{mlr3hyperband} log into the \code{bbotk} logger.
 To change the behaviour of each logger, run\preformatted{# mlr3 add info logs
 lgr::get_logger("mlr3")$set_threshold("info")
 # mlr3tuning add info logs
-lgr::get_logger("mlr3/mlr3tuning")$set_threshold("info")
-# mlr3hyperband add info logs (already set by default)
-lg$set_threshold("info")
+lgr::get_logger("bbotk")$set_threshold("info")
 }
 
 But be careful as this will add a lot of clutter to the logs.
@@ -210,7 +204,7 @@ params = list(
 )
 
 
-inst = TuningInstance$new(
+inst = TuningInstanceSingleCrit$new(
   tsk("iris"),
   lrn("classif.xgboost"),
   rsmp("holdout"),
@@ -255,7 +249,7 @@ ps$trafo = function(x, param_set) {
   return(x)
 }
 
-inst = TuningInstance$new(
+inst = TuningInstanceSingleCrit$new(
   tsk("iris"),
   lrn("classif.xgboost"),
   rsmp("holdout"),
@@ -290,8 +284,8 @@ params = list(
   ParamDbl$new("subsample.frac", lower = 0.1, upper = 1, tags = "budget")
 )
 
-# define TuningInstance with the Graph Learner and the extended hyperparams
-inst = TuningInstance$new(
+# define TuningInstanceSingleCrit with the Graph Learner and the extended hyperparams
+inst = TuningInstanceSingleCrit$new(
   tsk("iris"),
   ll,
   rsmp("holdout"),
@@ -315,8 +309,8 @@ print(inst$archive$data())
 \references{
 \cite{mlr3hyperband}{li_2018}
 }
-\section{Super classes}{
-\code{\link[bbotk:Optimizer]{bbotk::Optimizer}} -> \code{\link[mlr3tuning:Tuner]{mlr3tuning::Tuner}} -> \code{TunerHyperband}
+\section{Super class}{
+\code{\link[mlr3tuning:Tuner]{mlr3tuning::Tuner}} -> \code{TunerHyperband}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -328,9 +322,9 @@ print(inst$archive$data())
 \if{html}{
 \out{<details open ><summary>Inherited methods</summary>}
 \itemize{
-\item \out{<span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="format">}\href{../../bbotk/html/Optimizer.html#method-format}{\code{bbotk::Optimizer$format()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="print">}\href{../../bbotk/html/Optimizer.html#method-print}{\code{bbotk::Optimizer$print()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="format">}\href{../../mlr3tuning/html/Tuner.html#method-format}{\code{mlr3tuning::Tuner$format()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="optimize">}\href{../../mlr3tuning/html/Tuner.html#method-optimize}{\code{mlr3tuning::Tuner$optimize()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="print">}\href{../../mlr3tuning/html/Tuner.html#method-print}{\code{mlr3tuning::Tuner$print()}}\out{</span>}
 }
 \out{</details>}
 }

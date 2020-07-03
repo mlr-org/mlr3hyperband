@@ -8,7 +8,7 @@ old_opts = options(
 # https://github.com/HenrikBengtsson/Wishlist-for-R/issues/88
 old_opts = lapply(old_opts, function(x) if (is.null(x)) FALSE else x)
 
-lg = lgr::get_logger("mlr3/mlr3tuning/mlr3hyperband")
+lg = lgr::get_logger("bbotk")
 old_threshold = lg$threshold
 lg$set_threshold("warn")
 set.seed(123)

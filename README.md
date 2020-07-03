@@ -80,21 +80,21 @@ params = list(
 
 # initialize TuningInstance as usual
 # hyperband terminates on its own, so the terminator acts as a upper bound
-inst = TuningInstance$new(
+inst = TuningInstanceSingleCrit$new(
   task = tsk("iris"),
   learner = lrn("classif.xgboost"),
   resampling = rsmp("holdout"),
-  measures = msr("classif.ce"),
-  ParamSet$new(params),
-  term("evals", n_evals = 100000L) # high value to let hyperband finish
+  measure = msr("classif.ce"),
+  search_space = ParamSet$new(params),
+  terminator = term("none") # hyperband terminates on its own
 )
 
 # initialize Hyperband Tuner and tune
 tuner = TunerHyperband$new(eta = 2L)
-tuner$tune(inst)
+tuner$optimize(inst)
 
 # return best result
-inst$best()
+inst$result
 ```
 
 Additionally, our framework also supports the case when no natural fidelity parameter is given by the learner.
@@ -117,20 +117,20 @@ params = list(
 )
 
 # define TuningInstance with the Graph Learner and the extended hyperparams
-inst = TuningInstance$new(
+inst = TuningInstanceSingleCrit$new(
   tsk("iris"),
   ll,
   rsmp("holdout"),
   msr("classif.ce"),
   ParamSet$new(params),
-  term("evals", n_evals = 100000L) # high value to let hyperband finish
+  term("none") # hyperband terminates on its own
 )
 
 tuner = TunerHyperband$new(eta = 4L)
-tuner$tune(inst)
+tuner$optimize(inst)
 
 # return best result
-inst$best()
+inst$result
 ```
 
 
