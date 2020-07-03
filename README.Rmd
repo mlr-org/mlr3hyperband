@@ -1,3 +1,9 @@
+
+---
+output: github_document
+---
+
+
 # mlr3hyperband
 
 Extends the [mlr3](https://mlr3.mlr-org.com) package with hyperband tuning.
@@ -15,7 +21,7 @@ Extends the [mlr3](https://mlr3.mlr-org.com) package with hyperband tuning.
 
 Install from github by running the following line:
 
-```r
+```{r, eval = FALSE}
 remotes::install_github("mlr-org/mlr3hyperband")
 ```
 
@@ -24,8 +30,9 @@ remotes::install_github("mlr-org/mlr3hyperband")
 If you are already familiar with `mlr3tuning`, then the only change compared to other tuners is to give a numeric hyperparameter a `"budget"` tag.
 Afterwards, you can handle hyperband like all other tuners:
 
-```r
+```{r, eval = FALSE}
 library(paradox)
+library(mlr3tuning)
 library(mlr3hyperband)
 
 # give a hyperparameter the "budget" tag
@@ -35,13 +42,13 @@ params = list(
   ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
 )
 
-#inst = ... here goes the usual mlr3tuning TuningInstance constructor
+inst = ...  # here goes the usual mlr3tuning TuningInstance constructor
 
 # initialize hyperband tuner
-tuner = TunerHyperband$new(eta = 2L)
+tuner = tnr("hyperband", eta = 2L)
 
 # tune the previously defined TuningInstance
-#tuner$tune(inst)
+tuner$optimize(inst)
 ```
 
 For the full working example, please check out the Examples section below.
@@ -49,10 +56,10 @@ For the full working example, please check out the Examples section below.
 
 ## A short description of hyperband
 
-Hyperband is a budget oriented-procedure, weeding out suboptimally performing configurations early on during their training process, increasing tuning efficiency as a consequence.
+Hyperband is a budget oriented-procedure, weeding out suboptimally performing configurations early on during their training process aiming at increasing the efficiency of the tuning procedure.
 For this, several brackets are constructed with an associated set of configurations for each bracket. These configuration are initialized by stochastic, often uniform, sampling.
 Each bracket is divided into multiple stages, and configurations are evaluated for a increasing budget in each stage.
-Note that currently all configurations are trained completely from the beginning, so no online updates of models.
+Note that currently all configurations are trained completely from the beginning, so no online updates to the models are performed.
 
 Different brackets are initialized with different number of configurations, and different budget sizes.
 
@@ -64,11 +71,12 @@ An alternative approach using subsampling and pipelines is described further bel
 
 Originally, hyperband was created with a "natural" learning parameter as the budget parameter in mind, like `nrounds` of the XGBoost learner:
 
-```r
-library(mlr3hyperband)
-library(mlr3tuning)
-library(mlr3learners)
+```{r}
 library(mlr3)
+library(mlr3hyperband) # hyperband tuner
+library(mlr3tuning) # tuning methods
+library(mlr3learners) # xgboost learner
+library(paradox) # search space definition
 set.seed(123)
 
 # define hyperparameter and budget parameter for tuning with hyperband
@@ -90,19 +98,18 @@ inst = TuningInstanceSingleCrit$new(
 )
 
 # initialize Hyperband Tuner and tune
-tuner = TunerHyperband$new(eta = 2L)
+tuner = tnr("hyperband", eta = 2L)
 tuner$optimize(inst)
 
 # return best result
 inst$result
 ```
 
-Additionally, our framework also supports the case when no natural fidelity parameter is given by the learner.
-In this case, one can use `mlr3pipelines` to define subsampling as a preprocessing step.
+Additionally, it is also possible to use `mlr3hyperband` to tune learners that do not have a natural fidelity parameter.
+In such a case `mlr3pipelines` can be used to define data subsampling as a preprocessing step.
 Then, the `frac` parameter of subsampling, defining the fraction of the training data to be used, can act as the budget parameter:
 
-```r
-library(mlr3hyperband)
+```{r}
 library(mlr3pipelines)
 set.seed(123)
 
@@ -126,7 +133,7 @@ inst = TuningInstanceSingleCrit$new(
   term("none") # hyperband terminates on its own
 )
 
-tuner = TunerHyperband$new(eta = 4L)
+tuner = tnr("hyperband", eta = 4L)
 tuner$optimize(inst)
 
 # return best result

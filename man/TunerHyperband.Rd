@@ -75,8 +75,8 @@ hyperband_brackets(R = 81L, eta = 3L)
 }
 }
 \section{Construction}{
-\preformatted{TunerHyperband$new(eta = 2, sampler = NULL)
-tnr("hyperband")
+\preformatted{TunerHyperband$new()
+tnr("hyperband", eta = 2L, sampler = NULL)
 }
 }
 
@@ -97,10 +97,9 @@ during the initialization of each bracket. The default is uniform sampling.
 \section{Fields}{
 
 \itemize{
-\item \code{info} :: \code{\link[data.table:data.table]{data.table::data.table()}}\cr
-Table containing information about the intermediate values, matching the
-the indices of the original reference instead of the console logs.
-It holds the following columns:
+\item \code{archive} :: \link[R6:R6Class]{R6::R6Class} inheriting from \link[bbotk:Archive]{bbotk::Archive} \cr
+The archive is a field of the tuned instance and contains logging information about the tuning process.
+The archive holds the following additional columns that are specific to the hyperband tuner:
 \itemize{
 \item \code{bracket} :: \code{integer()}\cr
 The console logs about the bracket index are actually not matching
@@ -132,8 +131,8 @@ to the \code{r_i} in the original paper.
 Thanks to \CRANpkg{mlr3pipelines}, it is possible to use hyperband in combination
 with learners lacking a natural budget parameter.
 For example, any \link[mlr3:Learner]{mlr3::Learner} can be augmented with a
-\link[mlr3pipelines:PipeOp]{PipeOp} operator such as \link[mlr3pipelines:PipeOpSubsample]{PipeOpSubsample}.
-With the subsampling rate as budget parameter, the resulting \link[mlr3pipelines:GraphLearner]{GraphLearner}
+\link[mlr3pipelines:PipeOp]{PipeOp} operator such as \link[mlr3pipelines:mlr_pipeops_subsample]{PipeOpSubsample}.
+With the subsampling rate as budget parameter, the resulting \link[mlr3pipelines:mlr_learners_graph]{GraphLearner}
 is fitted on small proportions of the \link[mlr3:Task]{Task} in the first brackets, and on the
 complete Task in last brackets.
 See examples for some code.
@@ -223,7 +222,7 @@ sampler = SamplerJointIndep$new(list(
 
 tuner = tnr("hyperband", eta = 2L, sampler = sampler)
 \dontrun{
-tuner$tune(inst)
+tuner$optimize(inst)
 
 # return the best evaluation
 inst$result
@@ -261,7 +260,7 @@ inst = TuningInstanceSingleCrit$new(
 # eta can be a double
 tuner = tnr("hyperband", eta = 1.9)
 \dontrun{
-tuner$tune(inst)
+tuner$optimize(inst)
 
 # return the best evaluation
 inst$result
@@ -297,7 +296,7 @@ inst = TuningInstanceSingleCrit$new(
 # define and call hyperband as usual
 tuner = tnr("hyperband", eta = 4L)
 \dontrun{
-tuner$tune(inst)
+tuner$optimize(inst)
 
 # return the best evaluation
 inst$result
