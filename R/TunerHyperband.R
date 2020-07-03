@@ -158,23 +158,17 @@
 #' ```
 #'
 #' @section Logging:
-#' When loading the [mlr3hyperband] package, three loggers based on the [lgr]
+#' When loading the [mlr3hyperband] package, two loggers based on the [lgr]
 #' package are made available.
-#' One is called `mlr3`, the other `mlr3/mlr3tuning` and the last
-#' `mlr3/mlr3tuning/mlr3hyperband`. The first tow are the
-#' original ones of [mlr3] and [mlr3tuning], while the latter was added
-#' especially for [mlr3hyperband].
-#' Each logger is responsible for loggings in executed code of each respective
-#' package. This means [mlr3tuning] code executed in [mlr3hyperband] is logged
-#' by `mlr3/mlr3tuning` and NOT `mlr3/mlr3tuning/mlr3hyperband`.
+#' One is called `mlr3`, the other `bbotk`.
+#' All [mlr3] methods log into the `mlr3` logger.
+#' All optimization methods form the packags [bbotk], [mlr3tuning] and [mlr3hyperband] log into the `bbotk` logger.
 #' To change the behaviour of each logger, run
 #' ```
 #' # mlr3 add info logs
 #' lgr::get_logger("mlr3")$set_threshold("info")
 #' # mlr3tuning add info logs
-#' lgr::get_logger("mlr3/mlr3tuning")$set_threshold("info")
-#' # mlr3hyperband add info logs (already set by default)
-#' lg$set_threshold("info")
+#' lgr::get_logger("bbotk")$set_threshold("info")
 #' ```
 #' But be careful as this will add a lot of clutter to the logs.
 #'
@@ -198,7 +192,7 @@
 #' )
 #'
 #'
-#' inst = TuningInstance$new(
+#' inst = TuningInstanceSingleCrit$new(
 #'   tsk("iris"),
 #'   lrn("classif.xgboost"),
 #'   rsmp("holdout"),
@@ -243,7 +237,7 @@
 #'   return(x)
 #' }
 #'
-#' inst = TuningInstance$new(
+#' inst = TuningInstanceSingleCrit$new(
 #'   tsk("iris"),
 #'   lrn("classif.xgboost"),
 #'   rsmp("holdout"),
@@ -278,8 +272,8 @@
 #'   ParamDbl$new("subsample.frac", lower = 0.1, upper = 1, tags = "budget")
 #' )
 #'
-#' # define TuningInstance with the Graph Learner and the extended hyperparams
-#' inst = TuningInstance$new(
+#' # define TuningInstanceSingleCrit with the Graph Learner and the extended hyperparams
+#' inst = TuningInstanceSingleCrit$new(
 #'   tsk("iris"),
 #'   ll,
 #'   rsmp("holdout"),

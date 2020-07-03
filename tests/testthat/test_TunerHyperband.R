@@ -23,7 +23,7 @@ test_that("TunerHyperband multicrit", {
     ParamInt$new("minsplit", lower = 1, upper = 10, tags = "budget")
   )
 
-  inst = TuningInstanceMulticrit$new(
+  inst = TuningInstanceMultiCrit$new(
     tsk("pima"),
     lrn("classif.rpart"),
     rsmp("holdout"),
@@ -52,7 +52,7 @@ test_that("TunerHyperband using CV", {
   ))
 
   # tuning instance with 2-fold CV
-  inst = TuningInstance$new(
+  inst = TuningInstanceSingleCrit$new(
     tsk("iris"),
     lrn("classif.xgboost"),
     rsmp("cv", folds = 2),
@@ -87,8 +87,8 @@ test_that("TunerHyperband using subsampling", {
     ParamDbl$new("subsample.frac", lower = 0.1, upper = 1, tags = "budget")
   )
 
-  # define TuningInstance with the Graph Learner and the extended hyperparams
-  inst = TuningInstance$new(
+  # define TuningInstanceSingleCrit with the Graph Learner and the extended hyperparams
+  inst = TuningInstanceSingleCrit$new(
     tsk("iris"),
     graph_learner,
     rsmp("holdout"),
@@ -121,8 +121,8 @@ test_that("TunerHyperband using subsampling and non-integer eta", {
     ParamDbl$new("subsample.frac", lower = 0.1, upper = 1, tags = "budget")
   )
 
-  # define TuningInstance with the Graph Learner and the extended hyperparams
-  inst = TuningInstance$new(
+  # define TuningInstanceSingleCrit with the Graph Learner and the extended hyperparams
+  inst = TuningInstanceSingleCrit$new(
     tsk("iris"),
     graph_learner,
     rsmp("holdout"),
@@ -157,7 +157,7 @@ test_that("TunerHyperband using param trafo and non-integer eta", {
   #  return(x)
   # }
 
-  inst = TuningInstance$new(
+  inst = TuningInstanceSingleCrit$new(
     tsk("iris"),
     lrn("classif.xgboost"),
     rsmp("holdout"),
@@ -186,7 +186,7 @@ test_that("TunerHyperband using custom sampler", {
   )
 
 
-  inst = TuningInstance$new(
+  inst = TuningInstanceSingleCrit$new(
     tsk("iris"),
     lrn("classif.xgboost"),
     rsmp("holdout"),
@@ -243,7 +243,7 @@ test_that("TunerHyperband invalid input", {
   )
 
 
-  inst = TuningInstance$new(
+  inst = TuningInstanceSingleCrit$new(
     tsk("iris"),
     lrn("classif.xgboost"),
     rsmp("holdout"),
@@ -265,7 +265,7 @@ test_that("TunerHyperband invalid input", {
   )
 
 
-  inst = TuningInstance$new(
+  inst = TuningInstanceSingleCrit$new(
     tsk("iris"),
     lrn("classif.xgboost"),
     rsmp("holdout"),

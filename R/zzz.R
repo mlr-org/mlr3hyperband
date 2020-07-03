@@ -10,18 +10,12 @@
 
 
 .onLoad = function(libname, pkgname) {
-
+  # nocov start
   # add hyperband to sugar
   x = utils::getFromNamespace("mlr_tuners", ns = "mlr3tuning")
   x$add("hyperband", TunerHyperband)
-  assign(
-    "lg",
-    # this seems extremely inconvenient
-    # as changing the level of mlr3 or ml3/mlr3tuning would also adjust
-    # the hyperband logger
-    lgr::get_logger("mlr3/mlr3tuning/mlr3hyperband"),
-    envir = parent.env(environment())
-  )
+
+  assign("lg", lgr::get_logger("bbotk"), envir = parent.env(environment()))
 
   if (Sys.getenv("IN_PKGDOWN") == "true") {
     lg$set_threshold("warn")

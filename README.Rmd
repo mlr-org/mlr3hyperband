@@ -56,7 +56,7 @@ For the full working example, please check out the Examples section below.
 
 ## A short description of hyperband
 
-Hyperband is a budget oriented-procedure, weeding out suboptimally performing configurations early on during their training process aiming at increasing the efficiency of the tuning procedure. 
+Hyperband is a budget oriented-procedure, weeding out suboptimally performing configurations early on during their training process aiming at increasing the efficiency of the tuning procedure.
 For this, several brackets are constructed with an associated set of configurations for each bracket. These configuration are initialized by stochastic, often uniform, sampling.
 Each bracket is divided into multiple stages, and configurations are evaluated for a increasing budget in each stage.
 Note that currently all configurations are trained completely from the beginning, so no online updates to the models are performed.
@@ -87,13 +87,13 @@ params = list(
 
 # initialize TuningInstance as usual
 # hyperband terminates on its own, so the terminator acts as a upper bound
-inst = TuningInstance$new(
+inst = TuningInstanceSingleCrit$new(
   task = tsk("iris"),
   learner = lrn("classif.xgboost"),
   resampling = rsmp("holdout"),
   measure = msr("classif.ce"),
-  ParamSet$new(params),
-  term("evals", n_evals = 100000L) # high value to let hyperband finish
+  search_space = ParamSet$new(params),
+  terminator = term("none") # hyperband terminates on its own
 )
 
 # initialize Hyperband Tuner and tune
@@ -104,7 +104,7 @@ tuner$optimize(inst)
 inst$result
 ```
 
-Additionally, it is also possible to use `mlr3hyperband` to tune learners that do not have a natural fidelity parameter. 
+Additionally, it is also possible to use `mlr3hyperband` to tune learners that do not have a natural fidelity parameter.
 In such a case `mlr3pipelines` can be used to define data subsampling as a preprocessing step.
 Then, the `frac` parameter of subsampling, defining the fraction of the training data to be used, can act as the budget parameter:
 
@@ -124,13 +124,13 @@ params = list(
 )
 
 # define TuningInstance with the Graph Learner and the extended hyperparams
-inst = TuningInstance$new(
+inst = TuningInstanceSingleCrit$new(
   tsk("iris"),
   ll,
   rsmp("holdout"),
   msr("classif.ce"),
   ParamSet$new(params),
-  term("evals", n_evals = 100000L) # high value to let hyperband finish
+  term("none") # hyperband terminates on its own
 )
 
 tuner = tnr("hyperband", eta = 4L)
