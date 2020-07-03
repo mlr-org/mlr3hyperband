@@ -1,286 +1,64 @@
 context("nds_selection")
 
-
-test_that("nds_selection basics", {
-  data_matrix = t(matrix(
+points = matrix(
     c( # front 1
-      1, 4,
-      2, 3,
-      4, 1,
+      # emoa puts always Inf weight on boundary points, so they always survive 
+      # points 1 and points 4 have the highest hypervolume contributions 
+      1, 4, 
+      2, 2, 
+      3.9, 1.1, 
+      4, 1, 
       # front 2
-      2.2, 3.2,
+      # points 5 and points 7 have the highest hypervolume contributions as boundary points
+      2.2, 3.2, 
       4, 3,
       4.2, 1,
       # front 3
-      3, 5,
-      3.2, 4.7,
-      6, 2,
-      # front 4
       6, 6
-    ), byrow = TRUE, ncol = 2L
-  ))
-
-  # only the hypervolume contribution of the first front elements was manually
-  # calculated, so we can only check for membership in each front, but not for
-  # the exact truth
-  set.seed(123)
-  expect_subset(
-    nds_selection(data_matrix, 1),
-    2:3
-  )
-
-  set.seed(123)
-  expect_equal(
-    nds_selection(data_matrix, 2),
-    2:3
-  )
-
-  set.seed(123)
-  expect_equal(
-    nds_selection(data_matrix, 3),
-    1:3
-  )
-
-  set.seed(123)
-  expect_subset(
-    nds_selection(data_matrix, 4),
-    1:6
-  )
-
-  set.seed(123)
-  expect_subset(
-    nds_selection(data_matrix, 5),
-    1:6
-  )
-
-  set.seed(123)
-  expect_equal(
-    nds_selection(data_matrix, 6),
-    1:6
-  )
-
-  set.seed(123)
-  expect_subset(
-    nds_selection(data_matrix, 7),
-    1:9
-  )
-
-  set.seed(123)
-  expect_subset(
-    nds_selection(data_matrix, 8),
-    1:9
-  )
-
-  set.seed(123)
-  expect_equal(
-    nds_selection(data_matrix, 9),
-    1:9
-  )
-
-  set.seed(123)
-  expect_equal(
-    nds_selection(data_matrix, 10),
-    1:10
-  )
-
-  # maximize (the front numbers above are not accurate anymore, so manual
-  # estimation of the set containing the solution is required)
-  set.seed(123)
-  expect_equal(
-    nds_selection(data_matrix, 1, minimize = FALSE),
-    10
-  )
-
-  set.seed(123)
-  expect_subset(
-    nds_selection(data_matrix, 2, minimize = FALSE),
-    10:7
-  )
-
-  set.seed(123)
-  expect_subset(
-    nds_selection(data_matrix, 3, minimize = FALSE),
-    10:7
-  )
-
-  set.seed(123)
-  expect_subset(
-    nds_selection(data_matrix, 4, minimize = FALSE),
-    5:10
-  )
-
-  set.seed(123)
-  expect_subset(
-    nds_selection(data_matrix, 5, minimize = FALSE),
-    10:4
-  )
-
-  set.seed(123)
-  expect_subset(
-    nds_selection(data_matrix, 6, minimize = FALSE),
-    10:4
-  )
-
-  set.seed(123)
-  expect_subset(
-    nds_selection(data_matrix, 7, minimize = FALSE),
-    4:10
-  )
-
-  set.seed(123)
-  expect_subset(
-    nds_selection(data_matrix, 8, minimize = FALSE),
-    1:10
-  )
-
-  set.seed(123)
-  expect_subset(
-    nds_selection(data_matrix, 9, minimize = FALSE),
-    1:10
-  )
-
-  set.seed(123)
-  expect_equal(
-    nds_selection(data_matrix, 10, minimize = FALSE),
-    1:10
+    ), byrow = FALSE, nrow = 2L
   )
 
 
-  # check if ref_point is not broken
-  # maybe alter the test so the ref_point actually gives different result
-  set.seed(123)
-  expect_equal(
-    nds_selection(data_matrix, 1, ref_point = c(10, 10), minimize = FALSE),
-    10
-  )
+test_that("nds_selection basics", {
 
-  set.seed(123)
-  expect_equal(
-    nds_selection(data_matrix, 2, ref_point = c(0, 0)),
-    1:2
-  )
-})
+  # list of possible results for each n_select value
+  results = list(
+    # Point 3 is ommitted first, followed by point 2. Then, 1 or 4 survives randomly.
+    "1" = c("1", "4"), 
+    # Point 3 is ommitted first, followed by point 2. 1 and 4 survive both.
+    "2" = c("14"),
+    # Point 3 is ommited first, so points 1, 2, and 4 survive
+    "3" = c("124"),
+    # All points out of front 1 survive
+    "4" = c("1234"),
+    # Out of front 2, points 5 is ommitted first, then, either 5 or 7 are sampled randomly
+    "5" = c("12345", "12347"),
+    # Out of front 2, points 5 is ommitted first, and 5 and 7 survive
+    "6" = c("123457"),
+    # Whole front 2 survives
+    "7" = c('1234567'),
+    # all candidates survive
+    "8" = c('12345678')
+    )
 
+  for (i in 1:8) {
+    for (j in c(-1, 1)) {
+      res = replicate(100, nds_selection(j * points, i, minimize = (j == 1)), simplify = FALSE)
+      res = sapply(res, paste, collapse = "")
+      res = unique(res)
+      expect_set_equal(res, results[[i]])
+    }
+  }
 
-test_that("nds_selection high dimensional", {
+  # changing the sign in one objective will not change the result 
+  to_minimize = c(TRUE, FALSE) 
+  points_max2d = points * (to_minimize * 2 - 1)
 
-  # check if more dimensions break something
-  # 3 dimensional
-  set.seed(123)
-  points = rbind(
-    y1 = runif(10),
-    y2 = runif(10),
-    y3 = runif(10)
-  )
+  for (i in 1:8) {
+      res = replicate(100, nds_selection(points_max2d, i, minimize = to_minimize), simplify = FALSE)
+      res = sapply(res, paste, collapse = "")
+      res = unique(res)
+      expect_set_equal(res, results[[i]])
+  }
 
-  set.seed(123)
-  expect_equal(
-    nds_selection(points, 10),
-    1:10
-  )
-
-  set.seed(123)
-  expect_equal(
-    nds_selection(points, 10, rep(10, 3)),
-    1:10
-  )
-
-  set.seed(123)
-  expect_equal(
-    nds_selection(points, 10, minimize = FALSE),
-    1:10
-  )
-
-  set.seed(123)
-  expect_equal(
-    nds_selection(points, 10, rep(0, 3), FALSE),
-    1:10
-  )
-
-  set.seed(123)
-  expect_subset(
-    nds_selection(points, 1),
-    1:10
-  )
-
-  set.seed(123)
-  expect_subset(
-    nds_selection(points, 1, rep(10, 3)),
-    1:10
-  )
-
-  set.seed(123)
-  expect_subset(
-    nds_selection(points, 1, minimize = FALSE),
-    1:10
-  )
-
-  set.seed(123)
-  expect_subset(
-    nds_selection(points, 1, rep(0, 3), FALSE),
-    1:10
-  )
-
-  # 4 dimensional
-  points = rbind(points, y4 = runif(10))
-
-  set.seed(123)
-  expect_equal(
-    nds_selection(points, 10),
-    1:10
-  )
-
-  set.seed(123)
-  expect_equal(
-    nds_selection(points, 10, rep(10, 4)),
-    1:10
-  )
-
-  set.seed(123)
-  expect_equal(
-    nds_selection(points, 10, minimize = FALSE),
-    1:10
-  )
-
-  set.seed(123)
-  expect_equal(
-    nds_selection(points, 10, rep(0, 4), FALSE),
-    1:10
-  )
-
-  set.seed(123)
-  expect_subset(
-    nds_selection(points, 1),
-    1:10
-  )
-
-  set.seed(123)
-  expect_subset(
-    nds_selection(points, 1, rep(10, 4)),
-    1:10
-  )
-
-  set.seed(123)
-  expect_subset(
-    nds_selection(points, 1, minimize = FALSE),
-    1:10
-  )
-
-  set.seed(123)
-  expect_subset(
-    nds_selection(points, 1, rep(0, 4), FALSE),
-    1:10
-  )
-
-  set.seed(123)
-  expect_subset(
-    nds_selection(points, 1, minimize = c(FALSE, TRUE, FALSE, TRUE)),
-    1:10
-  )
-
-  set.seed(123)
-  expect_subset(
-    nds_selection(points, 1, minimize = c(FALSE, FALSE, TRUE, FALSE)),
-    1:10
-  )
 })
