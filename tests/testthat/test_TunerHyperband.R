@@ -18,17 +18,19 @@ test_that("TunerHyperband multicrit", {
   test_tuner_hyperband(eta = 3L, lower_b = 1, upper_b = 27, measures = c("classif.fpr", "classif.tpr"))
   test_tuner_hyperband(eta = 2L, lower_b = 1, upper_b = 8, term_evals = 10, n_dim = 2L, measures = c("classif.fpr", "classif.tpr"))
 
-  params = list(
+  params = ParamSet$new(list(
     ParamDbl$new("cp", lower = 0.001, upper = 0.1),
     ParamInt$new("minsplit", lower = 1, upper = 10, tags = "budget")
-  )
+  ))
+
+  measures = c("classif.tpr", "classif.fpr")
 
   inst = TuningInstanceMultiCrit$new(
     tsk("pima"),
     lrn("classif.rpart"),
     rsmp("holdout"),
-    lapply(c("classif.tpr", "classif.fpr"), msr),
-    ParamSet$new(params),
+    msrs(c("classif.tpr", "classif.fpr")),
+    params,
     term("evals", n_evals = 100000)
   )
 
@@ -39,6 +41,13 @@ test_that("TunerHyperband multicrit", {
   results = inst$archive$data()[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
 
   expect_data_table(results, ncols = 4, nrows = 7)
+
+  assert_data_table(inst$result)
+  assert_list(inst$result_learner_param_vals, types = "list")
+  assert_names(names(inst$result_learner_param_vals[[1]]), must.include = params$ids())
+  assert_names(names(inst$result_x_domain[[1]]), must.include = params$ids())
+  assert_names(colnames(inst$result_x_search_space), permutation.of = params$ids())
+  assert_names(colnames(inst$result), must.include = c(params$ids(), measures))
 })
 
 
