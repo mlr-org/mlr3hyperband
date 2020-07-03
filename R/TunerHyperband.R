@@ -49,7 +49,7 @@
 #'
 #' @section Fields:
 #' * `archive` :: [R6::R6Class] inheriting from [bbotk::Archive] \cr
-#'   The archive is a field of the tuned instance and contains logging information about the tuning process. 
+#'   The archive is a field of the tuned instance and contains logging information about the tuning process.
 #'   The archive holds the following additional columns that are specific to the hyperband tuner:
 #'   * `bracket` :: `integer()`\cr
 #'     The console logs about the bracket index are actually not matching
@@ -316,7 +316,8 @@ TunerHyperband = R6Class("TunerHyperband",
       super$initialize(
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
         param_set = ps_hyperband,
-        properties = c("dependencies", "single-crit", "multi-crit")
+        properties = c("dependencies", "single-crit", "multi-crit"),
+        packages = "emoa" # used in nds_selection()
       )
     }
   ),

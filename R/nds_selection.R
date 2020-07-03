@@ -19,7 +19,7 @@
 
 nds_selection = function(points, n_select, ref_point = NULL, minimize = TRUE) {
 
-  mlr3misc::require_namespaces("emoa")
+  require_namespaces("emoa")
 
   # check input for correctness
   assert_matrix(points, mode = "numeric")
@@ -38,7 +38,7 @@ nds_selection = function(points, n_select, ref_point = NULL, minimize = TRUE) {
   if (!is.null(ref_point)) {
     ref_point = ref_point * (minimize * 2 - 1)
   } else {
-    ref_point = apply(points, 1, max)    
+    ref_point = apply(points, 1, max)
   }
 
   # init output indices
@@ -59,7 +59,7 @@ nds_selection = function(points, n_select, ref_point = NULL, minimize = TRUE) {
   # remove tied indices/points as long as we are bigger than n_select
   while (length(tie_surv) + length(sel_surv) > n_select) {
 
-    # compute hypervolume contribution 
+    # compute hypervolume contribution
     hv_contrib = emoa::hypervolume_contribution(tie_points, ref_point)
 
     # index of the tied case with the lowest hypervolume contribution
