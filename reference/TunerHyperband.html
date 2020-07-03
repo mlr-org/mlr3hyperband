@@ -273,10 +273,10 @@ to the <code>r_i</code> in the original paper.</p></li>
 
 <p>Thanks to <a href='https://CRAN.R-project.org/package=mlr3pipelines'><span class="pkg">mlr3pipelines</span></a>, it is possible to use hyperband in combination
 with learners lacking a natural budget parameter.
-For example, any <a href='https://rdrr.io/pkg/mlr3/man/Learner.html'>mlr3::Learner</a> can be augmented with a
+For example, any <a href='https://mlr3.mlr-org.com/reference/Learner.html'>mlr3::Learner</a> can be augmented with a
 <a href='https://mlr3pipelines.mlr-org.com//reference/PipeOp.html'>PipeOp</a> operator such as <a href='https://mlr3pipelines.mlr-org.com//reference/mlr_pipeops_subsample.html'>PipeOpSubsample</a>.
 With the subsampling rate as budget parameter, the resulting <a href='https://mlr3pipelines.mlr-org.com//reference/mlr_learners_graph.html'>GraphLearner</a>
-is fitted on small proportions of the <a href='https://rdrr.io/pkg/mlr3/man/Task.html'>Task</a> in the first brackets, and on the
+is fitted on small proportions of the <a href='https://mlr3.mlr-org.com/reference/Task.html'>Task</a> in the first brackets, and on the
 complete Task in last brackets.
 See examples for some code.</p>
     <h2 class="hasAnchor" id="custom-sampler"><a class="anchor" href="#custom-sampler"></a>Custom sampler</h2>
@@ -318,7 +318,7 @@ like it is shown in the <code>examples</code>.</p>
 <p>When loading the <a href='mlr3hyperband-package.html'>mlr3hyperband</a> package, two loggers based on the lgr
 package are made available.
 One is called <code>mlr3</code>, the other <code>bbotk</code>.
-All <a href='https://rdrr.io/pkg/mlr3/man/mlr3-package.html'>mlr3</a> methods log into the <code>mlr3</code> logger.
+All <a href='https://mlr3.mlr-org.com/reference/mlr3-package.html'>mlr3</a> methods log into the <code>mlr3</code> logger.
 All optimization methods form the packags bbotk, <a href='https://mlr3tuning.mlr-org.com/reference/mlr3tuning-package.html'>mlr3tuning</a> and <a href='mlr3hyperband-package.html'>mlr3hyperband</a> log into the <code>bbotk</code> logger.
 To change the behaviour of each logger, run</p><pre><span class='co'># mlr3 add info logs</span>
 <span class='kw pkg'>lgr</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/lgr/man/get_logger.html'>get_logger</a></span>(<span class='st'>"mlr3"</span>)$<span class='fu'>set_threshold</span>(<span class='st'>"info"</span>)
@@ -389,10 +389,10 @@ To change the behaviour of each logger, run</p><pre><span class='co'># mlr3 add 
 
 
 <span class='no'>inst</span> <span class='kw'>=</span> <span class='no'>TuningInstanceSingleCrit</span>$<span class='fu'>new</span>(
-  <span class='fu'><a href='https://rdrr.io/pkg/mlr3/man/mlr_sugar.html'>tsk</a></span>(<span class='st'>"iris"</span>),
-  <span class='fu'><a href='https://rdrr.io/pkg/mlr3/man/mlr_sugar.html'>lrn</a></span>(<span class='st'>"classif.xgboost"</span>),
-  <span class='fu'><a href='https://rdrr.io/pkg/mlr3/man/mlr_sugar.html'>rsmp</a></span>(<span class='st'>"holdout"</span>),
-  <span class='fu'><a href='https://rdrr.io/pkg/mlr3/man/mlr_sugar.html'>msr</a></span>(<span class='st'>"classif.ce"</span>),
+  <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>tsk</a></span>(<span class='st'>"iris"</span>),
+  <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>lrn</a></span>(<span class='st'>"classif.xgboost"</span>),
+  <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>rsmp</a></span>(<span class='st'>"holdout"</span>),
+  <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>msr</a></span>(<span class='st'>"classif.ce"</span>),
   <span class='no'>ParamSet</span>$<span class='fu'>new</span>(<span class='no'>params</span>),
   <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/term.html'>term</a></span>(<span class='st'>"evals"</span>, <span class='kw'>n_evals</span> <span class='kw'>=</span> <span class='fl'>100000</span>)
 )
@@ -434,10 +434,10 @@ To change the behaviour of each logger, run</p><pre><span class='co'># mlr3 add 
 }
 
 <span class='no'>inst</span> <span class='kw'>=</span> <span class='no'>TuningInstanceSingleCrit</span>$<span class='fu'>new</span>(
-  <span class='fu'><a href='https://rdrr.io/pkg/mlr3/man/mlr_sugar.html'>tsk</a></span>(<span class='st'>"iris"</span>),
-  <span class='fu'><a href='https://rdrr.io/pkg/mlr3/man/mlr_sugar.html'>lrn</a></span>(<span class='st'>"classif.xgboost"</span>),
-  <span class='fu'><a href='https://rdrr.io/pkg/mlr3/man/mlr_sugar.html'>rsmp</a></span>(<span class='st'>"holdout"</span>),
-  <span class='fu'><a href='https://rdrr.io/pkg/mlr3/man/mlr_sugar.html'>msr</a></span>(<span class='st'>"classif.ce"</span>),
+  <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>tsk</a></span>(<span class='st'>"iris"</span>),
+  <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>lrn</a></span>(<span class='st'>"classif.xgboost"</span>),
+  <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>rsmp</a></span>(<span class='st'>"holdout"</span>),
+  <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>msr</a></span>(<span class='st'>"classif.ce"</span>),
   <span class='no'>ps</span>,
   <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/term.html'>term</a></span>(<span class='st'>"evals"</span>, <span class='kw'>n_evals</span> <span class='kw'>=</span> <span class='fl'>100000</span>)
 )
@@ -458,7 +458,7 @@ To change the behaviour of each logger, run</p><pre><span class='co'># mlr3 add 
 
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>mlr3pipelines</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>123</span>)
-<span class='no'>ll</span> <span class='kw'>=</span> <span class='fu'><a href='https://mlr3pipelines.mlr-org.com//reference/po.html'>po</a></span>(<span class='st'>"subsample"</span>) <span class='kw'>%&gt;&gt;%</span> <span class='fu'><a href='https://rdrr.io/pkg/mlr3/man/mlr_sugar.html'>lrn</a></span>(<span class='st'>"classif.rpart"</span>)
+<span class='no'>ll</span> <span class='kw'>=</span> <span class='fu'><a href='https://mlr3pipelines.mlr-org.com//reference/po.html'>po</a></span>(<span class='st'>"subsample"</span>) <span class='kw'>%&gt;&gt;%</span> <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>lrn</a></span>(<span class='st'>"classif.rpart"</span>)
 
 <span class='co'># define with extended hyperparameters with subsampling fraction as budget</span>
 <span class='co'># ==&gt; no learner budget is required</span>
@@ -470,10 +470,10 @@ To change the behaviour of each logger, run</p><pre><span class='co'># mlr3 add 
 
 <span class='co'># define TuningInstanceSingleCrit with the Graph Learner and the extended hyperparams</span>
 <span class='no'>inst</span> <span class='kw'>=</span> <span class='no'>TuningInstanceSingleCrit</span>$<span class='fu'>new</span>(
-  <span class='fu'><a href='https://rdrr.io/pkg/mlr3/man/mlr_sugar.html'>tsk</a></span>(<span class='st'>"iris"</span>),
+  <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>tsk</a></span>(<span class='st'>"iris"</span>),
   <span class='no'>ll</span>,
-  <span class='fu'><a href='https://rdrr.io/pkg/mlr3/man/mlr_sugar.html'>rsmp</a></span>(<span class='st'>"holdout"</span>),
-  <span class='fu'><a href='https://rdrr.io/pkg/mlr3/man/mlr_sugar.html'>msr</a></span>(<span class='st'>"classif.ce"</span>),
+  <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>rsmp</a></span>(<span class='st'>"holdout"</span>),
+  <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>msr</a></span>(<span class='st'>"classif.ce"</span>),
   <span class='no'>ParamSet</span>$<span class='fu'>new</span>(<span class='no'>params</span>),
   <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/term.html'>term</a></span>(<span class='st'>"evals"</span>, <span class='kw'>n_evals</span> <span class='kw'>=</span> <span class='fl'>100000</span>)
 )
