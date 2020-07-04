@@ -160,7 +160,7 @@ argument set, please have a look in the <code>details</code>.
 For more information about the algorithm, please check out the mlr3book. (ADD MISSING REFERENCE)</p>
 <p>To identify the budget for evaluating hyperband, the user has to specify
 explicitly which hyperparameter of the learner influences the budget
-by tagging a single hyperparameter in the <a href='https://rdrr.io/pkg/paradox/man/ParamSet.html'>paradox::ParamSet</a> with <code>"budget"</code>.
+by tagging a single hyperparameter in the <a href='https://paradox.mlr-org.com/reference/ParamSet.html'>paradox::ParamSet</a> with <code>"budget"</code>.
 An alternative approach using subsampling and pipelines is described below.</p>
 <p>Naturally, hyperband terminates once all of its brackets are evaluated,
 so a <a href='https://rdrr.io/pkg/bbotk/man/Terminator.html'>bbotk::Terminator</a> in the tuning instance acts as an upper
@@ -230,7 +230,7 @@ Fraction parameter of the successive halving algorithm: With every step
 the configuration budget is increased by a factor of <code>eta</code> and only the
 best <code>1/eta</code> configurations are used for the next stage. Non-integer
 values are supported, but <code>eta</code> is not allowed to be less or equal 1.</p></li>
-<li><p><code>sampler</code> :: <a href='https://rdrr.io/pkg/R6/man/R6Class.html'>R6::R6Class</a> object inheriting from <a href='https://rdrr.io/pkg/paradox/man/Sampler.html'>paradox::Sampler</a><br />
+<li><p><code>sampler</code> :: <a href='https://rdrr.io/pkg/R6/man/R6Class.html'>R6::R6Class</a> object inheriting from <a href='https://paradox.mlr-org.com/reference/Sampler.html'>paradox::Sampler</a><br />
 Object defining how the samples of the parameter space should be drawn
 during the initialization of each bracket. The default is uniform sampling.</p></li>
 </ul>
@@ -283,7 +283,7 @@ See examples for some code.</p>
 
     
 
-<p>Hyperband supports custom <a href='https://rdrr.io/pkg/paradox/man/Sampler.html'>Sampler</a> object for initial
+<p>Hyperband supports custom <a href='https://paradox.mlr-org.com/reference/Sampler.html'>Sampler</a> object for initial
 configurations in each bracket.
 A custom sampler may look like this (the full example is given in the
 <code>examples</code> section):</p><pre><span class='co'># - beta distribution with alpha = 2 and beta = 5</span>
