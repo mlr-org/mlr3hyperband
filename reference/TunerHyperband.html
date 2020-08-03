@@ -163,7 +163,7 @@ explicitly which hyperparameter of the learner influences the budget
 by tagging a single hyperparameter in the <a href='https://paradox.mlr-org.com/reference/ParamSet.html'>paradox::ParamSet</a> with <code>"budget"</code>.
 An alternative approach using subsampling and pipelines is described below.</p>
 <p>Naturally, hyperband terminates once all of its brackets are evaluated,
-so a <a href='https://rdrr.io/pkg/bbotk/man/Terminator.html'>bbotk::Terminator</a> in the tuning instance acts as an upper
+so a <a href='https://bbotk.mlr-org.com/reference/Terminator.html'>bbotk::Terminator</a> in the tuning instance acts as an upper
 bound and should be only set to a low value if one is unsure of how long
 hyperband will take to finish under the given settings.</p>
     </div>
@@ -240,7 +240,7 @@ during the initialization of each bracket. The default is uniform sampling.</p><
     
 
 <ul>
-<li><p><code>archive</code> :: <a href='https://rdrr.io/pkg/R6/man/R6Class.html'>R6::R6Class</a> inheriting from <a href='https://rdrr.io/pkg/bbotk/man/Archive.html'>bbotk::Archive</a> <br />
+<li><p><code>archive</code> :: <a href='https://rdrr.io/pkg/R6/man/R6Class.html'>R6::R6Class</a> inheriting from <a href='https://bbotk.mlr-org.com/reference/Archive.html'>bbotk::Archive</a> <br />
 The archive is a field of the tuned instance and contains logging information about the tuning process.
 The archive holds the following additional columns that are specific to the hyperband tuner:</p><ul>
 <li><p><code>bracket</code> :: <code><a href='https://rdrr.io/r/base/integer.html'>integer()</a></code><br />
@@ -394,7 +394,7 @@ To change the behaviour of each logger, run</p><pre><span class='co'># mlr3 add 
   <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>rsmp</a></span>(<span class='st'>"holdout"</span>),
   <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>msr</a></span>(<span class='st'>"classif.ce"</span>),
   <span class='no'>ParamSet</span>$<span class='fu'>new</span>(<span class='no'>params</span>),
-  <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/term.html'>term</a></span>(<span class='st'>"evals"</span>, <span class='kw'>n_evals</span> <span class='kw'>=</span> <span class='fl'>100000</span>)
+  <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/trm.html'>trm</a></span>(<span class='st'>"evals"</span>, <span class='kw'>n_evals</span> <span class='kw'>=</span> <span class='fl'>100000</span>)
 )
 
 <span class='co'># create custom sampler (optional):</span>
@@ -439,7 +439,7 @@ To change the behaviour of each logger, run</p><pre><span class='co'># mlr3 add 
   <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>rsmp</a></span>(<span class='st'>"holdout"</span>),
   <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>msr</a></span>(<span class='st'>"classif.ce"</span>),
   <span class='no'>ps</span>,
-  <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/term.html'>term</a></span>(<span class='st'>"evals"</span>, <span class='kw'>n_evals</span> <span class='kw'>=</span> <span class='fl'>100000</span>)
+  <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/trm.html'>trm</a></span>(<span class='st'>"evals"</span>, <span class='kw'>n_evals</span> <span class='kw'>=</span> <span class='fl'>100000</span>)
 )
 
 <span class='co'># eta can be a double</span>
@@ -475,7 +475,7 @@ To change the behaviour of each logger, run</p><pre><span class='co'># mlr3 add 
   <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>rsmp</a></span>(<span class='st'>"holdout"</span>),
   <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>msr</a></span>(<span class='st'>"classif.ce"</span>),
   <span class='no'>ParamSet</span>$<span class='fu'>new</span>(<span class='no'>params</span>),
-  <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/term.html'>term</a></span>(<span class='st'>"evals"</span>, <span class='kw'>n_evals</span> <span class='kw'>=</span> <span class='fl'>100000</span>)
+  <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/trm.html'>trm</a></span>(<span class='st'>"evals"</span>, <span class='kw'>n_evals</span> <span class='kw'>=</span> <span class='fl'>100000</span>)
 )
 
 <span class='co'># define and call hyperband as usual</span>
