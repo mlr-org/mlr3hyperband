@@ -58,9 +58,9 @@ test_tuner_hyperband = function(eta, n_dim = 1L, term_evals = NULL, lower_b, upp
 
   # run for an (almost) arbitrary time if NULL is given
   if (is.null(term_evals)) {
-    term = term("none")
+    term = trm("none")
   } else {
-    term = term("evals", n_evals = term_evals)
+    term = trm("evals", n_evals = term_evals)
   }
 
   if (is.null(ps)) {

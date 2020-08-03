@@ -131,8 +131,8 @@ to the \code{r_i} in the original paper.
 Thanks to \CRANpkg{mlr3pipelines}, it is possible to use hyperband in combination
 with learners lacking a natural budget parameter.
 For example, any \link[mlr3:Learner]{mlr3::Learner} can be augmented with a
-\link[mlr3pipelines:PipeOp]{PipeOp} operator such as \link[mlr3pipelines:PipeOpSubsample]{PipeOpSubsample}.
-With the subsampling rate as budget parameter, the resulting \link[mlr3pipelines:GraphLearner]{GraphLearner}
+\link[mlr3pipelines:PipeOp]{PipeOp} operator such as \link[mlr3pipelines:mlr_pipeops_subsample]{PipeOpSubsample}.
+With the subsampling rate as budget parameter, the resulting \link[mlr3pipelines:mlr_learners_graph]{GraphLearner}
 is fitted on small proportions of the \link[mlr3:Task]{Task} in the first brackets, and on the
 complete Task in last brackets.
 See examples for some code.
@@ -209,7 +209,7 @@ inst = TuningInstanceSingleCrit$new(
   rsmp("holdout"),
   msr("classif.ce"),
   ParamSet$new(params),
-  term("evals", n_evals = 100000)
+  trm("evals", n_evals = 100000)
 )
 
 # create custom sampler (optional):
@@ -254,7 +254,7 @@ inst = TuningInstanceSingleCrit$new(
   rsmp("holdout"),
   msr("classif.ce"),
   ps,
-  term("evals", n_evals = 100000)
+  trm("evals", n_evals = 100000)
 )
 
 # eta can be a double
@@ -290,7 +290,7 @@ inst = TuningInstanceSingleCrit$new(
   rsmp("holdout"),
   msr("classif.ce"),
   ParamSet$new(params),
-  term("evals", n_evals = 100000)
+  trm("evals", n_evals = 100000)
 )
 
 # define and call hyperband as usual

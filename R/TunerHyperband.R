@@ -198,7 +198,7 @@
 #'   rsmp("holdout"),
 #'   msr("classif.ce"),
 #'   ParamSet$new(params),
-#'   term("evals", n_evals = 100000)
+#'   trm("evals", n_evals = 100000)
 #' )
 #'
 #' # create custom sampler (optional):
@@ -243,7 +243,7 @@
 #'   rsmp("holdout"),
 #'   msr("classif.ce"),
 #'   ps,
-#'   term("evals", n_evals = 100000)
+#'   trm("evals", n_evals = 100000)
 #' )
 #'
 #' # eta can be a double
@@ -279,7 +279,7 @@
 #'   rsmp("holdout"),
 #'   msr("classif.ce"),
 #'   ParamSet$new(params),
-#'   term("evals", n_evals = 100000)
+#'   trm("evals", n_evals = 100000)
 #' )
 #'
 #' # define and call hyperband as usual

@@ -31,7 +31,7 @@ test_that("TunerHyperband multicrit", {
     rsmp("holdout"),
     msrs(c("classif.tpr", "classif.fpr")),
     params,
-    term("evals", n_evals = 100000)
+    trm("evals", n_evals = 100000)
   )
 
   tuner = tnr("hyperband", eta = 4L)
@@ -67,7 +67,7 @@ test_that("TunerHyperband using CV", {
     rsmp("cv", folds = 2),
     msr("classif.ce"),
     ps,
-    term("evals", n_evals = 100000)
+    trm("evals", n_evals = 100000)
   )
 
   # hyperband + tuning
@@ -103,7 +103,7 @@ test_that("TunerHyperband using subsampling", {
     rsmp("holdout"),
     msr("classif.ce"),
     ParamSet$new(params),
-    term("evals", n_evals = 100000)
+    trm("evals", n_evals = 100000)
   )
 
   # define and call hyperband as usual
@@ -137,7 +137,7 @@ test_that("TunerHyperband using subsampling and non-integer eta", {
     rsmp("holdout"),
     msr("classif.ce"),
     ParamSet$new(params),
-    term("evals", n_evals = 100000)
+    trm("evals", n_evals = 100000)
   )
 
   # define and call hyperband as usual
@@ -172,7 +172,7 @@ test_that("TunerHyperband using param trafo and non-integer eta", {
     rsmp("holdout"),
     msr("classif.ce"),
     ps,
-    term("evals", n_evals = 100000)
+    trm("evals", n_evals = 100000)
   )
 
   # hyperband + tuning
@@ -201,7 +201,7 @@ test_that("TunerHyperband using custom sampler", {
     rsmp("holdout"),
     msr("classif.ce"),
     ParamSet$new(params),
-    term("evals", n_evals = 100000)
+    trm("evals", n_evals = 100000)
   )
 
   # create custom sampler:
@@ -258,7 +258,7 @@ test_that("TunerHyperband invalid input", {
     rsmp("holdout"),
     msr("classif.ce"),
     ParamSet$new(params),
-    term("evals", n_evals = 100000)
+    trm("evals", n_evals = 100000)
   )
 
   tuner = tnr("hyperband", eta = 2L)
@@ -280,7 +280,7 @@ test_that("TunerHyperband invalid input", {
     rsmp("holdout"),
     msr("classif.ce"),
     ParamSet$new(params),
-    term("evals", n_evals = 100000)
+    trm("evals", n_evals = 100000)
   )
 
   tuner = tnr("hyperband", eta = 2L)
