@@ -105,7 +105,7 @@ inst = TuningInstanceSingleCrit$new(
   resampling = rsmp("holdout"),
   measure = msr("classif.ce"),
   search_space = ParamSet$new(params),
-  terminator = term("none") # hyperband terminates on its own
+  terminator = trm("none") # hyperband terminates on its own
 )
 
 # initialize Hyperband Tuner and tune
@@ -383,7 +383,7 @@ inst = TuningInstanceSingleCrit$new(
   rsmp("holdout"),
   msr("classif.ce"),
   ParamSet$new(params),
-  term("none") # hyperband terminates on its own
+  trm("none") # hyperband terminates on its own
 )
 
 tuner = tnr("hyperband", eta = 4L)
