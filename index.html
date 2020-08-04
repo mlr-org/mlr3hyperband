@@ -153,7 +153,7 @@
   <span class="kw">resampling</span> <span class="kw">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">rsmp</a></span>(<span class="st">"holdout"</span>),
   <span class="kw">measure</span> <span class="kw">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">msr</a></span>(<span class="st">"classif.ce"</span>),
   <span class="kw">search_space</span> <span class="kw">=</span> <span class="no">ParamSet</span>$<span class="fu">new</span>(<span class="no">params</span>),
-  <span class="kw">terminator</span> <span class="kw">=</span> <span class="fu">term</span>(<span class="st">"none"</span>) <span class="co"># hyperband terminates on its own</span>
+  <span class="kw">terminator</span> <span class="kw">=</span> <span class="fu"><a href="https://mlr3tuning.mlr-org.com/reference/trm.html">trm</a></span>(<span class="st">"none"</span>) <span class="co"># hyperband terminates on its own</span>
 )
 
 <span class="co"># initialize Hyperband Tuner and tune</span>
@@ -417,7 +417,7 @@
   <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">rsmp</a></span>(<span class="st">"holdout"</span>),
   <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">msr</a></span>(<span class="st">"classif.ce"</span>),
   <span class="no">ParamSet</span>$<span class="fu">new</span>(<span class="no">params</span>),
-  <span class="fu">term</span>(<span class="st">"none"</span>) <span class="co"># hyperband terminates on its own</span>
+  <span class="fu"><a href="https://mlr3tuning.mlr-org.com/reference/trm.html">trm</a></span>(<span class="st">"none"</span>) <span class="co"># hyperband terminates on its own</span>
 )
 
 <span class="no">tuner</span> <span class="kw">=</span> <span class="fu"><a href="https://mlr3tuning.mlr-org.com/reference/tnr.html">tnr</a></span>(<span class="st">"hyperband"</span>, <span class="kw">eta</span> <span class="kw">=</span> <span class="fl">4L</span>)
