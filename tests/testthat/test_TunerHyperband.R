@@ -234,7 +234,8 @@ test_that("TunerHyperband using custom sampler", {
   tuner = tnr("hyperband", eta = 2L, sampler = sampler)
   expect_tuner(tuner)
   tuner$optimize(inst)
-  expect_resample_result(inst$archive$best()$resample_result[[1]])
+  rr = inst$archive$benchmark_result$resample_result(uhash = inst$archive$best()$uhash)
+  expect_resample_result(rr)
 
   results = inst$archive$data()[, .(nrounds, eta, booster, classif.ce)]
   expect_data_table(results, ncols = 4, nrows = 35)
