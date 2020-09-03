@@ -2,21 +2,23 @@
 #'
 #' @description Select best subset of points by non dominated sorting with
 #' hypervolume contribution for tie breaking. Works on an arbitrary dimension
-#' of size two or higher.
+#' of size two or higher. Returns a vector of indices of selected points.
+#'
 #' @section Parameters:
-#' * `points` :: `matrix()`\cr
-#'   Numeric matrix with each column corresponding to a point
-#' * `n_select` :: `integer(1L)`\cr
-#'   Amount of points to select
-#' * `ref_point` :: `integer()`\cr
-#'   Reference point for hypervolume
-#' * `minimize` :: `logical()`\cr
-#'   Should the ranking be based on minimization? (Single bool
-#'   for all dimensions, or vector of bools with each entry corresponding to
-#' each dimension)
-#' @return Vector of indices of selected points
+#' \describe{
+#' \item{`points`}{`matrix()`\cr
+#' Numeric matrix with each column corresponding to a point.}
+#' \item{`n_select`}{`integer(1)`\cr
+#' Amount of points to select.}
+#' \item{`ref_point`}{`integer()`\cr
+#' Reference point for hypervolume.}
+#' \item{`minimize`}{`logical()`\cr
+#' Should the ranking be based on minimization? (Single bool for all dimensions,
+#' or vector of bools with each entry corresponding to each dimension).}
+#' }
+#'
+#' @return `integer()`
 #' @usage NULL
-
 nds_selection = function(points, n_select, ref_point = NULL, minimize = TRUE) {
 
   require_namespaces("emoa")

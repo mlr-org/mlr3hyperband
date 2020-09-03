@@ -8,7 +8,6 @@
 #' @importFrom R6 R6Class
 "_PACKAGE"
 
-
 .onLoad = function(libname, pkgname) {
   # nocov start
   # add hyperband to sugar

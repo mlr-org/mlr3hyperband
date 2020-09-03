@@ -4,26 +4,25 @@
 \alias{nds_selection}
 \title{Best points w.r.t. non dominated sorting with hypervolume contrib.}
 \value{
-Vector of indices of selected points
+\code{integer()}
 }
 \description{
 Select best subset of points by non dominated sorting with
 hypervolume contribution for tie breaking. Works on an arbitrary dimension
-of size two or higher.
+of size two or higher. Returns a vector of indices of selected points.
 }
 \section{Parameters}{
 
-\itemize{
-\item \code{points} :: \code{matrix()}\cr
-Numeric matrix with each column corresponding to a point
-\item \code{n_select} :: \code{integer(1L)}\cr
-Amount of points to select
-\item \code{ref_point} :: \code{integer()}\cr
-Reference point for hypervolume
-\item \code{minimize} :: \code{logical()}\cr
-Should the ranking be based on minimization? (Single bool
-for all dimensions, or vector of bools with each entry corresponding to
-each dimension)
+\describe{
+\item{\code{points}}{\code{matrix()}\cr
+Numeric matrix with each column corresponding to a point.}
+\item{\code{n_select}}{\code{integer(1)}\cr
+Amount of points to select.}
+\item{\code{ref_point}}{\code{integer()}\cr
+Reference point for hypervolume.}
+\item{\code{minimize}}{\code{logical()}\cr
+Should the ranking be based on minimization? (Single bool for all dimensions,
+or vector of bools with each entry corresponding to each dimension).}
 }
 }
 
