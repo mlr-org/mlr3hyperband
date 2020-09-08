@@ -166,9 +166,11 @@ make_dummy_cp_measure = function(type) {
           properties = "requires_learner"
         )
         self$fun = fun # allow a fun to transform cp to score
-      },
+      }
+    ),
 
-      score_internal = function(prediction, learner, ...) {
+    private = list(
+      .score = function(prediction, learner, ...) {
         self$fun(learner$param_set$values$cp)
       }
     )
