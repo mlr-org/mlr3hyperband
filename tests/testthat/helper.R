@@ -195,14 +195,16 @@ LearnerRegrDepParams = R6Class("LearnerRegrDepParams",
         param_set = param_set,
         properties = c("missings")
       )
-    },
+    }
+  ),
 
-    train_internal = function(task) {
+  private = list(
+    .train = function(task) {
       tn = task$target_names
       return(list())
     },
 
-    predict_internal = function(task) {
+    .predict = function(task) {
       n = task$nrow
       response = rep(99, n)
       PredictionRegr$new(task, response = response)
