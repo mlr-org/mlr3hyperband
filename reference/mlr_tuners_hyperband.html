@@ -180,38 +180,39 @@ current bracket index.
 For the starting configurations in each bracket it is
 <code><a href='https://rdrr.io/r/base/Round.html'>ceiling((B/R) * ((eta^s)/(s+1)))</a></code>, with <code>B = (bracket amount) * R</code>.
 To receive a table with the full brackets layout, load the following function
-and execute it for the desired <code>R</code> and <code>eta</code>.</p><pre><span class='no'>hyperband_brackets</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>R</span>, <span class='no'>eta</span>) {
+and execute it for the desired <code>R</code> and <code>eta</code>.</p><pre><span class='kw'>hyperband_brackets</span> <span class='op'>=</span> <span class='fu'>function</span>(<span class='kw'>R</span>, <span class='kw'>eta</span>) {
 
-  <span class='no'>result</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>()
-  <span class='no'>smax</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>floor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span>(<span class='no'>R</span>, <span class='no'>eta</span>))
-  <span class='no'>B</span> <span class='kw'>=</span> (<span class='no'>smax</span> + <span class='fl'>1</span>) * <span class='no'>R</span>
+  <span class='kw'>result</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>()
+  <span class='kw'>smax</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>floor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span>(<span class='kw'>R</span>, <span class='kw'>eta</span>))
+  <span class='kw'>B</span> <span class='op'>=</span> (<span class='kw'>smax</span> <span class='op'>+</span> <span class='fl'>1</span>) <span class='op'>*</span> <span class='kw'>R</span>
 
   <span class='co'># outer loop - iterate over brackets</span>
-  <span class='kw'>for</span> (<span class='no'>s</span> <span class='kw'>in</span> <span class='no'>smax</span>:<span class='fl'>0</span>) {
+  <span class='co'>for</span> (<span class='kw'>s</span> <span class='co'>in</span> <span class='kw'>smax</span><span class='op'>:</span><span class='fl'>0</span>) {
 
-    <span class='no'>n</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>ceiling</a></span>((<span class='no'>B</span>/<span class='no'>R</span>) * ((<span class='no'>eta</span>^<span class='no'>s</span>)/(<span class='no'>s</span>+<span class='fl'>1</span>)))
-    <span class='no'>r</span> <span class='kw'>=</span> <span class='no'>R</span> * <span class='no'>eta</span>^(-<span class='no'>s</span>)
+    <span class='kw'>n</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>ceiling</a></span>((<span class='kw'>B</span><span class='op'>/</span><span class='kw'>R</span>) <span class='op'>*</span> ((<span class='kw'>eta</span><span class='op'>^</span><span class='kw'>s</span>)<span class='op'>/</span>(<span class='kw'>s</span><span class='op'>+</span><span class='fl'>1</span>)))
+    <span class='kw'>r</span> <span class='op'>=</span> <span class='kw'>R</span> <span class='op'>*</span> <span class='kw'>eta</span><span class='op'>^</span>(<span class='op'>-</span><span class='kw'>s</span>)
 
     <span class='co'># inner loop - iterate over bracket stages</span>
-    <span class='kw'>for</span> (<span class='no'>i</span> <span class='kw'>in</span> <span class='fl'>0</span>:<span class='no'>s</span>) {
+    <span class='co'>for</span> (<span class='kw'>i</span> <span class='co'>in</span> <span class='fl'>0</span><span class='op'>:</span><span class='kw'>s</span>) {
 
-      <span class='no'>ni</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>floor</a></span>(<span class='no'>n</span> * <span class='no'>eta</span>^(-<span class='no'>i</span>))
-      <span class='no'>ri</span> <span class='kw'>=</span> <span class='no'>r</span> * <span class='no'>eta</span>^<span class='no'>i</span>
-      <span class='no'>result</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='no'>result</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>smax</span> - <span class='no'>s</span> + <span class='fl'>1</span>, <span class='no'>i</span> + <span class='fl'>1</span>, <span class='no'>ri</span>, <span class='no'>ni</span>))
+      <span class='kw'>ni</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>floor</a></span>(<span class='kw'>n</span> <span class='op'>*</span> <span class='kw'>eta</span><span class='op'>^</span>(<span class='op'>-</span><span class='kw'>i</span>))
+      <span class='kw'>ri</span> <span class='op'>=</span> <span class='kw'>r</span> <span class='op'>*</span> <span class='kw'>eta</span><span class='op'>^</span><span class='kw'>i</span>
+      <span class='kw'>result</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span>(<span class='kw'>result</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>smax</span> <span class='op'>-</span> <span class='kw'>s</span> <span class='op'>+</span> <span class='fl'>1</span>, <span class='kw'>i</span> <span class='op'>+</span> <span class='fl'>1</span>, <span class='kw'>ri</span>, <span class='kw'>ni</span>))
     }
   }
 
-  <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>result</span>) <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"bracket"</span>, <span class='st'>"bracket_stage"</span>, <span class='st'>"budget"</span>, <span class='st'>"n_configs"</span>)
-  <span class='fu'><a href='https://rdrr.io/r/base/function.html'>return</a></span>(<span class='no'>result</span>)
+  <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='kw'>result</span>) <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"bracket"</span>, <span class='st'>"bracket_stage"</span>, <span class='st'>"budget"</span>, <span class='st'>"n_configs"</span>)
+  <span class='fu'><a href='https://rdrr.io/r/base/function.html'>return</a></span>(<span class='kw'>result</span>)
 }
 
-<span class='fu'>hyperband_brackets</span>(<span class='kw'>R</span> <span class='kw'>=</span> <span class='fl'>81L</span>, <span class='kw'>eta</span> <span class='kw'>=</span> <span class='fl'>3L</span>)</pre>
+<span class='fu'>hyperband_brackets</span>(R = <span class='fl'>81L</span>, eta = <span class='fl'>3L</span>)
+</pre>
 
     <h2 class="hasAnchor" id="parameters"><a class="anchor" href="#parameters"></a>Parameters</h2>
 
     
 
-<dl'>
+<dl>
 <dt><code>eta</code></dt><dd><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code><br />
 Fraction parameter of the successive halving algorithm: With every step the
 configuration budget is increased by a factor of <code>eta</code> and only the best
@@ -273,10 +274,11 @@ configurations in each bracket.
 A custom sampler may look like this (the full example is given in the
 <code>examples</code> section):</p><pre><span class='co'># - beta distribution with alpha = 2 and beta = 5</span>
 <span class='co'># - categorical distribution with custom probabilities</span>
-<span class='no'>sampler</span> <span class='kw'>=</span> <span class='no'>SamplerJointIndep</span>$<span class='fu'>new</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
-  <span class='no'>Sampler1DRfun</span>$<span class='fu'>new</span>(<span class='no'>params</span><span class='kw'>[[</span><span class='fl'>2</span>]], <span class='kw'>function</span>(<span class='no'>n</span>) <span class='fu'><a href='https://rdrr.io/r/stats/Beta.html'>rbeta</a></span>(<span class='no'>n</span>, <span class='fl'>2</span>, <span class='fl'>5</span>)),
-  <span class='no'>Sampler1DCateg</span>$<span class='fu'>new</span>(<span class='no'>params</span><span class='kw'>[[</span><span class='fl'>3</span>]], <span class='kw'>prob</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.2</span>, <span class='fl'>0.3</span>, <span class='fl'>0.5</span>))
-))</pre>
+<span class='kw'>sampler</span> <span class='op'>=</span> <span class='kw'>SamplerJointIndep</span><span class='op'>$</span><span class='fu'>new</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
+  <span class='kw'>Sampler1DRfun</span><span class='op'>$</span><span class='fu'>new</span>(<span class='kw'>params</span>[[<span class='fl'>2</span>]], <span class='fu'>function</span>(<span class='kw'>n</span>) <span class='fu'><a href='https://rdrr.io/r/stats/Beta.html'>rbeta</a></span>(<span class='kw'>n</span>, <span class='fl'>2</span>, <span class='fl'>5</span>)),
+  <span class='kw'>Sampler1DCateg</span><span class='op'>$</span><span class='fu'>new</span>(<span class='kw'>params</span>[[<span class='fl'>3</span>]], prob = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.2</span>, <span class='fl'>0.3</span>, <span class='fl'>0.5</span>))
+))
+</pre>
 
     <h2 class="hasAnchor" id="runtime-scaling-w-r-t-the-chosen-budget"><a class="anchor" href="#runtime-scaling-w-r-t-the-chosen-budget"></a>Runtime scaling w.r.t. the chosen budget</h2>
 
@@ -304,7 +306,8 @@ like it is shown in the <code>examples</code>.</p>
 package are made available. One is called <code>mlr3</code>, the other <code>bbotk</code>. All
 <code>mlr3</code> methods log into the <code>mlr3</code> logger. All optimization methods form the
 packags <code>bbotk</code>, <code>mlr3tuning</code> and <code>mlr3hyperband</code> log into the <code>bbotk</code>
-logger. To hide the <code>mlr3</code> logging messages run:</p><pre><span class='kw pkg'>lgr</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/lgr/man/get_logger.html'>get_logger</a></span>(<span class='st'>"mlr3"</span>)$<span class='fu'>set_threshold</span>(<span class='st'>"warn"</span>)</pre>
+logger. To hide the <code>mlr3</code> logging messages run:</p><pre><span class='kw'>lgr</span>::<span class='fu'><a href='https://rdrr.io/pkg/lgr/man/get_logger.html'>get_logger</a></span>(<span class='st'>"mlr3"</span>)<span class='op'>$</span><span class='fu'>set_threshold</span>(<span class='st'>"warn"</span>)
+</pre>
 
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
@@ -318,7 +321,7 @@ logger. To hide the <code>mlr3</code> logging messages run:</p><pre><span class=
     <h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
 
     
-<h3>Public methods</h3>
+<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Public methods</h3>
 
 <ul>
 <li><p><a href='#method-new'><code>TunerHyperband$new()</code></a></p></li>
@@ -333,17 +336,17 @@ logger. To hide the <code>mlr3</code> logging messages run:</p><pre><span class=
 </details>
 
 <hr>
-<a id="method-new"></a></p><h3>Method <code>new()</code></h3>
-<p>Creates a new instance of this <a href='https://rdrr.io/pkg/R6/man/R6Class.html'>R6</a> class.</p><h3>Usage</h3>
-<p><div class="r"></p><pre><span class='no'>TunerHyperband</span>$<span class='fu'>new</span>()</pre><p></div></p>
+<a id="method-new"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>new()</code></h3>
+<p>Creates a new instance of this <a href='https://rdrr.io/pkg/R6/man/R6Class.html'>R6</a> class.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='kw'>TunerHyperband</span><span class='op'>$</span><span class='fu'>new</span>()</pre><p></div></p>
 
 <p><hr>
-<a id="method-clone"></a></p><h3>Method <code>clone()</code></h3>
-<p>The objects of this class are cloneable with this method.</p><h3>Usage</h3>
-<p><div class="r"></p><pre><span class='no'>TunerHyperband</span>$<span class='fu'>clone</span>(<span class='kw'>deep</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre><p></div></p>
+<a id="method-clone"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>clone()</code></h3>
+<p>The objects of this class are cloneable with this method.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='kw'>TunerHyperband</span><span class='op'>$</span><span class='fu'>clone</span>(deep = <span class='fl'>FALSE</span>)</pre><p></div></p>
 
-<h3>Arguments</h3>
-<p><div class="arguments"></p><dl'>
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Arguments</h4>
+<p><div class="arguments"></p><dl>
 <dt><code>deep</code></dt><dd><p>Whether to make a deep clone.</p></dd>
 
 </dl><p></div></p>
@@ -351,48 +354,51 @@ logger. To hide the <code>mlr3</code> logging messages run:</p><pre><span class=
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>mlr3hyperband</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>mlr3learners</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>mlr3tuning</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>mlr3</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>paradox</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://mlr3hyperband.mlr-org.com'>mlr3hyperband</a></span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://mlr3learners.mlr-org.com'>mlr3learners</a></span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://mlr3tuning.mlr-org.com'>mlr3tuning</a></span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://mlr3.mlr-org.com'>mlr3</a></span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://paradox.mlr-org.com'>paradox</a></span>)
 
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>123</span>)
 
 <span class='co'># define hyperparameter and budget parameter for tuning with hyperband</span>
-<span class='no'>params</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
-  <span class='no'>ParamInt</span>$<span class='fu'>new</span>(<span class='st'>"nrounds"</span>, <span class='kw'>lower</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>upper</span> <span class='kw'>=</span> <span class='fl'>16</span>, <span class='kw'>tag</span> <span class='kw'>=</span> <span class='st'>"budget"</span>),
-  <span class='no'>ParamDbl</span>$<span class='fu'>new</span>(<span class='st'>"eta"</span>, <span class='kw'>lower</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>upper</span> <span class='kw'>=</span> <span class='fl'>1</span>),
-  <span class='no'>ParamFct</span>$<span class='fu'>new</span>(<span class='st'>"booster"</span>, <span class='kw'>levels</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"gbtree"</span>, <span class='st'>"gblinear"</span>, <span class='st'>"dart"</span>))
+<span class='kw'>params</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
+  <span class='kw'>ParamInt</span><span class='op'>$</span><span class='fu'>new</span>(<span class='st'>"nrounds"</span>, lower = <span class='fl'>1</span>, upper = <span class='fl'>16</span>, tag = <span class='st'>"budget"</span>),
+  <span class='kw'>ParamDbl</span><span class='op'>$</span><span class='fu'>new</span>(<span class='st'>"eta"</span>, lower = <span class='fl'>0</span>, upper = <span class='fl'>1</span>),
+  <span class='kw'>ParamFct</span><span class='op'>$</span><span class='fu'>new</span>(<span class='st'>"booster"</span>, levels = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"gbtree"</span>, <span class='st'>"gblinear"</span>, <span class='st'>"dart"</span>))
 )
 
 
-<span class='no'>inst</span> <span class='kw'>=</span> <span class='no'>TuningInstanceSingleCrit</span>$<span class='fu'>new</span>(
+<span class='kw'>inst</span> <span class='op'>=</span> <span class='kw'>TuningInstanceSingleCrit</span><span class='op'>$</span><span class='fu'>new</span>(
   <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>tsk</a></span>(<span class='st'>"iris"</span>),
   <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>lrn</a></span>(<span class='st'>"classif.xgboost"</span>),
   <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>rsmp</a></span>(<span class='st'>"holdout"</span>),
   <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>msr</a></span>(<span class='st'>"classif.ce"</span>),
-  <span class='no'>ParamSet</span>$<span class='fu'>new</span>(<span class='no'>params</span>),
-  <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/trm.html'>trm</a></span>(<span class='st'>"evals"</span>, <span class='kw'>n_evals</span> <span class='kw'>=</span> <span class='fl'>100000</span>)
+  <span class='kw'>ParamSet</span><span class='op'>$</span><span class='fu'>new</span>(<span class='kw'>params</span>),
+  <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/trm.html'>trm</a></span>(<span class='st'>"evals"</span>, n_evals = <span class='fl'>100000</span>)
 )
 
 <span class='co'># create custom sampler (optional):</span>
 <span class='co'># - beta distribution with alpha = 2 and beta = 5</span>
 <span class='co'># - categorical distribution with custom probabilities</span>
-<span class='no'>sampler</span> <span class='kw'>=</span> <span class='no'>SamplerJointIndep</span>$<span class='fu'>new</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
-  <span class='no'>Sampler1DRfun</span>$<span class='fu'>new</span>(<span class='no'>params</span><span class='kw'>[[</span><span class='fl'>2</span>]], <span class='kw'>function</span>(<span class='no'>n</span>) <span class='fu'><a href='https://rdrr.io/r/stats/Beta.html'>rbeta</a></span>(<span class='no'>n</span>, <span class='fl'>2</span>, <span class='fl'>5</span>)),
-  <span class='no'>Sampler1DCateg</span>$<span class='fu'>new</span>(<span class='no'>params</span><span class='kw'>[[</span><span class='fl'>3</span>]], <span class='kw'>prob</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.2</span>, <span class='fl'>0.3</span>, <span class='fl'>0.5</span>))
+<span class='kw'>sampler</span> <span class='op'>=</span> <span class='kw'>SamplerJointIndep</span><span class='op'>$</span><span class='fu'>new</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
+  <span class='kw'>Sampler1DRfun</span><span class='op'>$</span><span class='fu'>new</span>(<span class='kw'>params</span>[[<span class='fl'>2</span>]], <span class='fu'>function</span>(<span class='kw'>n</span>) <span class='fu'><a href='https://rdrr.io/r/stats/Beta.html'>rbeta</a></span>(<span class='kw'>n</span>, <span class='fl'>2</span>, <span class='fl'>5</span>)),
+  <span class='kw'>Sampler1DCateg</span><span class='op'>$</span><span class='fu'>new</span>(<span class='kw'>params</span>[[<span class='fl'>3</span>]], prob = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.2</span>, <span class='fl'>0.3</span>, <span class='fl'>0.5</span>))
 ))
 
-<span class='no'>tuner</span> <span class='kw'>=</span> <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/tnr.html'>tnr</a></span>(<span class='st'>"hyperband"</span>, <span class='kw'>eta</span> <span class='kw'>=</span> <span class='fl'>2L</span>, <span class='kw'>sampler</span> <span class='kw'>=</span> <span class='no'>sampler</span>)
+<span class='kw'>tuner</span> <span class='op'>=</span> <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/tnr.html'>tnr</a></span>(<span class='st'>"hyperband"</span>, eta = <span class='fl'>2L</span>, sampler = <span class='kw'>sampler</span>)
 <span class='co'># \donttest{</span>
-<span class='no'>tuner</span>$<span class='fu'><a href='https://rdrr.io/r/stats/optimize.html'>optimize</a></span>(<span class='no'>inst</span>)</div><div class='output co'>#&gt;    nrounds      eta booster learner_param_vals  x_domain classif.ce
+<span class='kw'>tuner</span><span class='op'>$</span><span class='fu'><a href='https://rdrr.io/r/stats/optimize.html'>optimize</a></span>(<span class='kw'>inst</span>)
+</div><div class='output co'>#&gt;    nrounds      eta booster learner_param_vals  x_domain classif.ce
 #&gt; 1:       1 0.231625    dart          &lt;list[4]&gt; &lt;list[3]&gt;       0.04</div><div class='input'>
 <span class='co'># return the best evaluation</span>
-<span class='no'>inst</span>$<span class='no'>result</span></div><div class='output co'>#&gt;    nrounds      eta booster learner_param_vals  x_domain classif.ce
+<span class='kw'>inst</span><span class='op'>$</span><span class='kw'>result</span>
+</div><div class='output co'>#&gt;    nrounds      eta booster learner_param_vals  x_domain classif.ce
 #&gt; 1:       1 0.231625    dart          &lt;list[4]&gt; &lt;list[3]&gt;       0.04</div><div class='input'>
 <span class='co'># print all evaluations</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>inst</span>$<span class='no'>archive</span>$<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>())</div><div class='output co'>#&gt;            eta  booster nrounds bracket bracket_stage budget_scaled budget_real
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>inst</span><span class='op'>$</span><span class='kw'>archive</span><span class='op'>$</span><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>())
+</div><div class='output co'>#&gt;            eta  booster nrounds bracket bracket_stage budget_scaled budget_real
 #&gt;  1: 0.16633231 gblinear       1       4             0             1           1
 #&gt;  2: 0.53672392 gblinear       1       4             0             1           1
 #&gt;  3: 0.23162500     dart       1       4             0             1           1
@@ -467,152 +473,152 @@ logger. To hide the <code>mlr3</code> logging messages run:</p><pre><span class=
 #&gt; 72: 0.24035756 gblinear      16       0             0            16          16
 #&gt;            eta  booster nrounds bracket bracket_stage budget_scaled budget_real
 #&gt;     n_configs classif.ce                                uhash  x_domain
-#&gt;  1:        16       0.74 707e003c-c55e-4feb-8f7c-0f8565e20374 &lt;list[3]&gt;
-#&gt;  2:        16       0.42 3938181b-a5df-490a-8eb6-f31c1709d703 &lt;list[3]&gt;
-#&gt;  3:        16       0.04 c04130fa-7daf-4974-98de-3824ecdbae0e &lt;list[3]&gt;
-#&gt;  4:        16       0.04 b8f315fb-e5d1-4f90-b8a1-99172c37c324 &lt;list[3]&gt;
-#&gt;  5:        16       0.04 9c2671b8-f911-427b-9802-100bdbe54393 &lt;list[3]&gt;
-#&gt;  6:        16       0.70 2d3d9457-3441-42f1-978b-c86b568bc4f9 &lt;list[3]&gt;
-#&gt;  7:        16       0.74 41e5c11e-0e00-4194-a2fe-bbea62b161e5 &lt;list[3]&gt;
-#&gt;  8:        16       0.04 8c646bae-62dd-4015-b7b0-dd14a74d222e &lt;list[3]&gt;
-#&gt;  9:        16       0.74 470c64cb-7d9e-430e-84b5-ee0ec963884b &lt;list[3]&gt;
-#&gt; 10:        16       0.04 6d288c6f-6e3b-42d7-950d-3fcfc72579bb &lt;list[3]&gt;
-#&gt; 11:        16       0.74 b19bfa45-dbac-4262-94df-032f561cb48d &lt;list[3]&gt;
-#&gt; 12:        16       0.04 46184993-cd9c-496a-a5c6-32323ab0f9be &lt;list[3]&gt;
-#&gt; 13:        16       0.04 43492f5e-0417-48aa-89d4-3876366d8608 &lt;list[3]&gt;
-#&gt; 14:        16       0.04 9dcc0909-9ad7-4b93-8080-c52ecece37ad &lt;list[3]&gt;
-#&gt; 15:        16       0.04 da991407-dc4e-4e03-ba22-4286b77ed396 &lt;list[3]&gt;
-#&gt; 16:        16       0.04 6513ecde-1d9e-4da6-8e02-f30034859421 &lt;list[3]&gt;
-#&gt; 17:         8       0.04 42cca9c7-2afb-4abe-84f1-2f9254761c80 &lt;list[3]&gt;
-#&gt; 18:         8       0.04 e4e27f8c-cc37-420b-890b-1952837a3908 &lt;list[3]&gt;
-#&gt; 19:         8       0.04 2f6c977a-624c-497c-8163-66c8b40f9c9a &lt;list[3]&gt;
-#&gt; 20:         8       0.04 36015003-0ccc-446d-bb93-4c69989187cb &lt;list[3]&gt;
-#&gt; 21:         8       0.04 d570f3ca-16dd-4d5f-b640-58081145e9e8 &lt;list[3]&gt;
-#&gt; 22:         8       0.04 89cde6fd-c07e-4fd6-b4c5-c2b501172624 &lt;list[3]&gt;
-#&gt; 23:         8       0.04 322523df-ef08-4701-8c27-e3aa63abfc01 &lt;list[3]&gt;
-#&gt; 24:         8       0.04 ae079ab3-945f-47f7-938d-dcebfc4c251e &lt;list[3]&gt;
-#&gt; 25:         4       0.04 4048ed16-73db-4495-a044-998c480ac33a &lt;list[3]&gt;
-#&gt; 26:         4       0.04 43634f99-1c3d-4a56-a49a-6a9fc462fabd &lt;list[3]&gt;
-#&gt; 27:         4       0.04 47bbb947-03d4-4590-a04b-4eebcb672aa4 &lt;list[3]&gt;
-#&gt; 28:         4       0.04 a5434620-f557-4f30-afe2-658dc6273728 &lt;list[3]&gt;
-#&gt; 29:         2       0.04 456ff249-ca57-4fac-ae24-6235e3b55ff7 &lt;list[3]&gt;
-#&gt; 30:         2       0.04 4cec6fd8-2c02-4df7-83ff-ef1ff938dda1 &lt;list[3]&gt;
-#&gt; 31:         1       0.04 fbd9ee10-efee-4c3a-8b31-3fdba1dc93f4 &lt;list[3]&gt;
-#&gt; 32:        10       0.04 48ef27ec-b839-4ca0-9eef-2fa420d12472 &lt;list[3]&gt;
-#&gt; 33:        10       0.04 9fdb303d-8fae-4b78-807b-bbb17af553e2 &lt;list[3]&gt;
-#&gt; 34:        10       0.04 0dbf5596-cabb-4c86-b3bc-7545b8cef04a &lt;list[3]&gt;
-#&gt; 35:        10       0.04 805fee60-4d95-4963-bc00-6a92b6ae1293 &lt;list[3]&gt;
-#&gt; 36:        10       0.04 8317a132-3f54-4cbe-82d1-30c2a0300211 &lt;list[3]&gt;
-#&gt; 37:        10       0.72 365b9687-b698-4242-b35b-3f09eebc6e6f &lt;list[3]&gt;
-#&gt; 38:        10       0.04 287550ce-76d3-4d2a-b988-32b5c95ca4dd &lt;list[3]&gt;
-#&gt; 39:        10       0.04 ca16ff42-fc45-4db0-8fbe-2d3bcf03b4ca &lt;list[3]&gt;
-#&gt; 40:        10       0.04 5f22c7ff-dcad-4a52-9a47-41e6a4b281cf &lt;list[3]&gt;
-#&gt; 41:        10       0.04 b70cea3b-06b3-4488-8a11-14b07c984537 &lt;list[3]&gt;
-#&gt; 42:         5       0.04 b68b8847-f4ce-4208-8f98-045c9055c59b &lt;list[3]&gt;
-#&gt; 43:         5       0.04 a0971e6a-45df-4e3e-b5d1-811a89c9dcaf &lt;list[3]&gt;
-#&gt; 44:         5       0.04 25a9f74e-c791-413d-b2f6-bb47c3607904 &lt;list[3]&gt;
-#&gt; 45:         5       0.04 0efc11b5-4059-4ae1-b413-bc9b3928ce83 &lt;list[3]&gt;
-#&gt; 46:         5       0.04 8babfa2d-2ae5-4f93-9929-39e0084e2b6c &lt;list[3]&gt;
-#&gt; 47:         2       0.04 a4c0be9a-f2e2-4e47-baf2-fb9498a6024f &lt;list[3]&gt;
-#&gt; 48:         2       0.04 961188f2-f7ec-4127-9d4e-0d8d4284387b &lt;list[3]&gt;
-#&gt; 49:         1       0.04 d15bcaef-85ad-45f5-a052-ca430a8f4547 &lt;list[3]&gt;
-#&gt; 50:         7       0.04 99eda541-ed02-4d4c-841a-a9a8d46743ab &lt;list[3]&gt;
-#&gt; 51:         7       0.04 dd8615f5-5326-43a8-97f1-ae4235b935b1 &lt;list[3]&gt;
-#&gt; 52:         7       0.04 ccc59969-11eb-4de9-9500-0e70bf376604 &lt;list[3]&gt;
-#&gt; 53:         7       0.04 edae098b-47bb-4592-bcb0-256839f366a5 &lt;list[3]&gt;
-#&gt; 54:         7       0.04 118d8612-f8e2-416e-806a-994bfa46a04f &lt;list[3]&gt;
-#&gt; 55:         7       0.04 df1b1ac7-a8f9-48e7-8194-5caa785b6565 &lt;list[3]&gt;
-#&gt; 56:         7       0.42 6d9e0236-ae8e-4f7c-bcc3-64d61ad198a1 &lt;list[3]&gt;
-#&gt; 57:         3       0.04 886a115f-9440-4508-af9e-69258eb6c084 &lt;list[3]&gt;
-#&gt; 58:         3       0.04 59e32ca6-0a93-4068-92f4-e3a18ec64c40 &lt;list[3]&gt;
-#&gt; 59:         3       0.04 7332831d-da34-4ecd-b398-75482158e4fa &lt;list[3]&gt;
-#&gt; 60:         1       0.04 e35d2b75-c7e7-4c63-bbb7-2f3aefe980a8 &lt;list[3]&gt;
-#&gt; 61:         5       0.04 3911c57c-be45-4a5d-be05-611021afdbd8 &lt;list[3]&gt;
-#&gt; 62:         5       0.42 ab095d1a-9142-41c7-9c7c-44ae3a1e3ac1 &lt;list[3]&gt;
-#&gt; 63:         5       0.04 84b5c990-e494-4d4b-9114-0a56ef7d4f47 &lt;list[3]&gt;
-#&gt; 64:         5       0.04 c570f211-1037-47c8-8a7b-e9a4b23cce43 &lt;list[3]&gt;
-#&gt; 65:         5       0.04 ab686159-126e-4366-aae0-24ad7b8a6cf0 &lt;list[3]&gt;
-#&gt; 66:         2       0.04 d72af534-f91c-4675-af9b-b753a2542b7f &lt;list[3]&gt;
-#&gt; 67:         2       0.04 38435c65-ac74-4175-a701-389c2b0ffb59 &lt;list[3]&gt;
-#&gt; 68:         5       0.42 c053364e-241b-4d54-96bf-b11b2325df68 &lt;list[3]&gt;
-#&gt; 69:         5       0.20 d6cce6d6-4d5c-4e52-b809-f9efb4b03a38 &lt;list[3]&gt;
-#&gt; 70:         5       0.04 a1ffd5b3-e076-4b23-aeb8-be81ab4cf54f &lt;list[3]&gt;
-#&gt; 71:         5       0.42 270c40c1-954a-46b8-a28a-2d6ba06b6ccf &lt;list[3]&gt;
-#&gt; 72:         5       0.42 8af0f674-f44a-4851-ac8a-a6f3a732a35b &lt;list[3]&gt;
+#&gt;  1:        16       0.74 209bc28a-bce9-451a-9cc3-0c3646274796 &lt;list[3]&gt;
+#&gt;  2:        16       0.42 f4cf9121-3e7e-4c68-9a21-2abc31aa79fa &lt;list[3]&gt;
+#&gt;  3:        16       0.04 65d3db94-5480-40b0-8853-75e0eededf7e &lt;list[3]&gt;
+#&gt;  4:        16       0.04 69f15d83-1d9c-4eee-b335-da33f8bde6b9 &lt;list[3]&gt;
+#&gt;  5:        16       0.04 e7145615-3b22-452b-847f-f5515b3a1071 &lt;list[3]&gt;
+#&gt;  6:        16       0.74 3a524868-c0d5-43e8-97c4-c52fe0cddcf5 &lt;list[3]&gt;
+#&gt;  7:        16       0.68 04e93bab-0876-418d-b031-c103712c4dfe &lt;list[3]&gt;
+#&gt;  8:        16       0.04 20df24d8-9212-4d0b-ba60-7c06e3a7147e &lt;list[3]&gt;
+#&gt;  9:        16       0.74 2618bf88-0bdf-42ab-9d5c-bc6c4823850f &lt;list[3]&gt;
+#&gt; 10:        16       0.04 152daff8-c848-4ba9-8cb1-b27ca5163e3b &lt;list[3]&gt;
+#&gt; 11:        16       0.70 9a1958d7-c895-4917-8923-98c6be1dbd5c &lt;list[3]&gt;
+#&gt; 12:        16       0.04 1106d438-dd96-4508-bf3d-38feee6decd2 &lt;list[3]&gt;
+#&gt; 13:        16       0.04 5fc477bb-3820-4318-ad2f-4f12c02c6840 &lt;list[3]&gt;
+#&gt; 14:        16       0.04 cb384ead-cd2e-4f1d-930f-b963c1d7a76a &lt;list[3]&gt;
+#&gt; 15:        16       0.04 e3bce765-7609-4903-88e3-b51351514855 &lt;list[3]&gt;
+#&gt; 16:        16       0.04 64b0f890-85ad-4782-8d9d-522044defec4 &lt;list[3]&gt;
+#&gt; 17:         8       0.04 9dbe7ab0-e2e8-4573-afa4-f9164ad975ac &lt;list[3]&gt;
+#&gt; 18:         8       0.04 6889f9cb-8bd3-4f75-8062-0b48d7f4f7f3 &lt;list[3]&gt;
+#&gt; 19:         8       0.04 8f300405-e711-4f71-ad9b-59cf1dcb7eb1 &lt;list[3]&gt;
+#&gt; 20:         8       0.04 4e95faec-2654-4b24-9e04-081a040dc892 &lt;list[3]&gt;
+#&gt; 21:         8       0.04 f8fb41da-cda8-4423-afdd-d059a1b2a2c3 &lt;list[3]&gt;
+#&gt; 22:         8       0.04 03d4661c-8b3b-479c-8c73-c6f9b9a63e67 &lt;list[3]&gt;
+#&gt; 23:         8       0.04 b761c52f-4cec-4513-86ba-68a9466db3bd &lt;list[3]&gt;
+#&gt; 24:         8       0.04 45b688c4-5547-466a-b7ae-a5f70d48bec0 &lt;list[3]&gt;
+#&gt; 25:         4       0.04 341387ff-38a5-4a49-98a1-9ca855299fd9 &lt;list[3]&gt;
+#&gt; 26:         4       0.04 109009f6-1a25-4e0b-a930-25d99ca3ba3e &lt;list[3]&gt;
+#&gt; 27:         4       0.04 b87e4299-181a-4da2-b70e-17c8befa44aa &lt;list[3]&gt;
+#&gt; 28:         4       0.04 708091c6-3bbe-49e7-94b6-4eaaa5c3ed1a &lt;list[3]&gt;
+#&gt; 29:         2       0.04 8aac4bc3-e926-40c2-9340-9c7f7bc53947 &lt;list[3]&gt;
+#&gt; 30:         2       0.04 18423d79-7947-4b7d-93cd-4938e637223a &lt;list[3]&gt;
+#&gt; 31:         1       0.04 0af97712-b0d1-4745-b8f6-9753f5bea216 &lt;list[3]&gt;
+#&gt; 32:        10       0.04 9adaf825-7455-4043-a034-37aff3853a10 &lt;list[3]&gt;
+#&gt; 33:        10       0.04 6f8a39ba-f8f3-4427-8902-580a8a800024 &lt;list[3]&gt;
+#&gt; 34:        10       0.04 d68e8a87-e25b-4e2d-badc-c767e3fea66c &lt;list[3]&gt;
+#&gt; 35:        10       0.04 25ac8d37-0471-476b-a110-aae6964c9d05 &lt;list[3]&gt;
+#&gt; 36:        10       0.04 a28c0069-f19d-4513-b92b-36e6209be93d &lt;list[3]&gt;
+#&gt; 37:        10       0.72 ba56d044-97fc-44a3-888c-172776644e7c &lt;list[3]&gt;
+#&gt; 38:        10       0.04 d76c6509-a616-46fe-995f-bb70c723a359 &lt;list[3]&gt;
+#&gt; 39:        10       0.04 9214a244-50df-4beb-8e81-d0d1048e473d &lt;list[3]&gt;
+#&gt; 40:        10       0.04 dfdc361f-d2dc-45cc-9230-9297c3fdba9d &lt;list[3]&gt;
+#&gt; 41:        10       0.04 501f1e6a-d4cd-40d7-bc28-2707efe4a09a &lt;list[3]&gt;
+#&gt; 42:         5       0.04 9db1bee6-215a-4c5f-b1a6-df513f1f96cc &lt;list[3]&gt;
+#&gt; 43:         5       0.04 127858eb-ab80-4d50-baa2-4f1974a5048a &lt;list[3]&gt;
+#&gt; 44:         5       0.04 6855a305-b963-444f-9098-c9d4d62511b2 &lt;list[3]&gt;
+#&gt; 45:         5       0.04 1ae23824-5d63-4076-ab1b-b82d5a83ab87 &lt;list[3]&gt;
+#&gt; 46:         5       0.04 ede741dc-782c-453c-9bf1-2d4630009c96 &lt;list[3]&gt;
+#&gt; 47:         2       0.04 3ab04e23-2bd0-47b5-832e-6c273f0b9bb3 &lt;list[3]&gt;
+#&gt; 48:         2       0.04 f97a3f6c-db30-465b-8b79-789006166807 &lt;list[3]&gt;
+#&gt; 49:         1       0.04 aa91c9f6-4939-4ad7-9c58-52e181066a07 &lt;list[3]&gt;
+#&gt; 50:         7       0.04 2d8cfa8b-4c01-4b0e-9fa0-a427c4b99a93 &lt;list[3]&gt;
+#&gt; 51:         7       0.04 47b04719-270a-4547-a274-a17a3a543c81 &lt;list[3]&gt;
+#&gt; 52:         7       0.04 2098683c-a64f-4540-a47c-c67a24a30e6b &lt;list[3]&gt;
+#&gt; 53:         7       0.04 5387b7c8-f19b-4c9a-94e7-7aba5cc91b26 &lt;list[3]&gt;
+#&gt; 54:         7       0.04 51d86bb5-e815-401a-91e6-d8778727a9db &lt;list[3]&gt;
+#&gt; 55:         7       0.04 066cc6d4-3a9e-4c7d-95b5-14288b1cb7b9 &lt;list[3]&gt;
+#&gt; 56:         7       0.42 a4288e1b-a69e-40af-8b22-6a19f019f4e8 &lt;list[3]&gt;
+#&gt; 57:         3       0.04 6fc9098e-c5a4-4a68-b2d1-a4dbb547d71e &lt;list[3]&gt;
+#&gt; 58:         3       0.04 bb714228-82fd-4e92-b1be-cb4d91090a75 &lt;list[3]&gt;
+#&gt; 59:         3       0.04 10f5592e-5389-4a23-b582-c359a28e29fc &lt;list[3]&gt;
+#&gt; 60:         1       0.04 bf3c825d-12cd-4dda-8321-9c1b3e711382 &lt;list[3]&gt;
+#&gt; 61:         5       0.04 4017dcf5-2602-406d-b7ca-7ddeee82cdb9 &lt;list[3]&gt;
+#&gt; 62:         5       0.42 2dd16388-be43-46db-8771-383b67d67a4f &lt;list[3]&gt;
+#&gt; 63:         5       0.04 1289dc80-a490-40b4-bb2e-79b4d22dfd2e &lt;list[3]&gt;
+#&gt; 64:         5       0.04 99c7ce80-51ff-4d2f-a66d-f4177e5a41b6 &lt;list[3]&gt;
+#&gt; 65:         5       0.04 3f8aed17-affd-4d4e-9072-fad344790cbd &lt;list[3]&gt;
+#&gt; 66:         2       0.04 05648d68-5b56-4951-ba6b-e7226a6b8a3c &lt;list[3]&gt;
+#&gt; 67:         2       0.04 57447da2-33b3-47d8-aac2-1847a4ea8ba1 &lt;list[3]&gt;
+#&gt; 68:         5       0.42 55809171-559b-4344-894a-7a2e84e2b877 &lt;list[3]&gt;
+#&gt; 69:         5       0.20 d67ceb6d-9396-4d18-bb60-1cfd69726019 &lt;list[3]&gt;
+#&gt; 70:         5       0.04 c7cb7473-8b83-448d-9e8f-3c80ab21110c &lt;list[3]&gt;
+#&gt; 71:         5       0.42 fe7d1504-c7dd-4dd1-b68f-082390a0913f &lt;list[3]&gt;
+#&gt; 72:         5       0.42 c6946d6b-f562-45e5-af99-9ef9e0710d31 &lt;list[3]&gt;
 #&gt;     n_configs classif.ce                                uhash  x_domain
 #&gt;               timestamp batch_nr
-#&gt;  1: 2020-09-07 04:24:23        1
-#&gt;  2: 2020-09-07 04:24:23        1
-#&gt;  3: 2020-09-07 04:24:23        1
-#&gt;  4: 2020-09-07 04:24:23        1
-#&gt;  5: 2020-09-07 04:24:23        1
-#&gt;  6: 2020-09-07 04:24:23        1
-#&gt;  7: 2020-09-07 04:24:23        1
-#&gt;  8: 2020-09-07 04:24:23        1
-#&gt;  9: 2020-09-07 04:24:23        1
-#&gt; 10: 2020-09-07 04:24:23        1
-#&gt; 11: 2020-09-07 04:24:23        1
-#&gt; 12: 2020-09-07 04:24:23        1
-#&gt; 13: 2020-09-07 04:24:23        1
-#&gt; 14: 2020-09-07 04:24:23        1
-#&gt; 15: 2020-09-07 04:24:23        1
-#&gt; 16: 2020-09-07 04:24:23        1
-#&gt; 17: 2020-09-07 04:24:23        2
-#&gt; 18: 2020-09-07 04:24:23        2
-#&gt; 19: 2020-09-07 04:24:23        2
-#&gt; 20: 2020-09-07 04:24:23        2
-#&gt; 21: 2020-09-07 04:24:23        2
-#&gt; 22: 2020-09-07 04:24:23        2
-#&gt; 23: 2020-09-07 04:24:23        2
-#&gt; 24: 2020-09-07 04:24:23        2
-#&gt; 25: 2020-09-07 04:24:24        3
-#&gt; 26: 2020-09-07 04:24:24        3
-#&gt; 27: 2020-09-07 04:24:24        3
-#&gt; 28: 2020-09-07 04:24:24        3
-#&gt; 29: 2020-09-07 04:24:24        4
-#&gt; 30: 2020-09-07 04:24:24        4
-#&gt; 31: 2020-09-07 04:24:24        5
-#&gt; 32: 2020-09-07 04:24:25        6
-#&gt; 33: 2020-09-07 04:24:25        6
-#&gt; 34: 2020-09-07 04:24:25        6
-#&gt; 35: 2020-09-07 04:24:25        6
-#&gt; 36: 2020-09-07 04:24:25        6
-#&gt; 37: 2020-09-07 04:24:25        6
-#&gt; 38: 2020-09-07 04:24:25        6
-#&gt; 39: 2020-09-07 04:24:25        6
-#&gt; 40: 2020-09-07 04:24:25        6
-#&gt; 41: 2020-09-07 04:24:25        6
-#&gt; 42: 2020-09-07 04:24:25        7
-#&gt; 43: 2020-09-07 04:24:25        7
-#&gt; 44: 2020-09-07 04:24:25        7
-#&gt; 45: 2020-09-07 04:24:25        7
-#&gt; 46: 2020-09-07 04:24:25        7
-#&gt; 47: 2020-09-07 04:24:25        8
-#&gt; 48: 2020-09-07 04:24:25        8
-#&gt; 49: 2020-09-07 04:24:25        9
-#&gt; 50: 2020-09-07 04:24:26       10
-#&gt; 51: 2020-09-07 04:24:26       10
-#&gt; 52: 2020-09-07 04:24:26       10
-#&gt; 53: 2020-09-07 04:24:26       10
-#&gt; 54: 2020-09-07 04:24:26       10
-#&gt; 55: 2020-09-07 04:24:26       10
-#&gt; 56: 2020-09-07 04:24:26       10
-#&gt; 57: 2020-09-07 04:24:26       11
-#&gt; 58: 2020-09-07 04:24:26       11
-#&gt; 59: 2020-09-07 04:24:26       11
-#&gt; 60: 2020-09-07 04:24:26       12
-#&gt; 61: 2020-09-07 04:24:27       13
-#&gt; 62: 2020-09-07 04:24:27       13
-#&gt; 63: 2020-09-07 04:24:27       13
-#&gt; 64: 2020-09-07 04:24:27       13
-#&gt; 65: 2020-09-07 04:24:27       13
-#&gt; 66: 2020-09-07 04:24:27       14
-#&gt; 67: 2020-09-07 04:24:27       14
-#&gt; 68: 2020-09-07 04:24:27       15
-#&gt; 69: 2020-09-07 04:24:27       15
-#&gt; 70: 2020-09-07 04:24:27       15
-#&gt; 71: 2020-09-07 04:24:27       15
-#&gt; 72: 2020-09-07 04:24:27       15
+#&gt;  1: 2020-09-08 04:23:44        1
+#&gt;  2: 2020-09-08 04:23:44        1
+#&gt;  3: 2020-09-08 04:23:44        1
+#&gt;  4: 2020-09-08 04:23:44        1
+#&gt;  5: 2020-09-08 04:23:44        1
+#&gt;  6: 2020-09-08 04:23:44        1
+#&gt;  7: 2020-09-08 04:23:44        1
+#&gt;  8: 2020-09-08 04:23:44        1
+#&gt;  9: 2020-09-08 04:23:44        1
+#&gt; 10: 2020-09-08 04:23:44        1
+#&gt; 11: 2020-09-08 04:23:44        1
+#&gt; 12: 2020-09-08 04:23:44        1
+#&gt; 13: 2020-09-08 04:23:44        1
+#&gt; 14: 2020-09-08 04:23:44        1
+#&gt; 15: 2020-09-08 04:23:44        1
+#&gt; 16: 2020-09-08 04:23:44        1
+#&gt; 17: 2020-09-08 04:23:45        2
+#&gt; 18: 2020-09-08 04:23:45        2
+#&gt; 19: 2020-09-08 04:23:45        2
+#&gt; 20: 2020-09-08 04:23:45        2
+#&gt; 21: 2020-09-08 04:23:45        2
+#&gt; 22: 2020-09-08 04:23:45        2
+#&gt; 23: 2020-09-08 04:23:45        2
+#&gt; 24: 2020-09-08 04:23:45        2
+#&gt; 25: 2020-09-08 04:23:45        3
+#&gt; 26: 2020-09-08 04:23:45        3
+#&gt; 27: 2020-09-08 04:23:45        3
+#&gt; 28: 2020-09-08 04:23:45        3
+#&gt; 29: 2020-09-08 04:23:45        4
+#&gt; 30: 2020-09-08 04:23:45        4
+#&gt; 31: 2020-09-08 04:23:46        5
+#&gt; 32: 2020-09-08 04:23:46        6
+#&gt; 33: 2020-09-08 04:23:46        6
+#&gt; 34: 2020-09-08 04:23:46        6
+#&gt; 35: 2020-09-08 04:23:46        6
+#&gt; 36: 2020-09-08 04:23:46        6
+#&gt; 37: 2020-09-08 04:23:46        6
+#&gt; 38: 2020-09-08 04:23:46        6
+#&gt; 39: 2020-09-08 04:23:46        6
+#&gt; 40: 2020-09-08 04:23:46        6
+#&gt; 41: 2020-09-08 04:23:46        6
+#&gt; 42: 2020-09-08 04:23:47        7
+#&gt; 43: 2020-09-08 04:23:47        7
+#&gt; 44: 2020-09-08 04:23:47        7
+#&gt; 45: 2020-09-08 04:23:47        7
+#&gt; 46: 2020-09-08 04:23:47        7
+#&gt; 47: 2020-09-08 04:23:47        8
+#&gt; 48: 2020-09-08 04:23:47        8
+#&gt; 49: 2020-09-08 04:23:47        9
+#&gt; 50: 2020-09-08 04:23:47       10
+#&gt; 51: 2020-09-08 04:23:47       10
+#&gt; 52: 2020-09-08 04:23:47       10
+#&gt; 53: 2020-09-08 04:23:47       10
+#&gt; 54: 2020-09-08 04:23:47       10
+#&gt; 55: 2020-09-08 04:23:47       10
+#&gt; 56: 2020-09-08 04:23:47       10
+#&gt; 57: 2020-09-08 04:23:48       11
+#&gt; 58: 2020-09-08 04:23:48       11
+#&gt; 59: 2020-09-08 04:23:48       11
+#&gt; 60: 2020-09-08 04:23:48       12
+#&gt; 61: 2020-09-08 04:23:48       13
+#&gt; 62: 2020-09-08 04:23:48       13
+#&gt; 63: 2020-09-08 04:23:48       13
+#&gt; 64: 2020-09-08 04:23:48       13
+#&gt; 65: 2020-09-08 04:23:48       13
+#&gt; 66: 2020-09-08 04:23:48       14
+#&gt; 67: 2020-09-08 04:23:48       14
+#&gt; 68: 2020-09-08 04:23:49       15
+#&gt; 69: 2020-09-08 04:23:49       15
+#&gt; 70: 2020-09-08 04:23:49       15
+#&gt; 71: 2020-09-08 04:23:49       15
+#&gt; 72: 2020-09-08 04:23:49       15
 #&gt;               timestamp batch_nr</div><div class='input'><span class='co'># }</span>
 
 
@@ -621,36 +627,39 @@ logger. To hide the <code>mlr3</code> logging messages run:</p><pre><span class=
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>123</span>)
 
 <span class='co'># define hyperparameter and budget parameter for tuning with hyperband</span>
-<span class='no'>ps</span> <span class='kw'>=</span> <span class='no'>ParamSet</span>$<span class='fu'>new</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
-  <span class='no'>ParamInt</span>$<span class='fu'>new</span>(<span class='st'>"nrounds"</span>, <span class='kw'>lower</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>upper</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>tags</span> <span class='kw'>=</span> <span class='st'>"budget"</span>),
+<span class='kw'>ps</span> <span class='op'>=</span> <span class='kw'>ParamSet</span><span class='op'>$</span><span class='fu'>new</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
+  <span class='kw'>ParamInt</span><span class='op'>$</span><span class='fu'>new</span>(<span class='st'>"nrounds"</span>, lower = <span class='fl'>1</span>, upper = <span class='fl'>10</span>, tags = <span class='st'>"budget"</span>),
   <span class='co'># ParamDbl$new("eta",     lower = 0, upper = 1),</span>
-  <span class='no'>ParamFct</span>$<span class='fu'>new</span>(<span class='st'>"booster"</span>, <span class='kw'>levels</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"gbtree"</span>, <span class='st'>"gblinear"</span>, <span class='st'>"dart"</span>))
+  <span class='kw'>ParamFct</span><span class='op'>$</span><span class='fu'>new</span>(<span class='st'>"booster"</span>, levels = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"gbtree"</span>, <span class='st'>"gblinear"</span>, <span class='st'>"dart"</span>))
 ))
 
-<span class='no'>ps</span>$<span class='no'>trafo</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>param_set</span>) {
-  <span class='no'>x</span>$<span class='no'>nrounds</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>round</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span>(<span class='no'>x</span>$<span class='no'>nrounds</span>)) + <span class='fl'>1L</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/function.html'>return</a></span>(<span class='no'>x</span>)
+<span class='kw'>ps</span><span class='op'>$</span><span class='kw'>trafo</span> <span class='op'>=</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>param_set</span>) {
+  <span class='kw'>x</span><span class='op'>$</span><span class='kw'>nrounds</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>round</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span>(<span class='kw'>x</span><span class='op'>$</span><span class='kw'>nrounds</span>)) <span class='op'>+</span> <span class='fl'>1L</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/function.html'>return</a></span>(<span class='kw'>x</span>)
 }
 
-<span class='no'>inst</span> <span class='kw'>=</span> <span class='no'>TuningInstanceSingleCrit</span>$<span class='fu'>new</span>(
+<span class='kw'>inst</span> <span class='op'>=</span> <span class='kw'>TuningInstanceSingleCrit</span><span class='op'>$</span><span class='fu'>new</span>(
   <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>tsk</a></span>(<span class='st'>"iris"</span>),
   <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>lrn</a></span>(<span class='st'>"classif.xgboost"</span>),
   <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>rsmp</a></span>(<span class='st'>"holdout"</span>),
   <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>msr</a></span>(<span class='st'>"classif.ce"</span>),
-  <span class='no'>ps</span>,
-  <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/trm.html'>trm</a></span>(<span class='st'>"evals"</span>, <span class='kw'>n_evals</span> <span class='kw'>=</span> <span class='fl'>100000</span>)
+  <span class='kw'>ps</span>,
+  <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/trm.html'>trm</a></span>(<span class='st'>"evals"</span>, n_evals = <span class='fl'>100000</span>)
 )
 
 <span class='co'># eta can be a double</span>
-<span class='no'>tuner</span> <span class='kw'>=</span> <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/tnr.html'>tnr</a></span>(<span class='st'>"hyperband"</span>, <span class='kw'>eta</span> <span class='kw'>=</span> <span class='fl'>1.9</span>)
+<span class='kw'>tuner</span> <span class='op'>=</span> <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/tnr.html'>tnr</a></span>(<span class='st'>"hyperband"</span>, eta = <span class='fl'>1.9</span>)
 <span class='co'># \donttest{</span>
-<span class='no'>tuner</span>$<span class='fu'><a href='https://rdrr.io/r/stats/optimize.html'>optimize</a></span>(<span class='no'>inst</span>)</div><div class='output co'>#&gt;    nrounds booster learner_param_vals  x_domain classif.ce
+<span class='kw'>tuner</span><span class='op'>$</span><span class='fu'><a href='https://rdrr.io/r/stats/optimize.html'>optimize</a></span>(<span class='kw'>inst</span>)
+</div><div class='output co'>#&gt;    nrounds booster learner_param_vals  x_domain classif.ce
 #&gt; 1:       1  gbtree          &lt;list[3]&gt; &lt;list[2]&gt;       0.04</div><div class='input'>
 <span class='co'># return the best evaluation</span>
-<span class='no'>inst</span>$<span class='no'>result</span></div><div class='output co'>#&gt;    nrounds booster learner_param_vals  x_domain classif.ce
+<span class='kw'>inst</span><span class='op'>$</span><span class='kw'>result</span>
+</div><div class='output co'>#&gt;    nrounds booster learner_param_vals  x_domain classif.ce
 #&gt; 1:       1  gbtree          &lt;list[3]&gt; &lt;list[2]&gt;       0.04</div><div class='input'>
 <span class='co'># print all evaluations</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>inst</span>$<span class='no'>archive</span>$<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>())</div><div class='output co'>#&gt;      booster nrounds bracket bracket_stage budget_scaled budget_real n_configs
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>inst</span><span class='op'>$</span><span class='kw'>archive</span><span class='op'>$</span><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>())
+</div><div class='output co'>#&gt;      booster nrounds bracket bracket_stage budget_scaled budget_real n_configs
 #&gt;  1:   gbtree       1       3             0      1.457938           1         7
 #&gt;  2:     dart       1       3             0      1.457938           1         7
 #&gt;  3:     dart       1       3             0      1.457938           1         7
@@ -683,108 +692,111 @@ logger. To hide the <code>mlr3</code> logging messages run:</p><pre><span class=
 #&gt; 30:   gbtree      10       0             0     10.000000          10         4
 #&gt;      booster nrounds bracket bracket_stage budget_scaled budget_real n_configs
 #&gt;     classif.ce                                uhash  x_domain
-#&gt;  1:       0.04 44551990-5ebe-480f-b5d9-b3e7d8dbd801 &lt;list[2]&gt;
-#&gt;  2:       0.04 e75054cb-f767-4d13-b21f-cf9e5551e10a &lt;list[2]&gt;
-#&gt;  3:       0.04 e52bfd9f-c403-494c-b93c-0425beb2edbb &lt;list[2]&gt;
-#&gt;  4:       0.42 ab9a5654-4867-45f8-9979-136c8702e897 &lt;list[2]&gt;
-#&gt;  5:       0.42 bc5297c0-7547-4200-8b74-3429e4e6b3aa &lt;list[2]&gt;
-#&gt;  6:       0.04 986e9b06-2bf6-4ae2-978c-6776ec4b7b02 &lt;list[2]&gt;
-#&gt;  7:       0.04 3949ed21-069c-4f5a-95cc-a01133d579f0 &lt;list[2]&gt;
-#&gt;  8:       0.04 e58a0b83-04a1-4441-951a-87ec1b53b195 &lt;list[2]&gt;
-#&gt;  9:       0.04 119625e0-0231-4d88-9050-638af6df0b73 &lt;list[2]&gt;
-#&gt; 10:       0.04 a93c24f3-480c-4139-b852-2acc25582f43 &lt;list[2]&gt;
-#&gt; 11:       0.04 14a3d98f-8212-429e-b0a3-6c8ba77c5396 &lt;list[2]&gt;
-#&gt; 12:       0.04 578eda30-1590-4476-b4bb-71ea042ec5fa &lt;list[2]&gt;
-#&gt; 13:       0.42 baf39ee3-9326-4b01-af3d-f1f8dfce588f &lt;list[2]&gt;
-#&gt; 14:       0.42 18a83277-828b-4063-82bb-289e8f3d0b16 &lt;list[2]&gt;
-#&gt; 15:       0.04 9935c5aa-0656-44ba-ae4e-bf8ff3f2a5c1 &lt;list[2]&gt;
-#&gt; 16:       0.42 f717e8eb-58e8-4c14-895b-fbe776d73a4d &lt;list[2]&gt;
-#&gt; 17:       0.04 44034418-f16a-4ac0-8e34-172ec93c2305 &lt;list[2]&gt;
-#&gt; 18:       0.04 3b80f308-29bd-4c4b-9720-2d6e7f3217fe &lt;list[2]&gt;
-#&gt; 19:       0.04 7ea10821-678b-4ee0-ae78-3777fbaf2d34 &lt;list[2]&gt;
-#&gt; 20:       0.04 54233e4e-dd7d-4228-8a5f-0dd7b6e75b70 &lt;list[2]&gt;
-#&gt; 21:       0.42 9349c8c3-a94f-48a5-8c31-5cc29c0a3945 &lt;list[2]&gt;
-#&gt; 22:       0.42 523564d8-6240-488f-b9e2-735f7fce331d &lt;list[2]&gt;
-#&gt; 23:       0.42 992c2ba4-ebf4-4f82-bf9f-0c058da62745 &lt;list[2]&gt;
-#&gt; 24:       0.42 be7c4f99-e039-4e8e-b8c1-0e021feac7c9 &lt;list[2]&gt;
-#&gt; 25:       0.42 53781855-5a3d-4982-b9d2-e4a8f6335353 &lt;list[2]&gt;
-#&gt; 26:       0.42 3a3d0021-287f-4b0e-a14a-e980c71f8410 &lt;list[2]&gt;
-#&gt; 27:       0.42 e93ce177-a48f-4fae-81cd-2ef3882802c0 &lt;list[2]&gt;
-#&gt; 28:       0.42 4efeb6e1-49f0-47a4-8ef7-33a9271b1c5a &lt;list[2]&gt;
-#&gt; 29:       0.04 0449b0cb-87ca-4d9d-9e59-6d94dd8f22b4 &lt;list[2]&gt;
-#&gt; 30:       0.04 82d4c52a-30ad-45b9-a73d-f9a63f30905b &lt;list[2]&gt;
+#&gt;  1:       0.04 8ad5811a-e557-49d5-a52e-50f9d63b8e05 &lt;list[2]&gt;
+#&gt;  2:       0.04 d9cdc2d7-fe09-4506-b26d-0d5977138ba4 &lt;list[2]&gt;
+#&gt;  3:       0.04 d7329841-0625-4a00-83d0-f58ecb3895b4 &lt;list[2]&gt;
+#&gt;  4:       0.44 132edf26-5f1b-4f70-8d27-666205cf2c19 &lt;list[2]&gt;
+#&gt;  5:       0.42 0cd90498-4a55-4325-8219-80935321d54c &lt;list[2]&gt;
+#&gt;  6:       0.04 fd367a15-2911-4b4a-bdb2-c62e2b2529dd &lt;list[2]&gt;
+#&gt;  7:       0.04 0f343a52-fbcd-4995-bc0a-fa9b6c624668 &lt;list[2]&gt;
+#&gt;  8:       0.04 b914fd73-73e6-4353-9e97-23badf794485 &lt;list[2]&gt;
+#&gt;  9:       0.04 f5a3028f-8ea6-47f4-8a8c-da1d313972ac &lt;list[2]&gt;
+#&gt; 10:       0.04 eb77ef15-a588-4102-a28f-89e493a1efee &lt;list[2]&gt;
+#&gt; 11:       0.04 3a948088-096d-4815-acba-cd0acd81d095 &lt;list[2]&gt;
+#&gt; 12:       0.04 1e6716f4-acb1-48fb-b528-5c75eec216a9 &lt;list[2]&gt;
+#&gt; 13:       0.42 5cf63334-1c02-405b-94fd-008689b71d26 &lt;list[2]&gt;
+#&gt; 14:       0.42 92bc7a41-6ba7-4645-b712-9bd355d0c002 &lt;list[2]&gt;
+#&gt; 15:       0.04 55841ce8-b2b2-404c-9b73-ba3635443fd8 &lt;list[2]&gt;
+#&gt; 16:       0.42 71f16078-dc15-43e6-b33f-763354c66fb4 &lt;list[2]&gt;
+#&gt; 17:       0.04 b5bc5ca3-8c57-4ac3-9954-038d8d397a52 &lt;list[2]&gt;
+#&gt; 18:       0.04 b3f47ff1-4b7c-4cb7-878d-1aef4102eb10 &lt;list[2]&gt;
+#&gt; 19:       0.04 52a3154f-85d5-40bf-bca1-22f3faeba28f &lt;list[2]&gt;
+#&gt; 20:       0.04 4c58cb06-6004-4478-b676-477f13fa41db &lt;list[2]&gt;
+#&gt; 21:       0.42 2882789d-4f9f-4497-88f6-5b00fe3afcb6 &lt;list[2]&gt;
+#&gt; 22:       0.42 9a3dbf36-f7ad-476b-adc5-662784a97c15 &lt;list[2]&gt;
+#&gt; 23:       0.42 838e6742-961c-4a5a-85d4-42d77a45d6e1 &lt;list[2]&gt;
+#&gt; 24:       0.42 fd584ce3-01d2-4813-ab60-3faf0ee7f410 &lt;list[2]&gt;
+#&gt; 25:       0.42 92919047-bfdc-4c69-9c8c-769c06a6c1fd &lt;list[2]&gt;
+#&gt; 26:       0.42 bae997fb-2657-4750-8b2d-9e77feb4f846 &lt;list[2]&gt;
+#&gt; 27:       0.42 dda6e13c-6504-4642-85c7-73b4d67d4e33 &lt;list[2]&gt;
+#&gt; 28:       0.42 8492cbfb-dadb-424f-a192-a4313395d692 &lt;list[2]&gt;
+#&gt; 29:       0.04 5fc5c20a-412f-4e50-8105-1b264f5dcbb7 &lt;list[2]&gt;
+#&gt; 30:       0.04 545648d2-0c75-476b-9fc7-8f1290bd66e6 &lt;list[2]&gt;
 #&gt;     classif.ce                                uhash  x_domain
 #&gt;               timestamp batch_nr
-#&gt;  1: 2020-09-07 04:24:28        1
-#&gt;  2: 2020-09-07 04:24:28        1
-#&gt;  3: 2020-09-07 04:24:28        1
-#&gt;  4: 2020-09-07 04:24:28        1
-#&gt;  5: 2020-09-07 04:24:28        1
-#&gt;  6: 2020-09-07 04:24:28        1
-#&gt;  7: 2020-09-07 04:24:28        1
-#&gt;  8: 2020-09-07 04:24:28        2
-#&gt;  9: 2020-09-07 04:24:28        2
-#&gt; 10: 2020-09-07 04:24:28        2
-#&gt; 11: 2020-09-07 04:24:28        3
-#&gt; 12: 2020-09-07 04:24:28        4
-#&gt; 13: 2020-09-07 04:24:29        5
-#&gt; 14: 2020-09-07 04:24:29        5
-#&gt; 15: 2020-09-07 04:24:29        5
-#&gt; 16: 2020-09-07 04:24:29        5
-#&gt; 17: 2020-09-07 04:24:29        5
-#&gt; 18: 2020-09-07 04:24:29        6
-#&gt; 19: 2020-09-07 04:24:29        6
-#&gt; 20: 2020-09-07 04:24:29        7
-#&gt; 21: 2020-09-07 04:24:29        8
-#&gt; 22: 2020-09-07 04:24:29        8
-#&gt; 23: 2020-09-07 04:24:29        8
-#&gt; 24: 2020-09-07 04:24:29        8
-#&gt; 25: 2020-09-07 04:24:30        9
-#&gt; 26: 2020-09-07 04:24:30        9
-#&gt; 27: 2020-09-07 04:24:30       10
-#&gt; 28: 2020-09-07 04:24:30       10
-#&gt; 29: 2020-09-07 04:24:30       10
-#&gt; 30: 2020-09-07 04:24:30       10
+#&gt;  1: 2020-09-08 04:23:50        1
+#&gt;  2: 2020-09-08 04:23:50        1
+#&gt;  3: 2020-09-08 04:23:50        1
+#&gt;  4: 2020-09-08 04:23:50        1
+#&gt;  5: 2020-09-08 04:23:50        1
+#&gt;  6: 2020-09-08 04:23:50        1
+#&gt;  7: 2020-09-08 04:23:50        1
+#&gt;  8: 2020-09-08 04:23:50        2
+#&gt;  9: 2020-09-08 04:23:50        2
+#&gt; 10: 2020-09-08 04:23:50        2
+#&gt; 11: 2020-09-08 04:23:50        3
+#&gt; 12: 2020-09-08 04:23:50        4
+#&gt; 13: 2020-09-08 04:23:50        5
+#&gt; 14: 2020-09-08 04:23:50        5
+#&gt; 15: 2020-09-08 04:23:50        5
+#&gt; 16: 2020-09-08 04:23:50        5
+#&gt; 17: 2020-09-08 04:23:50        5
+#&gt; 18: 2020-09-08 04:23:51        6
+#&gt; 19: 2020-09-08 04:23:51        6
+#&gt; 20: 2020-09-08 04:23:51        7
+#&gt; 21: 2020-09-08 04:23:51        8
+#&gt; 22: 2020-09-08 04:23:51        8
+#&gt; 23: 2020-09-08 04:23:51        8
+#&gt; 24: 2020-09-08 04:23:51        8
+#&gt; 25: 2020-09-08 04:23:51        9
+#&gt; 26: 2020-09-08 04:23:51        9
+#&gt; 27: 2020-09-08 04:23:52       10
+#&gt; 28: 2020-09-08 04:23:52       10
+#&gt; 29: 2020-09-08 04:23:52       10
+#&gt; 30: 2020-09-08 04:23:52       10
 #&gt;               timestamp batch_nr</div><div class='input'><span class='co'># }</span>
 
 <span class='co'>### use subsampling for budget</span>
 
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>mlr3pipelines</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://mlr3pipelines.mlr-org.com'>mlr3pipelines</a></span>)
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>123</span>)
-<span class='no'>ll</span> <span class='kw'>=</span> <span class='fu'><a href='https://mlr3pipelines.mlr-org.com//reference/po.html'>po</a></span>(<span class='st'>"subsample"</span>) <span class='kw'>%&gt;&gt;%</span> <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>lrn</a></span>(<span class='st'>"classif.rpart"</span>)
+<span class='kw'>ll</span> <span class='op'>=</span> <span class='fu'><a href='https://mlr3pipelines.mlr-org.com//reference/po.html'>po</a></span>(<span class='st'>"subsample"</span>) <span class='op'>%&gt;&gt;%</span> <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>lrn</a></span>(<span class='st'>"classif.rpart"</span>)
 
 <span class='co'># define with extended hyperparameters with subsampling fraction as budget</span>
 <span class='co'># ==&gt; no learner budget is required</span>
-<span class='no'>params</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
-  <span class='no'>ParamDbl</span>$<span class='fu'>new</span>(<span class='st'>"classif.rpart.cp"</span>, <span class='kw'>lower</span> <span class='kw'>=</span> <span class='fl'>0.001</span>, <span class='kw'>upper</span> <span class='kw'>=</span> <span class='fl'>0.1</span>),
-  <span class='no'>ParamInt</span>$<span class='fu'>new</span>(<span class='st'>"classif.rpart.minsplit"</span>, <span class='kw'>lower</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>upper</span> <span class='kw'>=</span> <span class='fl'>10</span>),
-  <span class='no'>ParamDbl</span>$<span class='fu'>new</span>(<span class='st'>"subsample.frac"</span>, <span class='kw'>lower</span> <span class='kw'>=</span> <span class='fl'>0.1</span>, <span class='kw'>upper</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>tags</span> <span class='kw'>=</span> <span class='st'>"budget"</span>)
+<span class='kw'>params</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
+  <span class='kw'>ParamDbl</span><span class='op'>$</span><span class='fu'>new</span>(<span class='st'>"classif.rpart.cp"</span>, lower = <span class='fl'>0.001</span>, upper = <span class='fl'>0.1</span>),
+  <span class='kw'>ParamInt</span><span class='op'>$</span><span class='fu'>new</span>(<span class='st'>"classif.rpart.minsplit"</span>, lower = <span class='fl'>1</span>, upper = <span class='fl'>10</span>),
+  <span class='kw'>ParamDbl</span><span class='op'>$</span><span class='fu'>new</span>(<span class='st'>"subsample.frac"</span>, lower = <span class='fl'>0.1</span>, upper = <span class='fl'>1</span>, tags = <span class='st'>"budget"</span>)
 )
 
 <span class='co'># define TuningInstanceSingleCrit with the Graph Learner and the extended hyperparams</span>
-<span class='no'>inst</span> <span class='kw'>=</span> <span class='no'>TuningInstanceSingleCrit</span>$<span class='fu'>new</span>(
+<span class='kw'>inst</span> <span class='op'>=</span> <span class='kw'>TuningInstanceSingleCrit</span><span class='op'>$</span><span class='fu'>new</span>(
   <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>tsk</a></span>(<span class='st'>"iris"</span>),
-  <span class='no'>ll</span>,
+  <span class='kw'>ll</span>,
   <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>rsmp</a></span>(<span class='st'>"holdout"</span>),
   <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>msr</a></span>(<span class='st'>"classif.ce"</span>),
-  <span class='no'>ParamSet</span>$<span class='fu'>new</span>(<span class='no'>params</span>),
-  <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/trm.html'>trm</a></span>(<span class='st'>"evals"</span>, <span class='kw'>n_evals</span> <span class='kw'>=</span> <span class='fl'>100000</span>)
+  <span class='kw'>ParamSet</span><span class='op'>$</span><span class='fu'>new</span>(<span class='kw'>params</span>),
+  <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/trm.html'>trm</a></span>(<span class='st'>"evals"</span>, n_evals = <span class='fl'>100000</span>)
 )
 
 <span class='co'># define and call hyperband as usual</span>
-<span class='no'>tuner</span> <span class='kw'>=</span> <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/tnr.html'>tnr</a></span>(<span class='st'>"hyperband"</span>, <span class='kw'>eta</span> <span class='kw'>=</span> <span class='fl'>4L</span>)
+<span class='kw'>tuner</span> <span class='op'>=</span> <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/tnr.html'>tnr</a></span>(<span class='st'>"hyperband"</span>, eta = <span class='fl'>4L</span>)
 <span class='co'># \donttest{</span>
-<span class='no'>tuner</span>$<span class='fu'><a href='https://rdrr.io/r/stats/optimize.html'>optimize</a></span>(<span class='no'>inst</span>)</div><div class='output co'>#&gt;    classif.rpart.cp classif.rpart.minsplit subsample.frac learner_param_vals
+<span class='kw'>tuner</span><span class='op'>$</span><span class='fu'><a href='https://rdrr.io/r/stats/optimize.html'>optimize</a></span>(<span class='kw'>inst</span>)
+</div><div class='output co'>#&gt;    classif.rpart.cp classif.rpart.minsplit subsample.frac learner_param_vals
 #&gt; 1:       0.07348139                      3           0.25          &lt;list[6]&gt;
 #&gt;     x_domain classif.ce
 #&gt; 1: &lt;list[3]&gt;       0.02</div><div class='input'>
 <span class='co'># return the best evaluation</span>
-<span class='no'>inst</span>$<span class='no'>result</span></div><div class='output co'>#&gt;    classif.rpart.cp classif.rpart.minsplit subsample.frac learner_param_vals
+<span class='kw'>inst</span><span class='op'>$</span><span class='kw'>result</span>
+</div><div class='output co'>#&gt;    classif.rpart.cp classif.rpart.minsplit subsample.frac learner_param_vals
 #&gt; 1:       0.07348139                      3           0.25          &lt;list[6]&gt;
 #&gt;     x_domain classif.ce
 #&gt; 1: &lt;list[3]&gt;       0.02</div><div class='input'>
 <span class='co'># print all evaluations</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>inst</span>$<span class='no'>archive</span>$<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>())</div><div class='output co'>#&gt;    classif.rpart.cp classif.rpart.minsplit subsample.frac bracket bracket_stage
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>inst</span><span class='op'>$</span><span class='kw'>archive</span><span class='op'>$</span><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>())
+</div><div class='output co'>#&gt;    classif.rpart.cp classif.rpart.minsplit subsample.frac bracket bracket_stage
 #&gt; 1:       0.02532664                      4           0.25       1             0
 #&gt; 2:       0.07348139                      3           0.25       1             0
 #&gt; 3:       0.08489786                      2           0.25       1             0
@@ -801,13 +813,13 @@ logger. To hide the <code>mlr3</code> logging messages run:</p><pre><span class=
 #&gt; 6:          10.0        1.00         2       0.04
 #&gt; 7:          10.0        1.00         2       0.04
 #&gt;                                   uhash  x_domain           timestamp batch_nr
-#&gt; 1: 1628b66f-04e2-46a1-b788-8fbaf9057e88 &lt;list[3]&gt; 2020-09-07 04:24:32        1
-#&gt; 2: c288ef45-64df-4715-ad2b-df13dcc28ffd &lt;list[3]&gt; 2020-09-07 04:24:32        1
-#&gt; 3: 3b965169-a1b8-4e37-a0e3-0df71b34a678 &lt;list[3]&gt; 2020-09-07 04:24:32        1
-#&gt; 4: 33a8526b-a8f9-4a20-8efa-7a1ee5dfa3bc &lt;list[3]&gt; 2020-09-07 04:24:32        1
-#&gt; 5: 74dcc235-8dde-4abd-b44b-d21d7c1926d9 &lt;list[3]&gt; 2020-09-07 04:24:32        2
-#&gt; 6: d309200e-8bd4-4030-a718-74be2bf3af02 &lt;list[3]&gt; 2020-09-07 04:24:33        3
-#&gt; 7: 05451b0d-e804-438a-bfe9-c745e4c191e1 &lt;list[3]&gt; 2020-09-07 04:24:33        3</div><div class='input'># }
+#&gt; 1: fe1546d0-b56a-4253-b65a-fb6ee924f652 &lt;list[3]&gt; 2020-09-08 04:23:54        1
+#&gt; 2: 934ad24a-f183-4f89-a673-05f3a3b3cf93 &lt;list[3]&gt; 2020-09-08 04:23:54        1
+#&gt; 3: 8a54acbd-e193-46c0-aa3c-12245d16f50c &lt;list[3]&gt; 2020-09-08 04:23:54        1
+#&gt; 4: a5c9cfc8-2880-4f20-b4e4-810a928bc281 &lt;list[3]&gt; 2020-09-08 04:23:54        1
+#&gt; 5: 4c414cd9-afc4-4670-ba91-4d2d4e3b1bfe &lt;list[3]&gt; 2020-09-08 04:23:54        2
+#&gt; 6: a3702e3a-b226-4692-ae3c-dbfe3d4e9d65 &lt;list[3]&gt; 2020-09-08 04:23:54        3
+#&gt; 7: fd93f3fa-cdf9-4374-8ca8-5c3edb1918bf &lt;list[3]&gt; 2020-09-08 04:23:54        3</div><div class='input'><span class='co'># }</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -824,7 +836,7 @@ logger. To hide the <code>mlr3</code> logging messages run:</p><pre><span class=
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>
