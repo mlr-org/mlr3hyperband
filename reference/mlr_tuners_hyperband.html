@@ -230,14 +230,14 @@ the initialization of each bracket. The default is uniform sampling.</p></dd>
 
 <p>The <a href='https://mlr3tuning.mlr-org.com/reference/ArchiveTuning.html'>mlr3tuning::ArchiveTuning</a> holds the following additional columns that
 are specific to the hyperband tuner:</p><ul>
-<li><p><code>bracket</code> (<code><a href='https://rdrr.io/r/base/integer.html'>integer()</a></code>)<br />
+<li><p><code>bracket</code> (<code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code>)<br />
 The console logs about the bracket index are actually not matching
 with the original hyperband algorithm, which counts down the brackets
 and stops after evaluating bracket 0. The true bracket indices are
 given in this column.</p></li>
-<li><p><code>bracket_stage</code> (<code>integer())</code><br />
+<li><p><code>bracket_stage</code> (<code>integer(1))</code><br />
 The bracket stage of each bracket. Hyperband starts counting at 0.</p></li>
-<li><p><code>budget_scaled</code> (<code><a href='https://rdrr.io/r/base/integer.html'>integer()</a></code>)<br />
+<li><p><code>budget_scaled</code> (<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>)<br />
 The intermediate budget in each bracket stage calculated by hyperband.
 Because hyperband is originally only considered for budgets starting at 1, some
 rescaling is done to allow budgets starting at different values.
@@ -245,10 +245,10 @@ For this, budgets are internally divided by the lower budget bound to
 get a lower budget of 1. Before the learner
 receives its budgets for evaluation, the budget is transformed back to
 match the original scale again.</p></li>
-<li><p><code>budget_real</code> (<code><a href='https://rdrr.io/r/base/integer.html'>integer()</a></code>)<br />
+<li><p><code>budget_real</code> (<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>)<br />
 The real budget values the learner uses for evaluation after hyperband
 calculated its scaled budget.</p></li>
-<li><p><code>n_configs</code> (<code><a href='https://rdrr.io/r/base/integer.html'>integer()</a></code>)<br />
+<li><p><code>n_configs</code> (<code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code>)<br />
 The amount of evaluated configurations in each stage. These correspond
 to the <code>r_i</code> in the original paper.</p></li>
 </ul>
@@ -259,17 +259,17 @@ to the <code>r_i</code> in the original paper.</p></li>
 
 <p>Thanks to <a href='https://CRAN.R-project.org/package=mlr3pipelines'><span class="pkg">mlr3pipelines</span></a>, it is possible to use hyperband in
 combination with learners lacking a natural budget parameter. For example,
-any <a href='https://mlr3.mlr-org.com/reference/Learner.html'>mlr3::Learner</a> can be augmented with a <a href='https://mlr3pipelines.mlr-org.com//reference/PipeOp.html'>PipeOp</a>
-operator such as <a href='https://mlr3pipelines.mlr-org.com//reference/mlr_pipeops_subsample.html'>PipeOpSubsample</a>. With the
+any <a href='https://mlr3.mlr-org.com/reference/Learner.html'>mlr3::Learner</a> can be augmented with a <a href='https://mlr3pipelines.mlr-org.com//reference/PipeOp.html'>mlr3pipelines::PipeOp</a>
+operator such as <a href='https://mlr3pipelines.mlr-org.com//reference/mlr_pipeops_subsample.html'>mlr3pipelines::PipeOpSubsample</a>. With the
 subsampling rate as budget parameter, the resulting
-<a href='https://mlr3pipelines.mlr-org.com//reference/mlr_learners_graph.html'>GraphLearner</a> is fitted on small proportions of
-the <a href='https://mlr3.mlr-org.com/reference/Task.html'>Task</a> in the first brackets, and on the complete Task in
+<a href='https://mlr3pipelines.mlr-org.com//reference/mlr_learners_graph.html'>mlr3pipelines::GraphLearner</a> is fitted on small proportions of
+the <a href='https://mlr3.mlr-org.com/reference/Task.html'>mlr3::Task</a> in the first brackets, and on the complete Task in
 last brackets. See examples for some code.</p>
     <h2 class="hasAnchor" id="custom-sampler"><a class="anchor" href="#custom-sampler"></a>Custom sampler</h2>
 
     
 
-<p>Hyperband supports custom <a href='https://paradox.mlr-org.com/reference/Sampler.html'>Sampler</a> object for initial
+<p>Hyperband supports custom <a href='https://paradox.mlr-org.com/reference/Sampler.html'>paradox::Sampler</a> object for initial
 configurations in each bracket.
 A custom sampler may look like this (the full example is given in the
 <code>examples</code> section):</p><pre><span class='co'># - beta distribution with alpha = 2 and beta = 5</span>
@@ -305,8 +305,8 @@ like it is shown in the <code>examples</code>.</p>
 <p>When loading the <a href='mlr3hyperband-package.html'>mlr3hyperband</a> package, two loggers based on the lgr
 package are made available. One is called <code>mlr3</code>, the other <code>bbotk</code>. All
 <code>mlr3</code> methods log into the <code>mlr3</code> logger. All optimization methods form the
-packags <code>bbotk</code>, <code>mlr3tuning</code> and <code>mlr3hyperband</code> log into the <code>bbotk</code>
-logger. To hide the <code>mlr3</code> logging messages run:</p><pre><span class='kw'>lgr</span>::<span class='fu'><a href='https://rdrr.io/pkg/lgr/man/get_logger.html'>get_logger</a></span>(<span class='st'>"mlr3"</span>)<span class='op'>$</span><span class='fu'>set_threshold</span>(<span class='st'>"warn"</span>)
+packags bbotk, <a href='https://mlr3tuning.mlr-org.com/reference/mlr3tuning-package.html'>mlr3tuning</a> and <a href='mlr3hyperband-package.html'>mlr3hyperband</a> log into the <code>bbotk</code>
+logger. To hide the <a href='https://mlr3.mlr-org.com/reference/mlr3-package.html'>mlr3</a> logging messages run:</p><pre><span class='kw'>lgr</span>::<span class='fu'><a href='https://rdrr.io/pkg/lgr/man/get_logger.html'>get_logger</a></span>(<span class='st'>"mlr3"</span>)<span class='op'>$</span><span class='fu'>set_threshold</span>(<span class='st'>"warn"</span>)
 </pre>
 
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
@@ -473,152 +473,152 @@ logger. To hide the <code>mlr3</code> logging messages run:</p><pre><span class=
 #&gt; 72: 0.24035756 gblinear      16       0             0            16          16
 #&gt;            eta  booster nrounds bracket bracket_stage budget_scaled budget_real
 #&gt;     n_configs classif.ce                                uhash  x_domain
-#&gt;  1:        16       0.74 adcc4083-b1af-4d22-a470-0cf851073067 &lt;list[3]&gt;
-#&gt;  2:        16       0.50 9f80008e-3b11-42d4-9953-53074972aaeb &lt;list[3]&gt;
-#&gt;  3:        16       0.04 ffa4c943-9b41-44ca-9e83-3f5a9532cd5b &lt;list[3]&gt;
-#&gt;  4:        16       0.04 ea916e75-3cf1-4431-b9f0-6bb1b6856445 &lt;list[3]&gt;
-#&gt;  5:        16       0.04 0a319d95-d33e-4dc0-874c-127a69814f91 &lt;list[3]&gt;
-#&gt;  6:        16       0.70 aac1b242-b2ab-4eff-832c-334339c4dc56 &lt;list[3]&gt;
-#&gt;  7:        16       0.74 464f58f1-da32-486a-a701-3f47132516cd &lt;list[3]&gt;
-#&gt;  8:        16       0.04 f4153054-de54-4553-8278-f2430ada7c0a &lt;list[3]&gt;
-#&gt;  9:        16       0.74 8494a234-3924-40cc-a2c0-325522ad0aef &lt;list[3]&gt;
-#&gt; 10:        16       0.04 1f04696f-a1f1-4a91-9e52-c09d60da3720 &lt;list[3]&gt;
-#&gt; 11:        16       0.72 ff97a2b5-9548-4e37-a30b-b4eb02d8b1f4 &lt;list[3]&gt;
-#&gt; 12:        16       0.04 ede30126-d227-4d53-b1c1-5aa0b91b0c06 &lt;list[3]&gt;
-#&gt; 13:        16       0.04 aeb87bbe-ffd9-4adf-bf97-7b5ccb581d91 &lt;list[3]&gt;
-#&gt; 14:        16       0.04 2d3c2fca-c5ba-43bc-aa20-a1a3c364154d &lt;list[3]&gt;
-#&gt; 15:        16       0.04 51876b9d-0b12-4118-98d9-a91ec05f1d1f &lt;list[3]&gt;
-#&gt; 16:        16       0.04 f48f81dc-1418-434f-a012-a64a0328cd19 &lt;list[3]&gt;
-#&gt; 17:         8       0.04 78d8c07b-e516-4955-ad5a-f469fe80cffd &lt;list[3]&gt;
-#&gt; 18:         8       0.04 ce42e19a-2c5b-4eac-be21-37c340733627 &lt;list[3]&gt;
-#&gt; 19:         8       0.04 4dd54378-8372-4f33-ab18-3035f0afbb2c &lt;list[3]&gt;
-#&gt; 20:         8       0.04 f37aef00-ad39-4334-a459-badb158b6712 &lt;list[3]&gt;
-#&gt; 21:         8       0.04 860ffb4e-0d71-4c99-8144-df3eaae48078 &lt;list[3]&gt;
-#&gt; 22:         8       0.04 60f264d1-a01e-4418-86eb-b95d1c742359 &lt;list[3]&gt;
-#&gt; 23:         8       0.04 70d9b367-50b3-4f40-8e28-0cd8ebf9ddf8 &lt;list[3]&gt;
-#&gt; 24:         8       0.04 73f920f2-01da-41ab-9298-af4bc0766157 &lt;list[3]&gt;
-#&gt; 25:         4       0.04 0618972a-825c-4026-80ae-dec7a9fd8ba4 &lt;list[3]&gt;
-#&gt; 26:         4       0.04 cf892579-5ff7-4c7f-822a-c2b93127726a &lt;list[3]&gt;
-#&gt; 27:         4       0.04 8fd88cc9-eed7-4366-8b3c-97e1274426ea &lt;list[3]&gt;
-#&gt; 28:         4       0.04 53c2133e-5357-41e8-909a-9ce0d6f1b683 &lt;list[3]&gt;
-#&gt; 29:         2       0.04 c2090dfb-7735-45ea-96c7-62974ba3c7c0 &lt;list[3]&gt;
-#&gt; 30:         2       0.04 70048bfa-28c4-4e0d-9e39-f2d7a94ba6c5 &lt;list[3]&gt;
-#&gt; 31:         1       0.04 871f301c-bbb3-4963-ab48-b8e6aec83791 &lt;list[3]&gt;
-#&gt; 32:        10       0.04 9f875c1b-caa9-4739-b3e8-ca53e204b0c1 &lt;list[3]&gt;
-#&gt; 33:        10       0.04 31f4245e-300c-4bd2-b76d-b140e3fe62e5 &lt;list[3]&gt;
-#&gt; 34:        10       0.04 3e9a1bd7-feac-45b5-9f07-fc9cd512af60 &lt;list[3]&gt;
-#&gt; 35:        10       0.04 af5a3823-7349-4d41-8586-f93fd2b85ed9 &lt;list[3]&gt;
-#&gt; 36:        10       0.04 d9dce31a-3821-4cea-b2a6-b18c9932d5b1 &lt;list[3]&gt;
-#&gt; 37:        10       0.72 f52f5d40-3771-4484-bbd6-2e44b478cb5e &lt;list[3]&gt;
-#&gt; 38:        10       0.04 04d43eb6-9d65-4a4c-93d7-62b1b97ce9b3 &lt;list[3]&gt;
-#&gt; 39:        10       0.04 9db169c9-a2c9-4af9-924a-4ddf3ea82dd3 &lt;list[3]&gt;
-#&gt; 40:        10       0.04 d07530c1-14cb-4e0e-9e0d-50d20cf0fa02 &lt;list[3]&gt;
-#&gt; 41:        10       0.04 f67c8ad0-7d15-4683-8279-aae19e37797e &lt;list[3]&gt;
-#&gt; 42:         5       0.04 984deed7-b8f2-4a22-ae36-b11b822ebb27 &lt;list[3]&gt;
-#&gt; 43:         5       0.04 4555422d-4b76-4a90-965f-dcc8971b77d9 &lt;list[3]&gt;
-#&gt; 44:         5       0.04 9f6f4962-7044-4318-991d-de93cb95d657 &lt;list[3]&gt;
-#&gt; 45:         5       0.04 f9bd7d1e-74f8-40d8-a4b0-01bceda46086 &lt;list[3]&gt;
-#&gt; 46:         5       0.04 eaf6ca39-6b9e-4621-a41a-85b3ec5789bd &lt;list[3]&gt;
-#&gt; 47:         2       0.04 eb45646b-2b8f-4dba-b90a-9f02f4995de7 &lt;list[3]&gt;
-#&gt; 48:         2       0.04 7136ce8d-297f-41ae-be84-d99796d4f609 &lt;list[3]&gt;
-#&gt; 49:         1       0.04 a11786a8-9ac8-43d5-a097-9700b5e32a26 &lt;list[3]&gt;
-#&gt; 50:         7       0.04 0d9d66fb-127e-4fd3-9a77-9c4c3481e859 &lt;list[3]&gt;
-#&gt; 51:         7       0.04 f0bbdb48-ea88-408c-be73-56c5e614b502 &lt;list[3]&gt;
-#&gt; 52:         7       0.04 5f80d564-b62c-4ed4-b8e8-fe3082a0e5cd &lt;list[3]&gt;
-#&gt; 53:         7       0.04 946b37cc-5121-4186-97ef-b88488f25737 &lt;list[3]&gt;
-#&gt; 54:         7       0.04 0b145113-967f-498f-bd30-01ca7fe39d62 &lt;list[3]&gt;
-#&gt; 55:         7       0.04 373a0a2f-a857-4001-a551-150e725471ae &lt;list[3]&gt;
-#&gt; 56:         7       0.42 73f87a3a-6107-401f-9bfd-3ba054170a71 &lt;list[3]&gt;
-#&gt; 57:         3       0.04 edd16f4a-aa03-43a8-a108-86ce43bcc046 &lt;list[3]&gt;
-#&gt; 58:         3       0.04 ebfdd12f-1f97-4d83-82bb-5adb6dcbf688 &lt;list[3]&gt;
-#&gt; 59:         3       0.04 c6de1945-2e20-4bdf-95e1-8468c5acfefd &lt;list[3]&gt;
-#&gt; 60:         1       0.04 10eaf552-1b46-4961-b43e-b940c4428010 &lt;list[3]&gt;
-#&gt; 61:         5       0.04 cbe69863-2528-4143-9126-3ab95359f919 &lt;list[3]&gt;
-#&gt; 62:         5       0.42 f8289b13-3413-4dfe-8566-d71c5dd1bb80 &lt;list[3]&gt;
-#&gt; 63:         5       0.04 9ab5c18e-a8fb-405a-86ed-836eb5754257 &lt;list[3]&gt;
-#&gt; 64:         5       0.04 b566ab2e-033d-49eb-bdc5-9aeb2f61bb57 &lt;list[3]&gt;
-#&gt; 65:         5       0.04 e9efc5e6-8f6a-4bb5-ad67-6e2058bb69a3 &lt;list[3]&gt;
-#&gt; 66:         2       0.04 24e79cb7-009f-4bdd-aea5-57725d957506 &lt;list[3]&gt;
-#&gt; 67:         2       0.04 4da0ba92-c303-49be-9022-488e9408e66f &lt;list[3]&gt;
-#&gt; 68:         5       0.42 27bc209d-71f9-4c51-b9a1-0a1b8e498068 &lt;list[3]&gt;
-#&gt; 69:         5       0.18 024e9827-ab27-4f7b-adfb-2ac8e07521c8 &lt;list[3]&gt;
-#&gt; 70:         5       0.04 af7f6ff2-d8ee-4790-90c2-210c856f0a75 &lt;list[3]&gt;
-#&gt; 71:         5       0.42 c0113d02-bd9e-480c-9b50-f7082e261ddd &lt;list[3]&gt;
-#&gt; 72:         5       0.42 3e2d852c-d365-4235-8fa5-60cf5ca75da6 &lt;list[3]&gt;
+#&gt;  1:        16       0.74 5f07d0d5-e798-4ad1-a770-0822235ded34 &lt;list[3]&gt;
+#&gt;  2:        16       0.54 57d00b95-30ad-4feb-acd7-62aa2bbdd855 &lt;list[3]&gt;
+#&gt;  3:        16       0.04 2408d3f6-9930-4c8c-9641-a2af880ae3b0 &lt;list[3]&gt;
+#&gt;  4:        16       0.04 39cc4628-22cc-4251-b894-6fa74eab781f &lt;list[3]&gt;
+#&gt;  5:        16       0.04 974843fa-f9a7-4b10-ac5a-0e9349dfc4e6 &lt;list[3]&gt;
+#&gt;  6:        16       0.70 ffbf49bf-a0b3-45c9-a204-0ff7770b99d8 &lt;list[3]&gt;
+#&gt;  7:        16       0.74 fa7b949f-2ed6-4a11-8972-27c8752944e0 &lt;list[3]&gt;
+#&gt;  8:        16       0.04 01719dd0-4394-4cc3-819d-51c2f343458d &lt;list[3]&gt;
+#&gt;  9:        16       0.74 8a6b5493-c025-4beb-b810-e406dfd3b101 &lt;list[3]&gt;
+#&gt; 10:        16       0.04 14b3012c-6207-4352-af1d-b32c9a528383 &lt;list[3]&gt;
+#&gt; 11:        16       0.70 a6a65f51-45d5-4ad4-82bb-b8ce5971e53f &lt;list[3]&gt;
+#&gt; 12:        16       0.04 ad5d8846-26b0-44dd-814a-7b2e8cca795c &lt;list[3]&gt;
+#&gt; 13:        16       0.04 3a53253e-f77b-41e6-9a4b-efcf3d213166 &lt;list[3]&gt;
+#&gt; 14:        16       0.04 2adc7c1b-98e3-460b-9405-089166d17d3a &lt;list[3]&gt;
+#&gt; 15:        16       0.04 46efce2a-62e8-4204-98ee-5ef57ddd4e7b &lt;list[3]&gt;
+#&gt; 16:        16       0.04 396325c5-b556-4d01-ab1c-f152805d2b6f &lt;list[3]&gt;
+#&gt; 17:         8       0.04 749510a5-ab0e-422b-9ca9-604b4a3b0261 &lt;list[3]&gt;
+#&gt; 18:         8       0.04 b9d54985-fdcf-4c19-b52e-cf547224d44f &lt;list[3]&gt;
+#&gt; 19:         8       0.04 2d51041e-1827-46aa-a7d7-b08fd6787bad &lt;list[3]&gt;
+#&gt; 20:         8       0.04 3637baa2-9e3d-4db1-b402-fb790ebf4bbd &lt;list[3]&gt;
+#&gt; 21:         8       0.04 3480dd92-87a7-498c-a2f6-99815f548b48 &lt;list[3]&gt;
+#&gt; 22:         8       0.04 634b1761-031e-4a79-8f14-461d7a678fde &lt;list[3]&gt;
+#&gt; 23:         8       0.04 1c6ef453-d18f-4637-9304-554a165cdc24 &lt;list[3]&gt;
+#&gt; 24:         8       0.04 73b7f993-d380-4c93-a1cb-c641fe1c4306 &lt;list[3]&gt;
+#&gt; 25:         4       0.04 7dd36877-7eee-4091-b70c-503c627fd152 &lt;list[3]&gt;
+#&gt; 26:         4       0.04 8ba48f0a-f89e-44f3-a109-a127a7140e10 &lt;list[3]&gt;
+#&gt; 27:         4       0.04 76b21a67-fc52-4806-a706-9f25f171044a &lt;list[3]&gt;
+#&gt; 28:         4       0.04 05a3bb83-a0f8-4dde-bf13-239ea4743f8d &lt;list[3]&gt;
+#&gt; 29:         2       0.04 0c1c3ef5-eb34-4da8-b715-920c6b6230fb &lt;list[3]&gt;
+#&gt; 30:         2       0.04 f339cd83-f030-4b1d-84a4-e94bc9904273 &lt;list[3]&gt;
+#&gt; 31:         1       0.04 078641c8-8f41-436b-aa06-701543f7db03 &lt;list[3]&gt;
+#&gt; 32:        10       0.04 7570242c-1eb2-4b0a-bb2e-71c4d0bc4b23 &lt;list[3]&gt;
+#&gt; 33:        10       0.04 9f154a9c-3d19-4271-9ef6-8dc515241af9 &lt;list[3]&gt;
+#&gt; 34:        10       0.04 19549d05-4c0d-41e6-8355-b7af3b28af74 &lt;list[3]&gt;
+#&gt; 35:        10       0.04 2202dc48-3f6d-4b3d-a629-96d80bfe2d96 &lt;list[3]&gt;
+#&gt; 36:        10       0.04 c5cafd0c-5ad1-4c81-817d-78424f8ffc53 &lt;list[3]&gt;
+#&gt; 37:        10       0.74 0b359adc-1bfe-4f8f-a211-9abf1c4c827c &lt;list[3]&gt;
+#&gt; 38:        10       0.04 2a50aa30-157f-4734-af37-2d6df9f18a4f &lt;list[3]&gt;
+#&gt; 39:        10       0.04 253d7e66-85bc-4eb3-9346-bad99a6925ac &lt;list[3]&gt;
+#&gt; 40:        10       0.04 7bf7b4ea-37ab-4b8e-896a-9678767f5d85 &lt;list[3]&gt;
+#&gt; 41:        10       0.04 1fcaa9f3-ae24-40ca-a4ee-bbb7e191bf39 &lt;list[3]&gt;
+#&gt; 42:         5       0.04 f4f8aa3e-4d0a-488f-b582-3e9fa7c2fa28 &lt;list[3]&gt;
+#&gt; 43:         5       0.04 6b1f84bb-4f3f-498b-b6a7-f75b1d16d3b5 &lt;list[3]&gt;
+#&gt; 44:         5       0.04 49a051d0-631f-4bd7-ba16-03c72d30214b &lt;list[3]&gt;
+#&gt; 45:         5       0.04 70b0242d-d1fe-4c67-856f-8bcdb49d9acb &lt;list[3]&gt;
+#&gt; 46:         5       0.04 e25e9794-74d4-431f-a54c-42fe4279a430 &lt;list[3]&gt;
+#&gt; 47:         2       0.04 8bed605c-a9aa-4cc9-80b7-3aefaf514f76 &lt;list[3]&gt;
+#&gt; 48:         2       0.04 f365755c-1e61-4b15-8359-abc0bb974976 &lt;list[3]&gt;
+#&gt; 49:         1       0.04 8d2dd1d5-7459-4aad-a003-0788079b72ae &lt;list[3]&gt;
+#&gt; 50:         7       0.04 2f3d27e2-6d90-4bc1-bac8-6c7e81f71684 &lt;list[3]&gt;
+#&gt; 51:         7       0.04 8ba1caf4-b02b-40d2-87b5-8189cecdf78e &lt;list[3]&gt;
+#&gt; 52:         7       0.04 bb5d9a2f-7bce-4e25-93ee-2cb991ea35a4 &lt;list[3]&gt;
+#&gt; 53:         7       0.04 76489366-9ea0-4c20-a634-4628aed6513e &lt;list[3]&gt;
+#&gt; 54:         7       0.04 ec194883-6f65-43d3-ae55-48e2d58a9109 &lt;list[3]&gt;
+#&gt; 55:         7       0.04 f48a4114-9eac-49d3-a657-5307c486e563 &lt;list[3]&gt;
+#&gt; 56:         7       0.42 6e770e81-adc9-4b53-aae7-0e9f9736cbc9 &lt;list[3]&gt;
+#&gt; 57:         3       0.04 307a61eb-402e-414c-990c-c495fc081dd7 &lt;list[3]&gt;
+#&gt; 58:         3       0.04 ded6fe99-eff1-4304-8529-76941a4d75ce &lt;list[3]&gt;
+#&gt; 59:         3       0.04 0993986d-6170-4cad-9efd-9937215cb5fe &lt;list[3]&gt;
+#&gt; 60:         1       0.04 8be12ac7-a1d2-4644-8e9d-cf693194adf1 &lt;list[3]&gt;
+#&gt; 61:         5       0.04 6e5edbce-e053-4d0a-916c-87609cb2c754 &lt;list[3]&gt;
+#&gt; 62:         5       0.42 45080669-a957-46aa-95a8-927d6a9767d0 &lt;list[3]&gt;
+#&gt; 63:         5       0.04 1924a778-4b56-487b-b3c1-b8d69a8cdfad &lt;list[3]&gt;
+#&gt; 64:         5       0.04 76bad1ff-19c4-4f9f-bd9e-938ac54deb9d &lt;list[3]&gt;
+#&gt; 65:         5       0.04 80da0da8-ce40-426b-b3ea-cfe109c963ab &lt;list[3]&gt;
+#&gt; 66:         2       0.04 8e0de795-2881-4adb-930a-3f5970e27389 &lt;list[3]&gt;
+#&gt; 67:         2       0.04 ec74357b-eec4-4631-8629-8a85ecf8b3f6 &lt;list[3]&gt;
+#&gt; 68:         5       0.42 310ff22a-0369-4993-8031-5606fd93083d &lt;list[3]&gt;
+#&gt; 69:         5       0.18 46572617-fbba-49fa-891c-5f01b6ee4aba &lt;list[3]&gt;
+#&gt; 70:         5       0.04 86ac1bd5-3ce0-43b2-9c28-a97572b718e7 &lt;list[3]&gt;
+#&gt; 71:         5       0.42 dd3ab460-106e-4dd4-a476-2d36293eb8d3 &lt;list[3]&gt;
+#&gt; 72:         5       0.42 37e2bd6f-0615-4c0b-8a5f-1afc8aa4d0ce &lt;list[3]&gt;
 #&gt;     n_configs classif.ce                                uhash  x_domain
 #&gt;               timestamp batch_nr
-#&gt;  1: 2020-09-10 04:23:24        1
-#&gt;  2: 2020-09-10 04:23:24        1
-#&gt;  3: 2020-09-10 04:23:24        1
-#&gt;  4: 2020-09-10 04:23:24        1
-#&gt;  5: 2020-09-10 04:23:24        1
-#&gt;  6: 2020-09-10 04:23:24        1
-#&gt;  7: 2020-09-10 04:23:24        1
-#&gt;  8: 2020-09-10 04:23:24        1
-#&gt;  9: 2020-09-10 04:23:24        1
-#&gt; 10: 2020-09-10 04:23:24        1
-#&gt; 11: 2020-09-10 04:23:24        1
-#&gt; 12: 2020-09-10 04:23:24        1
-#&gt; 13: 2020-09-10 04:23:24        1
-#&gt; 14: 2020-09-10 04:23:24        1
-#&gt; 15: 2020-09-10 04:23:24        1
-#&gt; 16: 2020-09-10 04:23:24        1
-#&gt; 17: 2020-09-10 04:23:25        2
-#&gt; 18: 2020-09-10 04:23:25        2
-#&gt; 19: 2020-09-10 04:23:25        2
-#&gt; 20: 2020-09-10 04:23:25        2
-#&gt; 21: 2020-09-10 04:23:25        2
-#&gt; 22: 2020-09-10 04:23:25        2
-#&gt; 23: 2020-09-10 04:23:25        2
-#&gt; 24: 2020-09-10 04:23:25        2
-#&gt; 25: 2020-09-10 04:23:25        3
-#&gt; 26: 2020-09-10 04:23:25        3
-#&gt; 27: 2020-09-10 04:23:25        3
-#&gt; 28: 2020-09-10 04:23:25        3
-#&gt; 29: 2020-09-10 04:23:25        4
-#&gt; 30: 2020-09-10 04:23:25        4
-#&gt; 31: 2020-09-10 04:23:26        5
-#&gt; 32: 2020-09-10 04:23:26        6
-#&gt; 33: 2020-09-10 04:23:26        6
-#&gt; 34: 2020-09-10 04:23:26        6
-#&gt; 35: 2020-09-10 04:23:26        6
-#&gt; 36: 2020-09-10 04:23:26        6
-#&gt; 37: 2020-09-10 04:23:26        6
-#&gt; 38: 2020-09-10 04:23:26        6
-#&gt; 39: 2020-09-10 04:23:26        6
-#&gt; 40: 2020-09-10 04:23:26        6
-#&gt; 41: 2020-09-10 04:23:26        6
-#&gt; 42: 2020-09-10 04:23:27        7
-#&gt; 43: 2020-09-10 04:23:27        7
-#&gt; 44: 2020-09-10 04:23:27        7
-#&gt; 45: 2020-09-10 04:23:27        7
-#&gt; 46: 2020-09-10 04:23:27        7
-#&gt; 47: 2020-09-10 04:23:27        8
-#&gt; 48: 2020-09-10 04:23:27        8
-#&gt; 49: 2020-09-10 04:23:27        9
-#&gt; 50: 2020-09-10 04:23:27       10
-#&gt; 51: 2020-09-10 04:23:27       10
-#&gt; 52: 2020-09-10 04:23:27       10
-#&gt; 53: 2020-09-10 04:23:27       10
-#&gt; 54: 2020-09-10 04:23:27       10
-#&gt; 55: 2020-09-10 04:23:27       10
-#&gt; 56: 2020-09-10 04:23:27       10
-#&gt; 57: 2020-09-10 04:23:28       11
-#&gt; 58: 2020-09-10 04:23:28       11
-#&gt; 59: 2020-09-10 04:23:28       11
-#&gt; 60: 2020-09-10 04:23:28       12
-#&gt; 61: 2020-09-10 04:23:28       13
-#&gt; 62: 2020-09-10 04:23:28       13
-#&gt; 63: 2020-09-10 04:23:28       13
-#&gt; 64: 2020-09-10 04:23:28       13
-#&gt; 65: 2020-09-10 04:23:28       13
-#&gt; 66: 2020-09-10 04:23:28       14
-#&gt; 67: 2020-09-10 04:23:28       14
-#&gt; 68: 2020-09-10 04:23:29       15
-#&gt; 69: 2020-09-10 04:23:29       15
-#&gt; 70: 2020-09-10 04:23:29       15
-#&gt; 71: 2020-09-10 04:23:29       15
-#&gt; 72: 2020-09-10 04:23:29       15
+#&gt;  1: 2020-09-10 07:46:27        1
+#&gt;  2: 2020-09-10 07:46:27        1
+#&gt;  3: 2020-09-10 07:46:27        1
+#&gt;  4: 2020-09-10 07:46:27        1
+#&gt;  5: 2020-09-10 07:46:27        1
+#&gt;  6: 2020-09-10 07:46:27        1
+#&gt;  7: 2020-09-10 07:46:27        1
+#&gt;  8: 2020-09-10 07:46:27        1
+#&gt;  9: 2020-09-10 07:46:27        1
+#&gt; 10: 2020-09-10 07:46:27        1
+#&gt; 11: 2020-09-10 07:46:27        1
+#&gt; 12: 2020-09-10 07:46:27        1
+#&gt; 13: 2020-09-10 07:46:27        1
+#&gt; 14: 2020-09-10 07:46:27        1
+#&gt; 15: 2020-09-10 07:46:27        1
+#&gt; 16: 2020-09-10 07:46:27        1
+#&gt; 17: 2020-09-10 07:46:28        2
+#&gt; 18: 2020-09-10 07:46:28        2
+#&gt; 19: 2020-09-10 07:46:28        2
+#&gt; 20: 2020-09-10 07:46:28        2
+#&gt; 21: 2020-09-10 07:46:28        2
+#&gt; 22: 2020-09-10 07:46:28        2
+#&gt; 23: 2020-09-10 07:46:28        2
+#&gt; 24: 2020-09-10 07:46:28        2
+#&gt; 25: 2020-09-10 07:46:28        3
+#&gt; 26: 2020-09-10 07:46:28        3
+#&gt; 27: 2020-09-10 07:46:28        3
+#&gt; 28: 2020-09-10 07:46:28        3
+#&gt; 29: 2020-09-10 07:46:28        4
+#&gt; 30: 2020-09-10 07:46:28        4
+#&gt; 31: 2020-09-10 07:46:28        5
+#&gt; 32: 2020-09-10 07:46:29        6
+#&gt; 33: 2020-09-10 07:46:29        6
+#&gt; 34: 2020-09-10 07:46:29        6
+#&gt; 35: 2020-09-10 07:46:29        6
+#&gt; 36: 2020-09-10 07:46:29        6
+#&gt; 37: 2020-09-10 07:46:29        6
+#&gt; 38: 2020-09-10 07:46:29        6
+#&gt; 39: 2020-09-10 07:46:29        6
+#&gt; 40: 2020-09-10 07:46:29        6
+#&gt; 41: 2020-09-10 07:46:29        6
+#&gt; 42: 2020-09-10 07:46:30        7
+#&gt; 43: 2020-09-10 07:46:30        7
+#&gt; 44: 2020-09-10 07:46:30        7
+#&gt; 45: 2020-09-10 07:46:30        7
+#&gt; 46: 2020-09-10 07:46:30        7
+#&gt; 47: 2020-09-10 07:46:30        8
+#&gt; 48: 2020-09-10 07:46:30        8
+#&gt; 49: 2020-09-10 07:46:30        9
+#&gt; 50: 2020-09-10 07:46:30       10
+#&gt; 51: 2020-09-10 07:46:30       10
+#&gt; 52: 2020-09-10 07:46:30       10
+#&gt; 53: 2020-09-10 07:46:30       10
+#&gt; 54: 2020-09-10 07:46:30       10
+#&gt; 55: 2020-09-10 07:46:30       10
+#&gt; 56: 2020-09-10 07:46:30       10
+#&gt; 57: 2020-09-10 07:46:31       11
+#&gt; 58: 2020-09-10 07:46:31       11
+#&gt; 59: 2020-09-10 07:46:31       11
+#&gt; 60: 2020-09-10 07:46:31       12
+#&gt; 61: 2020-09-10 07:46:31       13
+#&gt; 62: 2020-09-10 07:46:31       13
+#&gt; 63: 2020-09-10 07:46:31       13
+#&gt; 64: 2020-09-10 07:46:31       13
+#&gt; 65: 2020-09-10 07:46:31       13
+#&gt; 66: 2020-09-10 07:46:32       14
+#&gt; 67: 2020-09-10 07:46:32       14
+#&gt; 68: 2020-09-10 07:46:32       15
+#&gt; 69: 2020-09-10 07:46:32       15
+#&gt; 70: 2020-09-10 07:46:32       15
+#&gt; 71: 2020-09-10 07:46:32       15
+#&gt; 72: 2020-09-10 07:46:32       15
 #&gt;               timestamp batch_nr</div><div class='input'><span class='co'># }</span>
 
 
@@ -692,68 +692,68 @@ logger. To hide the <code>mlr3</code> logging messages run:</p><pre><span class=
 #&gt; 30:   gbtree      10       0             0     10.000000          10         4
 #&gt;      booster nrounds bracket bracket_stage budget_scaled budget_real n_configs
 #&gt;     classif.ce                                uhash  x_domain
-#&gt;  1:       0.04 f360cc6a-33a0-4436-a552-00ed65bb6867 &lt;list[2]&gt;
-#&gt;  2:       0.04 433b7b7a-d87c-4a89-b942-2dc340240fb9 &lt;list[2]&gt;
-#&gt;  3:       0.04 482ae6ad-830a-46dd-8c88-6389ed04e440 &lt;list[2]&gt;
-#&gt;  4:       0.44 bf59d76b-2b79-471a-8cc0-33b01a8b33da &lt;list[2]&gt;
-#&gt;  5:       0.42 fd4803bb-debb-4d66-8fe1-07d5eca02f4e &lt;list[2]&gt;
-#&gt;  6:       0.04 8ad4f87b-3615-477d-aa72-5ee343f727c0 &lt;list[2]&gt;
-#&gt;  7:       0.04 ddd6ae89-b149-4438-b080-cba2ba2688f5 &lt;list[2]&gt;
-#&gt;  8:       0.04 20aaaee0-ef30-4059-a78e-2c333aac5a49 &lt;list[2]&gt;
-#&gt;  9:       0.04 376fddff-1343-4627-8f0a-51c1693970cd &lt;list[2]&gt;
-#&gt; 10:       0.04 dcd89e74-98a0-4e1b-b7d7-cb04d53f1fe1 &lt;list[2]&gt;
-#&gt; 11:       0.04 9d41673c-8f24-4def-8aa5-87648ae09577 &lt;list[2]&gt;
-#&gt; 12:       0.04 1308004f-544f-4739-8d5a-14730b72b1c3 &lt;list[2]&gt;
-#&gt; 13:       0.42 fc41684b-766b-4810-8d94-ecae8181be4c &lt;list[2]&gt;
-#&gt; 14:       0.42 ac3fb2a5-1852-4a9c-b755-e8172cf625a7 &lt;list[2]&gt;
-#&gt; 15:       0.04 de2b67e9-90d9-4d7e-bf23-6e9eaf87fb61 &lt;list[2]&gt;
-#&gt; 16:       0.42 c291629b-a4f1-4b5a-9156-b127f7465426 &lt;list[2]&gt;
-#&gt; 17:       0.04 d8668db7-8aa1-4748-b614-5fd31bbd4f48 &lt;list[2]&gt;
-#&gt; 18:       0.04 9a9223db-df27-4662-a788-97c28f14af14 &lt;list[2]&gt;
-#&gt; 19:       0.04 4797a95a-3de0-4999-8467-8d752ef8ea19 &lt;list[2]&gt;
-#&gt; 20:       0.04 3f11e1cb-56ec-4460-a396-0008f46666f1 &lt;list[2]&gt;
-#&gt; 21:       0.42 51c39cf5-3580-4f8e-b105-d32cefdc8b54 &lt;list[2]&gt;
-#&gt; 22:       0.42 dfcd908e-9770-4fbb-98e6-b01712cac486 &lt;list[2]&gt;
-#&gt; 23:       0.42 39d1b36c-8c7c-40a3-8195-acacf214d8b5 &lt;list[2]&gt;
-#&gt; 24:       0.42 f97e992b-b43d-4d98-9670-67617f1e80ee &lt;list[2]&gt;
-#&gt; 25:       0.42 bdff56e9-3164-4f32-bf58-200aa2c94449 &lt;list[2]&gt;
-#&gt; 26:       0.42 82dbd0d3-9be1-4c41-abfe-54d500eb4e98 &lt;list[2]&gt;
-#&gt; 27:       0.42 aaf0e113-de3e-4701-a872-4ec08646f9f9 &lt;list[2]&gt;
-#&gt; 28:       0.42 b37536ca-c124-4722-b6f6-533945d8cbe3 &lt;list[2]&gt;
-#&gt; 29:       0.04 a44cc84d-214b-48e7-b832-86fc22984ecc &lt;list[2]&gt;
-#&gt; 30:       0.04 1016aca4-6816-4cd5-9922-a86e1efcafc9 &lt;list[2]&gt;
+#&gt;  1:       0.04 beef8351-99a6-47d8-bb84-4b7c6a1cb597 &lt;list[2]&gt;
+#&gt;  2:       0.04 fe800fde-e922-4f2f-942d-53adf1ad9bce &lt;list[2]&gt;
+#&gt;  3:       0.04 a3e8c06e-d17a-4bdc-ae57-b31c3b42ac64 &lt;list[2]&gt;
+#&gt;  4:       0.70 dc9434a8-6969-439c-95fd-f6c3cc5f9e33 &lt;list[2]&gt;
+#&gt;  5:       0.42 24801fd7-19f0-4767-b35c-2649ecbd5614 &lt;list[2]&gt;
+#&gt;  6:       0.04 35cffda3-182d-48e0-aa93-5992bbadc866 &lt;list[2]&gt;
+#&gt;  7:       0.04 1717984f-b681-4a4b-830f-e7a8bde65ba1 &lt;list[2]&gt;
+#&gt;  8:       0.04 73f731be-4d8a-4f89-a16b-f0073a6712f1 &lt;list[2]&gt;
+#&gt;  9:       0.04 f2a0f287-b16a-481a-a8ba-e3e96f61dfea &lt;list[2]&gt;
+#&gt; 10:       0.04 a230e8e1-7a58-4195-a42f-8c4232a58c75 &lt;list[2]&gt;
+#&gt; 11:       0.04 89c06155-ef25-45b8-bf3a-e6e7cb3352d5 &lt;list[2]&gt;
+#&gt; 12:       0.04 743806c7-9560-429f-8c4d-c53480d2d70d &lt;list[2]&gt;
+#&gt; 13:       0.42 0099167b-b3ca-4360-a2aa-29a1d4223f3e &lt;list[2]&gt;
+#&gt; 14:       0.42 773e16a9-75fb-45cb-94cc-b7ac8f15d9c9 &lt;list[2]&gt;
+#&gt; 15:       0.04 adb7cfc8-c6f9-4802-9d0f-458120bad717 &lt;list[2]&gt;
+#&gt; 16:       0.42 c65281e3-e668-48d5-ba05-fa91a8823634 &lt;list[2]&gt;
+#&gt; 17:       0.04 fb2f44d2-0903-4869-b667-9595f3d95d3f &lt;list[2]&gt;
+#&gt; 18:       0.04 a6c48953-7293-4456-9bb4-6e2097c8e9d1 &lt;list[2]&gt;
+#&gt; 19:       0.04 f4d11073-b6e4-484a-8651-02cd31d233cf &lt;list[2]&gt;
+#&gt; 20:       0.04 17f37a30-2c3d-4149-87b0-a0db28e3b4f2 &lt;list[2]&gt;
+#&gt; 21:       0.42 c8f82771-2a2a-49a0-bc4f-1e08d05c97f7 &lt;list[2]&gt;
+#&gt; 22:       0.42 37c780f5-cb8a-41ef-8da7-55a4e7832c8d &lt;list[2]&gt;
+#&gt; 23:       0.42 44651e9c-65fd-467b-b9d8-8bfa3206c52b &lt;list[2]&gt;
+#&gt; 24:       0.42 56f58c3b-b6d4-4c97-8a85-7b70aaf1015c &lt;list[2]&gt;
+#&gt; 25:       0.42 8b7bc73a-f0da-44e6-b692-693176d2fc70 &lt;list[2]&gt;
+#&gt; 26:       0.42 375a7d88-6722-4b29-8507-dc8df9b523fa &lt;list[2]&gt;
+#&gt; 27:       0.42 8652a0b2-1d81-4d68-af19-b33c5b4e3f79 &lt;list[2]&gt;
+#&gt; 28:       0.42 e9d05a12-6d52-40de-aa4a-710eee81e630 &lt;list[2]&gt;
+#&gt; 29:       0.04 b78cf3da-fb8e-42b2-9e42-d972b61f864a &lt;list[2]&gt;
+#&gt; 30:       0.04 803a9fd0-87a4-4b5d-8ead-a2aedff5d76c &lt;list[2]&gt;
 #&gt;     classif.ce                                uhash  x_domain
 #&gt;               timestamp batch_nr
-#&gt;  1: 2020-09-10 04:23:29        1
-#&gt;  2: 2020-09-10 04:23:29        1
-#&gt;  3: 2020-09-10 04:23:29        1
-#&gt;  4: 2020-09-10 04:23:29        1
-#&gt;  5: 2020-09-10 04:23:29        1
-#&gt;  6: 2020-09-10 04:23:29        1
-#&gt;  7: 2020-09-10 04:23:29        1
-#&gt;  8: 2020-09-10 04:23:30        2
-#&gt;  9: 2020-09-10 04:23:30        2
-#&gt; 10: 2020-09-10 04:23:30        2
-#&gt; 11: 2020-09-10 04:23:30        3
-#&gt; 12: 2020-09-10 04:23:30        4
-#&gt; 13: 2020-09-10 04:23:30        5
-#&gt; 14: 2020-09-10 04:23:30        5
-#&gt; 15: 2020-09-10 04:23:30        5
-#&gt; 16: 2020-09-10 04:23:30        5
-#&gt; 17: 2020-09-10 04:23:30        5
-#&gt; 18: 2020-09-10 04:23:30        6
-#&gt; 19: 2020-09-10 04:23:30        6
-#&gt; 20: 2020-09-10 04:23:30        7
-#&gt; 21: 2020-09-10 04:23:31        8
-#&gt; 22: 2020-09-10 04:23:31        8
-#&gt; 23: 2020-09-10 04:23:31        8
-#&gt; 24: 2020-09-10 04:23:31        8
-#&gt; 25: 2020-09-10 04:23:31        9
-#&gt; 26: 2020-09-10 04:23:31        9
-#&gt; 27: 2020-09-10 04:23:31       10
-#&gt; 28: 2020-09-10 04:23:31       10
-#&gt; 29: 2020-09-10 04:23:31       10
-#&gt; 30: 2020-09-10 04:23:31       10
+#&gt;  1: 2020-09-10 07:46:33        1
+#&gt;  2: 2020-09-10 07:46:33        1
+#&gt;  3: 2020-09-10 07:46:33        1
+#&gt;  4: 2020-09-10 07:46:33        1
+#&gt;  5: 2020-09-10 07:46:33        1
+#&gt;  6: 2020-09-10 07:46:33        1
+#&gt;  7: 2020-09-10 07:46:33        1
+#&gt;  8: 2020-09-10 07:46:33        2
+#&gt;  9: 2020-09-10 07:46:33        2
+#&gt; 10: 2020-09-10 07:46:33        2
+#&gt; 11: 2020-09-10 07:46:33        3
+#&gt; 12: 2020-09-10 07:46:33        4
+#&gt; 13: 2020-09-10 07:46:34        5
+#&gt; 14: 2020-09-10 07:46:34        5
+#&gt; 15: 2020-09-10 07:46:34        5
+#&gt; 16: 2020-09-10 07:46:34        5
+#&gt; 17: 2020-09-10 07:46:34        5
+#&gt; 18: 2020-09-10 07:46:34        6
+#&gt; 19: 2020-09-10 07:46:34        6
+#&gt; 20: 2020-09-10 07:46:34        7
+#&gt; 21: 2020-09-10 07:46:34        8
+#&gt; 22: 2020-09-10 07:46:34        8
+#&gt; 23: 2020-09-10 07:46:34        8
+#&gt; 24: 2020-09-10 07:46:34        8
+#&gt; 25: 2020-09-10 07:46:35        9
+#&gt; 26: 2020-09-10 07:46:35        9
+#&gt; 27: 2020-09-10 07:46:35       10
+#&gt; 28: 2020-09-10 07:46:35       10
+#&gt; 29: 2020-09-10 07:46:35       10
+#&gt; 30: 2020-09-10 07:46:35       10
 #&gt;               timestamp batch_nr</div><div class='input'><span class='co'># }</span>
 
 <span class='co'>### use subsampling for budget</span>
@@ -813,13 +813,13 @@ logger. To hide the <code>mlr3</code> logging messages run:</p><pre><span class=
 #&gt; 6:          10.0        1.00         2       0.04
 #&gt; 7:          10.0        1.00         2       0.04
 #&gt;                                   uhash  x_domain           timestamp batch_nr
-#&gt; 1: c24f9fff-e824-4a25-a8ee-0d8af1aba66a &lt;list[3]&gt; 2020-09-10 04:23:33        1
-#&gt; 2: 59298ec0-1bf4-4695-bbb6-51d3592f3f34 &lt;list[3]&gt; 2020-09-10 04:23:33        1
-#&gt; 3: 45915ba9-9368-45d5-8c65-a6cb525a4396 &lt;list[3]&gt; 2020-09-10 04:23:33        1
-#&gt; 4: 199db2bd-ba8c-49a9-8d0f-3ce229b037cd &lt;list[3]&gt; 2020-09-10 04:23:33        1
-#&gt; 5: c36e152f-ea2d-4bf7-b684-37af0924ecd2 &lt;list[3]&gt; 2020-09-10 04:23:33        2
-#&gt; 6: eb06ea8e-9529-4641-bc1a-a73c96aaa856 &lt;list[3]&gt; 2020-09-10 04:23:33        3
-#&gt; 7: 8fb577cc-a188-4147-8c39-f3de4d1bd523 &lt;list[3]&gt; 2020-09-10 04:23:33        3</div><div class='input'><span class='co'># }</span>
+#&gt; 1: 2c8546fa-1a53-4e0e-8caf-fb5686ad191a &lt;list[3]&gt; 2020-09-10 07:46:37        1
+#&gt; 2: 15c7496f-65e0-441e-acd6-44f82c8be5a6 &lt;list[3]&gt; 2020-09-10 07:46:37        1
+#&gt; 3: bca0e1e2-3061-429a-a65d-ab239f022819 &lt;list[3]&gt; 2020-09-10 07:46:37        1
+#&gt; 4: 72b20beb-bb17-44fd-97dc-88666ff5180c &lt;list[3]&gt; 2020-09-10 07:46:37        1
+#&gt; 5: 9f5e9f35-1820-4ae6-9666-72fcb9d1fd50 &lt;list[3]&gt; 2020-09-10 07:46:37        2
+#&gt; 6: bcce80ac-5aeb-4ead-ae51-fbf3edf6bc34 &lt;list[3]&gt; 2020-09-10 07:46:38        3
+#&gt; 7: f7ce43e2-9918-4b49-bd84-d9ae805075db &lt;list[3]&gt; 2020-09-10 07:46:38        3</div><div class='input'><span class='co'># }</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
