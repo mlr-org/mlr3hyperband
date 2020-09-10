@@ -39,14 +39,14 @@
 #' @section Archive:
 #' The [mlr3tuning::ArchiveTuning] holds the following additional columns that
 #' are specific to the hyperband tuner:
-#'   * `bracket` (`integer()`)\cr
+#'   * `bracket` (`integer(1)`)\cr
 #'     The console logs about the bracket index are actually not matching
 #'     with the original hyperband algorithm, which counts down the brackets
 #'     and stops after evaluating bracket 0. The true bracket indices are
 #'     given in this column.
-#'   * `bracket_stage` (`integer())`\cr
+#'   * `bracket_stage` (`integer(1))`\cr
 #'     The bracket stage of each bracket. Hyperband starts counting at 0.
-#'   * `budget_scaled` (`integer()`)\cr
+#'   * `budget_scaled` (`numeric(1)`)\cr
 #'     The intermediate budget in each bracket stage calculated by hyperband.
 #'     Because hyperband is originally only considered for budgets starting at 1, some
 #'     rescaling is done to allow budgets starting at different values.
@@ -54,25 +54,25 @@
 #'     get a lower budget of 1. Before the learner
 #'     receives its budgets for evaluation, the budget is transformed back to
 #'     match the original scale again.
-#'   * `budget_real` (`integer()`)\cr
+#'   * `budget_real` (`numeric(1)`)\cr
 #'     The real budget values the learner uses for evaluation after hyperband
 #'     calculated its scaled budget.
-#'   * `n_configs` (`integer()`)\cr
+#'   * `n_configs` (`integer(1)`)\cr
 #'     The amount of evaluated configurations in each stage. These correspond
 #'     to the `r_i` in the original paper.
 #'
 #' @section Hyperband without learner budget:
 #' Thanks to \CRANpkg{mlr3pipelines}, it is possible to use hyperband in
 #' combination with learners lacking a natural budget parameter. For example,
-#' any [mlr3::Learner] can be augmented with a [PipeOp][mlr3pipelines::PipeOp]
-#' operator such as [PipeOpSubsample][mlr3pipelines::PipeOpSubsample]. With the
+#' any [mlr3::Learner] can be augmented with a [mlr3pipelines::PipeOp]
+#' operator such as [mlr3pipelines::PipeOpSubsample]. With the
 #' subsampling rate as budget parameter, the resulting
-#' [GraphLearner][mlr3pipelines::GraphLearner] is fitted on small proportions of
-#' the [Task][mlr3::Task] in the first brackets, and on the complete Task in
+#' [mlr3pipelines::GraphLearner] is fitted on small proportions of
+#' the [mlr3::Task] in the first brackets, and on the complete Task in
 #' last brackets. See examples for some code.
 #'
 #' @section Custom sampler:
-#' Hyperband supports custom [Sampler][paradox::Sampler] object for initial
+#' Hyperband supports custom [paradox::Sampler] object for initial
 #' configurations in each bracket.
 #' A custom sampler may look like this (the full example is given in the
 #' `examples` section):
@@ -149,8 +149,8 @@
 #' When loading the [mlr3hyperband] package, two loggers based on the [lgr]
 #' package are made available. One is called `mlr3`, the other `bbotk`. All
 #' `mlr3` methods log into the `mlr3` logger. All optimization methods form the
-#' packags `bbotk`, `mlr3tuning` and `mlr3hyperband` log into the `bbotk`
-#' logger. To hide the `mlr3` logging messages run:
+#' packags [bbotk], [mlr3tuning] and [mlr3hyperband] log into the `bbotk`
+#' logger. To hide the [mlr3] logging messages run:
 #'
 #' ```
 #' lgr::get_logger("mlr3")$set_threshold("warn")
