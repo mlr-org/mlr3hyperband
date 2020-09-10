@@ -9,13 +9,15 @@
 #' consequence.
 #'
 #' For this, several brackets are constructed with an associated set of
-#' configurations for each bracket. Each bracket as several stages. Different
+#' configurations for each bracket. Each bracket has several stages. Different
 #' brackets are initialized with different amounts of configurations and
-#' different budget sizes. To get an idea of how the bracket layout looks like
-#' for a given argument set, please have a look in the `details`.
+#' different budget sizes.
 #'
-#' To identify the budget for evaluating hyperband, the user has to specify
-#' explicitly which hyperparameter of the learner influences the budget by
+#' Within the context of hyperband each evaluation of a learner consumes a
+#' certain budget. This budget is not fixed but controlled by a certain
+#' hyperparameter, e.g. the number of boosting iterations or the number of trees
+#' in a random forest. The user has to specify explicitly which hyperparameter
+#' of the learner controls the consumption of the budget by
 #' tagging a single hyperparameter in the [paradox::ParamSet] with `"budget"`.
 #' An alternative approach using subsampling and pipelines is described below.
 #'
@@ -75,7 +77,7 @@
 #' Hyperband supports custom [paradox::Sampler] object for initial
 #' configurations in each bracket.
 #' A custom sampler may look like this (the full example is given in the
-#' `examples` section):
+#' *examples* section):
 #' ```
 #' # - beta distribution with alpha = 2 and beta = 5
 #' # - categorical distribution with custom probabilities
@@ -92,58 +94,8 @@
 #' over all configurations in each bracket is roughly the same. This will not
 #' hold true once the scaling in the budget parameter is not linear
 #' anymore, even though the sum of the budgets in each bracket remains the
-#' same. A basic example can be viewed by calling the function
-#' `hyperband_brackets` below with the arguments `R = 2` and `eta = 2`. If we
-#' run a learner with O(budget^2) time complexity, the runtime of the last
-#' bracket will be 33% longer than the first bracket
-#' (time of bracket 1 = 2 * 1^2 + 2^2 = 6; time of bracket 2 = 2 * 2^2 = 8).
-#' Of course, this won't break anything, but it should be kept in mind when
-#' applying hyperband. A possible adaption would be to introduce a trafo,
-#' like it is shown in the `examples`.
-#'
-#' @details
-#' This sections explains the calculation of the constants for each bracket.
-#' A small overview will be given here, but for more details please check
-#' out the original paper (see `references`).
-#' To keep things uniform with the notation in the paper (and to safe space in
-#' the formulas), `R` is used for the upper budget that last remaining
-#' configuration should reach. The formula to calculate the amount of brackets
-#' is `floor(log(R, eta)) + 1`. To calculate the starting budget in each
-#' bracket, use `R * eta^(-s)`, where `s` is the maximum bracket minus the
-#' current bracket index.
-#' For the starting configurations in each bracket it is
-#' `ceiling((B/R) * ((eta^s)/(s+1)))`, with `B = (bracket amount) * R`.
-#' To receive a table with the full brackets layout, load the following function
-#' and execute it for the desired `R` and `eta`.
-#'
-#' ```
-#' hyperband_brackets = function(R, eta) {
-#'
-#'   result = data.frame()
-#'   smax = floor(log(R, eta))
-#'   B = (smax + 1) * R
-#'
-#'   # outer loop - iterate over brackets
-#'   for (s in smax:0) {
-#'
-#'     n = ceiling((B/R) * ((eta^s)/(s+1)))
-#'     r = R * eta^(-s)
-#'
-#'     # inner loop - iterate over bracket stages
-#'     for (i in 0:s) {
-#'
-#'       ni = floor(n * eta^(-i))
-#'       ri = r * eta^i
-#'       result = rbind(result, c(smax - s + 1, i + 1, ri, ni))
-#'     }
-#'   }
-#'
-#'   names(result) = c("bracket", "bracket_stage", "budget", "n_configs")
-#'   return(result)
-#' }
-#'
-#' hyperband_brackets(R = 81L, eta = 3L)
-#' ```
+#' same. A possible adaption would be to introduce a trafo, like it is shown in
+#' the *examples* section.
 #'
 #' @section Logging:
 #' When loading the [mlr3hyperband] package, two loggers based on the [lgr]
@@ -436,3 +388,66 @@ TunerHyperband = R6Class("TunerHyperband",
     }
   )
 )
+
+#' @title TunerHyperband-details
+#'
+#' @description
+#' Here, it is explained how the bracket layout looks like for a given argument
+#' set.
+#'
+#' @noRd
+#'
+#' @details
+#' How the budget behaves if the runtime is not linear, can be seen in the
+#' following example.
+#' It can be viewed by calling the function
+#' `hyperband_brackets` below with the arguments `R = 2` and `eta = 2`. If we
+#' run a learner with O(budget^2) time complexity, the runtime of the last
+#' bracket will be 33% longer than the first bracket
+#' (time of bracket 1 = 2 * 1^2 + 2^2 = 6; time of bracket 2 = 2 * 2^2 = 8).
+#' Of course, this won't break anything, but it should be kept in mind when
+#' applying hyperband.
+#'
+#' @details
+#' This sections explains the calculation of the constants for each bracket.
+#' A small overview will be given here, but for more details please check
+#' out the original paper (see "references").
+#' To keep things uniform with the notation in the paper (and to safe space in
+#' the formulas), `R` is used for the upper budget that last remaining
+#' configuration should reach. The formula to calculate the amount of brackets
+#' is `floor(log(R, eta)) + 1`. To calculate the starting budget in each
+#' bracket, use `R * eta^(-s)`, where `s` is the maximum bracket minus the
+#' current bracket index.
+#' For the starting configurations in each bracket it is
+#' `ceiling((B/R) * ((eta^s)/(s+1)))`, with `B = (bracket amount) * R`.
+#' To receive a table with the full brackets layout, load the following function
+#' and execute it for the desired `R` and `eta`.
+#'
+#' ```
+#' hyperband_brackets = function(R, eta) {
+#'
+#'   result = data.frame()
+#'   smax = floor(log(R, eta))
+#'   B = (smax + 1) * R
+#'
+#'   # outer loop - iterate over brackets
+#'   for (s in smax:0) {
+#'
+#'     n = ceiling((B/R) * ((eta^s)/(s+1)))
+#'     r = R * eta^(-s)
+#'
+#'     # inner loop - iterate over bracket stages
+#'     for (i in 0:s) {
+#'
+#'       ni = floor(n * eta^(-i))
+#'       ri = r * eta^i
+#'       result = rbind(result, c(smax - s + 1, i + 1, ri, ni))
+#'     }
+#'   }
+#'
+#'   names(result) = c("bracket", "bracket_stage", "budget", "n_configs")
+#'   return(result)
+#' }
+#'
+#' hyperband_brackets(R = 81L, eta = 3L)
+#' ```
