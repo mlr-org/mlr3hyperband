@@ -354,473 +354,120 @@ logger. To hide the <a href='https://mlr3.mlr-org.com/reference/mlr3-package.htm
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://mlr3hyperband.mlr-org.com'>mlr3hyperband</a></span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://mlr3.mlr-org.com'>mlr3</a></span>)
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://mlr3learners.mlr-org.com'>mlr3learners</a></span>)
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://mlr3tuning.mlr-org.com'>mlr3tuning</a></span>)
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://mlr3.mlr-org.com'>mlr3</a></span>)
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://paradox.mlr-org.com'>paradox</a></span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://mlr3tuning.mlr-org.com'>mlr3tuning</a></span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://mlr3hyperband.mlr-org.com'>mlr3hyperband</a></span>)
 
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>123</span>)
-
-<span class='co'># define hyperparameter and budget parameter for tuning with hyperband</span>
-<span class='kw'>params</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
+<span class='co'># Define hyperparameter and budget parameter for tuning with hyperband</span>
+<span class='kw'>ps</span> <span class='op'>=</span> <span class='kw'>ParamSet</span><span class='op'>$</span><span class='fu'>new</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
   <span class='kw'>ParamInt</span><span class='op'>$</span><span class='fu'>new</span>(<span class='st'>"nrounds"</span>, lower = <span class='fl'>1</span>, upper = <span class='fl'>16</span>, tag = <span class='st'>"budget"</span>),
   <span class='kw'>ParamDbl</span><span class='op'>$</span><span class='fu'>new</span>(<span class='st'>"eta"</span>, lower = <span class='fl'>0</span>, upper = <span class='fl'>1</span>),
   <span class='kw'>ParamFct</span><span class='op'>$</span><span class='fu'>new</span>(<span class='st'>"booster"</span>, levels = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"gbtree"</span>, <span class='st'>"gblinear"</span>, <span class='st'>"dart"</span>))
-)
-
-
-<span class='kw'>inst</span> <span class='op'>=</span> <span class='kw'>TuningInstanceSingleCrit</span><span class='op'>$</span><span class='fu'>new</span>(
-  <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>tsk</a></span>(<span class='st'>"iris"</span>),
-  <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>lrn</a></span>(<span class='st'>"classif.xgboost"</span>),
-  <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>rsmp</a></span>(<span class='st'>"holdout"</span>),
-  <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>msr</a></span>(<span class='st'>"classif.ce"</span>),
-  <span class='kw'>ParamSet</span><span class='op'>$</span><span class='fu'>new</span>(<span class='kw'>params</span>),
-  <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/trm.html'>trm</a></span>(<span class='st'>"evals"</span>, n_evals = <span class='fl'>100000</span>)
-)
-
-<span class='co'># create custom sampler (optional):</span>
-<span class='co'># - beta distribution with alpha = 2 and beta = 5</span>
-<span class='co'># - categorical distribution with custom probabilities</span>
-<span class='kw'>sampler</span> <span class='op'>=</span> <span class='kw'>SamplerJointIndep</span><span class='op'>$</span><span class='fu'>new</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
-  <span class='kw'>Sampler1DRfun</span><span class='op'>$</span><span class='fu'>new</span>(<span class='kw'>params</span>[[<span class='fl'>2</span>]], <span class='fu'>function</span>(<span class='kw'>n</span>) <span class='fu'><a href='https://rdrr.io/r/stats/Beta.html'>rbeta</a></span>(<span class='kw'>n</span>, <span class='fl'>2</span>, <span class='fl'>5</span>)),
-  <span class='kw'>Sampler1DCateg</span><span class='op'>$</span><span class='fu'>new</span>(<span class='kw'>params</span>[[<span class='fl'>3</span>]], prob = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.2</span>, <span class='fl'>0.3</span>, <span class='fl'>0.5</span>))
 ))
+<span class='co'># Define termination criterion</span>
+<span class='co'># Usually, trm("none") since hyperband terminates itself but to keep this</span>
+<span class='co'># example short we use 20 evaluations.</span>
+<span class='kw'>terminator</span> <span class='op'>=</span> <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/trm.html'>trm</a></span>(<span class='st'>"evals"</span>, n_evals = <span class='fl'>20</span>)
 
-<span class='kw'>tuner</span> <span class='op'>=</span> <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/tnr.html'>tnr</a></span>(<span class='st'>"hyperband"</span>, eta = <span class='fl'>2L</span>, sampler = <span class='kw'>sampler</span>)
-<span class='co'># \donttest{</span>
+<span class='co'># Create tuning instance</span>
+<span class='kw'>inst</span> <span class='op'>=</span> <span class='kw'>TuningInstanceSingleCrit</span><span class='op'>$</span><span class='fu'>new</span>(
+  task = <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>tsk</a></span>(<span class='st'>"iris"</span>),
+  learner = <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>lrn</a></span>(<span class='st'>"classif.xgboost"</span>),
+  resampling = <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>rsmp</a></span>(<span class='st'>"holdout"</span>),
+  measure = <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>msr</a></span>(<span class='st'>"classif.ce"</span>),
+  search_space = <span class='kw'>ps</span>,
+  terminator = <span class='kw'>terminator</span>,
+)
+
+<span class='co'># Load tuner</span>
+<span class='kw'>tuner</span> <span class='op'>=</span> <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/tnr.html'>tnr</a></span>(<span class='st'>"hyperband"</span>, eta = <span class='fl'>2L</span>)
+
+<span class='co'># Trigger optimization</span>
 <span class='kw'>tuner</span><span class='op'>$</span><span class='fu'><a href='https://rdrr.io/r/stats/optimize.html'>optimize</a></span>(<span class='kw'>inst</span>)
-</div><div class='output co'>#&gt;    nrounds      eta booster learner_param_vals  x_domain classif.ce
-#&gt; 1:       1 0.231625    dart          &lt;list[4]&gt; &lt;list[3]&gt;       0.04</div><div class='input'>
-<span class='co'># return the best evaluation</span>
-<span class='kw'>inst</span><span class='op'>$</span><span class='kw'>result</span>
-</div><div class='output co'>#&gt;    nrounds      eta booster learner_param_vals  x_domain classif.ce
-#&gt; 1:       1 0.231625    dart          &lt;list[4]&gt; &lt;list[3]&gt;       0.04</div><div class='input'>
-<span class='co'># print all evaluations</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>inst</span><span class='op'>$</span><span class='kw'>archive</span><span class='op'>$</span><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>())
+</div><div class='output co'>#&gt;    nrounds       eta booster learner_param_vals  x_domain classif.ce
+#&gt; 1:       2 0.9062973    dart          &lt;list[4]&gt; &lt;list[3]&gt;       0.04</div><div class='input'>
+<span class='co'># Print all evaluations</span>
+<span class='kw'>inst</span><span class='op'>$</span><span class='kw'>archive</span><span class='op'>$</span><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>()
 </div><div class='output co'>#&gt;            eta  booster nrounds bracket bracket_stage budget_scaled budget_real
-#&gt;  1: 0.16633231 gblinear       1       4             0             1           1
-#&gt;  2: 0.53672392 gblinear       1       4             0             1           1
-#&gt;  3: 0.23162500     dart       1       4             0             1           1
-#&gt;  4: 0.09921319     dart       1       4             0             1           1
-#&gt;  5: 0.32374930     dart       1       4             0             1           1
-#&gt;  6: 0.25848344 gblinear       1       4             0             1           1
-#&gt;  7: 0.28687990 gblinear       1       4             0             1           1
-#&gt;  8: 0.36995279   gbtree       1       4             0             1           1
-#&gt;  9: 0.21663062 gblinear       1       4             0             1           1
-#&gt; 10: 0.43375908     dart       1       4             0             1           1
-#&gt; 11: 0.24324338 gblinear       1       4             0             1           1
-#&gt; 12: 0.35748527     dart       1       4             0             1           1
-#&gt; 13: 0.38180400     dart       1       4             0             1           1
-#&gt; 14: 0.22436454     dart       1       4             0             1           1
-#&gt; 15: 0.57168085     dart       1       4             0             1           1
-#&gt; 16: 0.52772844   gbtree       1       4             0             1           1
-#&gt; 17: 0.23162500     dart       2       4             1             2           2
-#&gt; 18: 0.09921319     dart       2       4             1             2           2
-#&gt; 19: 0.32374930     dart       2       4             1             2           2
-#&gt; 20: 0.36995279   gbtree       2       4             1             2           2
-#&gt; 21: 0.43375908     dart       2       4             1             2           2
-#&gt; 22: 0.35748527     dart       2       4             1             2           2
-#&gt; 23: 0.38180400     dart       2       4             1             2           2
-#&gt; 24: 0.22436454     dart       2       4             1             2           2
-#&gt; 25: 0.23162500     dart       4       4             2             4           4
-#&gt; 26: 0.09921319     dart       4       4             2             4           4
-#&gt; 27: 0.32374930     dart       4       4             2             4           4
-#&gt; 28: 0.36995279   gbtree       4       4             2             4           4
-#&gt; 29: 0.23162500     dart       8       4             3             8           8
-#&gt; 30: 0.09921319     dart       8       4             3             8           8
-#&gt; 31: 0.23162500     dart      16       4             4            16          16
-#&gt; 32: 0.12152038     dart       2       3             0             2           2
-#&gt; 33: 0.31007089     dart       2       3             0             2           2
-#&gt; 34: 0.13099165     dart       2       3             0             2           2
-#&gt; 35: 0.19669320     dart       2       3             0             2           2
-#&gt; 36: 0.23676637     dart       2       3             0             2           2
-#&gt; 37: 0.17165036 gblinear       2       3             0             2           2
-#&gt; 38: 0.33564743     dart       2       3             0             2           2
-#&gt; 39: 0.30172118     dart       2       3             0             2           2
-#&gt; 40: 0.12918127     dart       2       3             0             2           2
-#&gt; 41: 0.27152929   gbtree       2       3             0             2           2
-#&gt; 42: 0.12152038     dart       4       3             1             4           4
-#&gt; 43: 0.31007089     dart       4       3             1             4           4
-#&gt; 44: 0.13099165     dart       4       3             1             4           4
-#&gt; 45: 0.19669320     dart       4       3             1             4           4
-#&gt; 46: 0.23676637     dart       4       3             1             4           4
-#&gt; 47: 0.12152038     dart       8       3             2             8           8
-#&gt; 48: 0.31007089     dart       8       3             2             8           8
-#&gt; 49: 0.12152038     dart      16       3             3            16          16
-#&gt; 50: 0.44501551     dart       4       2             0             4           4
-#&gt; 51: 0.09232408     dart       4       2             0             4           4
-#&gt; 52: 0.47135712   gbtree       4       2             0             4           4
-#&gt; 53: 0.46636871     dart       4       2             0             4           4
-#&gt; 54: 0.35758233     dart       4       2             0             4           4
-#&gt; 55: 0.12343101   gbtree       4       2             0             4           4
-#&gt; 56: 0.26219631 gblinear       4       2             0             4           4
-#&gt; 57: 0.44501551     dart       8       2             1             8           8
-#&gt; 58: 0.09232408     dart       8       2             1             8           8
-#&gt; 59: 0.47135712   gbtree       8       2             1             8           8
-#&gt; 60: 0.44501551     dart      16       2             2            16          16
-#&gt; 61: 0.18500249   gbtree       8       1             0             8           8
-#&gt; 62: 0.52125349 gblinear       8       1             0             8           8
-#&gt; 63: 0.28196564     dart       8       1             0             8           8
-#&gt; 64: 0.36458346     dart       8       1             0             8           8
-#&gt; 65: 0.10382335   gbtree       8       1             0             8           8
-#&gt; 66: 0.18500249   gbtree      16       1             1            16          16
-#&gt; 67: 0.28196564     dart      16       1             1            16          16
-#&gt; 68: 0.11684580 gblinear      16       0             0            16          16
-#&gt; 69: 0.60449159 gblinear      16       0             0            16          16
-#&gt; 70: 0.22024316     dart      16       0             0            16          16
-#&gt; 71: 0.14160471 gblinear      16       0             0            16          16
-#&gt; 72: 0.24035756 gblinear      16       0             0            16          16
+#&gt;  1: 0.03745117     dart       1       4             0             1           1
+#&gt;  2: 0.59355379     dart       1       4             0             1           1
+#&gt;  3: 0.23697755 gblinear       1       4             0             1           1
+#&gt;  4: 0.90629727     dart       1       4             0             1           1
+#&gt;  5: 0.81887298     dart       1       4             0             1           1
+#&gt;  6: 0.69982936     dart       1       4             0             1           1
+#&gt;  7: 0.22000033   gbtree       1       4             0             1           1
+#&gt;  8: 0.72799094   gbtree       1       4             0             1           1
+#&gt;  9: 0.21708446     dart       1       4             0             1           1
+#&gt; 10: 0.45623020     dart       1       4             0             1           1
+#&gt; 11: 0.33279976   gbtree       1       4             0             1           1
+#&gt; 12: 0.56835267   gbtree       1       4             0             1           1
+#&gt; 13: 0.25220572     dart       1       4             0             1           1
+#&gt; 14: 0.46401357 gblinear       1       4             0             1           1
+#&gt; 15: 0.91766051     dart       1       4             0             1           1
+#&gt; 16: 0.97284422     dart       1       4             0             1           1
+#&gt; 17: 0.03745117     dart       2       4             1             2           2
+#&gt; 18: 0.59355379     dart       2       4             1             2           2
+#&gt; 19: 0.90629727     dart       2       4             1             2           2
+#&gt; 20: 0.81887298     dart       2       4             1             2           2
+#&gt; 21: 0.69982936     dart       2       4             1             2           2
+#&gt; 22: 0.22000033   gbtree       2       4             1             2           2
+#&gt; 23: 0.72799094   gbtree       2       4             1             2           2
+#&gt; 24: 0.21708446     dart       2       4             1             2           2
 #&gt;            eta  booster nrounds bracket bracket_stage budget_scaled budget_real
 #&gt;     n_configs classif.ce                                uhash  x_domain
-#&gt;  1:        16       0.74 3a1dbce8-9121-44fc-abf3-3a58d846191d &lt;list[3]&gt;
-#&gt;  2:        16       0.42 10b7298c-5d21-497d-9e88-ca87bdc65f82 &lt;list[3]&gt;
-#&gt;  3:        16       0.04 eb7dd481-4d69-4a48-9865-924bac32abaf &lt;list[3]&gt;
-#&gt;  4:        16       0.04 363769d3-dcad-4c29-8820-d38100a33256 &lt;list[3]&gt;
-#&gt;  5:        16       0.04 755fbb9d-20a7-4869-805a-6eea6c67b127 &lt;list[3]&gt;
-#&gt;  6:        16       0.74 575293f0-9a65-4c32-99e9-c8f1675873d1 &lt;list[3]&gt;
-#&gt;  7:        16       0.74 12f3258d-f2c9-4731-aa98-3b33629bcd17 &lt;list[3]&gt;
-#&gt;  8:        16       0.04 03251d1a-bb94-4b2b-8c8c-2c41453d971f &lt;list[3]&gt;
-#&gt;  9:        16       0.74 bdae158a-9817-448e-8da0-8606e85d6eaf &lt;list[3]&gt;
-#&gt; 10:        16       0.04 7ac4739c-8fae-4e05-8a2d-163fa2cab55f &lt;list[3]&gt;
-#&gt; 11:        16       0.74 5e823aa0-6f4d-410d-a2a2-8d518a41103c &lt;list[3]&gt;
-#&gt; 12:        16       0.04 61ae8c49-0754-4cea-b5ac-8ed4025897ad &lt;list[3]&gt;
-#&gt; 13:        16       0.04 1032b97d-9fff-435c-ba99-310ba8b16ef5 &lt;list[3]&gt;
-#&gt; 14:        16       0.04 b1b877ea-7839-41c6-88bb-bd696713e93e &lt;list[3]&gt;
-#&gt; 15:        16       0.04 4d2ca75d-8cd8-4a78-846d-4d2ef2a64a37 &lt;list[3]&gt;
-#&gt; 16:        16       0.04 40d19c3b-95f7-477c-9f53-a095a6c9dbca &lt;list[3]&gt;
-#&gt; 17:         8       0.04 d8a85b86-5e84-4a63-a865-7768c979dea6 &lt;list[3]&gt;
-#&gt; 18:         8       0.04 cc39be1d-a650-4d85-8796-07d47d9295cd &lt;list[3]&gt;
-#&gt; 19:         8       0.04 75bb0e17-463a-46e3-a839-49bea66a3e23 &lt;list[3]&gt;
-#&gt; 20:         8       0.04 b600a211-afee-4d86-9d13-4ccb304c2d76 &lt;list[3]&gt;
-#&gt; 21:         8       0.04 be16962c-130b-4be4-b354-9fc438af8341 &lt;list[3]&gt;
-#&gt; 22:         8       0.04 2a2b24df-df7d-457b-9630-430016b8e6e3 &lt;list[3]&gt;
-#&gt; 23:         8       0.04 a75b4be9-7b53-44cb-85ba-d5e5fcf9bbfc &lt;list[3]&gt;
-#&gt; 24:         8       0.04 3601d41b-9da3-4c78-a01b-0ab5b4cb4a85 &lt;list[3]&gt;
-#&gt; 25:         4       0.04 ef5a2c0e-8e51-47f8-956b-d2d28a2666f4 &lt;list[3]&gt;
-#&gt; 26:         4       0.04 f9f31720-df71-4818-88f0-453f628ad2fb &lt;list[3]&gt;
-#&gt; 27:         4       0.04 3e0fb8fd-e7a4-4a01-a86e-37c26f0f08f0 &lt;list[3]&gt;
-#&gt; 28:         4       0.04 80c3a15b-5d93-4688-8b1f-f4a11532471f &lt;list[3]&gt;
-#&gt; 29:         2       0.04 e03469ef-a974-4717-be93-2b9424442fc8 &lt;list[3]&gt;
-#&gt; 30:         2       0.04 e223e8a8-b1b9-4155-a089-203bb3cb1e6c &lt;list[3]&gt;
-#&gt; 31:         1       0.04 9eff1177-3316-407a-8eee-7adac33bed9f &lt;list[3]&gt;
-#&gt; 32:        10       0.04 c25e5df4-1068-49d6-adb6-b83594284312 &lt;list[3]&gt;
-#&gt; 33:        10       0.04 8de93bba-bd7e-484b-b871-03516a1d77cb &lt;list[3]&gt;
-#&gt; 34:        10       0.04 ccd055a0-d5bf-4b39-a722-39666b1d7dca &lt;list[3]&gt;
-#&gt; 35:        10       0.04 8165377a-3a7a-4622-8486-75c2efe71232 &lt;list[3]&gt;
-#&gt; 36:        10       0.04 081a0e00-c8f0-4992-8574-60be17e825a1 &lt;list[3]&gt;
-#&gt; 37:        10       0.72 13c6b2a8-69a7-4067-aab7-afd977e79270 &lt;list[3]&gt;
-#&gt; 38:        10       0.04 5160c5fa-0493-4d57-a1f2-6a6ee44585f8 &lt;list[3]&gt;
-#&gt; 39:        10       0.04 a8068e08-e2dc-408d-b5fe-c5bd2059f99f &lt;list[3]&gt;
-#&gt; 40:        10       0.04 10baedb6-a295-401d-b6b1-0379c7a36af4 &lt;list[3]&gt;
-#&gt; 41:        10       0.04 aaf6833a-ec7d-4c02-a0c9-b676c9ea8142 &lt;list[3]&gt;
-#&gt; 42:         5       0.04 348ced5b-5dcd-4d65-b5c8-60268753d1b0 &lt;list[3]&gt;
-#&gt; 43:         5       0.04 1ff05449-6382-461e-81be-617c525049a4 &lt;list[3]&gt;
-#&gt; 44:         5       0.04 ddfde8b7-a388-4321-9822-612fc031e543 &lt;list[3]&gt;
-#&gt; 45:         5       0.04 17f2b0fc-cf36-44fc-9c40-0aa07d580c2d &lt;list[3]&gt;
-#&gt; 46:         5       0.04 799d6710-ee1b-4882-b4f6-90b910d9b3f7 &lt;list[3]&gt;
-#&gt; 47:         2       0.04 7ad12aeb-8590-4289-ac75-e2b2bf05bda7 &lt;list[3]&gt;
-#&gt; 48:         2       0.04 c44d7db3-073e-4341-92d1-a0e09dff93a0 &lt;list[3]&gt;
-#&gt; 49:         1       0.04 145e0f6d-b668-4701-afbf-81a0baaa267f &lt;list[3]&gt;
-#&gt; 50:         7       0.04 73d6ab0c-eb8a-4c7b-bab9-f70c0681d69c &lt;list[3]&gt;
-#&gt; 51:         7       0.04 7ceeacb1-2eb7-4676-a417-7d406042b714 &lt;list[3]&gt;
-#&gt; 52:         7       0.04 263ae915-4a26-43d6-b9ee-72e2fe9e2001 &lt;list[3]&gt;
-#&gt; 53:         7       0.04 87f9c402-c7d7-471c-94db-72829b2931f8 &lt;list[3]&gt;
-#&gt; 54:         7       0.04 cbd0037a-80dc-476c-843b-7b8ab4469f24 &lt;list[3]&gt;
-#&gt; 55:         7       0.04 7878dae2-2a00-40cf-a64c-14ab60d26b80 &lt;list[3]&gt;
-#&gt; 56:         7       0.42 8ec9af61-7457-4718-9919-dc71fa17ca9e &lt;list[3]&gt;
-#&gt; 57:         3       0.04 b848f33c-1906-4c12-99de-fb9a74ed10e4 &lt;list[3]&gt;
-#&gt; 58:         3       0.04 f9b9192d-d2d1-4c0e-9fa0-0b114cb7a980 &lt;list[3]&gt;
-#&gt; 59:         3       0.04 fe512b4a-abca-49ed-9815-14172b898931 &lt;list[3]&gt;
-#&gt; 60:         1       0.04 55f742a4-7a94-4672-a848-05d816119d27 &lt;list[3]&gt;
-#&gt; 61:         5       0.04 d3f36be8-7645-4595-a498-8adbc0eaba11 &lt;list[3]&gt;
-#&gt; 62:         5       0.42 63ea3728-b5d3-4199-b10f-06dd8720d1c5 &lt;list[3]&gt;
-#&gt; 63:         5       0.04 ae4ac529-9bff-4572-bf62-731e54f764f0 &lt;list[3]&gt;
-#&gt; 64:         5       0.04 bec37d72-1f99-4263-b62c-1bc333c27c75 &lt;list[3]&gt;
-#&gt; 65:         5       0.04 98dfcdc0-7d93-48c6-a088-6678fb2c58e5 &lt;list[3]&gt;
-#&gt; 66:         2       0.04 c642ee46-3893-42ce-9357-ab4fe2bdc4ca &lt;list[3]&gt;
-#&gt; 67:         2       0.04 d0b0d3a8-d632-427d-bbc9-e900683b7a39 &lt;list[3]&gt;
-#&gt; 68:         5       0.42 29077b67-4922-4019-8958-b53a50172961 &lt;list[3]&gt;
-#&gt; 69:         5       0.18 aed9315f-c777-42da-8b49-c2d0a7fa3b9c &lt;list[3]&gt;
-#&gt; 70:         5       0.04 0cdecf19-76a4-4f41-932e-4284c2abcd44 &lt;list[3]&gt;
-#&gt; 71:         5       0.42 7c648fca-c03e-4964-9dec-0362641423ec &lt;list[3]&gt;
-#&gt; 72:         5       0.42 c6b35d6b-75e8-4e47-8199-763c11367335 &lt;list[3]&gt;
+#&gt;  1:        16       0.08 ade42d8b-748b-4042-bed2-bddd31af776c &lt;list[3]&gt;
+#&gt;  2:        16       0.08 fa4f94b3-533e-47d5-a69b-703ceb5f1ee8 &lt;list[3]&gt;
+#&gt;  3:        16       0.40 72372e98-5bbb-4a37-a651-553beb590565 &lt;list[3]&gt;
+#&gt;  4:        16       0.08 8de9c221-70db-4898-a7e0-b631859790ab &lt;list[3]&gt;
+#&gt;  5:        16       0.08 9f94f759-0bd2-4ac9-88b8-2972e82e79de &lt;list[3]&gt;
+#&gt;  6:        16       0.08 c8985e04-7215-4a00-b85a-6c810df0b924 &lt;list[3]&gt;
+#&gt;  7:        16       0.08 7a771d69-9674-4b35-bf29-9265b7ae82d8 &lt;list[3]&gt;
+#&gt;  8:        16       0.08 933b7fc3-5589-42c9-b983-4ae63b57fa2e &lt;list[3]&gt;
+#&gt;  9:        16       0.08 4a96e6ae-f1b2-4dcf-9528-0f7d218a67c9 &lt;list[3]&gt;
+#&gt; 10:        16       0.08 7e799e93-59c9-4597-9e26-87cfcefc16a8 &lt;list[3]&gt;
+#&gt; 11:        16       0.08 813f75e3-5b59-4391-b26b-2615973eb3e7 &lt;list[3]&gt;
+#&gt; 12:        16       0.08 ee36fe86-e808-47bf-841c-4029671d104e &lt;list[3]&gt;
+#&gt; 13:        16       0.08 9956d662-7bc5-4eec-8980-8698c037487f &lt;list[3]&gt;
+#&gt; 14:        16       0.40 b4bf9ed3-5944-4c80-a5c6-53b08d7ac074 &lt;list[3]&gt;
+#&gt; 15:        16       0.08 a4f613f4-f1ca-4e83-a6f2-54b7e4aa5bdf &lt;list[3]&gt;
+#&gt; 16:        16       0.08 b37f8776-c021-43da-8579-ab6f67f3f090 &lt;list[3]&gt;
+#&gt; 17:         8       0.08 45f81ea2-fad4-4112-a937-fa3d9f45aa68 &lt;list[3]&gt;
+#&gt; 18:         8       0.08 c5dd34bb-64d9-47b3-9d62-858f868626de &lt;list[3]&gt;
+#&gt; 19:         8       0.04 b149759a-be8f-4548-a807-d768a59c39ad &lt;list[3]&gt;
+#&gt; 20:         8       0.04 5b1f305c-885d-4f34-962b-50b12ac6d2bc &lt;list[3]&gt;
+#&gt; 21:         8       0.04 027fa4dc-6df0-4282-aa23-552ba1de5c2e &lt;list[3]&gt;
+#&gt; 22:         8       0.08 afc1e812-8e36-4d63-908d-0ebcd3a92c1a &lt;list[3]&gt;
+#&gt; 23:         8       0.04 2117f9e9-7672-44f7-bf88-3f3f9d21bf87 &lt;list[3]&gt;
+#&gt; 24:         8       0.08 6c0fc6a7-bec0-4b00-9401-a4f7699b2300 &lt;list[3]&gt;
 #&gt;     n_configs classif.ce                                uhash  x_domain
 #&gt;               timestamp batch_nr
-#&gt;  1: 2020-09-22 04:27:04        1
-#&gt;  2: 2020-09-22 04:27:04        1
-#&gt;  3: 2020-09-22 04:27:04        1
-#&gt;  4: 2020-09-22 04:27:04        1
-#&gt;  5: 2020-09-22 04:27:04        1
-#&gt;  6: 2020-09-22 04:27:04        1
-#&gt;  7: 2020-09-22 04:27:04        1
-#&gt;  8: 2020-09-22 04:27:04        1
-#&gt;  9: 2020-09-22 04:27:04        1
-#&gt; 10: 2020-09-22 04:27:04        1
-#&gt; 11: 2020-09-22 04:27:04        1
-#&gt; 12: 2020-09-22 04:27:04        1
-#&gt; 13: 2020-09-22 04:27:04        1
-#&gt; 14: 2020-09-22 04:27:04        1
-#&gt; 15: 2020-09-22 04:27:04        1
-#&gt; 16: 2020-09-22 04:27:04        1
-#&gt; 17: 2020-09-22 04:27:04        2
-#&gt; 18: 2020-09-22 04:27:04        2
-#&gt; 19: 2020-09-22 04:27:04        2
-#&gt; 20: 2020-09-22 04:27:04        2
-#&gt; 21: 2020-09-22 04:27:04        2
-#&gt; 22: 2020-09-22 04:27:04        2
-#&gt; 23: 2020-09-22 04:27:04        2
-#&gt; 24: 2020-09-22 04:27:04        2
-#&gt; 25: 2020-09-22 04:27:05        3
-#&gt; 26: 2020-09-22 04:27:05        3
-#&gt; 27: 2020-09-22 04:27:05        3
-#&gt; 28: 2020-09-22 04:27:05        3
-#&gt; 29: 2020-09-22 04:27:05        4
-#&gt; 30: 2020-09-22 04:27:05        4
-#&gt; 31: 2020-09-22 04:27:05        5
-#&gt; 32: 2020-09-22 04:27:05        6
-#&gt; 33: 2020-09-22 04:27:05        6
-#&gt; 34: 2020-09-22 04:27:05        6
-#&gt; 35: 2020-09-22 04:27:05        6
-#&gt; 36: 2020-09-22 04:27:05        6
-#&gt; 37: 2020-09-22 04:27:05        6
-#&gt; 38: 2020-09-22 04:27:05        6
-#&gt; 39: 2020-09-22 04:27:05        6
-#&gt; 40: 2020-09-22 04:27:05        6
-#&gt; 41: 2020-09-22 04:27:05        6
-#&gt; 42: 2020-09-22 04:27:06        7
-#&gt; 43: 2020-09-22 04:27:06        7
-#&gt; 44: 2020-09-22 04:27:06        7
-#&gt; 45: 2020-09-22 04:27:06        7
-#&gt; 46: 2020-09-22 04:27:06        7
-#&gt; 47: 2020-09-22 04:27:06        8
-#&gt; 48: 2020-09-22 04:27:06        8
-#&gt; 49: 2020-09-22 04:27:06        9
-#&gt; 50: 2020-09-22 04:27:06       10
-#&gt; 51: 2020-09-22 04:27:06       10
-#&gt; 52: 2020-09-22 04:27:06       10
-#&gt; 53: 2020-09-22 04:27:06       10
-#&gt; 54: 2020-09-22 04:27:06       10
-#&gt; 55: 2020-09-22 04:27:06       10
-#&gt; 56: 2020-09-22 04:27:06       10
-#&gt; 57: 2020-09-22 04:27:07       11
-#&gt; 58: 2020-09-22 04:27:07       11
-#&gt; 59: 2020-09-22 04:27:07       11
-#&gt; 60: 2020-09-22 04:27:07       12
-#&gt; 61: 2020-09-22 04:27:07       13
-#&gt; 62: 2020-09-22 04:27:07       13
-#&gt; 63: 2020-09-22 04:27:07       13
-#&gt; 64: 2020-09-22 04:27:07       13
-#&gt; 65: 2020-09-22 04:27:07       13
-#&gt; 66: 2020-09-22 04:27:07       14
-#&gt; 67: 2020-09-22 04:27:07       14
-#&gt; 68: 2020-09-22 04:27:08       15
-#&gt; 69: 2020-09-22 04:27:08       15
-#&gt; 70: 2020-09-22 04:27:08       15
-#&gt; 71: 2020-09-22 04:27:08       15
-#&gt; 72: 2020-09-22 04:27:08       15
-#&gt;               timestamp batch_nr</div><div class='input'><span class='co'># }</span>
-
-
-<span class='co'>### use parameter trafo to convert budget parameter</span>
-
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>123</span>)
-
-<span class='co'># define hyperparameter and budget parameter for tuning with hyperband</span>
-<span class='kw'>ps</span> <span class='op'>=</span> <span class='kw'>ParamSet</span><span class='op'>$</span><span class='fu'>new</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
-  <span class='kw'>ParamInt</span><span class='op'>$</span><span class='fu'>new</span>(<span class='st'>"nrounds"</span>, lower = <span class='fl'>1</span>, upper = <span class='fl'>10</span>, tags = <span class='st'>"budget"</span>),
-  <span class='co'># ParamDbl$new("eta",     lower = 0, upper = 1),</span>
-  <span class='kw'>ParamFct</span><span class='op'>$</span><span class='fu'>new</span>(<span class='st'>"booster"</span>, levels = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"gbtree"</span>, <span class='st'>"gblinear"</span>, <span class='st'>"dart"</span>))
-))
-
-<span class='kw'>ps</span><span class='op'>$</span><span class='kw'>trafo</span> <span class='op'>=</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>param_set</span>) {
-  <span class='kw'>x</span><span class='op'>$</span><span class='kw'>nrounds</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>round</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span>(<span class='kw'>x</span><span class='op'>$</span><span class='kw'>nrounds</span>)) <span class='op'>+</span> <span class='fl'>1L</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/function.html'>return</a></span>(<span class='kw'>x</span>)
-}
-
-<span class='kw'>inst</span> <span class='op'>=</span> <span class='kw'>TuningInstanceSingleCrit</span><span class='op'>$</span><span class='fu'>new</span>(
-  <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>tsk</a></span>(<span class='st'>"iris"</span>),
-  <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>lrn</a></span>(<span class='st'>"classif.xgboost"</span>),
-  <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>rsmp</a></span>(<span class='st'>"holdout"</span>),
-  <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>msr</a></span>(<span class='st'>"classif.ce"</span>),
-  <span class='kw'>ps</span>,
-  <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/trm.html'>trm</a></span>(<span class='st'>"evals"</span>, n_evals = <span class='fl'>100000</span>)
-)
-
-<span class='co'># eta can be a double</span>
-<span class='kw'>tuner</span> <span class='op'>=</span> <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/tnr.html'>tnr</a></span>(<span class='st'>"hyperband"</span>, eta = <span class='fl'>1.9</span>)
-<span class='co'># \donttest{</span>
-<span class='kw'>tuner</span><span class='op'>$</span><span class='fu'><a href='https://rdrr.io/r/stats/optimize.html'>optimize</a></span>(<span class='kw'>inst</span>)
-</div><div class='output co'>#&gt;    nrounds booster learner_param_vals  x_domain classif.ce
-#&gt; 1:       1  gbtree          &lt;list[3]&gt; &lt;list[2]&gt;       0.04</div><div class='input'>
-<span class='co'># return the best evaluation</span>
-<span class='kw'>inst</span><span class='op'>$</span><span class='kw'>result</span>
-</div><div class='output co'>#&gt;    nrounds booster learner_param_vals  x_domain classif.ce
-#&gt; 1:       1  gbtree          &lt;list[3]&gt; &lt;list[2]&gt;       0.04</div><div class='input'>
-<span class='co'># print all evaluations</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>inst</span><span class='op'>$</span><span class='kw'>archive</span><span class='op'>$</span><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>())
-</div><div class='output co'>#&gt;      booster nrounds bracket bracket_stage budget_scaled budget_real n_configs
-#&gt;  1:   gbtree       1       3             0      1.457938           1         7
-#&gt;  2:     dart       1       3             0      1.457938           1         7
-#&gt;  3:     dart       1       3             0      1.457938           1         7
-#&gt;  4: gblinear       1       3             0      1.457938           1         7
-#&gt;  5: gblinear       1       3             0      1.457938           1         7
-#&gt;  6:   gbtree       1       3             0      1.457938           1         7
-#&gt;  7:   gbtree       1       3             0      1.457938           1         7
-#&gt;  8:   gbtree       3       3             1      2.770083           3         3
-#&gt;  9:     dart       3       3             1      2.770083           3         3
-#&gt; 10:     dart       3       3             1      2.770083           3         3
-#&gt; 11:   gbtree       5       3             2      5.263158           5         1
-#&gt; 12:   gbtree      10       3             3     10.000000          10         1
-#&gt; 13: gblinear       3       2             0      2.770083           3         5
-#&gt; 14: gblinear       3       2             0      2.770083           3         5
-#&gt; 15:   gbtree       3       2             0      2.770083           3         5
-#&gt; 16: gblinear       3       2             0      2.770083           3         5
-#&gt; 17:   gbtree       3       2             0      2.770083           3         5
-#&gt; 18:   gbtree       5       2             1      5.263158           5         2
-#&gt; 19:   gbtree       5       2             1      5.263158           5         2
-#&gt; 20:   gbtree      10       2             2     10.000000          10         1
-#&gt; 21: gblinear       5       1             0      5.263158           5         4
-#&gt; 22: gblinear       5       1             0      5.263158           5         4
-#&gt; 23: gblinear       5       1             0      5.263158           5         4
-#&gt; 24: gblinear       5       1             0      5.263158           5         4
-#&gt; 25: gblinear      10       1             1     10.000000          10         2
-#&gt; 26: gblinear      10       1             1     10.000000          10         2
-#&gt; 27: gblinear      10       0             0     10.000000          10         4
-#&gt; 28: gblinear      10       0             0     10.000000          10         4
-#&gt; 29:     dart      10       0             0     10.000000          10         4
-#&gt; 30:   gbtree      10       0             0     10.000000          10         4
-#&gt;      booster nrounds bracket bracket_stage budget_scaled budget_real n_configs
-#&gt;     classif.ce                                uhash  x_domain
-#&gt;  1:       0.04 70b33e69-d55e-4917-a35d-7b9e775d3148 &lt;list[2]&gt;
-#&gt;  2:       0.04 669f8fe9-dc37-4ed5-8d24-f0a7cb1ed4d5 &lt;list[2]&gt;
-#&gt;  3:       0.04 588a49e8-2a18-40f3-8494-308f042b428d &lt;list[2]&gt;
-#&gt;  4:       0.42 e24ffd23-0ec6-4fd6-a6f1-ad3c7f038859 &lt;list[2]&gt;
-#&gt;  5:       0.42 0e45195a-bf01-4443-a7e9-6f1b942110d1 &lt;list[2]&gt;
-#&gt;  6:       0.04 6f24d44d-601f-404f-a283-39fc28735154 &lt;list[2]&gt;
-#&gt;  7:       0.04 82fb6759-e80f-4646-a60f-e24758011e4d &lt;list[2]&gt;
-#&gt;  8:       0.04 df8c7f71-f9d2-498e-a072-7c625653a3d9 &lt;list[2]&gt;
-#&gt;  9:       0.04 2d5f5c74-fed4-417c-aa8e-b1f109c22cc8 &lt;list[2]&gt;
-#&gt; 10:       0.04 e5c03a83-93e7-4aa8-a67e-ae944e1235db &lt;list[2]&gt;
-#&gt; 11:       0.04 6361b686-679c-4965-9ad1-dede0754cd55 &lt;list[2]&gt;
-#&gt; 12:       0.04 f07d9cfd-794f-4d80-869e-bcee14940126 &lt;list[2]&gt;
-#&gt; 13:       0.42 2385e04b-6164-4ecf-95bf-fd4bfcad6968 &lt;list[2]&gt;
-#&gt; 14:       0.42 814a526c-e8c6-4327-9c5d-4b5c59c1fa6d &lt;list[2]&gt;
-#&gt; 15:       0.04 80dca701-4955-445c-9d4b-7ab01cd96cae &lt;list[2]&gt;
-#&gt; 16:       0.42 b965f098-7b5f-4261-93fd-ebc8148f0c36 &lt;list[2]&gt;
-#&gt; 17:       0.04 c0243940-dcb3-41cb-adab-80e88059bc0a &lt;list[2]&gt;
-#&gt; 18:       0.04 367a0aa1-87a9-4aeb-a456-35428bf34127 &lt;list[2]&gt;
-#&gt; 19:       0.04 5608d988-7673-4a61-8a35-18a49b2605c8 &lt;list[2]&gt;
-#&gt; 20:       0.04 abd1b8d1-0b33-4d70-932d-542ebd85833c &lt;list[2]&gt;
-#&gt; 21:       0.42 d758c1a4-0d3c-42d2-bbf1-58baf3c461ef &lt;list[2]&gt;
-#&gt; 22:       0.42 d7bc1eab-f8c1-4ec8-9d51-d57742698de7 &lt;list[2]&gt;
-#&gt; 23:       0.42 f650cc43-c2a1-4fd6-a222-fda8191c5ecf &lt;list[2]&gt;
-#&gt; 24:       0.42 89a6731d-846f-429b-9e4f-29a32440c80b &lt;list[2]&gt;
-#&gt; 25:       0.42 4af05cb5-8a3f-4e10-b41d-7547cfa5d0b0 &lt;list[2]&gt;
-#&gt; 26:       0.42 1a662fd1-bccb-4192-a35c-7220c00b225e &lt;list[2]&gt;
-#&gt; 27:       0.42 1b2b2e11-3675-4145-9c8b-d8d5ae618180 &lt;list[2]&gt;
-#&gt; 28:       0.42 c32c3be6-82df-4fa0-828b-e23872a77063 &lt;list[2]&gt;
-#&gt; 29:       0.04 7b9848e3-1947-4f06-a9ed-5b6650b44445 &lt;list[2]&gt;
-#&gt; 30:       0.04 1751e5fa-2185-42ca-9dbb-1cf00a26c259 &lt;list[2]&gt;
-#&gt;     classif.ce                                uhash  x_domain
-#&gt;               timestamp batch_nr
-#&gt;  1: 2020-09-22 04:27:08        1
-#&gt;  2: 2020-09-22 04:27:08        1
-#&gt;  3: 2020-09-22 04:27:08        1
-#&gt;  4: 2020-09-22 04:27:08        1
-#&gt;  5: 2020-09-22 04:27:08        1
-#&gt;  6: 2020-09-22 04:27:08        1
-#&gt;  7: 2020-09-22 04:27:08        1
-#&gt;  8: 2020-09-22 04:27:09        2
-#&gt;  9: 2020-09-22 04:27:09        2
-#&gt; 10: 2020-09-22 04:27:09        2
-#&gt; 11: 2020-09-22 04:27:09        3
-#&gt; 12: 2020-09-22 04:27:09        4
-#&gt; 13: 2020-09-22 04:27:09        5
-#&gt; 14: 2020-09-22 04:27:09        5
-#&gt; 15: 2020-09-22 04:27:09        5
-#&gt; 16: 2020-09-22 04:27:09        5
-#&gt; 17: 2020-09-22 04:27:09        5
-#&gt; 18: 2020-09-22 04:27:09        6
-#&gt; 19: 2020-09-22 04:27:09        6
-#&gt; 20: 2020-09-22 04:27:09        7
-#&gt; 21: 2020-09-22 04:27:09        8
-#&gt; 22: 2020-09-22 04:27:09        8
-#&gt; 23: 2020-09-22 04:27:09        8
-#&gt; 24: 2020-09-22 04:27:09        8
-#&gt; 25: 2020-09-22 04:27:10        9
-#&gt; 26: 2020-09-22 04:27:10        9
-#&gt; 27: 2020-09-22 04:27:10       10
-#&gt; 28: 2020-09-22 04:27:10       10
-#&gt; 29: 2020-09-22 04:27:10       10
-#&gt; 30: 2020-09-22 04:27:10       10
-#&gt;               timestamp batch_nr</div><div class='input'><span class='co'># }</span>
-
-<span class='co'>### use subsampling for budget</span>
-
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://mlr3pipelines.mlr-org.com'>mlr3pipelines</a></span>)
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>123</span>)
-<span class='kw'>ll</span> <span class='op'>=</span> <span class='fu'><a href='https://mlr3pipelines.mlr-org.com//reference/po.html'>po</a></span>(<span class='st'>"subsample"</span>) <span class='op'>%&gt;&gt;%</span> <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>lrn</a></span>(<span class='st'>"classif.rpart"</span>)
-
-<span class='co'># define with extended hyperparameters with subsampling fraction as budget</span>
-<span class='co'># ==&gt; no learner budget is required</span>
-<span class='kw'>params</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
-  <span class='kw'>ParamDbl</span><span class='op'>$</span><span class='fu'>new</span>(<span class='st'>"classif.rpart.cp"</span>, lower = <span class='fl'>0.001</span>, upper = <span class='fl'>0.1</span>),
-  <span class='kw'>ParamInt</span><span class='op'>$</span><span class='fu'>new</span>(<span class='st'>"classif.rpart.minsplit"</span>, lower = <span class='fl'>1</span>, upper = <span class='fl'>10</span>),
-  <span class='kw'>ParamDbl</span><span class='op'>$</span><span class='fu'>new</span>(<span class='st'>"subsample.frac"</span>, lower = <span class='fl'>0.1</span>, upper = <span class='fl'>1</span>, tags = <span class='st'>"budget"</span>)
-)
-
-<span class='co'># define TuningInstanceSingleCrit with the Graph Learner and the extended hyperparams</span>
-<span class='kw'>inst</span> <span class='op'>=</span> <span class='kw'>TuningInstanceSingleCrit</span><span class='op'>$</span><span class='fu'>new</span>(
-  <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>tsk</a></span>(<span class='st'>"iris"</span>),
-  <span class='kw'>ll</span>,
-  <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>rsmp</a></span>(<span class='st'>"holdout"</span>),
-  <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>msr</a></span>(<span class='st'>"classif.ce"</span>),
-  <span class='kw'>ParamSet</span><span class='op'>$</span><span class='fu'>new</span>(<span class='kw'>params</span>),
-  <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/trm.html'>trm</a></span>(<span class='st'>"evals"</span>, n_evals = <span class='fl'>100000</span>)
-)
-
-<span class='co'># define and call hyperband as usual</span>
-<span class='kw'>tuner</span> <span class='op'>=</span> <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/tnr.html'>tnr</a></span>(<span class='st'>"hyperband"</span>, eta = <span class='fl'>4L</span>)
-<span class='co'># \donttest{</span>
-<span class='kw'>tuner</span><span class='op'>$</span><span class='fu'><a href='https://rdrr.io/r/stats/optimize.html'>optimize</a></span>(<span class='kw'>inst</span>)
-</div><div class='output co'>#&gt;    classif.rpart.cp classif.rpart.minsplit subsample.frac learner_param_vals
-#&gt; 1:       0.07348139                      3           0.25          &lt;list[6]&gt;
-#&gt;     x_domain classif.ce
-#&gt; 1: &lt;list[3]&gt;       0.02</div><div class='input'>
-<span class='co'># return the best evaluation</span>
-<span class='kw'>inst</span><span class='op'>$</span><span class='kw'>result</span>
-</div><div class='output co'>#&gt;    classif.rpart.cp classif.rpart.minsplit subsample.frac learner_param_vals
-#&gt; 1:       0.07348139                      3           0.25          &lt;list[6]&gt;
-#&gt;     x_domain classif.ce
-#&gt; 1: &lt;list[3]&gt;       0.02</div><div class='input'>
-<span class='co'># print all evaluations</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>inst</span><span class='op'>$</span><span class='kw'>archive</span><span class='op'>$</span><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>())
-</div><div class='output co'>#&gt;    classif.rpart.cp classif.rpart.minsplit subsample.frac bracket bracket_stage
-#&gt; 1:       0.02532664                      4           0.25       1             0
-#&gt; 2:       0.07348139                      3           0.25       1             0
-#&gt; 3:       0.08489786                      2           0.25       1             0
-#&gt; 4:       0.05025520                      4           0.25       1             0
-#&gt; 5:       0.07348139                      3           1.00       1             1
-#&gt; 6:       0.05762160                      5           1.00       0             0
-#&gt; 7:       0.02247238                      3           1.00       0             0
-#&gt;    budget_scaled budget_real n_configs classif.ce
-#&gt; 1:           2.5        0.25         4       0.04
-#&gt; 2:           2.5        0.25         4       0.02
-#&gt; 3:           2.5        0.25         4       0.08
-#&gt; 4:           2.5        0.25         4       0.02
-#&gt; 5:          10.0        1.00         1       0.04
-#&gt; 6:          10.0        1.00         2       0.04
-#&gt; 7:          10.0        1.00         2       0.04
-#&gt;                                   uhash  x_domain           timestamp batch_nr
-#&gt; 1: 12cd7544-a18a-436a-86ed-2e059e74d141 &lt;list[3]&gt; 2020-09-22 04:27:11        1
-#&gt; 2: da3130fb-615c-4997-93f3-39fa0ac64061 &lt;list[3]&gt; 2020-09-22 04:27:11        1
-#&gt; 3: b3649f60-3ca6-484a-b768-842f15a0811a &lt;list[3]&gt; 2020-09-22 04:27:11        1
-#&gt; 4: 79cfb49d-e737-4e0c-9e60-27889170e956 &lt;list[3]&gt; 2020-09-22 04:27:11        1
-#&gt; 5: 71a81231-58b5-4060-9330-0fba87294a8b &lt;list[3]&gt; 2020-09-22 04:27:11        2
-#&gt; 6: 41f63f68-4f93-4535-811c-a611c820116d &lt;list[3]&gt; 2020-09-22 04:27:12        3
-#&gt; 7: 1ca79787-43d5-4637-80e7-32bedad5e955 &lt;list[3]&gt; 2020-09-22 04:27:12        3</div><div class='input'><span class='co'># }</span>
-</div></pre>
+#&gt;  1: 2020-09-22 20:22:28        1
+#&gt;  2: 2020-09-22 20:22:28        1
+#&gt;  3: 2020-09-22 20:22:28        1
+#&gt;  4: 2020-09-22 20:22:28        1
+#&gt;  5: 2020-09-22 20:22:28        1
+#&gt;  6: 2020-09-22 20:22:28        1
+#&gt;  7: 2020-09-22 20:22:28        1
+#&gt;  8: 2020-09-22 20:22:28        1
+#&gt;  9: 2020-09-22 20:22:28        1
+#&gt; 10: 2020-09-22 20:22:28        1
+#&gt; 11: 2020-09-22 20:22:28        1
+#&gt; 12: 2020-09-22 20:22:28        1
+#&gt; 13: 2020-09-22 20:22:28        1
+#&gt; 14: 2020-09-22 20:22:28        1
+#&gt; 15: 2020-09-22 20:22:28        1
+#&gt; 16: 2020-09-22 20:22:28        1
+#&gt; 17: 2020-09-22 20:22:28        2
+#&gt; 18: 2020-09-22 20:22:28        2
+#&gt; 19: 2020-09-22 20:22:28        2
+#&gt; 20: 2020-09-22 20:22:28        2
+#&gt; 21: 2020-09-22 20:22:28        2
+#&gt; 22: 2020-09-22 20:22:28        2
+#&gt; 23: 2020-09-22 20:22:28        2
+#&gt; 24: 2020-09-22 20:22:28        2
+#&gt;               timestamp batch_nr</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
