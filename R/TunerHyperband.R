@@ -159,125 +159,44 @@
 #' @references
 #' \cite{mlr3hyperband}{li_2018}
 #'
+#' @export
 #' @examples
-#' library(mlr3hyperband)
-#' library(mlr3learners)
-#' library(mlr3tuning)
 #' library(mlr3)
+#' library(mlr3learners)
 #' library(paradox)
+#' library(mlr3tuning)
+#' library(mlr3hyperband)
 #'
-#' set.seed(123)
-#'
-#' # define hyperparameter and budget parameter for tuning with hyperband
-#' params = list(
+#' # Define hyperparameter and budget parameter for tuning with hyperband
+#' ps = ParamSet$new(list(
 #'   ParamInt$new("nrounds", lower = 1, upper = 16, tag = "budget"),
 #'   ParamDbl$new("eta", lower = 0, upper = 1),
 #'   ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
-#' )
-#'
-#'
-#' inst = TuningInstanceSingleCrit$new(
-#'   tsk("iris"),
-#'   lrn("classif.xgboost"),
-#'   rsmp("holdout"),
-#'   msr("classif.ce"),
-#'   ParamSet$new(params),
-#'   trm("evals", n_evals = 100000)
-#' )
-#'
-#' # create custom sampler (optional):
-#' # - beta distribution with alpha = 2 and beta = 5
-#' # - categorical distribution with custom probabilities
-#' sampler = SamplerJointIndep$new(list(
-#'   Sampler1DRfun$new(params[[2]], function(n) rbeta(n, 2, 5)),
-#'   Sampler1DCateg$new(params[[3]], prob = c(0.2, 0.3, 0.5))
 #' ))
+
+#' # Define termination criterion
+#' # Usually, trm("none") since hyperband terminates itself but to keep this
+#' # example short we use 20 evaluations.
+#' terminator = trm("evals", n_evals = 20)
 #'
-#' tuner = tnr("hyperband", eta = 2L, sampler = sampler)
-#' \donttest{
-#' tuner$optimize(inst)
-#'
-#' # return the best evaluation
-#' inst$result
-#'
-#' # print all evaluations
-#' print(inst$archive$data())
-#' }
-#'
-#'
-#' ### use parameter trafo to convert budget parameter
-#'
-#' set.seed(123)
-#'
-#' # define hyperparameter and budget parameter for tuning with hyperband
-#' ps = ParamSet$new(list(
-#'   ParamInt$new("nrounds", lower = 1, upper = 10, tags = "budget"),
-#'   # ParamDbl$new("eta",     lower = 0, upper = 1),
-#'   ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
-#' ))
-#'
-#' ps$trafo = function(x, param_set) {
-#'   x$nrounds = round(log(x$nrounds)) + 1L
-#'   return(x)
-#' }
-#'
+#' # Create tuning instance
 #' inst = TuningInstanceSingleCrit$new(
-#'   tsk("iris"),
-#'   lrn("classif.xgboost"),
-#'   rsmp("holdout"),
-#'   msr("classif.ce"),
-#'   ps,
-#'   trm("evals", n_evals = 100000)
+#'   task = tsk("iris"),
+#'   learner = lrn("classif.xgboost"),
+#'   resampling = rsmp("holdout"),
+#'   measure = msr("classif.ce"),
+#'   search_space = ps,
+#'   terminator = terminator,
 #' )
 #'
-#' # eta can be a double
-#' tuner = tnr("hyperband", eta = 1.9)
-#' \donttest{
+#' # Load tuner
+#' tuner = tnr("hyperband", eta = 2L)
+#'
+#' # Trigger optimization
 #' tuner$optimize(inst)
 #'
-#' # return the best evaluation
-#' inst$result
-#'
-#' # print all evaluations
-#' print(inst$archive$data())
-#' }
-#'
-#' ### use subsampling for budget
-#'
-#' library(mlr3pipelines)
-#' set.seed(123)
-#' ll = po("subsample") %>>% lrn("classif.rpart")
-#'
-#' # define with extended hyperparameters with subsampling fraction as budget
-#' # ==> no learner budget is required
-#' params = list(
-#'   ParamDbl$new("classif.rpart.cp", lower = 0.001, upper = 0.1),
-#'   ParamInt$new("classif.rpart.minsplit", lower = 1, upper = 10),
-#'   ParamDbl$new("subsample.frac", lower = 0.1, upper = 1, tags = "budget")
-#' )
-#'
-#' # define TuningInstanceSingleCrit with the Graph Learner and the extended hyperparams
-#' inst = TuningInstanceSingleCrit$new(
-#'   tsk("iris"),
-#'   ll,
-#'   rsmp("holdout"),
-#'   msr("classif.ce"),
-#'   ParamSet$new(params),
-#'   trm("evals", n_evals = 100000)
-#' )
-#'
-#' # define and call hyperband as usual
-#' tuner = tnr("hyperband", eta = 4L)
-#' \donttest{
-#' tuner$optimize(inst)
-#'
-#' # return the best evaluation
-#' inst$result
-#'
-#' # print all evaluations
-#' print(inst$archive$data())
-#' }
-#' @export
+#' # Print all evaluations
+#' inst$archive$data()
 TunerHyperband = R6Class("TunerHyperband",
   inherit = Tuner,
   public = list(
