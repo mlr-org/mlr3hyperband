@@ -95,33 +95,31 @@
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>Development version</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="kw">remotes</span>::<span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"mlr-org/mlr3hyperband"</span>)
-</pre></div>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"mlr-org/mlr3hyperband"</span><span class="op">)</span></pre></div>
 </div>
 <div id="quickstart" class="section level2">
 <h2 class="hasAnchor">
 <a href="#quickstart" class="anchor"></a>Quickstart</h2>
 <p>If you are already familiar with <code>mlr3tuning</code>, then the only change compared to other tuners is to give a numeric hyperparameter a <code>budget</code> tag. Afterwards, you can handle hyperband like all other tuners:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://paradox.mlr-org.com">paradox</a></span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://mlr3tuning.mlr-org.com">mlr3tuning</a></span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://mlr3hyperband.mlr-org.com">mlr3hyperband</a></span>)
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://paradox.mlr-org.com">paradox</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mlr3tuning.mlr-org.com">mlr3tuning</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mlr3hyperband.mlr-org.com">mlr3hyperband</a></span><span class="op">)</span>
 
 <span class="co"># give a hyperparameter the "budget" tag</span>
-<span class="kw">params</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(
-  <span class="kw">ParamInt</span><span class="op">$</span><span class="fu">new</span>(<span class="st">"nrounds"</span>, lower = <span class="fl">1</span>, upper = <span class="fl">16</span>, tags = <span class="st">"budget"</span>),
-  <span class="kw">ParamDbl</span><span class="op">$</span><span class="fu">new</span>(<span class="st">"eta"</span>,     lower = <span class="fl">0</span>, upper = <span class="fl">1</span>),
-  <span class="kw">ParamFct</span><span class="op">$</span><span class="fu">new</span>(<span class="st">"booster"</span>, levels = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"gbtree"</span>, <span class="st">"gblinear"</span>, <span class="st">"dart"</span>))
-)
+<span class="va">params</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>
+  <span class="va"><a href="https://paradox.mlr-org.com/reference/ParamInt.html">ParamInt</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="st">"nrounds"</span>, lower <span class="op">=</span> <span class="fl">1</span>, upper <span class="op">=</span> <span class="fl">16</span>, tags <span class="op">=</span> <span class="st">"budget"</span><span class="op">)</span>,
+  <span class="va"><a href="https://paradox.mlr-org.com/reference/ParamDbl.html">ParamDbl</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="st">"eta"</span>,     lower <span class="op">=</span> <span class="fl">0</span>, upper <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,
+  <span class="va"><a href="https://paradox.mlr-org.com/reference/ParamFct.html">ParamFct</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="st">"booster"</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"gbtree"</span>, <span class="st">"gblinear"</span>, <span class="st">"dart"</span><span class="op">)</span><span class="op">)</span>
+<span class="op">)</span>
 
-<span class="kw">inst</span> <span class="op">=</span> <span class="kw">...</span>  <span class="co"># here goes the usual mlr3tuning TuningInstance constructor</span>
+<span class="va">inst</span> <span class="op">=</span> <span class="va">...</span>  <span class="co"># here goes the usual mlr3tuning TuningInstance constructor</span>
 
 <span class="co"># initialize hyperband tuner</span>
-<span class="kw">tuner</span> <span class="op">=</span> <span class="fu"><a href="https://mlr3tuning.mlr-org.com/reference/tnr.html">tnr</a></span>(<span class="st">"hyperband"</span>, eta = <span class="fl">2L</span>)
+<span class="va">tuner</span> <span class="op">=</span> <span class="fu"><a href="https://mlr3tuning.mlr-org.com/reference/tnr.html">tnr</a></span><span class="op">(</span><span class="st">"hyperband"</span>, eta <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span>
 
 <span class="co"># tune the previously defined TuningInstance</span>
-<span class="kw">tuner</span><span class="op">$</span><span class="fu"><a href="https://rdrr.io/r/stats/optimize.html">optimize</a></span>(<span class="kw">inst</span>)
-</pre></div>
+<span class="va">tuner</span><span class="op">$</span><span class="fu">optimize</span><span class="op">(</span><span class="va">inst</span><span class="op">)</span></pre></div>
 <p>For the full working example, please check out the Examples section below.</p>
 </div>
 <div id="a-short-description-of-hyperband" class="section level2">
@@ -135,70 +133,68 @@
 <a href="#examples" class="anchor"></a>Examples</h2>
 <p>Originally, hyperband was created with a “natural” learning parameter as the budget parameter in mind, like <code>nrounds</code> of the XGBoost learner:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://mlr3.mlr-org.com">mlr3</a></span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://mlr3hyperband.mlr-org.com">mlr3hyperband</a></span>) <span class="co"># hyperband tuner</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://mlr3tuning.mlr-org.com">mlr3tuning</a></span>) <span class="co"># tuning methods</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://mlr3learners.mlr-org.com">mlr3learners</a></span>) <span class="co"># xgboost learner</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://paradox.mlr-org.com">paradox</a></span>) <span class="co"># search space definition</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">123</span>)
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mlr3.mlr-org.com">mlr3</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mlr3hyperband.mlr-org.com">mlr3hyperband</a></span><span class="op">)</span> <span class="co"># hyperband tuner</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mlr3tuning.mlr-org.com">mlr3tuning</a></span><span class="op">)</span> <span class="co"># tuning methods</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mlr3learners.mlr-org.com">mlr3learners</a></span><span class="op">)</span> <span class="co"># xgboost learner</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://paradox.mlr-org.com">paradox</a></span><span class="op">)</span> <span class="co"># search space definition</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
 
 <span class="co"># Define hyperparameter and budget parameter for tuning with hyperband</span>
-<span class="kw">params</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(
-  <span class="kw">ParamInt</span><span class="op">$</span><span class="fu">new</span>(<span class="st">"nrounds"</span>, lower = <span class="fl">1</span>, upper = <span class="fl">16</span>, tags = <span class="st">"budget"</span>),
-  <span class="kw">ParamDbl</span><span class="op">$</span><span class="fu">new</span>(<span class="st">"eta"</span>,     lower = <span class="fl">0</span>, upper = <span class="fl">1</span>),
-  <span class="kw">ParamFct</span><span class="op">$</span><span class="fu">new</span>(<span class="st">"booster"</span>, levels = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"gbtree"</span>, <span class="st">"gblinear"</span>, <span class="st">"dart"</span>))
-)
+<span class="va">params</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>
+  <span class="va"><a href="https://paradox.mlr-org.com/reference/ParamInt.html">ParamInt</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="st">"nrounds"</span>, lower <span class="op">=</span> <span class="fl">1</span>, upper <span class="op">=</span> <span class="fl">16</span>, tags <span class="op">=</span> <span class="st">"budget"</span><span class="op">)</span>,
+  <span class="va"><a href="https://paradox.mlr-org.com/reference/ParamDbl.html">ParamDbl</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="st">"eta"</span>,     lower <span class="op">=</span> <span class="fl">0</span>, upper <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,
+  <span class="va"><a href="https://paradox.mlr-org.com/reference/ParamFct.html">ParamFct</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="st">"booster"</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"gbtree"</span>, <span class="st">"gblinear"</span>, <span class="st">"dart"</span><span class="op">)</span><span class="op">)</span>
+<span class="op">)</span>
 
 <span class="co"># Initialize TuningInstance as usual</span>
 <span class="co"># hyperband terminates on its own, so the terminator acts as a upper bound</span>
-<span class="kw">inst</span> <span class="op">=</span> <span class="kw">TuningInstanceSingleCrit</span><span class="op">$</span><span class="fu">new</span>(
-  task = <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">tsk</a></span>(<span class="st">"iris"</span>),
-  learner = <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">lrn</a></span>(<span class="st">"classif.xgboost"</span>),
-  resampling = <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">rsmp</a></span>(<span class="st">"holdout"</span>),
-  measure = <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">msr</a></span>(<span class="st">"classif.ce"</span>),
-  search_space = <span class="kw">ParamSet</span><span class="op">$</span><span class="fu">new</span>(<span class="kw">params</span>),
-  terminator = <span class="fu"><a href="https://mlr3tuning.mlr-org.com/reference/trm.html">trm</a></span>(<span class="st">"none"</span>) <span class="co"># hyperband terminates on its own</span>
-)
+<span class="va">inst</span> <span class="op">=</span> <span class="va"><a href="https://mlr3tuning.mlr-org.com/reference/TuningInstanceSingleCrit.html">TuningInstanceSingleCrit</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>
+  task <span class="op">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">tsk</a></span><span class="op">(</span><span class="st">"iris"</span><span class="op">)</span>,
+  learner <span class="op">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">lrn</a></span><span class="op">(</span><span class="st">"classif.xgboost"</span><span class="op">)</span>,
+  resampling <span class="op">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">rsmp</a></span><span class="op">(</span><span class="st">"holdout"</span><span class="op">)</span>,
+  measure <span class="op">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">msr</a></span><span class="op">(</span><span class="st">"classif.ce"</span><span class="op">)</span>,
+  search_space <span class="op">=</span> <span class="va"><a href="https://paradox.mlr-org.com/reference/ParamSet.html">ParamSet</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">params</span><span class="op">)</span>,
+  terminator <span class="op">=</span> <span class="fu"><a href="https://mlr3tuning.mlr-org.com/reference/trm.html">trm</a></span><span class="op">(</span><span class="st">"none"</span><span class="op">)</span> <span class="co"># hyperband terminates on its own</span>
+<span class="op">)</span>
 
 <span class="co"># Initialize Hyperband Tuner and tune</span>
-<span class="kw">tuner</span> <span class="op">=</span> <span class="fu"><a href="https://mlr3tuning.mlr-org.com/reference/tnr.html">tnr</a></span>(<span class="st">"hyperband"</span>, eta = <span class="fl">2L</span>)
-<span class="kw">tuner</span><span class="op">$</span><span class="fu"><a href="https://rdrr.io/r/stats/optimize.html">optimize</a></span>(<span class="kw">inst</span>)
+<span class="va">tuner</span> <span class="op">=</span> <span class="fu"><a href="https://mlr3tuning.mlr-org.com/reference/tnr.html">tnr</a></span><span class="op">(</span><span class="st">"hyperband"</span>, eta <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span>
+<span class="va">tuner</span><span class="op">$</span><span class="fu">optimize</span><span class="op">(</span><span class="va">inst</span><span class="op">)</span>
 
 <span class="co"># View results</span>
-<span class="kw">inst</span><span class="op">$</span><span class="kw">result</span>
-</pre></div>
+<span class="va">inst</span><span class="op">$</span><span class="va">result</span></pre></div>
 <p>Additionally, it is also possible to use <code>mlr3hyperband</code> to tune learners that do not have a natural fidelity parameter. In such a case <code>mlr3pipelines</code> can be used to define data subsampling as a preprocessing step. Then, the <code>frac</code> parameter of subsampling, defining the fraction of the training data to be used, can act as the budget parameter:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://mlr3pipelines.mlr-org.com">mlr3pipelines</a></span>)
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">123</span>)
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mlr3pipelines.mlr-org.com">mlr3pipelines</a></span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
 
-<span class="kw">ll</span> <span class="op">=</span> <span class="fu"><a href="https://mlr3pipelines.mlr-org.com//reference/po.html">po</a></span>(<span class="st">"subsample"</span>) <span class="op">%&gt;&gt;%</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">lrn</a></span>(<span class="st">"classif.rpart"</span>)
+<span class="va">ll</span> <span class="op">=</span> <span class="fu"><a href="https://mlr3pipelines.mlr-org.com//reference/po.html">po</a></span><span class="op">(</span><span class="st">"subsample"</span><span class="op">)</span> <span class="op">%&gt;&gt;%</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">lrn</a></span><span class="op">(</span><span class="st">"classif.rpart"</span><span class="op">)</span>
 
 <span class="co"># Define extended hyperparameters with subsampling fraction as budget and hence</span>
 <span class="co"># no learner budget is required</span>
-<span class="kw">params</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(
-  <span class="kw">ParamDbl</span><span class="op">$</span><span class="fu">new</span>(<span class="st">"classif.rpart.cp"</span>, lower = <span class="fl">0.001</span>, upper = <span class="fl">0.1</span>),
-  <span class="kw">ParamInt</span><span class="op">$</span><span class="fu">new</span>(<span class="st">"classif.rpart.minsplit"</span>, lower = <span class="fl">1</span>, upper = <span class="fl">10</span>),
-  <span class="kw">ParamDbl</span><span class="op">$</span><span class="fu">new</span>(<span class="st">"subsample.frac"</span>, lower = <span class="fl">0.1</span>, upper = <span class="fl">1</span>, tags = <span class="st">"budget"</span>)
-)
+<span class="va">params</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>
+  <span class="va"><a href="https://paradox.mlr-org.com/reference/ParamDbl.html">ParamDbl</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="st">"classif.rpart.cp"</span>, lower <span class="op">=</span> <span class="fl">0.001</span>, upper <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>,
+  <span class="va"><a href="https://paradox.mlr-org.com/reference/ParamInt.html">ParamInt</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="st">"classif.rpart.minsplit"</span>, lower <span class="op">=</span> <span class="fl">1</span>, upper <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>,
+  <span class="va"><a href="https://paradox.mlr-org.com/reference/ParamDbl.html">ParamDbl</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="st">"subsample.frac"</span>, lower <span class="op">=</span> <span class="fl">0.1</span>, upper <span class="op">=</span> <span class="fl">1</span>, tags <span class="op">=</span> <span class="st">"budget"</span><span class="op">)</span>
+<span class="op">)</span>
 
 <span class="co"># Define TuningInstance with the Graph Learner and the extended hyperparams</span>
-<span class="kw">inst</span> <span class="op">=</span> <span class="kw">TuningInstanceSingleCrit</span><span class="op">$</span><span class="fu">new</span>(
-  <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">tsk</a></span>(<span class="st">"iris"</span>),
-  <span class="kw">ll</span>,
-  <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">rsmp</a></span>(<span class="st">"holdout"</span>),
-  <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">msr</a></span>(<span class="st">"classif.ce"</span>),
-  <span class="kw">ParamSet</span><span class="op">$</span><span class="fu">new</span>(<span class="kw">params</span>),
-  <span class="fu"><a href="https://mlr3tuning.mlr-org.com/reference/trm.html">trm</a></span>(<span class="st">"none"</span>) <span class="co"># hyperband terminates on its own</span>
-)
+<span class="va">inst</span> <span class="op">=</span> <span class="va"><a href="https://mlr3tuning.mlr-org.com/reference/TuningInstanceSingleCrit.html">TuningInstanceSingleCrit</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>
+  <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">tsk</a></span><span class="op">(</span><span class="st">"iris"</span><span class="op">)</span>,
+  <span class="va">ll</span>,
+  <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">rsmp</a></span><span class="op">(</span><span class="st">"holdout"</span><span class="op">)</span>,
+  <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html">msr</a></span><span class="op">(</span><span class="st">"classif.ce"</span><span class="op">)</span>,
+  <span class="va"><a href="https://paradox.mlr-org.com/reference/ParamSet.html">ParamSet</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">params</span><span class="op">)</span>,
+  <span class="fu"><a href="https://mlr3tuning.mlr-org.com/reference/trm.html">trm</a></span><span class="op">(</span><span class="st">"none"</span><span class="op">)</span> <span class="co"># hyperband terminates on its own</span>
+<span class="op">)</span>
 
 <span class="co"># Initialize Hyperband Tuner and tune</span>
-<span class="kw">tuner</span> <span class="op">=</span> <span class="fu"><a href="https://mlr3tuning.mlr-org.com/reference/tnr.html">tnr</a></span>(<span class="st">"hyperband"</span>, eta = <span class="fl">4L</span>)
-<span class="kw">tuner</span><span class="op">$</span><span class="fu"><a href="https://rdrr.io/r/stats/optimize.html">optimize</a></span>(<span class="kw">inst</span>)
+<span class="va">tuner</span> <span class="op">=</span> <span class="fu"><a href="https://mlr3tuning.mlr-org.com/reference/tnr.html">tnr</a></span><span class="op">(</span><span class="st">"hyperband"</span>, eta <span class="op">=</span> <span class="fl">4L</span><span class="op">)</span>
+<span class="va">tuner</span><span class="op">$</span><span class="fu">optimize</span><span class="op">(</span><span class="va">inst</span><span class="op">)</span>
 
 <span class="co"># View results</span>
-<span class="kw">inst</span><span class="op">$</span><span class="kw">result</span>
-</pre></div>
+<span class="va">inst</span><span class="op">$</span><span class="va">result</span></pre></div>
 </div>
 <div id="documentation" class="section level2">
 <h2 class="hasAnchor">
