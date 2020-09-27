@@ -335,6 +335,9 @@ TunerHyperband = R6Class("TunerHyperband",
             assert_integer(best_indices, lower = 1,
               upper = nrow(active_configs))
             active_configs = active_configs[best_indices]
+          } else {
+            # set continue_hash
+            active_configs[["continue_hash"]] = paste0(bracket, seq(nrow(active_configs)))
           }
 
           # overwrite active configurations with the current budget
