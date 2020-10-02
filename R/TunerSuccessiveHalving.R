@@ -25,26 +25,28 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
   public = list(
     initialize = function() {
       ps = ParamSet$new(list(
-        ParamInt$new("n", lower = 1), # Number of configurations in first stage
+        ParamInt$new("n", lower = 1),
         ParamDbl$new("eta", lower = 1.0001),
         ParamUty$new("sampler",
           custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE))
       ))
-      ps$values = list(sampler = NULL)
+      ps$values = list(eta = 2, sampler = NULL)
 
       super$initialize(
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
         param_set = ps,
-        properties = c("dependencies", "single-crit"),
-        packages = character(0)
+        properties = c("dependencies", "single-crit", "multi-crit"),
+        packages = "emoa"
       )
     }
   ),
 
   private = list(
     .optimize = function(inst) {
+
       pars = self$param_set$values
       n = pars$n
+      eta = pars$eta
       sampler = pars$sampler
       ps = inst$search_space
       budget_id = ps$ids(tags = "budget")
@@ -60,25 +62,31 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
       # Number of stages if each configuration in the fist stage uses r_min
       # resources and each configuration in the last stage uses less than r_max
       # resources
-      k = floor(log(r_max/r_min, eta))
+      k = floor(log(r_max / r_min, eta))
 
-      for(i in 0:k) {
-        ni = floor(n*eta^(-i)) # Number of configurations in stage
-        ri = r_min*eta^i # Resources of each configuration in stage
+      for (i in 0:k) {
+        ni = floor(n * eta^(-i)) # Number of configurations in stage
+        ri = r_min * eta^i # Resources of each configuration in stage
 
-        if(i == 0) {
+        if (i == 0) {
           xdt = sampler$sample(ni)$data
-          xdt[[budget_id]] = ri
           xdt$continue_hash = seq(nrow(xdt))
-          xdt$stage = i + 1
         } else {
-          archive = inst$archive$data()
-          setorderv(archive, cols = inst$archive$cols_y)
-          archive = head(archive, ni)
-          xdt = archive[,c(inst$archive$cols_x, "continue_hash"), with = FALSE]
-          xdt[[budget_id]] = ri
-          xdt$stage = i + 1
+          archive = inst$archive
+          data = archive$data()[batch_nr %in% archive$n_batch]
+          y = data[, archive$cols_y, with = FALSE]
+          minimize = !as.logical(bbotk::mult_max_to_min(archive$codomain))
+
+          if (archive$codomain$length == 1) {
+            row_ids = head(order(y, decreasing = minimize), ni)
+          } else {
+            row_ids = nds_selection(points = t(as.matrix(y)), n_select = ni,
+              minimize = minimize)
+          }
+          xdt = data[row_ids, c(archive$cols_x, "continue_hash"), with = FALSE]
         }
+        xdt[[budget_id]] = ri
+        xdt$stage = i + 1
         inst$eval_batch(xdt)
       }
     }
