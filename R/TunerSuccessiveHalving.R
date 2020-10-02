@@ -23,6 +23,9 @@
 TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
   inherit = Tuner,
   public = list(
+
+    #' @description
+    #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
       ps = ParamSet$new(list(
         ParamInt$new("n", lower = 1),
