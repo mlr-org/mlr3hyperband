@@ -87,6 +87,7 @@ test_that("TunerHyperband using subsampling", {
   # define Graph Learner from rpart with subsampling as preprocessing step
   pops = mlr_pipeops$get("subsample")
   graph_learner = GraphLearner$new(pops %>>% lrn("classif.rpart"))
+  graph_learner$properties = graph_learner$properties[graph_learner$properties %nin% "continue"]
 
   # define with extended hyperparameters with subsampling fraction as budget
   # ==> no learner budget is required
@@ -120,7 +121,8 @@ test_that("TunerHyperband using subsampling and non-integer eta", {
 
   # define Graph Learner from rpart with subsampling as preprocessing step
   pops = po("subsample")
-  graph_learner = pops %>>% lrn("classif.rpart")
+  graph_learner = as_learner(pops %>>% lrn("classif.rpart"))
+  graph_learner$properties = graph_learner$properties[graph_learner$properties %nin% "continue"]
 
   # define with extended hyperparameters with subsampling fraction as budget
   # ==> no learner budget is required
