@@ -2,14 +2,9 @@
 
 <!-- badges: start -->
 [![tic](https://github.com/mlr-org/mlr3hyperband/workflows/tic/badge.svg?branch=master)](https://github.com/mlr-org/mlr3hyperband/actions)
-[![CRAN Status
-Badge](https://www.r-pkg.org/badges/version-ago/mlr3hyperband)](https://cran.r-project.org/package=mlr3hyperband)
-[![CRAN
-Downloads](https://cranlogs.r-pkg.org/badges/mlr3hyperband)](https://cran.rstudio.com/web/packages/mlr3hyperband/index.html)
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-[![codecov](https://codecov.io/gh/mlr-org/mlr3hyperband/branch/master/graph/badge.svg)](https://codecov.io/gh/mlr-org/mlr3hyperband)
+[![CRAN Status](https://www.r-pkg.org/badges/version-ago/mlr3hyperband)](https://cran.r-project.org/package=mlr3hyperband)
 [![StackOverflow](https://img.shields.io/badge/stackoverflow-mlr3-orange.svg)](https://stackoverflow.com/questions/tagged/mlr3)
+[![Mattermost](https://img.shields.io/badge/chat-mattermost-orange.svg)](https://lmmisld-lmu-stats-slds.srv.mwn.de/mlr_invite/)
 <!-- badges: end -->
 
 This package provides hyperband tuning for [mlr3](https://mlr3.mlr-org.com.
