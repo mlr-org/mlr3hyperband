@@ -210,4 +210,46 @@ LearnerRegrDepParams = R6Class("LearnerRegrDepParams",
       PredictionRegr$new(task, response = response)
     }
   )
+
 )
+
+
+
+test_tuner_successive_halving = function(n, eta, sampler = NULL, n_dim = 1L,
+  lower_bound = 1, upper_bound = 16, task = tsk("pima"),
+  learner = lrn("classif.xgboost"), resampling = rsmp("holdout"),
+  measures = msr("classif.ce"), search_space = NULL, terminator = trm("none")) {
+
+  if(is.null(search_space)) {
+    if(n_dim == 1) {
+      search_space = ParamSet$new(params = list(
+        ParamInt$new("nrounds", lower = lower_bound, upper = upper_bound, tags = "budget"),
+        ParamInt$new("max_depth", lower = 1, upper = 100)
+      ))
+    } else if (n_dim == 2) {
+      search_space = ParamSet$new(params = list(
+        ParamInt$new("nrounds", lower = lower_bound, upper = upper_bound, tags = "budget"),
+        ParamDbl$new("eta", lower = 0, upper = 1),
+        ParamInt$new("max_depth", lower = 1, upper = 100)
+      ))
+    }
+  }
+
+  if (length(measures) == 1) {
+    instance = TuningInstanceSingleCrit$new(task, learner, resampling,
+      measures, search_space, terminator)
+  } else {
+    instance = TuningInstanceMultiCrit$new(task, learner, resampling,
+      measures, search_space, terminator)
+  }
+
+  browser()
+
+  tuner = tnr("successive_halving", n = n, eta = eta, sampler = sampler)
+  expect_tuner(tuner)
+
+  expect_data_table(tuner$optimize(instance), nrows = 1)
+}
+
+
+
