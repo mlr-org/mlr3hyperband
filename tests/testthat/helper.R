@@ -243,8 +243,6 @@ test_tuner_successive_halving = function(n, eta, sampler = NULL, n_dim = 1L,
       measures, search_space, terminator)
   }
 
-  browser()
-
   tuner = tnr("successive_halving", n = n, eta = eta, sampler = sampler)
   expect_tuner(tuner)
 

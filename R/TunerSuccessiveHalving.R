@@ -78,7 +78,7 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
           archive = inst$archive
           data = archive$data()[batch_nr %in% archive$n_batch]
           y = data[, archive$cols_y, with = FALSE]
-          minimize = !as.logical(bbotk::mult_max_to_min(archive$codomain))
+          minimize = !as.logical(mult_max_to_min(archive$codomain))
 
           if (archive$codomain$length == 1) {
             row_ids = head(order(y, decreasing = minimize), ni)
