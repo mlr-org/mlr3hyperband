@@ -8,7 +8,7 @@
 #' @section Parameters:
 #' \describe{
 #' \item{`n`}{`integer(1)`\cr
-#' Maximum number of configuration.}
+#' Number of configurations in first stage.}
 #' \item{`eta`}{`numeric(1)`\cr
 #' With every step the configuration budget is increased by a factor of `eta`
 #' and only the best `1/eta` configurations are used for the next stage.
@@ -45,7 +45,6 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
     .optimize = function(inst) {
       pars = self$param_set$values
       n = pars$n
-      r = pars$r
       sampler = pars$sampler
       ps = inst$search_space
       budget_id = ps$ids(tags = "budget")
@@ -55,32 +54,30 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
         sampler = SamplerUnif$new(ps_sampler)
       }
 
-      budget_lower = ps$lower[[budget_id]]
-      budget_upper = ps$upper[[budget_id]]
+      r_min = ps$lower[[budget_id]]
+      r_max = ps$upper[[budget_id]]
 
-      # Rescale budget
-      r = budget_upper/budget_lower
-      r = r * eta^(-smax) # Budget allocated to the first configurations
+      # Number of stages if each configuration in the fist stage uses r_min
+      # resources and each configuration in the last stage uses less than r_max
+      # resources
+      k = floor(log(r_max/r_min, eta))
 
-      smax = floor(log(n, eta))
+      for(i in 0:k) {
+        ni = floor(n*eta^(-i)) # Number of configurations in stage
+        ri = r_min*eta^i # Resources of each configuration in stage
 
-      for(stage in 0:smax) {
-        ni = floor(n*eta^(-stage)) # Number of configurations in stage
-        ri = r * eta^stage # Budget of each configuration
-        ri_real = floor(ri*budget_lower) # Rescale budget back
-
-        if(stage == 0) {
+        if(i == 0) {
           xdt = sampler$sample(ni)$data
-          xdt[[budget_id]] = ri_real
+          xdt[[budget_id]] = ri
           xdt$continue_hash = seq(nrow(xdt))
-          xdt$stage = stage + 1
+          xdt$stage = i + 1
         } else {
           archive = inst$archive$data()
           setorderv(archive, cols = inst$archive$cols_y)
           archive = head(archive, ni)
           xdt = archive[,c(inst$archive$cols_x, "continue_hash"), with = FALSE]
-          xdt[[budget_id]] = ri_real
-          xdt$stage = stage + 1
+          xdt[[budget_id]] = ri
+          xdt$stage = i + 1
         }
         inst$eval_batch(xdt)
       }
