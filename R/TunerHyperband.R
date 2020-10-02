@@ -156,8 +156,8 @@
 #' lgr::get_logger("mlr3")$set_threshold("warn")
 #' ```
 #'
-#' @references
-#' \cite{mlr3hyperband}{li_2018}
+#' @source
+#' `r tools::toRd(bibentries["li_2018"])`
 #'
 #' @export
 #' @examples

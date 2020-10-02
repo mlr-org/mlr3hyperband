@@ -30,7 +30,9 @@ Authors@R:
 Description: Implements hyperband method for hyperparameter
     tuning.  Various termination criteria can be set and combined. The
     class 'AutoTuner' provides a convenient way to perform nested
-    resampling in combination with 'mlr3'.
+    resampling in combination with 'mlr3'. The hyperband algorithm was 
+    proposed by Lisha Li and Kevin Jamieson and Giulia DeSalvo and Afshin 
+    Rostamizadeh and Ameet Talwalkar (2018) <arXiv:1603.06560>.
 License: LGPL-3
 URL: https://mlr3hyperband.mlr-org.com,
     https://github.com/mlr-org/mlr3hyperband
@@ -42,13 +44,12 @@ Imports:
     checkmate (>= 1.9.4),
     data.table,
     lgr,
-    mlr3,
+    mlr3 (>= 0.6.0),
     mlr3misc,
     mlr3tuning (>= 0.2.0),
     paradox,
     R6
 Suggests:
-    bibtex,
     emoa,
     mlr3learners,
     mlr3pipelines,
@@ -60,8 +61,6 @@ Remotes:
     mlr-org/mlr3learners@continue,
     mlr-org/mlr3tuning@continue,
     mlr-org/bbotk@continue
-RdMacros:
-    mlr3misc
 Encoding: UTF-8
 NeedsCompilation: no
 Roxygen: list(markdown = TRUE)
@@ -70,4 +69,5 @@ Collate:
     'TunerHyperband.R'
     'TunerSuccessiveHalving.R'
     'nds_selection.R'
+    'bibentries.R'
     'zzz.R'

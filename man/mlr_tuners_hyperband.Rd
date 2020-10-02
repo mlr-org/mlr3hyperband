@@ -4,6 +4,12 @@
 \alias{mlr_tuners_hyperband}
 \alias{TunerHyperband}
 \title{Tuner using the Hyperband algorithm}
+\source{
+Li L, Jamieson K, DeSalvo G, Rostamizadeh A, Talwalkar A (2018).
+\dQuote{Hyperband: A Novel Bandit-Based Approach to Hyperparameter Optimization.}
+\emph{Journal of Machine Learning Research}, \bold{18}(185), 1-52.
+\url{https://jmlr.org/papers/v18/16-558.html}.
+}
 \description{
 \code{TunerHyperband} class that implements hyperband tuning. Hyperband is a
 budget oriented-procedure, weeding out suboptimal performing configurations
@@ -200,9 +206,6 @@ tuner$optimize(inst)
 
 # Print all evaluations
 inst$archive$data()
-}
-\references{
-\cite{mlr3hyperband}{li_2018}
 }
 \section{Super class}{
 \code{\link[mlr3tuning:Tuner]{mlr3tuning::Tuner}} -> \code{TunerHyperband}
