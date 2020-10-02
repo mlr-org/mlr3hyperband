@@ -218,7 +218,8 @@ LearnerRegrDepParams = R6Class("LearnerRegrDepParams",
 test_tuner_successive_halving = function(n, eta, sampler = NULL, n_dim = 1L,
   lower_bound = 1, upper_bound = 16, task = tsk("pima"),
   learner = lrn("classif.xgboost"), resampling = rsmp("holdout"),
-  measures = msr("classif.ce"), search_space = NULL, terminator = trm("none")) {
+  measures = msr("classif.ce"), search_space = NULL, terminator = trm("none"),
+  store_models = TRUE) {
 
   if(is.null(search_space)) {
     if(n_dim == 1) {
@@ -237,16 +238,23 @@ test_tuner_successive_halving = function(n, eta, sampler = NULL, n_dim = 1L,
 
   if (length(measures) == 1) {
     instance = TuningInstanceSingleCrit$new(task, learner, resampling,
-      measures, search_space, terminator)
+      measures, search_space, terminator, store_models = store_models,
+      check_values = TRUE)
   } else {
     instance = TuningInstanceMultiCrit$new(task, learner, resampling,
-      measures, search_space, terminator)
+      measures, search_space, terminator, store_models = store_models,
+      check_values = TRUE)
   }
 
   tuner = tnr("successive_halving", n = n, eta = eta, sampler = sampler)
   expect_tuner(tuner)
 
-  expect_data_table(tuner$optimize(instance), nrows = 1)
+  tuner$optimize(instance)
+  archive = instance$archive$data()
+
+  budget = archive[, search_space$ids(tags = "budget"), with = FALSE]
+  expect_lte(max(budget), upper_bound)
+  expect_gte(min(budget), lower_bound)
 }
 
 
