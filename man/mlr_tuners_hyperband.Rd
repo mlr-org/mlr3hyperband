@@ -4,6 +4,12 @@
 \alias{mlr_tuners_hyperband}
 \alias{TunerHyperband}
 \title{Tuner using the Hyperband algorithm}
+\source{
+Li L, Jamieson K, DeSalvo G, Rostamizadeh A, Talwalkar A (2018).
+\dQuote{Hyperband: A Novel Bandit-Based Approach to Hyperparameter Optimization.}
+\emph{Journal of Machine Learning Research}, \bold{18}(185), 1-52.
+\url{https://jmlr.org/papers/v18/16-558.html}.
+}
 \description{
 \code{TunerHyperband} class that implements hyperband tuning. Hyperband is a
 budget oriented-procedure, weeding out suboptimal performing configurations
@@ -86,14 +92,14 @@ the initialization of each bracket. The default is uniform sampling.}
 The \link[mlr3tuning:ArchiveTuning]{mlr3tuning::ArchiveTuning} holds the following additional columns that
 are specific to the hyperband tuner:
 \itemize{
-\item \code{bracket} (\code{integer()})\cr
+\item \code{bracket} (\code{integer(1)})\cr
 The console logs about the bracket index are actually not matching
 with the original hyperband algorithm, which counts down the brackets
 and stops after evaluating bracket 0. The true bracket indices are
 given in this column.
-\item \code{bracket_stage} (\verb{integer())}\cr
+\item \code{bracket_stage} (\verb{integer(1))}\cr
 The bracket stage of each bracket. Hyperband starts counting at 0.
-\item \code{budget_scaled} (\code{integer()})\cr
+\item \code{budget_scaled} (\code{numeric(1)})\cr
 The intermediate budget in each bracket stage calculated by hyperband.
 Because hyperband is originally only considered for budgets starting at 1, some
 rescaling is done to allow budgets starting at different values.
@@ -101,10 +107,10 @@ For this, budgets are internally divided by the lower budget bound to
 get a lower budget of 1. Before the learner
 receives its budgets for evaluation, the budget is transformed back to
 match the original scale again.
-\item \code{budget_real} (\code{integer()})\cr
+\item \code{budget_real} (\code{numeric(1)})\cr
 The real budget values the learner uses for evaluation after hyperband
 calculated its scaled budget.
-\item \code{n_configs} (\code{integer()})\cr
+\item \code{n_configs} (\code{integer(1)})\cr
 The amount of evaluated configurations in each stage. These correspond
 to the \code{r_i} in the original paper.
 }
@@ -114,17 +120,17 @@ to the \code{r_i} in the original paper.
 
 Thanks to \CRANpkg{mlr3pipelines}, it is possible to use hyperband in
 combination with learners lacking a natural budget parameter. For example,
-any \link[mlr3:Learner]{mlr3::Learner} can be augmented with a \link[mlr3pipelines:PipeOp]{PipeOp}
-operator such as \link[mlr3pipelines:mlr_pipeops_subsample]{PipeOpSubsample}. With the
+any \link[mlr3:Learner]{mlr3::Learner} can be augmented with a \link[mlr3pipelines:PipeOp]{mlr3pipelines::PipeOp}
+operator such as \link[mlr3pipelines:mlr_pipeops_subsample]{mlr3pipelines::PipeOpSubsample}. With the
 subsampling rate as budget parameter, the resulting
-\link[mlr3pipelines:mlr_learners_graph]{GraphLearner} is fitted on small proportions of
-the \link[mlr3:Task]{Task} in the first brackets, and on the complete Task in
+\link[mlr3pipelines:mlr_learners_graph]{mlr3pipelines::GraphLearner} is fitted on small proportions of
+the \link[mlr3:Task]{mlr3::Task} in the first brackets, and on the complete Task in
 last brackets. See examples for some code.
 }
 
 \section{Custom sampler}{
 
-Hyperband supports custom \link[paradox:Sampler]{Sampler} object for initial
+Hyperband supports custom \link[paradox:Sampler]{paradox::Sampler} object for initial
 configurations in each bracket.
 A custom sampler may look like this (the full example is given in the
 \code{examples} section):\preformatted{# - beta distribution with alpha = 2 and beta = 5
@@ -159,132 +165,47 @@ like it is shown in the \code{examples}.
 When loading the \link{mlr3hyperband} package, two loggers based on the \link{lgr}
 package are made available. One is called \code{mlr3}, the other \code{bbotk}. All
 \code{mlr3} methods log into the \code{mlr3} logger. All optimization methods form the
-packags \code{bbotk}, \code{mlr3tuning} and \code{mlr3hyperband} log into the \code{bbotk}
-logger. To hide the \code{mlr3} logging messages run:\preformatted{lgr::get_logger("mlr3")$set_threshold("warn")
+packags \link{bbotk}, \link{mlr3tuning} and \link{mlr3hyperband} log into the \code{bbotk}
+logger. To hide the \link{mlr3} logging messages run:\preformatted{lgr::get_logger("mlr3")$set_threshold("warn")
 }
 }
 
 \examples{
-library(mlr3hyperband)
-library(mlr3learners)
-library(mlr3tuning)
 library(mlr3)
+library(mlr3learners)
 library(paradox)
+library(mlr3tuning)
+library(mlr3hyperband)
 
-set.seed(123)
-
-# define hyperparameter and budget parameter for tuning with hyperband
-params = list(
+# Define hyperparameter and budget parameter for tuning with hyperband
+ps = ParamSet$new(list(
   ParamInt$new("nrounds", lower = 1, upper = 16, tag = "budget"),
   ParamDbl$new("eta", lower = 0, upper = 1),
   ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
-)
-
-
-inst = TuningInstanceSingleCrit$new(
-  tsk("iris"),
-  lrn("classif.xgboost"),
-  rsmp("holdout"),
-  msr("classif.ce"),
-  ParamSet$new(params),
-  trm("evals", n_evals = 100000)
-)
-
-# create custom sampler (optional):
-# - beta distribution with alpha = 2 and beta = 5
-# - categorical distribution with custom probabilities
-sampler = SamplerJointIndep$new(list(
-  Sampler1DRfun$new(params[[2]], function(n) rbeta(n, 2, 5)),
-  Sampler1DCateg$new(params[[3]], prob = c(0.2, 0.3, 0.5))
 ))
+# Define termination criterion
+# Usually, trm("none") since hyperband terminates itself but to keep this
+# example short we use 20 evaluations.
+terminator = trm("evals", n_evals = 20)
 
-tuner = tnr("hyperband", eta = 2L, sampler = sampler)
-\donttest{
-tuner$optimize(inst)
-
-# return the best evaluation
-inst$result
-
-# print all evaluations
-print(inst$archive$data())
-}
-
-
-### use parameter trafo to convert budget parameter
-
-set.seed(123)
-
-# define hyperparameter and budget parameter for tuning with hyperband
-ps = ParamSet$new(list(
-  ParamInt$new("nrounds", lower = 1, upper = 10, tags = "budget"),
-  # ParamDbl$new("eta",     lower = 0, upper = 1),
-  ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
-))
-
-ps$trafo = function(x, param_set) {
-  x$nrounds = round(log(x$nrounds)) + 1L
-  return(x)
-}
-
+# Create tuning instance
 inst = TuningInstanceSingleCrit$new(
-  tsk("iris"),
-  lrn("classif.xgboost"),
-  rsmp("holdout"),
-  msr("classif.ce"),
-  ps,
-  trm("evals", n_evals = 100000)
+  task = tsk("iris"),
+  learner = lrn("classif.xgboost"),
+  resampling = rsmp("holdout"),
+  measure = msr("classif.ce"),
+  search_space = ps,
+  terminator = terminator,
 )
 
-# eta can be a double
-tuner = tnr("hyperband", eta = 1.9)
-\donttest{
+# Load tuner
+tuner = tnr("hyperband", eta = 2L)
+
+# Trigger optimization
 tuner$optimize(inst)
 
-# return the best evaluation
-inst$result
-
-# print all evaluations
-print(inst$archive$data())
-}
-
-### use subsampling for budget
-
-library(mlr3pipelines)
-set.seed(123)
-ll = po("subsample") \%>>\% lrn("classif.rpart")
-
-# define with extended hyperparameters with subsampling fraction as budget
-# ==> no learner budget is required
-params = list(
-  ParamDbl$new("classif.rpart.cp", lower = 0.001, upper = 0.1),
-  ParamInt$new("classif.rpart.minsplit", lower = 1, upper = 10),
-  ParamDbl$new("subsample.frac", lower = 0.1, upper = 1, tags = "budget")
-)
-
-# define TuningInstanceSingleCrit with the Graph Learner and the extended hyperparams
-inst = TuningInstanceSingleCrit$new(
-  tsk("iris"),
-  ll,
-  rsmp("holdout"),
-  msr("classif.ce"),
-  ParamSet$new(params),
-  trm("evals", n_evals = 100000)
-)
-
-# define and call hyperband as usual
-tuner = tnr("hyperband", eta = 4L)
-\donttest{
-tuner$optimize(inst)
-
-# return the best evaluation
-inst$result
-
-# print all evaluations
-print(inst$archive$data())
-}
-}
-\references{
-\cite{mlr3hyperband}{li_2018}
+# Print all evaluations
+inst$archive$data()
 }
 \section{Super class}{
 \code{\link[mlr3tuning:Tuner]{mlr3tuning::Tuner}} -> \code{TunerHyperband}
