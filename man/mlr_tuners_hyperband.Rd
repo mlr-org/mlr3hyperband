@@ -179,14 +179,14 @@ library(mlr3hyperband)
 
 # Define hyperparameter and budget parameter for tuning with hyperband
 ps = ParamSet$new(list(
-  ParamInt$new("nrounds", lower = 1, upper = 8, tag = "budget"),
+  ParamInt$new("nrounds", lower = 1, upper = 4, tag = "budget"),
   ParamDbl$new("eta", lower = 0, upper = 1),
   ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
 ))
+
 # Define termination criterion
-# Usually, trm("none") since hyperband terminates itself but to keep this
-# example short we use 20 evaluations.
-terminator = trm("evals", n_evals = 20)
+# Hyperband terminates itself
+terminator = trm("none")
 
 # Create tuning instance
 inst = TuningInstanceSingleCrit$new(
