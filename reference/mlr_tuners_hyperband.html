@@ -384,12 +384,13 @@ logger. To hide the <a href='https://mlr3.mlr-org.com/reference/mlr3-package.htm
 <span class='co'># Load tuner</span>
 <span class='va'>tuner</span> <span class='op'>=</span> <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/tnr.html'>tnr</a></span><span class='op'>(</span><span class='st'>"hyperband"</span>, eta <span class='op'>=</span> <span class='fl'>2L</span><span class='op'>)</span>
 
+<span class='co'># \donttest{</span>
 <span class='co'># Trigger optimization</span>
 <span class='va'>tuner</span><span class='op'>$</span><span class='fu'>optimize</span><span class='op'>(</span><span class='va'>inst</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;    nrounds       eta booster learner_param_vals  x_domain classif.ce
 #&gt; 1:       2 0.9176605    dart          &lt;list[4]&gt; &lt;list[3]&gt;       0.04</div><div class='input'>
 <span class='co'># Print all evaluations</span>
-<span class='va'>inst</span><span class='op'>$</span><span class='va'>archive</span><span class='op'>$</span><span class='fu'>data</span><span class='op'>(</span><span class='op'>)</span>
+<span class='va'>inst</span><span class='op'>$</span><span class='va'>archive</span><span class='op'>$</span><span class='fu'>data</span><span class='op'>(</span><span class='op'>)</span><span class='co'># }</span>
 </div><div class='output co'>#&gt;            eta  booster nrounds bracket bracket_stage budget_scaled budget_real
 #&gt;  1: 0.03745117     dart       1       2             0             1           1
 #&gt;  2: 0.59355379     dart       1       2             0             1           1
@@ -406,35 +407,35 @@ logger. To hide the <a href='https://mlr3.mlr-org.com/reference/mlr3-package.htm
 #&gt; 13: 0.86661570     dart       4       0             0             4           4
 #&gt; 14: 0.23845311 gblinear       4       0             0             4           4
 #&gt;     n_configs classif.ce                                uhash  x_domain
-#&gt;  1:         4       0.08 be82d3a6-561d-40be-bf09-bbddb697404f &lt;list[3]&gt;
-#&gt;  2:         4       0.08 4b683a48-cc0a-4b09-a58b-a8b13903cb77 &lt;list[3]&gt;
-#&gt;  3:         4       0.08 4e083aa0-fbb2-46d4-8f0c-1f79622386df &lt;list[3]&gt;
-#&gt;  4:         4       0.08 4560cf7d-68ce-430a-bcca-d6449b50a2d6 &lt;list[3]&gt;
-#&gt;  5:         2       0.08 79201699-efe7-4e17-8a95-0f19040b0810 &lt;list[3]&gt;
-#&gt;  6:         2       0.08 ba60431e-3e43-44d7-a332-31784324016b &lt;list[3]&gt;
-#&gt;  7:         1       0.08 e4dfaa62-8fd9-44bf-9095-d70b84e50920 &lt;list[3]&gt;
-#&gt;  8:         3       0.04 b1320530-4bb2-47af-910c-4d17f349fb09 &lt;list[3]&gt;
-#&gt;  9:         3       0.40 e98f2d83-6b09-4471-8201-0ff7609a6cce &lt;list[3]&gt;
-#&gt; 10:         3       0.04 be945bc9-6b85-4c53-8fc4-34be0c818cfb &lt;list[3]&gt;
-#&gt; 11:         1       0.04 575f6561-44d9-4908-b800-b36ceb6e544f &lt;list[3]&gt;
-#&gt; 12:         3       0.04 70ec90e8-82b5-4db8-b11c-112371a7dbcf &lt;list[3]&gt;
-#&gt; 13:         3       0.04 263f3525-f206-4005-8b6d-b511fa864184 &lt;list[3]&gt;
-#&gt; 14:         3       0.40 a01f45cd-9a64-4bf8-af56-688b9a879956 &lt;list[3]&gt;
+#&gt;  1:         4       0.08 753c4048-34a8-457b-98f6-c1a266c8d261 &lt;list[3]&gt;
+#&gt;  2:         4       0.08 23909d86-c34e-49df-bc45-da40d958e56d &lt;list[3]&gt;
+#&gt;  3:         4       0.08 b7550817-a660-434d-a78d-3e7e7dad0cf8 &lt;list[3]&gt;
+#&gt;  4:         4       0.08 52d639f8-92a8-474f-abe3-211c28e9f164 &lt;list[3]&gt;
+#&gt;  5:         2       0.08 6f8db048-ca1e-4433-9709-02f0a539d4a2 &lt;list[3]&gt;
+#&gt;  6:         2       0.08 f4af8795-aa67-4f1f-8e48-57a9655d7411 &lt;list[3]&gt;
+#&gt;  7:         1       0.08 6fce342c-0fd5-402e-bf83-82e8dd24ab67 &lt;list[3]&gt;
+#&gt;  8:         3       0.04 5972042f-c361-4d41-b27b-c30a17959fda &lt;list[3]&gt;
+#&gt;  9:         3       0.40 dfd78150-20d9-45c0-9e33-75fe9d65b5de &lt;list[3]&gt;
+#&gt; 10:         3       0.04 da9804ba-79e5-4b0a-9d4c-2f9176813bc7 &lt;list[3]&gt;
+#&gt; 11:         1       0.04 ca7f4617-01b0-4644-8fc0-807a8c7a70c9 &lt;list[3]&gt;
+#&gt; 12:         3       0.04 81a06e64-1e9e-401c-b0c6-28e1367f9bb5 &lt;list[3]&gt;
+#&gt; 13:         3       0.04 5fa633ed-127c-4f49-83a0-cc47d467b345 &lt;list[3]&gt;
+#&gt; 14:         3       0.40 ccb027f7-fffd-49ac-b35f-f0150cc61b77 &lt;list[3]&gt;
 #&gt;               timestamp batch_nr
-#&gt;  1: 2020-10-19 08:38:03        1
-#&gt;  2: 2020-10-19 08:38:03        1
-#&gt;  3: 2020-10-19 08:38:03        1
-#&gt;  4: 2020-10-19 08:38:03        1
-#&gt;  5: 2020-10-19 08:38:03        2
-#&gt;  6: 2020-10-19 08:38:03        2
-#&gt;  7: 2020-10-19 08:38:03        3
-#&gt;  8: 2020-10-19 08:38:04        4
-#&gt;  9: 2020-10-19 08:38:04        4
-#&gt; 10: 2020-10-19 08:38:04        4
-#&gt; 11: 2020-10-19 08:38:04        5
-#&gt; 12: 2020-10-19 08:38:05        6
-#&gt; 13: 2020-10-19 08:38:05        6
-#&gt; 14: 2020-10-19 08:38:05        6</div></pre>
+#&gt;  1: 2020-10-19 12:30:58        1
+#&gt;  2: 2020-10-19 12:30:58        1
+#&gt;  3: 2020-10-19 12:30:58        1
+#&gt;  4: 2020-10-19 12:30:58        1
+#&gt;  5: 2020-10-19 12:30:58        2
+#&gt;  6: 2020-10-19 12:30:58        2
+#&gt;  7: 2020-10-19 12:30:58        3
+#&gt;  8: 2020-10-19 12:30:59        4
+#&gt;  9: 2020-10-19 12:30:59        4
+#&gt; 10: 2020-10-19 12:30:59        4
+#&gt; 11: 2020-10-19 12:30:59        5
+#&gt; 12: 2020-10-19 12:31:00        6
+#&gt; 13: 2020-10-19 12:31:00        6
+#&gt; 14: 2020-10-19 12:31:00        6</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
