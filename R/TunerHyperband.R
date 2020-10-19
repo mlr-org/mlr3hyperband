@@ -169,7 +169,7 @@
 #'
 #' # Define hyperparameter and budget parameter for tuning with hyperband
 #' ps = ParamSet$new(list(
-#'   ParamInt$new("nrounds", lower = 1, upper = 16, tag = "budget"),
+#'   ParamInt$new("nrounds", lower = 1, upper = 8, tag = "budget"),
 #'   ParamDbl$new("eta", lower = 0, upper = 1),
 #'   ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
 #' ))
