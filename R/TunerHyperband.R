@@ -190,12 +190,13 @@
 #'
 #' # Load tuner
 #' tuner = tnr("hyperband", eta = 2L)
-#'
+#' 
+#' \donttest{
 #' # Trigger optimization
 #' tuner$optimize(inst)
 #'
 #' # Print all evaluations
-#' inst$archive$data()
+#' inst$archive$data()}
 TunerHyperband = R6Class("TunerHyperband",
   inherit = Tuner,
   public = list(

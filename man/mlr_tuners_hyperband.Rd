@@ -201,11 +201,12 @@ inst = TuningInstanceSingleCrit$new(
 # Load tuner
 tuner = tnr("hyperband", eta = 2L)
 
+\donttest{
 # Trigger optimization
 tuner$optimize(inst)
 
 # Print all evaluations
-inst$archive$data()
+inst$archive$data()}
 }
 \section{Super class}{
 \code{\link[mlr3tuning:Tuner]{mlr3tuning::Tuner}} -> \code{TunerHyperband}
