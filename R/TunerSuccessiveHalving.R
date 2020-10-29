@@ -46,7 +46,6 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
 
   private = list(
     .optimize = function(inst) {
-
       pars = self$param_set$values
       n = pars$n
       eta = pars$eta
@@ -63,12 +62,18 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
       r_max = ps$upper[[budget_id]]
 
       # Number of stages if each configuration in the fist stage uses r_min
-      # resources and each configuration in the last stage uses less than r_max
-      # resources
-      k = floor(log(r_max / r_min, eta))
+      # resources and each configuration in the last stage uses not more than
+      # r_max resources
+      k_n = floor(log(r_max / r_min, eta))
+
+      # Number of stages so that the last stages evaluates more than 1
+      # configuration
+      k_r = floor(log(n, eta))
+
+      k = min(k_n, k_r)
 
       for (i in 0:k) {
-        ni = floor(n * eta^(-i)) # Number of configurations in stage
+        ni = ceiling(n * eta^(-i)) # Number of configurations in stage
         ri = r_min * eta^i # Resources of each configuration in stage
 
         if (i == 0) {
