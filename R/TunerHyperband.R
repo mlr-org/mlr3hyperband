@@ -157,7 +157,7 @@
 #' ```
 #'
 #' @source
-#' `r tools::toRd(bibentries["li_2018"])`
+#' `r format_bib("li_2018")`
 #'
 #' @export
 #' @examples
