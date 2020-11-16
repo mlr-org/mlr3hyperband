@@ -15,9 +15,15 @@ provides a convenient way to perform nested resampling in combination with
 
 ## Installation
 
+CRAN version
+
+```{r}
+install.packages("mlr3hyperband")
+```
+
 Development version
 
-``` r
+```{r}
 remotes::install_github("mlr-org/mlr3hyperband")
 ```
 
