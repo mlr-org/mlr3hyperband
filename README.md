@@ -1,5 +1,7 @@
 # mlr3hyperband
 
+Package website: [release](https://mlr3hyperband.mlr-org.com/) | [dev](https://mlr3hyperband.mlr-org.com/dev/)
+
 <!-- badges: start -->
 [![tic](https://github.com/mlr-org/mlr3hyperband/workflows/tic/badge.svg?branch=master)](https://github.com/mlr-org/mlr3hyperband/actions)
 [![CRAN Status](https://www.r-pkg.org/badges/version-ago/mlr3hyperband)](https://cran.r-project.org/package=mlr3hyperband)
@@ -8,7 +10,7 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/mlr-org/mlr3hyperband/badge)](https://www.codefactor.io/repository/github/mlr-org/mlr3hyperband)
 <!-- badges: end -->
 
-This package provides hyperband tuning for [mlr3](https://mlr3.mlr-org.com.
+This package provides hyperband tuning for [mlr3](https://mlr3.mlr-org.com).
 Various termination criteria can be set and combined. The class 'AutoTuner'
 provides a convenient way to perform nested resampling in combination with
 'mlr3'.
@@ -17,13 +19,13 @@ provides a convenient way to perform nested resampling in combination with
 
 CRAN version
 
-```{r}
+```r
 install.packages("mlr3hyperband")
 ```
 
 Development version
 
-```{r}
+```r
 remotes::install_github("mlr-org/mlr3hyperband")
 ```
 
