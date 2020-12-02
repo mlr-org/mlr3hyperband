@@ -190,7 +190,7 @@
 #'
 #' # Load tuner
 #' tuner = tnr("hyperband", eta = 2L)
-#' 
+#'
 #' \donttest{
 #' # Trigger optimization
 #' tuner$optimize(inst)
@@ -215,7 +215,7 @@ TunerHyperband = R6Class("TunerHyperband",
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
         param_set = ps,
         properties = c("dependencies", "single-crit", "multi-crit"),
-        packages = "emoa" # used in nds_selection()
+        packages = character(0)
       )
     }
   ),
@@ -228,6 +228,10 @@ TunerHyperband = R6Class("TunerHyperband",
       measures = inst$objective$measures
       msr_ids = ids(measures)
       to_minimize = map_lgl(measures, "minimize")
+
+      if (length(msr_ids) > 1) {
+        require_namespaces("emoa")
+      }
 
       # name of the hyperparameters with a budget tag
       budget_id = ps$ids(tags = "budget")
