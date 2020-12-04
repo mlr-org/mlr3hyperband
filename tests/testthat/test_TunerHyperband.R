@@ -30,8 +30,8 @@ test_that("TunerHyperband multicrit", {
     lrn("classif.rpart"),
     rsmp("holdout"),
     msrs(c("classif.tpr", "classif.fpr")),
-    params,
-    trm("evals", n_evals = 100000)
+    trm("evals", n_evals = 100000),
+    params
   )
 
   tuner = tnr("hyperband", eta = 4L)
@@ -66,8 +66,8 @@ test_that("TunerHyperband using CV", {
     lrn("classif.xgboost"),
     rsmp("cv", folds = 2),
     msr("classif.ce"),
-    ps,
-    trm("evals", n_evals = 100000)
+    trm("evals", n_evals = 100000),
+    ps
   )
 
   # hyperband + tuning
@@ -102,8 +102,8 @@ test_that("TunerHyperband using subsampling", {
     graph_learner,
     rsmp("holdout"),
     msr("classif.ce"),
-    ParamSet$new(params),
-    trm("evals", n_evals = 100000)
+    trm("evals", n_evals = 100000),
+    ParamSet$new(params)
   )
 
   # define and call hyperband as usual
@@ -136,8 +136,8 @@ test_that("TunerHyperband using subsampling and non-integer eta", {
     graph_learner,
     rsmp("holdout"),
     msr("classif.ce"),
-    ParamSet$new(params),
-    trm("evals", n_evals = 100000)
+    trm("evals", n_evals = 100000),
+    ParamSet$new(params)
   )
 
   # define and call hyperband as usual
@@ -171,8 +171,8 @@ test_that("TunerHyperband using param trafo and non-integer eta", {
     lrn("classif.xgboost"),
     rsmp("holdout"),
     msr("classif.ce"),
-    ps,
-    trm("evals", n_evals = 100000)
+    trm("evals", n_evals = 100000),
+    ps
   )
 
   # hyperband + tuning
@@ -200,8 +200,8 @@ test_that("TunerHyperband using custom sampler", {
     lrn("classif.xgboost"),
     rsmp("holdout"),
     msr("classif.ce"),
-    ParamSet$new(params),
-    trm("evals", n_evals = 100000)
+    trm("evals", n_evals = 100000),
+    ParamSet$new(params)
   )
 
   # create custom sampler:
@@ -258,8 +258,8 @@ test_that("TunerHyperband invalid input", {
     lrn("classif.xgboost"),
     rsmp("holdout"),
     msr("classif.ce"),
-    ParamSet$new(params),
-    trm("evals", n_evals = 100000)
+    trm("evals", n_evals = 100000),
+    ParamSet$new(params)
   )
 
   tuner = tnr("hyperband", eta = 2L)
@@ -280,8 +280,8 @@ test_that("TunerHyperband invalid input", {
     lrn("classif.xgboost"),
     rsmp("holdout"),
     msr("classif.ce"),
-    ParamSet$new(params),
-    trm("evals", n_evals = 100000)
+    trm("evals", n_evals = 100000),
+    ParamSet$new(params)
   )
 
   tuner = tnr("hyperband", eta = 2L)
