@@ -26,12 +26,12 @@ test_that("TunerHyperband multicrit", {
   measures = c("classif.tpr", "classif.fpr")
 
   inst = TuningInstanceMultiCrit$new(
-    tsk("pima"),
-    lrn("classif.rpart"),
-    rsmp("holdout"),
-    msrs(c("classif.tpr", "classif.fpr")),
-    trm("evals", n_evals = 100000),
-    params
+    task = tsk("pima"),
+    learner = lrn("classif.rpart"),
+    resampling = rsmp("holdout"),
+    measures = msrs(c("classif.tpr", "classif.fpr")),
+    terminator = trm("evals", n_evals = 100000),
+    search_space = params
   )
 
   tuner = tnr("hyperband", eta = 4L)
@@ -62,12 +62,12 @@ test_that("TunerHyperband using CV", {
 
   # tuning instance with 2-fold CV
   inst = TuningInstanceSingleCrit$new(
-    tsk("iris"),
-    lrn("classif.xgboost"),
-    rsmp("cv", folds = 2),
-    msr("classif.ce"),
-    trm("evals", n_evals = 100000),
-    ps
+    task = tsk("iris"),
+    learner = lrn("classif.xgboost"),
+    resampling = rsmp("cv", folds = 2),
+    measure = msr("classif.ce"),
+    terminator = trm("evals", n_evals = 100000),
+    search_space = ps
   )
 
   # hyperband + tuning
@@ -98,12 +98,12 @@ test_that("TunerHyperband using subsampling", {
 
   # define TuningInstanceSingleCrit with the Graph Learner and the extended hyperparams
   inst = TuningInstanceSingleCrit$new(
-    tsk("iris"),
-    graph_learner,
-    rsmp("holdout"),
-    msr("classif.ce"),
-    trm("evals", n_evals = 100000),
-    ParamSet$new(params)
+    task = tsk("iris"),
+    learner = graph_learner,
+    resampling = rsmp("holdout"),
+    measure = msr("classif.ce"),
+    terminator = trm("evals", n_evals = 100000),
+    search_space = ParamSet$new(params)
   )
 
   # define and call hyperband as usual
@@ -132,12 +132,12 @@ test_that("TunerHyperband using subsampling and non-integer eta", {
 
   # define TuningInstanceSingleCrit with the Graph Learner and the extended hyperparams
   inst = TuningInstanceSingleCrit$new(
-    tsk("iris"),
-    graph_learner,
-    rsmp("holdout"),
-    msr("classif.ce"),
-    trm("evals", n_evals = 100000),
-    ParamSet$new(params)
+    task = tsk("iris"),
+    learner = graph_learner,
+    resampling = rsmp("holdout"),
+    measure = msr("classif.ce"),
+    terminator = trm("evals", n_evals = 100000),
+    search_space = ParamSet$new(params)
   )
 
   # define and call hyperband as usual
@@ -167,12 +167,12 @@ test_that("TunerHyperband using param trafo and non-integer eta", {
   # }
 
   inst = TuningInstanceSingleCrit$new(
-    tsk("iris"),
-    lrn("classif.xgboost"),
-    rsmp("holdout"),
-    msr("classif.ce"),
-    trm("evals", n_evals = 100000),
-    ps
+    task = tsk("iris"),
+    learner = lrn("classif.xgboost"),
+    resampling = rsmp("holdout"),
+    measure = msr("classif.ce"),
+    terminator = trm("evals", n_evals = 100000),
+    search_space = ps
   )
 
   # hyperband + tuning
@@ -196,12 +196,12 @@ test_that("TunerHyperband using custom sampler", {
 
 
   inst = TuningInstanceSingleCrit$new(
-    tsk("iris"),
-    lrn("classif.xgboost"),
-    rsmp("holdout"),
-    msr("classif.ce"),
-    trm("evals", n_evals = 100000),
-    ParamSet$new(params)
+    task = tsk("iris"),
+    learner = lrn("classif.xgboost"),
+    resampling = rsmp("holdout"),
+    measure = msr("classif.ce"),
+    terminator = trm("evals", n_evals = 100000),
+    search_space = ParamSet$new(params)
   )
 
   # create custom sampler:
@@ -254,12 +254,12 @@ test_that("TunerHyperband invalid input", {
 
 
   inst = TuningInstanceSingleCrit$new(
-    tsk("iris"),
-    lrn("classif.xgboost"),
-    rsmp("holdout"),
-    msr("classif.ce"),
-    trm("evals", n_evals = 100000),
-    ParamSet$new(params)
+    task = tsk("iris"),
+    learner = lrn("classif.xgboost"),
+    resampling = rsmp("holdout"),
+    measure = msr("classif.ce"),
+    terminator = trm("evals", n_evals = 100000),
+    search_space = ParamSet$new(params)
   )
 
   tuner = tnr("hyperband", eta = 2L)
@@ -276,12 +276,12 @@ test_that("TunerHyperband invalid input", {
 
 
   inst = TuningInstanceSingleCrit$new(
-    tsk("iris"),
-    lrn("classif.xgboost"),
-    rsmp("holdout"),
-    msr("classif.ce"),
-    trm("evals", n_evals = 100000),
-    ParamSet$new(params)
+    task = tsk("iris"),
+    learner = lrn("classif.xgboost"),
+    resampling = rsmp("holdout"),
+    measure = msr("classif.ce"),
+    terminator = trm("evals", n_evals = 100000),
+    search_space = ParamSet$new(params)
   )
 
   tuner = tnr("hyperband", eta = 2L)
