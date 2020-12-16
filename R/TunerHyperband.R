@@ -196,7 +196,7 @@
 #' tuner$optimize(inst)
 #'
 #' # Print all evaluations
-#' inst$archive$data()}
+#' as.data.table(inst$archive)}
 TunerHyperband = R6Class("TunerHyperband",
   inherit = Tuner,
   public = list(
@@ -315,7 +315,7 @@ TunerHyperband = R6Class("TunerHyperband",
           if (stage > 0) {
 
             # get performance of each active configuration
-            configs_perf = inst$archive$data()[, msr_ids, with = FALSE]
+            configs_perf = inst$archive$data[, msr_ids, with = FALSE]
             n_rows = nrow(configs_perf)
             configs_perf = configs_perf[(n_rows - mu_previous + 1):n_rows]
 

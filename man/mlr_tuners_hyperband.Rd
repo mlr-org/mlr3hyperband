@@ -206,7 +206,7 @@ tuner = tnr("hyperband", eta = 2L)
 tuner$optimize(inst)
 
 # Print all evaluations
-inst$archive$data()}
+as.data.table(inst$archive)}
 }
 \section{Super class}{
 \code{\link[mlr3tuning:Tuner]{mlr3tuning::Tuner}} -> \code{TunerHyperband}

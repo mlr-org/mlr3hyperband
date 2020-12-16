@@ -38,7 +38,7 @@ test_that("TunerHyperband multicrit", {
   tuner$optimize(inst)
   # lapply(inst$pareto_front(), expect_resample_result)
 
-  results = inst$archive$data()[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
+  results = inst$archive$data[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
 
   expect_data_table(results, ncols = 4, nrows = 7)
 
@@ -74,7 +74,7 @@ test_that("TunerHyperband using CV", {
   tuner = tnr("hyperband", eta = 2L)
   tuner$optimize(inst)
 
-  results = inst$archive$data()[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
+  results = inst$archive$data[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
 
   #FIXME: Check that results are also good, i.e. the correct individuals survive (https://github.com/mlr-org/mlr3hyperband/issues/50)
   expect_data_table(results, ncols = 3, nrows = 35)
@@ -110,7 +110,7 @@ test_that("TunerHyperband using subsampling", {
   tuner = tnr("hyperband", eta = 4L)
   tuner$optimize(inst)
 
-  results = inst$archive$data()[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
+  results = inst$archive$data[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
   expect_data_table(results, ncols = 4, nrows = 7)
 })
 
@@ -144,7 +144,7 @@ test_that("TunerHyperband using subsampling and non-integer eta", {
   tuner = tnr("hyperband", eta = 3.5)
   tuner$optimize(inst)
 
-  results = inst$archive$data()[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
+  results = inst$archive$data[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
   expect_data_table(results, ncols = 4, nrows = 7)
 })
 
@@ -179,7 +179,7 @@ test_that("TunerHyperband using param trafo and non-integer eta", {
   tuner = tnr("hyperband", eta = 3.9)
   tuner$optimize(inst)
 
-  results = inst$archive$data()[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
+  results = inst$archive$data[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
   expect_data_table(results, ncols = 4, nrows = 7)
 })
 
@@ -237,7 +237,7 @@ test_that("TunerHyperband using custom sampler", {
   rr = inst$archive$benchmark_result$resample_result(uhash = inst$archive$best()$uhash)
   expect_resample_result(rr)
 
-  results = inst$archive$data()[, .(nrounds, eta, booster, classif.ce)]
+  results = inst$archive$data[, .(nrounds, eta, booster, classif.ce)]
   expect_data_table(results, ncols = 4, nrows = 35)
 })
 

@@ -32,13 +32,13 @@ expect_tuner = function(tuner) {
 expect_info = function(eta, lower_b, upper_b, archive) {
   hb_meta_info = hyperband_brackets(R = upper_b / lower_b, eta = eta)
   hb_meta_info = as.data.table(hb_meta_info)
-  tuner_info = archive$data()[, colnames(hb_meta_info), with = FALSE]
+  tuner_info = archive$data[, colnames(hb_meta_info), with = FALSE]
   tuner_info = unique(tuner_info) # info for all x is duplicated in each bracket
   real_evals = sum(tuner_info$n_configs)
 
   expect_equal(hb_meta_info, tuner_info)
   expect_equal(real_evals, archive$n_evals)
-  expect_data_table(archive$data(), nrows = real_evals)
+  expect_data_table(archive$data, nrows = real_evals)
 }
 
 # single crit test
@@ -91,7 +91,7 @@ test_tuner_hyperband = function(eta, n_dim = 1L, term_evals = NULL, lower_b,
   if (!inst$is_terminated) {
     expect_info(eta, lower_b, upper_b, archive)
   } else {
-    expect_data_table(archive$data(), min.rows = term_evals)
+    expect_data_table(archive$data, min.rows = term_evals)
     expect_gte(archive$n_evals, term_evals)
   }
 
