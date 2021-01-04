@@ -26,7 +26,7 @@ select_survivors = function(points, n_select, ref_point = NULL, minimize = TRUE,
 
   # check input for correctness
   assert_data_frame(points)
-  assert_int(n_select, lower = 1, upper = ncol(points))
+  assert_int(n_select, lower = 1, upper = nrow(points))
   assert_logical(
     minimize, min.len = 1, max.len = ncol(points), any.missing = FALSE
   )
@@ -39,7 +39,7 @@ select_survivors = function(points, n_select, ref_point = NULL, minimize = TRUE,
     assert_choice(tie_breaker, choices = c("CD", "HV"))
 
   if (method == "indicator_based")
-    assert_data_frame(archive, ncols = ncol(points), null.ok = FALSE)
+    assert_data_frame(archive, ncols = ncol(points), null.ok = TRUE)
 
   # maximize/minimize preprocessing: switch sign in each dim to maximize (since emoa maximizes)
   points = mapply(`*`, points, c(minimize * 2 - 1))
@@ -49,7 +49,7 @@ select_survivors = function(points, n_select, ref_point = NULL, minimize = TRUE,
   if (!is.null(ref_point)) {
     ref_point = ref_point * (minimize * 2 - 1)
   } else {
-    ref_point = apply(points, 1, max)
+    ref_point = apply(points, 2, max)
   }
 
   # init output indices
@@ -57,7 +57,7 @@ select_survivors = function(points, n_select, ref_point = NULL, minimize = TRUE,
 
   if (method == "dominance_based") {
 
-    front_ranks = pareto_rank(points, maximise = FALSE)
+    front_ranks = eaf::pareto_rank(points, maximise = FALSE)
 
     breaked_front = min(which(cumsum(table(front_ranks)) > n_select))
     sel_surv = survivors[front_ranks < breaked_front]
@@ -101,19 +101,19 @@ select_survivors = function(points, n_select, ref_point = NULL, minimize = TRUE,
     # for every proposed point, get the hypervolume contribution
     hvc = unlist(lapply(seq_row(points), function(i) {
 
-      to_eval = points[i, ]
+      to_eval = points[i, , drop = FALSE]
 
       arch_size = nrow(archive)
 
       # combine archive with the point and compute the hypervolume contribution of this point
-      if (arch_size > 0) {
+      if (!is.null(arch_size) && arch_size > 0) {
         to_eval = rbind(to_eval, archive)
       }
 
-      hv_contributions(to_eval, reference = ref_point, maximise = FALSE)[1]
+      eaf::hv_contributions(to_eval, reference = ref_point, maximise = FALSE)[1]
     }))
 
-    sel_surv = order(hvc, decreasing = TRUE)[n_select]
+    sel_surv = order(hvc, decreasing = TRUE)[seq_len(n_select)]
   }
 
   return(sel_surv)

@@ -18,7 +18,8 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
           custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)), 
         ParamInt$new("n", lower = 1), # TODO: Check if boundaries are correct
         ParamDbl$new("r", lower = 1e-8), # TODO: Check if boundaries are correct
-        ParamFct$new("mo_method", levels = c("indicator_based", "dominance_based", "scalarized")),
+        ParamFct$new("mo_method", levels = c("indicator_based", "dominance_based", "scalarized"), default = "dominance_based"),
+        ParamFct$new("tie_breaker", levels = c("CD", "HV"), default = "CD"),        
         ParamInt$new("np", lower = 1L)
       ))
 
@@ -55,6 +56,7 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
       mo_archive = data.frame()
 
       mo_method = pars$mo_method
+      tie_breaker = pars$tie_breaker
 
       ps_sampler = ps$clone()$subset(setdiff(ps$ids(), budget_id))
       if (is.null(sampler)) {
@@ -83,7 +85,7 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
 
       # Number of stages so that the last stages evaluates more than 1
       # configuration
-      k_n = floor(log(n / size_front, eta))
+      k_n = floor(log(n / reduce_to, eta))
 
       # The number of halvings we can perform 
       k = min(k_n, k_r)
@@ -97,6 +99,7 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
       print("Design of the bracket:")
       print(design)
 
+      mo_archive = NULL
 
       for (o in seq_len(outer_iters)) {
 
@@ -105,7 +108,7 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
           ni = ceiling(n * eta^(-i))
           ri = r_min * eta^i 
 
-          if (s == 0) {
+          if (i == 0) {
             xdt = sampler$sample(ni)$data
             xdt$continue_hash = seq(nrow(xdt))
           } else {
@@ -119,7 +122,7 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
             } else {
               row_ids = select_survivors(points = y, n_select = ni,
                 minimize = minimize, method = mo_method, tie_breaker = tie_breaker, 
-                archive = mo_archive)
+                archive = mo_archive[, inst$objective$codomain$ids(), with = FALSE])
             }
             xdt = data[row_ids, c(archive$cols_x, "continue_hash"), with = FALSE]
           }
@@ -130,13 +133,16 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
           inst$eval_batch(xdt)
         }
 
-        if (nrow(mo_archive) == 0) {
+        if (is.null(mo_archive)) {
           mo_archive = inst$archive$data[stage == i + 1, ]
         } else {
           mo_archive = rbind(mo_archive, inst$archive$data[stage == i + 1, ])
         }
       }
-
+    }, 
+    .assign_result = function(inst) {
+      assert_multi_class(inst, c("OptimInstanceMultiCrit", "OptimInstanceSingleCrit", "TuningInstanceSingleCrit", "TuningInstanceMultiCrit"))
+      assign_result_default(inst) 
     }
   )
 )

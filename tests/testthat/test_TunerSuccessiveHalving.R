@@ -27,42 +27,25 @@ test_that("TunerHyperband singlecrit", {
       resampling =  rsmp("holdout"), measure = msrs(measures), terminator = term,
       search_space = par.set)
 
-    tuner = mlr3tuning::tnr("sh", eta = 2, n = 2^5, r = 20, mo_method = "indicator_based", np = 5)
+    tuner = mlr3tuning::tnr("sh", eta = 2, n = 2^5, r = 20, mo_method = "indicator_based", np = 2, tie_breaker = "CD")
 
     tuner$optimize(inst)
 
-    df = as.data.frame(inst$archive$data)
-    df$cum_budget = cumsum(df$budget)
-    df$cum_max = cummax(df$classif.acc)
 
-
-    # Compare against a standard random search 
- 	term = trm("evals", n_evals = round((2^8 - 20) / 2)) 
-
-    inst = TuningInstanceSingleCrit$new(task = task, learner = learner,
-      resampling =  rsmp("holdout"), measure = msr(measures), terminator = term,
+    inst = TuningInstanceMultiCrit$new(task = task, learner = learner,
+      resampling =  rsmp("holdout"), measure = msrs(measures), terminator = term,
       search_space = par.set)
 
- 	tuner = mlr3tuning::tnr("random_search")
+    tuner = mlr3tuning::tnr("sh", eta = 2, n = 2^5, r = 20, mo_method = "dominance_based", np = 1, tie_breaker = "CD")
 
- 	tuner$optimize(inst)
-
-    df2 = as.data.frame(inst$archive$data)
-    df2$cum_budget = cumsum(df2$nrounds)
-    df2$cum_max = cummax(df2$classif.acc)
-
-    library(ggplot2)
-
-    p = ggplot(data = df, aes(x = (cum_budget), y = cum_max)) + geom_line()
-
-    p + geom_line(data = df2, aes(x = (cum_budget), y = cum_max), colour = "blue")
-
-
+    tuner$optimize(inst)
 })
 
 
 
 test_that("TunerSuccessiveHalving synthetic", {
+
+	mlr_tuners$add("sh", TunerSuccessiveHalving)	
 
 	# Define objective function
 	fun = function(xs) {
@@ -110,9 +93,4 @@ test_that("TunerSuccessiveHalving synthetic", {
     tuner = mlr3tuning::tnr("sh", eta = 2, n = 2^5, r = 2, mo_method = "indicator_based", np = 5)
 
     tuner$optimize(inst)
-
-
-	term = trm("none")
-
-
 })
