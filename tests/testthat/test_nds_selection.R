@@ -18,6 +18,7 @@ points = matrix(
     ), byrow = FALSE, nrow = 2L
   )
 
+points = as.data.frame(t(points))
 
 test_that("nds_selection basics", {
 

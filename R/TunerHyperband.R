@@ -225,9 +225,9 @@ TunerHyperband = R6Class("TunerHyperband",
       eta = self$param_set$values$eta
       sampler = self$param_set$values$sampler
       ps = inst$search_space
-      measures = inst$objective$measures
-      msr_ids = ids(measures)
-      to_minimize = map_lgl(measures, "minimize")
+
+      if (class(inst) %in% c(""))
+        to_minimize = inst$objective$codomain$tags == "minimize"
 
       if (length(msr_ids) > 1) {
         require_namespaces("emoa")
