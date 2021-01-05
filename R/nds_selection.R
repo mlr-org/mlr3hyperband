@@ -19,7 +19,7 @@
 #'
 #' @return `integer()`
 #' @usage NULL
-select_survivors = function(points, n_select, ref_point = NULL, minimize = TRUE, 
+select_survivors = function(points, n_select, ref_point = NULL, minimize = TRUE,
   method = "dominance_based", tie_breaker = "HV", archive = NULL) {
 
   require_namespaces("emoa")
@@ -71,7 +71,7 @@ select_survivors = function(points, n_select, ref_point = NULL, minimize = TRUE,
         # choose additional candidates based on crowding distance
         tie_surv = head(order(emoa::crowding_distance(t(as.matrix(tie_points))), decreasing = TRUE), n_select - length(sel_surv))
         sel_surv = c(sel_surv, tie_idx[tie_surv])
-      } 
+      }
 
       if (tie_breaker == "HV") {
 
@@ -94,7 +94,7 @@ select_survivors = function(points, n_select, ref_point = NULL, minimize = TRUE,
         sel_surv = c(sel_surv, tie_idx)
       }
     }
-  } 
+  }
 
   if (method == "indicator_based") {
 
@@ -110,7 +110,8 @@ select_survivors = function(points, n_select, ref_point = NULL, minimize = TRUE,
         to_eval = rbind(to_eval, archive)
       }
 
-      eaf::hv_contributions(to_eval, reference = ref_point, maximise = FALSE)[1]
+      #eaf::hv_contributions(to_eval, reference = ref_point, maximise = FALSE)[1]
+      emoa::dominated_hypervolume(t(to_eval), ref_point)
     }))
 
     sel_surv = order(hvc, decreasing = TRUE)[seq_len(n_select)]
