@@ -7,7 +7,7 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
   public = list(
 
     mo_archive = NULL,
-    
+
     #' @description
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
@@ -15,11 +15,11 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
       ps = ParamSet$new(list(
         ParamDbl$new("eta", lower = 1.0001, tags = "required", default = 2),
         ParamUty$new("sampler",
-          custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)), 
+          custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)),
         ParamInt$new("n", lower = 1), # TODO: Check if boundaries are correct
         ParamDbl$new("r", lower = 1e-8), # TODO: Check if boundaries are correct
         ParamFct$new("mo_method", levels = c("indicator_based", "dominance_based", "scalarized"), default = "dominance_based"),
-        ParamFct$new("tie_breaker", levels = c("CD", "HV"), default = "CD"),        
+        ParamFct$new("tie_breaker", levels = c("CD", "HV"), default = "CD"),
         ParamInt$new("np", lower = 1L)
       ))
 
@@ -31,7 +31,7 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
         properties = c("dependencies", "single-crit", "multi-crit"),
         packages = character(0)
       )
-    }, 
+    },
 
     optimize = function(inst) {
       assert_multi_class(inst, c("OptimInstanceMultiCrit", "OptimInstanceSingleCrit", "TuningInstanceSingleCrit", "TuningInstanceMultiCrit"))
@@ -39,12 +39,12 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
     }
   ),
 
-  private = list(    
+  private = list(
     .optimize = function(inst) {
 
       pars = self$param_set$values
       n = pars$n
-      np = pars$np 
+      np = pars$np
       r_min = pars$r
 
       eta = pars$eta
@@ -53,7 +53,7 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
       budget_id = ps$ids(tags = "budget")
       assert_character(budget_id, len = 1)
 
-      mo_archive = data.frame()
+      self$mo_archive = NULL
 
       mo_method = pars$mo_method
       tie_breaker = pars$tie_breaker
@@ -69,8 +69,8 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
       if (is.null(r_min))
         r_min = ps$lower[[budget_id]]
 
-      r_max = ps$upper[[budget_id]]     
-    
+      r_max = ps$upper[[budget_id]]
+
       # Budget needs to be numeric
       assert_choice(ps$class[[budget_id]], c("ParamInt", "ParamDbl"))
 
@@ -87,7 +87,7 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
       # configuration
       k_n = floor(log(n / reduce_to, eta))
 
-      # The number of halvings we can perform 
+      # The number of halvings we can perform
       k = min(k_n, k_r)
 
       # Budget used (each step evaluates (n * eta^(-s)) x r * eta^s evalations)
@@ -106,7 +106,7 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
         for(i in seq(0, k)) {
 
           ni = ceiling(n * eta^(-i))
-          ri = r_min * eta^i 
+          ri = r_min * eta^i
 
           if (i == 0) {
             xdt = sampler$sample(ni)$data
@@ -121,8 +121,8 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
               row_ids = tail(order(y, decreasing = minimize), ni)
             } else {
               row_ids = select_survivors(points = y, n_select = ni,
-                minimize = minimize, method = mo_method, tie_breaker = tie_breaker, 
-                archive = mo_archive[, inst$objective$codomain$ids(), with = FALSE])
+                minimize = minimize, method = mo_method, tie_breaker = tie_breaker,
+                archive = self$mo_archive[, inst$objective$codomain$ids(), with = FALSE])
             }
             xdt = data[row_ids, c(archive$cols_x, "continue_hash"), with = FALSE]
           }
@@ -133,16 +133,18 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
           inst$eval_batch(xdt)
         }
 
-        if (is.null(mo_archive)) {
-          mo_archive = inst$archive$data[stage == i + 1, ]
+        if (is.null(self$mo_archive)) {
+          self$mo_archive = inst$archive$data[stage == i + 1 & outer_stage == o, ]
+          self$mo_archive = undominated(self$mo_archive, inst$objective$codomain$ids())
         } else {
-          mo_archive = rbind(mo_archive, inst$archive$data[stage == i + 1, ])
+          self$mo_archive = rbind(self$mo_archive, inst$archive$data[stage == i + 1 & outer_stage == o, ])
+          self$mo_archive = undominated(self$mo_archive, inst$objective$codomain$ids())
         }
       }
-    }, 
+    },
     .assign_result = function(inst) {
       assert_multi_class(inst, c("OptimInstanceMultiCrit", "OptimInstanceSingleCrit", "TuningInstanceSingleCrit", "TuningInstanceMultiCrit"))
-      assign_result_default(inst) 
+      assign_result_default(inst)
     }
   )
 )

@@ -98,23 +98,57 @@ select_survivors = function(points, n_select, ref_point = NULL, minimize = TRUE,
 
   if (method == "indicator_based") {
 
-    # for every proposed point, get the hypervolume contribution
-    hvc = unlist(lapply(seq_row(points), function(i) {
+    cur_archive = archive
+    cur_points = points
 
-      to_eval = points[i, , drop = FALSE]
+    sel_surv = c()
 
+    if(is.null(archive)){
+      arch_size=2^-1
+    }
+    else{
       arch_size = nrow(archive)
+    }
 
-      # combine archive with the point and compute the hypervolume contribution of this point
-      if (!is.null(arch_size) && arch_size > 0) {
-        to_eval = rbind(to_eval, archive)
+    for(i in 0:floor(log(arch_size, 2)+1)){
+      cur_arch_size = floor(arch_size/2^i)
+      if(!is.null(cur_archive)){
+        cur_archive = cur_archive[
+          sample(1:nrow(cur_archive), cur_arch_size, replace = FALSE), ,drop = FALSE]
       }
 
-      #eaf::hv_contributions(to_eval, reference = ref_point, maximise = FALSE)[1]
-      emoa::dominated_hypervolume(t(to_eval), ref_point)
-    }))
+      # for every proposed point, get the hypervolume contribution
+      indices = setdiff(seq_row(points), sel_surv)
+      hvc = unlist(lapply(indices, function(i) {
 
-    sel_surv = order(hvc, decreasing = TRUE)[seq_len(n_select)]
+        eval_point = points[i, , drop = FALSE]
+
+        # combine archive with the point and compute the hypervolume contribution of this point
+        if (cur_arch_size > 0) {
+          to_eval = rbind(eval_point, cur_archive)
+          if(is_dom(eval_point, to_eval)){
+            return(Inf)
+          }
+        }else{
+          to_eval = eval_point
+        }
+
+        -emoa::dominated_hypervolume(t(to_eval), ref_point)
+      }))
+
+      sb_idx = strictly_better_idx(hvc, n_select-length(sel_surv))
+      sel_surv = c(sel_surv, indices[order(hvc)[seq_len(sb_idx)]])
+
+      if(length(sel_surv) == n_select){
+        break
+      }
+      if(cur_arch_size == 0){
+        sel_surv = c(sel_surv, setdiff(seq_row(points), sel_surv))
+      }
+
+      }
+
+    sel_surv = sel_surv[seq_len(n_select)]
   }
 
   return(sel_surv)
