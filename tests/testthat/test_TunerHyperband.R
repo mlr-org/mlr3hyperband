@@ -18,7 +18,6 @@ test_that("TunerHyperband works with TuningInstanceMultiCrit", {
   test_tuner_hyperband(eta = 2L, lower_budget = 1, upper_budget = 8, term_evals = 10, n_dim = 2L, measures = c("classif.fpr", "classif.tpr"))
 })
 
-
 test_that("TunerHyperband works with subsampling", {
   skip_if_not_installed("mlr3pipelines")
   library(mlr3pipelines)
