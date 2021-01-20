@@ -161,7 +161,7 @@
 #'
 #' @export
 #' @examples
-#' if(requirenamespace("xgboost")) {
+#' if(requireNamespace("xgboost")) {
 #' library(mlr3)
 #' library(mlr3learners)
 #' library(paradox)

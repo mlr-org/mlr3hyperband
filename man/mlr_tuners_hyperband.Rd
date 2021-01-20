@@ -171,7 +171,7 @@ logger. To hide the \link{mlr3} logging messages run:\preformatted{lgr::get_logg
 }
 
 \examples{
-if(requirenamespace("xgboost")) {
+if(requireNamespace("xgboost")) {
 library(mlr3)
 library(mlr3learners)
 library(paradox)
