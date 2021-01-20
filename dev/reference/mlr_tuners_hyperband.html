@@ -365,7 +365,8 @@ logger. To hide the <a href='https://mlr3.mlr-org.com/reference/mlr3-package.htm
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://mlr3.mlr-org.com'>mlr3</a></span><span class='op'>)</span>
+    <pre class="examples"><div class='input'><span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/ns-load.html'>requireNamespace</a></span><span class='op'>(</span><span class='st'>"xgboost"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://mlr3.mlr-org.com'>mlr3</a></span><span class='op'>)</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://mlr3learners.mlr-org.com'>mlr3learners</a></span><span class='op'>)</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://paradox.mlr-org.com'>paradox</a></span><span class='op'>)</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://mlr3tuning.mlr-org.com'>mlr3tuning</a></span><span class='op'>)</span>
@@ -398,24 +399,24 @@ logger. To hide the <a href='https://mlr3.mlr-org.com/reference/mlr3-package.htm
 <span class='co'># \donttest{</span>
 <span class='co'># Trigger optimization</span>
 <span class='va'>tuner</span><span class='op'>$</span><span class='fu'>optimize</span><span class='op'>(</span><span class='va'>inst</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [04:55:02] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
-#&gt; [04:55:02] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
-#&gt; [04:55:02] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
-#&gt; [04:55:02] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
-#&gt; [04:55:02] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
-#&gt; [04:55:02] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
-#&gt; [04:55:03] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
-#&gt; [04:55:03] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
-#&gt; [04:55:03] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
-#&gt; [04:55:03] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
-#&gt; [04:55:03] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
-#&gt; [04:55:03] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
-#&gt; [04:55:03] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
-#&gt; [04:55:03] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.</div><div class='output co'>#&gt;    nrounds       eta booster learner_param_vals  x_domain classif.ce
-#&gt; 1:       2 0.9176605    dart          &lt;list[4]&gt; &lt;list[3]&gt;       0.04</div><div class='input'>
+
 <span class='co'># Print all evaluations</span>
 <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/as.data.table.html'>as.data.table</a></span><span class='op'>(</span><span class='va'>inst</span><span class='op'>$</span><span class='va'>archive</span><span class='op'>)</span><span class='co'># }</span>
-</div><div class='output co'>#&gt;            eta  booster nrounds bracket bracket_stage budget_scaled budget_real
+<span class='op'>}</span>
+</div><div class='output co'>#&gt; <span class='message'>Loading required namespace: xgboost</span></div><div class='output co'>#&gt; [14:15:52] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
+#&gt; [14:15:52] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
+#&gt; [14:15:52] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
+#&gt; [14:15:52] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
+#&gt; [14:15:52] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
+#&gt; [14:15:52] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
+#&gt; [14:15:53] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
+#&gt; [14:15:53] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
+#&gt; [14:15:53] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
+#&gt; [14:15:53] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
+#&gt; [14:15:53] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
+#&gt; [14:15:54] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
+#&gt; [14:15:54] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
+#&gt; [14:15:54] WARNING: amalgamation/../src/learner.cc:1061: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'multi:softprob' was changed from 'merror' to 'mlogloss'. Explicitly set eval_metric if you'd like to restore the old behavior.</div><div class='output co'>#&gt;            eta  booster nrounds bracket bracket_stage budget_scaled budget_real
 #&gt;  1: 0.03745117     dart       1       2             0             1           1
 #&gt;  2: 0.59355379     dart       1       2             0             1           1
 #&gt;  3: 0.23697755   gbtree       1       2             0             1           1
@@ -431,35 +432,35 @@ logger. To hide the <a href='https://mlr3.mlr-org.com/reference/mlr3-package.htm
 #&gt; 13: 0.86661570     dart       4       0             0             4           4
 #&gt; 14: 0.23845311 gblinear       4       0             0             4           4
 #&gt;     n_configs classif.ce                                uhash
-#&gt;  1:         4       0.08 2fd6aab1-935a-4319-99a7-2910c5b37c79
-#&gt;  2:         4       0.08 001987d2-fa08-497f-8d04-39c5761f9571
-#&gt;  3:         4       0.08 0af212d4-cadf-4caf-b7a0-1ab356121fda
-#&gt;  4:         4       0.08 962e366d-3866-4657-9ba7-ce0b22da166f
-#&gt;  5:         2       0.08 19199f03-6720-4939-91fc-e74baa1d35b3
-#&gt;  6:         2       0.08 067731dc-a866-4944-8f98-a0a3df8fd576
-#&gt;  7:         1       0.08 124963b5-c172-43be-bf42-d669d22c93e1
-#&gt;  8:         3       0.04 28bf0cb4-9cba-4143-ba56-894c1c2b6453
-#&gt;  9:         3       0.40 4c53f6ba-7e4c-4bc1-a00a-3f3f1b63dbcb
-#&gt; 10:         3       0.04 04b6da5d-6e82-48f8-954c-b642aa1f3d17
-#&gt; 11:         1       0.04 0b62e6e5-e1df-49ee-8359-f46048d14925
-#&gt; 12:         3       0.04 f0b06ecd-4324-4f77-853b-aeafcbb53098
-#&gt; 13:         3       0.04 67ece663-3135-418c-8d30-ab2917d4a644
-#&gt; 14:         3       0.40 75a47e58-29c5-44ce-9681-20ff0369ea5a
+#&gt;  1:         4       0.08 ef713b31-ff54-453f-8988-f8d81eb64d4d
+#&gt;  2:         4       0.08 46c5bbab-9224-49d6-ba9f-10b22df28d30
+#&gt;  3:         4       0.08 b4422678-da31-4dbb-be2d-654b2472db1e
+#&gt;  4:         4       0.08 eaf02558-5d0a-4e36-8e38-635594643904
+#&gt;  5:         2       0.08 e7da44d3-6d5c-40c3-85dd-ffa9d7c3d743
+#&gt;  6:         2       0.08 08cc4be6-684a-4ccf-a826-4dcec8ef2813
+#&gt;  7:         1       0.08 09057204-8b76-415a-ac56-b586fba95bf5
+#&gt;  8:         3       0.04 6ecd2904-cfc9-4680-b4e5-2e04eec37a21
+#&gt;  9:         3       0.40 71375f4f-7498-4561-ab30-2328f9f95d32
+#&gt; 10:         3       0.04 aa7d289e-2168-4a5f-98a4-8349fc4ae242
+#&gt; 11:         1       0.04 17cb1f33-aaf2-4ddf-8e6c-97f7a0d6510b
+#&gt; 12:         3       0.04 1e73f497-510c-4bf8-abac-5002697a2ef9
+#&gt; 13:         3       0.04 c39ccae8-e957-4a48-a0f3-429701a3986e
+#&gt; 14:         3       0.40 e3dc85d4-b4d2-46c2-abb5-a6f2d1e57b57
 #&gt;               timestamp batch_nr x_domain_nrounds x_domain_eta x_domain_booster
-#&gt;  1: 2021-01-20 04:55:02        1                1   0.03745117             dart
-#&gt;  2: 2021-01-20 04:55:02        1                1   0.59355379             dart
-#&gt;  3: 2021-01-20 04:55:02        1                1   0.23697755           gbtree
-#&gt;  4: 2021-01-20 04:55:02        1                1   0.90629727             dart
-#&gt;  5: 2021-01-20 04:55:02        2                2   0.03745117             dart
-#&gt;  6: 2021-01-20 04:55:02        2                2   0.59355379             dart
-#&gt;  7: 2021-01-20 04:55:03        3                4   0.03745117             dart
-#&gt;  8: 2021-01-20 04:55:03        4                2   0.91766051             dart
-#&gt;  9: 2021-01-20 04:55:03        4                2   0.97284422         gblinear
-#&gt; 10: 2021-01-20 04:55:03        4                2   0.81908245             dart
-#&gt; 11: 2021-01-20 04:55:03        5                4   0.91766051             dart
-#&gt; 12: 2021-01-20 04:55:03        6                4   0.72175973           gbtree
-#&gt; 13: 2021-01-20 04:55:03        6                4   0.86661570             dart
-#&gt; 14: 2021-01-20 04:55:03        6                4   0.23845311         gblinear</div></pre>
+#&gt;  1: 2021-01-20 14:15:52        1                1   0.03745117             dart
+#&gt;  2: 2021-01-20 14:15:52        1                1   0.59355379             dart
+#&gt;  3: 2021-01-20 14:15:52        1                1   0.23697755           gbtree
+#&gt;  4: 2021-01-20 14:15:52        1                1   0.90629727             dart
+#&gt;  5: 2021-01-20 14:15:53        2                2   0.03745117             dart
+#&gt;  6: 2021-01-20 14:15:53        2                2   0.59355379             dart
+#&gt;  7: 2021-01-20 14:15:53        3                4   0.03745117             dart
+#&gt;  8: 2021-01-20 14:15:53        4                2   0.91766051             dart
+#&gt;  9: 2021-01-20 14:15:53        4                2   0.97284422         gblinear
+#&gt; 10: 2021-01-20 14:15:53        4                2   0.81908245             dart
+#&gt; 11: 2021-01-20 14:15:54        5                4   0.91766051             dart
+#&gt; 12: 2021-01-20 14:15:54        6                4   0.72175973           gbtree
+#&gt; 13: 2021-01-20 14:15:54        6                4   0.86661570             dart
+#&gt; 14: 2021-01-20 14:15:54        6                4   0.23845311         gblinear</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
