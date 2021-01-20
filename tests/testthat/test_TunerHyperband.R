@@ -6,6 +6,7 @@ context("TunerHyperband")
 
 
 test_that("TunerHyperband singlecrit", {
+  skip_if_not_installed("xgboost")
   set.seed(1234)
   test_tuner_hyperband(eta = 3L, lower_b = 1, upper_b = 27)
   test_tuner_hyperband(eta = 2L, lower_b = 1, upper_b = 8, term_evals = 10, n_dim = 2L)
@@ -14,7 +15,9 @@ test_that("TunerHyperband singlecrit", {
 
 
 test_that("TunerHyperband multicrit", {
+  skip_if_not_installed("xgboost")
   set.seed(1234)
+  skip_if_not_installed
   test_tuner_hyperband(eta = 3L, lower_b = 1, upper_b = 27, measures = c("classif.fpr", "classif.tpr"))
   test_tuner_hyperband(eta = 2L, lower_b = 1, upper_b = 8, term_evals = 10, n_dim = 2L, measures = c("classif.fpr", "classif.tpr"))
 
@@ -52,6 +55,7 @@ test_that("TunerHyperband multicrit", {
 
 
 test_that("TunerHyperband using CV", {
+  skip_if_not_installed("xgboost")
   set.seed(123)
 
   # define hyperparameter and budget parameter for tuning with hyperband
@@ -82,6 +86,7 @@ test_that("TunerHyperband using CV", {
 
 
 test_that("TunerHyperband using subsampling", {
+  skip_if_not_installed("mlr3pipelines")
   set.seed(123)
 
   # define Graph Learner from rpart with subsampling as preprocessing step
@@ -116,6 +121,7 @@ test_that("TunerHyperband using subsampling", {
 
 
 test_that("TunerHyperband using subsampling and non-integer eta", {
+  skip_if_not_installed("mlr3pipelines")
   set.seed(123)
 
   # define Graph Learner from rpart with subsampling as preprocessing step
@@ -150,6 +156,7 @@ test_that("TunerHyperband using subsampling and non-integer eta", {
 
 
 test_that("TunerHyperband using param trafo and non-integer eta", {
+  skip_if_not_installed("xgboost")
   set.seed(123)
 
   #FIXME: This Test does not what it is intendet to do
@@ -185,6 +192,7 @@ test_that("TunerHyperband using param trafo and non-integer eta", {
 
 
 test_that("TunerHyperband using custom sampler", {
+  skip_if_not_installed("xgboost")
   set.seed(123)
 
   # define hyperparameter and budget parameter for tuning with hyperband
@@ -243,6 +251,7 @@ test_that("TunerHyperband using custom sampler", {
 
 
 test_that("TunerHyperband invalid input", {
+  skip_if_not_installed("xgboost")
   set.seed(123)
 
   # non numberish budget param

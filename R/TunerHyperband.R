@@ -161,6 +161,7 @@
 #'
 #' @export
 #' @examples
+#' if(requirenamespace("xgboost")) {
 #' library(mlr3)
 #' library(mlr3learners)
 #' library(paradox)
@@ -197,6 +198,7 @@
 #'
 #' # Print all evaluations
 #' as.data.table(inst$archive)}
+#' }
 TunerHyperband = R6Class("TunerHyperband",
   inherit = Tuner,
   public = list(
