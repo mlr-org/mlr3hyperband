@@ -1,3 +1,4 @@
+library(checkmate)
 library(mlr3)
 library(mlr3misc)
 library(mlr3pipelines)
