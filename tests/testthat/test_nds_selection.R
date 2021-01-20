@@ -1,6 +1,5 @@
-context("nds_selection")
-
-points = matrix(
+test_that("nds_selection basics", {
+  points = matrix(
     c( # front 1
       # emoa puts always Inf weight on boundary points, so they always survive 
       # points 1 and points 4 have the highest hypervolume contributions 
@@ -18,8 +17,6 @@ points = matrix(
     ), byrow = FALSE, nrow = 2L
   )
 
-
-test_that("nds_selection basics", {
 
   # list of possible results for each n_select value
   results = list(
@@ -60,5 +57,4 @@ test_that("nds_selection basics", {
       res = unique(res)
       expect_set_equal(res, results[[i]])
   }
-
 })

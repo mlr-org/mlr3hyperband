@@ -1,25 +1,20 @@
-library(mlr3learners)
-library(mlr3pipelines)
-library(checkmate)
+  library(mlr3learners)
+  library(mlr3pipelines)
 
-context("TunerHyperband")
-
-
-test_that("TunerHyperband singlecrit", {
+test_that("TunerHyperband works with TuningInstanceSingleCrit", {
   skip_if_not_installed("xgboost")
-  set.seed(1234)
-  test_tuner_hyperband(eta = 3L, lower_b = 1, upper_b = 27)
-  test_tuner_hyperband(eta = 2L, lower_b = 1, upper_b = 8, term_evals = 10, n_dim = 2L)
-  test_tuner_hyperband_dependencies(eta = 3L, lower_b = 1, upper_b = 27)
+
+  test_tuner_hyperband(eta = 3L, lower_budget = 1, upper_budget = 27)
+  test_tuner_hyperband(eta = 2L, lower_budget = 1, upper_budget = 8, term_evals = 10, n_dim = 2L)
+  test_tuner_hyperband_dependencies(eta = 3L, lower_budget = 1, upper_budget = 27)
 })
 
 
 test_that("TunerHyperband multicrit", {
   skip_if_not_installed("xgboost")
-  set.seed(1234)
-  skip_if_not_installed
-  test_tuner_hyperband(eta = 3L, lower_b = 1, upper_b = 27, measures = c("classif.fpr", "classif.tpr"))
-  test_tuner_hyperband(eta = 2L, lower_b = 1, upper_b = 8, term_evals = 10, n_dim = 2L, measures = c("classif.fpr", "classif.tpr"))
+
+  test_tuner_hyperband(eta = 3L, lower_budget = 1, upper_budget = 27, measures = c("classif.fpr", "classif.tpr"))
+  test_tuner_hyperband(eta = 2L, lower_budget = 1, upper_budget = 8, term_evals = 10, n_dim = 2L, measures = c("classif.fpr", "classif.tpr"))
 
   params = ParamSet$new(list(
     ParamDbl$new("cp", lower = 0.001, upper = 0.1),
@@ -39,12 +34,10 @@ test_that("TunerHyperband multicrit", {
 
   tuner = tnr("hyperband", eta = 4L)
   tuner$optimize(inst)
-  # lapply(inst$pareto_front(), expect_resample_result)
 
   results = inst$archive$data[, c(inst$archive$cols_x, inst$archive$cols_y), with = FALSE]
 
   expect_data_table(results, ncols = 4, nrows = 7)
-
   assert_data_table(inst$result)
   assert_list(inst$result_learner_param_vals, types = "list")
   assert_names(names(inst$result_learner_param_vals[[1]]), must.include = params$ids())
@@ -56,8 +49,7 @@ test_that("TunerHyperband multicrit", {
 
 test_that("TunerHyperband using CV", {
   skip_if_not_installed("xgboost")
-  set.seed(123)
-
+  
   # define hyperparameter and budget parameter for tuning with hyperband
   ps = ParamSet$new(list(
     ParamInt$new("nrounds", lower = 1, upper = 8, tags = "budget"),
