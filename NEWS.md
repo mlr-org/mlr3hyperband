@@ -1,3 +1,7 @@
+# mlr3hyperband 0.1.1.9000
+
+* Internal changes only.
+
 # mlr3hyperband 0.1.1
 
 * Fixed dependency on `emoa`.
