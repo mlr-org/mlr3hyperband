@@ -1,7 +1,7 @@
 test_that("TunerHyperband works with TuningInstanceSingleCrit", {
   skip_if_not_installed("mlr3learners")
   skip_if_not_installed("xgboost")
-  library(mlr3learners)
+  library(mlr3learners) # nolint
 
   test_tuner_hyperband(eta = 3L, lower_budget = 1, upper_budget = 27)
   test_tuner_hyperband(eta = 2L, lower_budget = 1, upper_budget = 8, term_evals = 10, n_dim = 2L)
@@ -12,7 +12,7 @@ test_that("TunerHyperband works with TuningInstanceSingleCrit", {
 test_that("TunerHyperband works with TuningInstanceMultiCrit", {
   skip_if_not_installed("mlr3learners")
   skip_if_not_installed("xgboost")
-  library(mlr3learners)
+  library(mlr3learners) # nolint
 
   test_tuner_hyperband(eta = 3L, lower_budget = 1, upper_budget = 27, measures = c("classif.fpr", "classif.tpr"))
   test_tuner_hyperband(eta = 2L, lower_budget = 1, upper_budget = 8, term_evals = 10, n_dim = 2L, measures = c("classif.fpr", "classif.tpr"))
@@ -46,7 +46,7 @@ test_that("TunerHyperband works with subsampling", {
 test_that("TunerHyperband works with custom sampler", {
   skip_if_not_installed("mlr3learners")
   skip_if_not_installed("xgboost")
-  library(mlr3learners)
+  library(mlr3learners) # nolint
 
   search_space = ps(
     nrounds = p_int(lower = 1, upper = 8, tags = "budget"),
@@ -96,7 +96,7 @@ test_that("TunerHyperband works with custom sampler", {
 test_that("TunerHyperband throws an error if budget parameter is invalid", {
   skip_if_not_installed("mlr3learners")
   skip_if_not_installed("xgboost")
-  library(mlr3learners)
+  library(mlr3learners) # nolint
 
   # non-numeric budget parameter
   search_space = ps(
