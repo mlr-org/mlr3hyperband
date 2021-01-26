@@ -8,7 +8,6 @@ test_that("TunerHyperband works with TuningInstanceSingleCrit", {
   test_tuner_hyperband_dependencies(eta = 3L, lower_budget = 1, upper_budget = 27)
 })
 
-
 test_that("TunerHyperband works with TuningInstanceMultiCrit", {
   skip_if_not_installed("mlr3learners")
   skip_if_not_installed("xgboost")
@@ -91,7 +90,6 @@ test_that("TunerHyperband works with custom sampler", {
     regexp = "Assertion on 'sampler$param_set$ids()' failed: Must be equal to set {'eta','booster'}, but is {'nrounds','eta','booster'}.",
     fixed = TRUE)
 })
-
 
 test_that("TunerHyperband throws an error if budget parameter is invalid", {
   skip_if_not_installed("mlr3learners")
