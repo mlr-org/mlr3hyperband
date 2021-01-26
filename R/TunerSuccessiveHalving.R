@@ -81,7 +81,7 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
           # xdt$continue_hash = seq(nrow(xdt))
         } else {
           archive = inst$archive
-          data = archive$data()[batch_nr %in% archive$n_batch]
+          data = archive$data[batch_nr %in% archive$n_batch]
           y = data[, archive$cols_y, with = FALSE]
           minimize = !as.logical(mult_max_to_min(archive$codomain))
 
@@ -90,11 +90,8 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
           } else {
             row_ids = nds_selection(points = t(as.matrix(y)), n_select = ni, minimize = minimize)
           }
-          browser()
-          continue_hash = data[row_ids, uhash]
-          inst$objective$continue_hash =
+          inst$objective$continue_hash = data[row_ids, uhash]
           xdt = data[row_ids, archive$cols_x, with = FALSE]
-
         }
         xdt[[budget_id]] = ri
         xdt$stage = i + 1

@@ -34,10 +34,10 @@ test_tuner_hyperband = function(eta, n_dim = 1L, term_evals = NULL, lower_budget
   }
 
   if (length(measures) == 1) {
-    instance = TuningInstanceSingleCrit$new(task = task, learner = learner, resampling =  rsmp("holdout"), 
+    instance = TuningInstanceSingleCrit$new(task = task, learner = learner, resampling =  rsmp("holdout"),
       measure = msr(measures), terminator = terminator, search_space = search_space)
   } else {
-    instance = TuningInstanceMultiCrit$new(task = task, learner = learner, resampling = rsmp("holdout"), 
+    instance = TuningInstanceMultiCrit$new(task = task, learner = learner, resampling = rsmp("holdout"),
       measures = lapply(measures, msr), terminator = terminator, search_space = search_space)
   }
 
@@ -101,7 +101,7 @@ expect_hyperband_brackets = function(eta, lower_budget, upper_budget, archive) {
   expect_equal(hb_meta_info, tuner_info)
   expect_equal(real_evals, archive$n_evals)
   expect_data_table(archive$data, nrows = real_evals)
-})
+}
 
 test_tuner_successive_halving = function(n, eta, sampler = NULL, n_dim = 1L,
   lower_bound = 1, upper_bound = 16, task = tsk("pima"),
@@ -125,13 +125,11 @@ test_tuner_successive_halving = function(n, eta, sampler = NULL, n_dim = 1L,
   }
 
   if (length(measures) == 1) {
-    instance = TuningInstanceSingleCrit$new(task, learner, resampling,
-      measures, search_space, terminator, store_models = store_models,
-      check_values = TRUE)
+    instance = TuningInstanceSingleCrit$new(task, learner, resampling, measures, terminator, search_space,
+      store_models = store_models, check_values = TRUE)
   } else {
-    instance = TuningInstanceMultiCrit$new(task, learner, resampling,
-      measures, search_space, terminator, store_models = store_models,
-      check_values = TRUE)
+    instance = TuningInstanceMultiCrit$new(task, learner, resampling, measures, terminator, search_space, 
+      store_models = store_models, check_values = TRUE)
   }
 
   tuner = tnr("successive_halving", n = n, eta = eta, sampler = sampler)
