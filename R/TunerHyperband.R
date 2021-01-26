@@ -228,10 +228,10 @@ TunerHyperband = R6Class("TunerHyperband",
       sampler = self$param_set$values$sampler
       ps = inst$search_space
       measures = inst$objective$measures
-      msr_ids = ids(measures)
       to_minimize = map_lgl(measures, "minimize")
+      archive = inst$archive
 
-      if (length(msr_ids) > 1) {
+      if (archive$codomain$length > 1) {
         require_namespaces("emoa")
       }
 
@@ -281,12 +281,14 @@ TunerHyperband = R6Class("TunerHyperband",
       # outer loop - iterating over brackets
       for (bracket in seq(bracket_max, 0)) {
 
+        # continue hash might be set by previous bracket
+        inst$objective$continue_hash = NULL
+
         # for less confusion of the user we start the print with bracket 1
         lg$info("Start evaluation of bracket %i", bracket_max - bracket + 1)
 
         # amount of active configs and budget in bracket
-        mu_start = mu_current =
-          ceiling((B * eta^bracket) / (config_max_b * (bracket + 1)))
+        mu_start = mu_current = ceiling((B * eta^bracket) / (config_max_b * (bracket + 1)))
 
         budget_start = budget_current = config_max_b / eta^bracket
 
@@ -317,34 +319,27 @@ TunerHyperband = R6Class("TunerHyperband",
           if (stage > 0) {
 
             # get performance of each active configuration
-            configs_perf = inst$archive$data[, msr_ids, with = FALSE]
-            n_rows = nrow(configs_perf)
-            configs_perf = configs_perf[(n_rows - mu_previous + 1):n_rows]
+            data = archive$data[batch_nr %in% archive$n_batch]
+            y = data[, archive$cols_y, with = FALSE]
 
             # select best mu_current indices
-            if (length(msr_ids) < 2) {
-
-              # single crit
-              ordered_perf = order(configs_perf[[msr_ids]],
-                decreasing = !to_minimize)
-              best_indices = ordered_perf[seq_len(mu_current)]
-
+            minimize = !as.logical(mult_max_to_min(archive$codomain))
+            if (archive$codomain$length == 1) {
+              # single-crit
+              row_ids = head(order(y, decreasing = minimize), mu_current)
             } else {
-
-              # multi crit
-              best_indices = nds_selection(
-                points = t(as.matrix(configs_perf[, msr_ids, with = FALSE])),
-                n_select = mu_current, minimize = to_minimize)
+              # multi-crit
+              row_ids = nds_selection(points = t(as.matrix(y)), n_select = mu_current, minimize = minimize)
             }
-
+ 
             # update active configurations
-            assert_integer(best_indices, lower = 1,
-              upper = nrow(active_configs))
-            active_configs = active_configs[best_indices]
-          } else {
-            # set continue_hash
-            active_configs[["continue_hash"]] = paste0(bracket, seq(nrow(active_configs)))
+            assert_integer(row_ids, lower = 1, upper = nrow(active_configs))
+            active_configs = data[row_ids, archive$cols_x, with = FALSE]
+
+            # set continue hash
+            inst$objective$continue_hash = data[row_ids, uhash]
           }
+
 
           # overwrite active configurations with the current budget
           active_configs[[budget_id]] = budget_current_real
@@ -357,7 +352,7 @@ TunerHyperband = R6Class("TunerHyperband",
             budget_real = budget_current_real,
             n_configs = mu_current
           )
-
+          
           inst$eval_batch(xdt)
         }
       }
