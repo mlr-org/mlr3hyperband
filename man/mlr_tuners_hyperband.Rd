@@ -171,6 +171,7 @@ logger. To hide the \link{mlr3} logging messages run:\preformatted{lgr::get_logg
 }
 
 \examples{
+if(requireNamespace("xgboost")) {
 library(mlr3)
 library(mlr3learners)
 library(paradox)
@@ -179,14 +180,14 @@ library(mlr3hyperband)
 
 # Define hyperparameter and budget parameter for tuning with hyperband
 ps = ParamSet$new(list(
-  ParamInt$new("nrounds", lower = 1, upper = 16, tag = "budget"),
+  ParamInt$new("nrounds", lower = 1, upper = 4, tag = "budget"),
   ParamDbl$new("eta", lower = 0, upper = 1),
   ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
 ))
+
 # Define termination criterion
-# Usually, trm("none") since hyperband terminates itself but to keep this
-# example short we use 20 evaluations.
-terminator = trm("evals", n_evals = 20)
+# Hyperband terminates itself
+terminator = trm("none")
 
 # Create tuning instance
 inst = TuningInstanceSingleCrit$new(
@@ -201,11 +202,13 @@ inst = TuningInstanceSingleCrit$new(
 # Load tuner
 tuner = tnr("hyperband", eta = 2L)
 
+\donttest{
 # Trigger optimization
 tuner$optimize(inst)
 
 # Print all evaluations
-inst$archive$data()
+as.data.table(inst$archive)}
+}
 }
 \section{Super class}{
 \code{\link[mlr3tuning:Tuner]{mlr3tuning::Tuner}} -> \code{TunerHyperband}

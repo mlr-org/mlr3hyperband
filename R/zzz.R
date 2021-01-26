@@ -8,7 +8,7 @@
 #' @importFrom R6 R6Class
 "_PACKAGE"
 
-.onLoad = function(libname, pkgname) {
+.onLoad = function(libname, pkgname) { # nolint
   # nocov start
   # add hyperband to sugar
   x = utils::getFromNamespace("mlr_tuners", ns = "mlr3tuning")
