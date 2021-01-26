@@ -136,14 +136,12 @@ test_tuner_successive_halving = function(n, eta, sampler = NULL, n_dim = 1L,
   expect_tuner(tuner)
 
   tuner$optimize(instance)
-  archive = instance$archive$data()
+  archive = instance$archive$data
 
   budget = archive[, search_space$ids(tags = "budget"), with = FALSE]
   expect_lte(max(budget), upper_bound)
   expect_gte(min(budget), lower_bound)
 }
-
-
 
 # test hyperband tuner with depedencies in parameters
 test_tuner_hyperband_dependencies = function(eta, term_evals = NULL, lower_budget, upper_budget) {
