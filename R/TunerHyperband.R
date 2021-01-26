@@ -157,10 +157,11 @@
 #' ```
 #'
 #' @source
-#' `r tools::toRd(bibentries["li_2018"])`
+#' `r format_bib("li_2018")`
 #'
 #' @export
 #' @examples
+#' if(requireNamespace("xgboost")) {
 #' library(mlr3)
 #' library(mlr3learners)
 #' library(paradox)
@@ -190,13 +191,14 @@
 #'
 #' # Load tuner
 #' tuner = tnr("hyperband", eta = 2L)
-#' 
+#'
 #' \donttest{
 #' # Trigger optimization
 #' tuner$optimize(inst)
 #'
 #' # Print all evaluations
-#' inst$archive$data()}
+#' as.data.table(inst$archive)}
+#' }
 TunerHyperband = R6Class("TunerHyperband",
   inherit = Tuner,
   public = list(
@@ -215,7 +217,7 @@ TunerHyperband = R6Class("TunerHyperband",
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
         param_set = ps,
         properties = c("dependencies", "single-crit", "multi-crit"),
-        packages = "emoa" # used in nds_selection()
+        packages = character(0)
       )
     }
   ),
@@ -228,6 +230,10 @@ TunerHyperband = R6Class("TunerHyperband",
       measures = inst$objective$measures
       msr_ids = ids(measures)
       to_minimize = map_lgl(measures, "minimize")
+
+      if (length(msr_ids) > 1) {
+        require_namespaces("emoa")
+      }
 
       # name of the hyperparameters with a budget tag
       budget_id = ps$ids(tags = "budget")
@@ -311,7 +317,7 @@ TunerHyperband = R6Class("TunerHyperband",
           if (stage > 0) {
 
             # get performance of each active configuration
-            configs_perf = inst$archive$data()[, msr_ids, with = FALSE]
+            configs_perf = inst$archive$data[, msr_ids, with = FALSE]
             n_rows = nrow(configs_perf)
             configs_perf = configs_perf[(n_rows - mu_previous + 1):n_rows]
 
