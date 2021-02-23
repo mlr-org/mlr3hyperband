@@ -57,7 +57,7 @@ inst = TuningInstanceSingleCrit$new(
 )
 
 # Load tuner
-tuner = tnr("successive_halving", eta = 2L)
+tuner = tnr("successive_halving", n = 16L, eta = 2L)
 
 \donttest{
 # Trigger optimization

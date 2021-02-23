@@ -51,7 +51,7 @@
 #' )
 #'
 #' # Load tuner
-#' tuner = tnr("successive_halving", eta = 2L)
+#' tuner = tnr("successive_halving", n = 16L, eta = 2L)
 #'
 #' \donttest{
 #' # Trigger optimization
@@ -68,12 +68,12 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
       ps = ParamSet$new(list(
-        ParamInt$new("n", lower = 1),
-        ParamDbl$new("eta", lower = 1.0001),
+        ParamInt$new("n", lower = 1, default = 16),
+        ParamDbl$new("eta", lower = 1.0001, default = 2),
         ParamUty$new("sampler",
           custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE))
       ))
-      ps$values = list(eta = 2, sampler = NULL)
+      ps$values = list(n = 16L, eta = 2L, sampler = NULL)
 
       super$initialize(
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
