@@ -3,9 +3,16 @@
 \name{mlr_tuners_successive_halving}
 \alias{mlr_tuners_successive_halving}
 \alias{TunerSuccessiveHalving}
-\title{Tuner using the Successive Halving}
+\title{Hyperparameter Tuning with Successive Halving}
+\source{
+Jamieson K, Talwalkar A (2016).
+\dQuote{Non-stochastic Best Arm Identification and Hyperparameter Optimization.}
+In Gretton A, Robert CC (eds.), \emph{Proceedings of the 19th International Conference on Artificial Intelligence and Statistics}, volume 51 series Proceedings of Machine Learning Research, 240-248.
+\url{http://proceedings.mlr.press/v51/jamieson16.html}.
+}
 \description{
-Successive Halving Algorithm.
+\code{TunerSuccessiveHalving} class that implements the successive halving
+algorithm.
 }
 \section{Parameters}{
 
@@ -13,7 +20,7 @@ Successive Halving Algorithm.
 \item{\code{n}}{\code{integer(1)}\cr
 Number of configurations in first stage.}
 \item{\code{eta}}{\code{numeric(1)}\cr
-With every step the configuration budget is increased by a factor of \code{eta}
+With every step, the configuration budget is increased by a factor of \code{eta}
 and only the best \code{1/eta} configurations are used for the next stage.
 Non-integer values are supported, but \code{eta} is not allowed to be less or
 equal 1.}
@@ -23,6 +30,43 @@ the initialization of each bracket. The default is uniform sampling.}
 }
 }
 
+\examples{
+if(requireNamespace("xgboost")) {
+library(mlr3hyperband)
+library(mlr3learners)
+
+# Define hyperparameter and budget parameter for tuning with hyperband
+search_space = ParamSet$new(list(
+  ParamInt$new("nrounds", lower = 1, upper = 4, tag = "budget"),
+  ParamDbl$new("eta", lower = 0, upper = 1),
+  ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
+))
+
+# Define termination criterion
+# Successive halving terminates itself
+terminator = trm("none")
+
+# Create tuning instance
+inst = TuningInstanceSingleCrit$new(
+  task = tsk("iris"),
+  learner = lrn("classif.xgboost"),
+  resampling = rsmp("holdout"),
+  measure = msr("classif.ce"),
+  terminator = terminator,
+  search_space = search_space,
+)
+
+# Load tuner
+tuner = tnr("successive_halving", eta = 2L)
+
+\donttest{
+# Trigger optimization
+tuner$optimize(inst)
+
+# Print all evaluations
+as.data.table(inst$archive)}
+}
+}
 \section{Super class}{
 \code{\link[mlr3tuning:Tuner]{mlr3tuning::Tuner}} -> \code{TunerSuccessiveHalving}
 }

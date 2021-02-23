@@ -169,7 +169,7 @@
 #' library(mlr3hyperband)
 #'
 #' # Define hyperparameter and budget parameter for tuning with hyperband
-#' ps = ParamSet$new(list(
+#' search_space = ParamSet$new(list(
 #'   ParamInt$new("nrounds", lower = 1, upper = 4, tag = "budget"),
 #'   ParamDbl$new("eta", lower = 0, upper = 1),
 #'   ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
@@ -185,8 +185,8 @@
 #'   learner = lrn("classif.xgboost"),
 #'   resampling = rsmp("holdout"),
 #'   measure = msr("classif.ce"),
-#'   search_space = ps,
 #'   terminator = terminator,
+#'   search_space = search_space,
 #' )
 #'
 #' # Load tuner
@@ -331,7 +331,7 @@ TunerHyperband = R6Class("TunerHyperband",
               # multi-crit
               row_ids = nds_selection(points = t(as.matrix(y)), n_select = mu_current, minimize = minimize)
             }
- 
+
             # update active configurations
             assert_integer(row_ids, lower = 1, upper = nrow(active_configs))
             active_configs = data[row_ids, archive$cols_x, with = FALSE]
@@ -339,7 +339,6 @@ TunerHyperband = R6Class("TunerHyperband",
             # set continue hash
             inst$objective$continue_hash = data[row_ids, uhash]
           }
-
 
           # overwrite active configurations with the current budget
           active_configs[[budget_id]] = budget_current_real
@@ -352,7 +351,7 @@ TunerHyperband = R6Class("TunerHyperband",
             budget_real = budget_current_real,
             n_configs = mu_current
           )
-          
+
           inst$eval_batch(xdt)
         }
       }
