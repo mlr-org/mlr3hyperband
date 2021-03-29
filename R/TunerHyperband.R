@@ -335,9 +335,6 @@ TunerHyperband = R6Class("TunerHyperband",
             # update active configurations
             assert_integer(row_ids, lower = 1, upper = nrow(active_configs))
             active_configs = data[row_ids, archive$cols_x, with = FALSE]
-
-            # set continue hash
-            inst$objective$continue_hash = data[row_ids, uhash]
           }
 
           # overwrite active configurations with the current budget

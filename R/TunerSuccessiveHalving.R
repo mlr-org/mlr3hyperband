@@ -70,8 +70,7 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
       ps = ParamSet$new(list(
         ParamInt$new("n", lower = 1, default = 16),
         ParamDbl$new("eta", lower = 1.0001, default = 2),
-        ParamUty$new("sampler",
-          custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE))
+        ParamUty$new("sampler", custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE))
       ))
       ps$values = list(n = 16L, eta = 2L, sampler = NULL)
 
@@ -91,7 +90,7 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
       eta = pars$eta
       sampler = pars$sampler
       ps = inst$search_space
-      budget_id = ps$ids(tags = "budget")
+      budget_id = ps$ids(tags = "retrain")
 
       ps_sampler = ps$clone()$subset(setdiff(ps$ids(), budget_id))
       if (is.null(sampler)) {
@@ -101,20 +100,18 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
       r_min = ps$lower[[budget_id]]
       r_max = ps$upper[[budget_id]]
 
-      # Number of stages if each configuration in the fist stage uses r_min
-      # resources and each configuration in the last stage uses not more than
-      # r_max resources
+      # number of stages if each configuration in the fist stage uses r_min resources
+      # and each configuration in the last stage uses not more than r_max resources
       k_n = floor(log(r_max / r_min, eta))
 
-      # Number of stages so that the last stages evaluates more than 1
-      # configuration
+      # number of stages so that the last stages evaluates at least one configuration
       k_r = floor(log(n, eta))
 
       k = min(k_n, k_r)
 
       for (i in 0:k) {
-        ni = ceiling(n * eta^(-i)) # Number of configurations in stage
-        ri = r_min * eta^i # Resources of each configuration in stage
+        ni = floor(n * eta^(-i)) # number of configurations in stage
+        ri = r_min * eta^i # resources of each configuration in stage
 
         if (i == 0) {
           xdt = sampler$sample(ni)$data
@@ -127,10 +124,8 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
           if (archive$codomain$length == 1) {
             row_ids = head(order(y, decreasing = minimize), ni)
           } else {
-            row_ids = nds_selection(points = t(as.matrix(y)), n_select = ni,
-              minimize = minimize)
+            row_ids = nds_selection(points = t(as.matrix(y)), n_select = ni, minimize = minimize)
           }
-          inst$objective$continue_hash = data[row_ids, uhash]
           xdt = data[row_ids, archive$cols_x, with = FALSE]
         }
         xdt[[budget_id]] = ri
