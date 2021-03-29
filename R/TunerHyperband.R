@@ -281,9 +281,6 @@ TunerHyperband = R6Class("TunerHyperband",
       # outer loop - iterating over brackets
       for (bracket in seq(bracket_max, 0)) {
 
-        # continue hash might be set by previous bracket
-        inst$objective$continue_hash = NULL
-
         # for less confusion of the user we start the print with bracket 1
         lg$info("Start evaluation of bracket %i", bracket_max - bracket + 1)
 
