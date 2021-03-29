@@ -23,7 +23,7 @@ test_that("TunerHyperband works with subsampling", {
 
   # define Graph Learner from rpart with subsampling as preprocessing step
   pops = po("subsample")
-  graph_learner = pops %>>% lrn("classif.rpart")
+  graph_learner = as_learner(pops %>>% lrn("classif.rpart"))
 
   # define with extended hyperparameters with subsampling fraction as budget
   # ==> no learner budget is required
