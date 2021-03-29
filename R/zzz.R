@@ -13,6 +13,7 @@
   # add hyperband to sugar
   x = utils::getFromNamespace("mlr_tuners", ns = "mlr3tuning")
   x$add("hyperband", TunerHyperband)
+  x$add("successive_halving", TunerSuccessiveHalving)
 
   assign("lg", lgr::get_logger("bbotk"), envir = parent.env(environment()))
 

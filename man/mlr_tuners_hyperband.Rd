@@ -179,7 +179,7 @@ library(mlr3tuning)
 library(mlr3hyperband)
 
 # Define hyperparameter and budget parameter for tuning with hyperband
-ps = ParamSet$new(list(
+search_space = ParamSet$new(list(
   ParamInt$new("nrounds", lower = 1, upper = 4, tag = "budget"),
   ParamDbl$new("eta", lower = 0, upper = 1),
   ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
@@ -195,8 +195,8 @@ inst = TuningInstanceSingleCrit$new(
   learner = lrn("classif.xgboost"),
   resampling = rsmp("holdout"),
   measure = msr("classif.ce"),
-  search_space = ps,
   terminator = terminator,
+  search_space = search_space,
 )
 
 # Load tuner
