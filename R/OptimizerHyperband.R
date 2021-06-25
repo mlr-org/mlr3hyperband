@@ -185,6 +185,7 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
 
   private = list(
     .optimize = function(inst) {
+      browser()
       eta = self$param_set$values$eta
       sampler = self$param_set$values$sampler
       ps = inst$search_space
