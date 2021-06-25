@@ -1,66 +1,45 @@
+
 # mlr3hyperband
 
-Package website: [release](https://mlr3hyperband.mlr-org.com/) | [dev](https://mlr3hyperband.mlr-org.com/dev/)
+Package website: [release](https://mlr3hyperband.mlr-org.com/) |
+[dev](https://mlr3hyperband.mlr-org.com/dev/)
 
 <!-- badges: start -->
+
 [![tic](https://github.com/mlr-org/mlr3hyperband/workflows/tic/badge.svg?branch=main)](https://github.com/mlr-org/mlr3hyperband/actions)
-[![CRAN Status](https://www.r-pkg.org/badges/version-ago/mlr3hyperband)](https://cran.r-project.org/package=mlr3hyperband)
+[![CRAN
+Status](https://www.r-pkg.org/badges/version-ago/mlr3hyperband)](https://cran.r-project.org/package=mlr3hyperband)
 [![StackOverflow](https://img.shields.io/badge/stackoverflow-mlr3-orange.svg)](https://stackoverflow.com/questions/tagged/mlr3)
 [![Mattermost](https://img.shields.io/badge/chat-mattermost-orange.svg)](https://lmmisld-lmu-stats-slds.srv.mwn.de/mlr_invite/)
 [![CodeFactor](https://www.codefactor.io/repository/github/mlr-org/mlr3hyperband/badge)](https://www.codefactor.io/repository/github/mlr-org/mlr3hyperband)
 <!-- badges: end -->
 
-This package provides hyperband tuning for [mlr3](https://mlr3.mlr-org.com).
-Various termination criteria can be set and combined. The class 'AutoTuner'
-provides a convenient way to perform nested resampling in combination with
-'mlr3'.
+This package provides hyperband tuning for
+[`mlr3`](https://mlr3.mlr-org.com).
 
 ## Installation
 
-CRAN version
+Install the last release from CRAN:
 
-```r
+``` r
 install.packages("mlr3hyperband")
 ```
 
-Development version
+Install the development version from GitHub:
 
-```r
+``` r
 remotes::install_github("mlr-org/mlr3hyperband")
 ```
 
-## Quickstart
+## Resources
 
-If you are already familiar with `mlr3tuning`, then the only change
-compared to other tuners is to give a numeric hyperparameter a
-`budget` tag. Afterwards, you can handle hyperband like all other
-tuners:
+  - mlr3book chapter on
+    [hyperband](https://mlr3book.mlr-org.com/hyperband.html) and
+    [hyperparameter tuning](https://mlr3book.mlr-org.com/tuning.html).
+  - The original [paper](https://arxiv.org/abs/1603.06560) introducing
+    the hyperband algorithm.
 
-``` r
-library(paradox)
-library(mlr3tuning)
-library(mlr3hyperband)
-
-# give a hyperparameter the "budget" tag
-params = list(
-  ParamInt$new("nrounds", lower = 1, upper = 16, tags = "budget"),
-  ParamDbl$new("eta",     lower = 0, upper = 1),
-  ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
-)
-
-inst = ...  # here goes the usual mlr3tuning TuningInstance constructor
-
-# initialize hyperband tuner
-tuner = tnr("hyperband", eta = 2L)
-
-# tune the previously defined TuningInstance
-tuner$optimize(inst)
-```
-
-For the full working example, please check out the Examples section
-below.
-
-## A short description of hyperband
+## Short description
 
 Hyperband is a budget oriented-procedure, weeding out suboptimally
 performing configurations early on during their training process aiming
@@ -72,96 +51,84 @@ configurations are evaluated for a increasing budget in each stage. Note
 that currently all configurations are trained completely from the
 beginning, so no online updates to the models are performed.
 
-Different brackets are initialized with different number of configurations, and
-different budget sizes. To identify the budget for evaluating hyperband, the
-user has to specify explicitly which hyperparameter of the learner influences
-the budget by tagging a single hyperparameter in the parameter set with
-`"budget"`. An alternative approach using subsampling and pipelines is described
-further below.
+Different brackets are initialized with different number of
+configurations, and different budget sizes. To identify the budget for
+evaluating hyperband, the user has to specify explicitly which
+hyperparameter of the learner influences the budget by tagging a single
+hyperparameter in the parameter set with `"budget"`. An alternative
+approach using subsampling and pipelines is described further below.
 
 ## Examples
 
+### Basic
+
+If you are already familiar with `mlr3tuning`, then the only change
+compared to other tuners is to give a numeric hyperparameter a `budget`
+tag. Afterwards, you can handle hyperband like all other tuners.
 Originally, hyperband was created with a “natural” learning parameter as
-the budget parameter in mind, like `nrounds` of the XGBoost learner:
+the budget parameter in mind, like `nrounds` of the XGBoost learner.
 
 ``` r
-library(mlr3)
-library(mlr3hyperband) # hyperband tuner
-library(mlr3tuning) # tuning methods
-library(mlr3learners) # xgboost learner
-library(paradox) # search space definition
-set.seed(123)
+library(mlr3hyperband)
+library(mlr3learners)
 
-# Define hyperparameter and budget parameter for tuning with hyperband
-params = list(
-  ParamInt$new("nrounds", lower = 1, upper = 16, tags = "budget"),
-  ParamDbl$new("eta",     lower = 0, upper = 1),
-  ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
+# define hyperparameter and budget parameter
+search_space = ps(
+  nrounds = p_int(lower = 1, upper = 16, tags = "budget"),
+  eta = p_dbl(lower = 0, upper = 1),
+  booster = p_fct(levels = c("gbtree", "gblinear", "dart"))
 )
 
-# Initialize TuningInstance as usual
-# hyperband terminates on its own, so the terminator acts as a upper bound
-inst = TuningInstanceSingleCrit$new(
-  task = tsk("iris"),
-  learner = lrn("classif.xgboost"),
-  resampling = rsmp("holdout"),
+# hyperparameter tuning on the pima indians diabetes data set
+instance = tune(
+  method = "hyperband",
+  task = tsk("pima"),
+  learner = lrn("classif.xgboost", eval_metric = "logloss"),
+  resampling = rsmp("cv", folds = 3),
   measure = msr("classif.ce"),
-  search_space = ParamSet$new(params),
-  terminator = trm("none") # hyperband terminates on its own
+  search_space = search_space
 )
 
-# Initialize Hyperband Tuner and tune
-tuner = tnr("hyperband", eta = 2L)
-tuner$optimize(inst)
-
-# View results
-inst$result
+# best performing hyperparameter configuration
+instance$result
 ```
+
+    ##    nrounds       eta booster learner_param_vals  x_domain classif.ce
+    ## 1:       2 0.4364793    dart          <list[6]> <list[3]>  0.2669271
 
 Additionally, it is also possible to use `mlr3hyperband` to tune
 learners that do not have a natural fidelity parameter. In such a case
 `mlr3pipelines` can be used to define data subsampling as a
 preprocessing step. Then, the `frac` parameter of subsampling, defining
 the fraction of the training data to be used, can act as the budget
-parameter:
+parameter.
 
 ``` r
-library(mlr3pipelines)
-set.seed(123)
+library(mlr3verse)
+library(mlr3hyperband)
 
-ll = po("subsample") %>>% lrn("classif.rpart")
+learner = po("subsample") %>>% lrn("classif.rpart")
 
-# Define extended hyperparameters with subsampling fraction as budget and hence
-# no learner budget is required
-params = list(
-  ParamDbl$new("classif.rpart.cp", lower = 0.001, upper = 0.1),
-  ParamInt$new("classif.rpart.minsplit", lower = 1, upper = 10),
-  ParamDbl$new("subsample.frac", lower = 0.1, upper = 1, tags = "budget")
+# define subsampling parameter as budget
+search_space = ps(
+  classif.rpart.cp = p_dbl(lower = 0.001, upper = 0.1),
+  classif.rpart.minsplit = p_int(lower = 1, upper = 10),
+  subsample.frac = p_dbl(lower = 0.1, upper = 1, tags = "budget")
 )
 
-# Define TuningInstance with the Graph Learner and the extended hyperparams
-inst = TuningInstanceSingleCrit$new(
-  tsk("iris"),
-  ll,
-  rsmp("holdout"),
-  msr("classif.ce"),
-  ParamSet$new(params),
-  trm("none") # hyperband terminates on its own
+# hyperparameter tuning on the pima indians diabetes data set
+instance = tune(
+  method = "hyperband",
+  task = tsk("pima"),
+  learner = learner,
+  resampling = rsmp("cv", folds = 3),
+  measure = msr("classif.ce"),
+  search_space = search_space
 )
 
-# Initialize Hyperband Tuner and tune
-tuner = tnr("hyperband", eta = 4L)
-tuner$optimize(inst)
-
-# View results
-inst$result
+# best performing hyperparameter configuration
+instance$result
 ```
 
-## Documentation
-
-The function reference is can be found
-[here](https://mlr3hyperband.mlr-org.com/reference/). Further
-documentation lives in the [mlr3book](https://mlr3book.mlr-org.com/).
-
-The original paper introducing the hyperband algorithm is given
-[here](https://arxiv.org/abs/1603.06560).
+    ##    classif.rpart.cp classif.rpart.minsplit subsample.frac learner_param_vals  x_domain classif.ce
+    ## 1:       0.02258595                      4              1          <list[6]> <list[3]>  0.2421875
