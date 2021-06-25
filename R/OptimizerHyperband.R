@@ -107,7 +107,6 @@
 #'
 #' ```
 #' hyperband_brackets = function(R, eta) {
-#'
 #'   result = data.frame()
 #'   smax = floor(log(R, eta))
 #'   B = (smax + 1) * R
@@ -195,7 +194,6 @@
 #' 
 #' # all evaluations
 #' as.data.table(instance$archive)
-
 OptimizerHyperband = R6Class("OptimizerHyperband",
   inherit = Optimizer,
   public = list(
