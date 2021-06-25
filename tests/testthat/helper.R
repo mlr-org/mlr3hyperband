@@ -9,6 +9,7 @@ library(R6)
 lapply(list.files(system.file("testthat", package = "mlr3"), pattern = "^helper.*\\.[rR]$", full.names = TRUE), source)
 lapply(list.files(system.file("testthat", package = "mlr3tuning"), pattern = "^helper.*\\.[rR]$", full.names = TRUE), source)
 # nolint end
+
 test_tuner_hyperband = function(eta, n_dim = 1L, term_evals = NULL, lower_budget, upper_budget, measures = "classif.ce", 
   learner = lrn("classif.xgboost"), task = tsk("pima"), search_space = NULL) {
 

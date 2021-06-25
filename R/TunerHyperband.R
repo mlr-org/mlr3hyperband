@@ -200,155 +200,15 @@
 #' as.data.table(inst$archive)}
 #' }
 TunerHyperband = R6Class("TunerHyperband",
-  inherit = Tuner,
+  inherit = TunerFromOptimizer,
   public = list(
 
     #' @description
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
-      ps = ParamSet$new(list(
-        ParamDbl$new("eta", lower = 1.0001, tags = "required", default = 2),
-        ParamUty$new("sampler",
-          custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE))
-      ))
-      ps$values = list(eta = 2, sampler = NULL)
-
       super$initialize(
-        param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
-        param_set = ps,
-        properties = c("dependencies", "single-crit", "multi-crit"),
-        packages = character(0)
+        optimizer = OptimizerHyperband$new()
       )
-    }
-  ),
-
-  private = list(
-    .optimize = function(inst) {
-      eta = self$param_set$values$eta
-      sampler = self$param_set$values$sampler
-      ps = inst$search_space
-      measures = inst$objective$measures
-      to_minimize = map_lgl(measures, "minimize")
-      archive = inst$archive
-
-      if (archive$codomain$length > 1) {
-        require_namespaces("emoa")
-      }
-
-      # name of the hyperparameters with a budget tag
-      budget_id = ps$ids(tags = "budget")
-      # check if we have EXACTLY 1 budget parameter, or else throw an informative error
-      if (length(budget_id) != 1) {
-        stopf("Exactly one hyperparameter must be tagged with 'budget'")
-      }
-
-      # budget parameter MUST be defined as integer or double in paradox
-      assert_choice(ps$class[[budget_id]], c("ParamInt", "ParamDbl"))
-      ps_sampler = ps$clone()$subset(setdiff(ps$ids(), budget_id))
-
-      # construct unif sampler if non is given
-      if (is.null(sampler)) {
-        sampler = SamplerUnif$new(ps_sampler)
-      } else {
-        assert_set_equal(sampler$param_set$ids(), ps_sampler$ids())
-      }
-
-      # use parameter tagged with 'budget' as budget for hyperband
-      budget_lower = ps$lower[[budget_id]]
-      budget_upper = ps$upper[[budget_id]]
-
-      # we need the budget to start with a SMALL NONNEGATIVE value
-      assert_number(budget_lower, lower = 1e-8)
-
-      # rescale config max budget (:= 'R' in the original paper)
-      # this represents the maximum budget a single configuration
-      # will run for in the last stage of each bracket
-      config_max_b = budget_upper / budget_lower
-
-      # cannot use config_max_b due to stability reasons
-      bracket_max = floor(log(budget_upper, eta) - log(budget_lower, eta))
-      # <=> eta^bracket_max = config_max_b
-      lg$info(
-        "Amount of brackets to be evaluated = %i, ",
-        bracket_max + 1)
-
-      # 'B' is approximately the used budget of an entire bracket.
-      # The reference states a single execution of hyperband uses (smax+1) * B
-      # amount of budget, and with (smax+1) as the amount of brackets follows
-      # the claim. (smax is 'bracket_max' here)
-      B = (bracket_max + 1L) * config_max_b
-
-      # outer loop - iterating over brackets
-      for (bracket in seq(bracket_max, 0)) {
-
-        # for less confusion of the user we start the print with bracket 1
-        lg$info("Start evaluation of bracket %i", bracket_max - bracket + 1)
-
-        # amount of active configs and budget in bracket
-        mu_start = mu_current = ceiling((B * eta^bracket) / (config_max_b * (bracket + 1)))
-
-        budget_start = budget_current = config_max_b / eta^bracket
-
-        # generate design based on given parameter set and sampler
-        active_configs = sampler$sample(mu_current)$data
-
-        # inner loop - iterating over bracket stages
-        for (stage in seq(0, bracket)) {
-
-          # amount of configs of the previous stage
-          mu_previous = mu_current
-
-          # make configs smaller, increase budget and increment stage counter
-          mu_current = floor(mu_start / eta^stage)
-          budget_current = budget_start * eta^stage
-
-          # rescale budget back to real world scale
-          budget_current_real = budget_current * budget_lower
-          # round if the budget is an integer parameter
-          if (ps$class[[budget_id]] == "ParamInt") {
-            budget_current_real = round(budget_current_real)
-          }
-
-          lg$info("Training %i configs with budget of %g for each",
-            mu_current, budget_current_real)
-
-          # only rank and pick configurations if we are not in the first stage
-          if (stage > 0) {
-
-            # get performance of each active configuration
-            data = archive$data[batch_nr %in% archive$n_batch]
-            y = data[, archive$cols_y, with = FALSE]
-
-            # select best mu_current indices
-            minimize = !as.logical(mult_max_to_min(archive$codomain))
-            if (archive$codomain$length == 1) {
-              # single-crit
-              row_ids = head(order(y, decreasing = minimize), mu_current)
-            } else {
-              # multi-crit
-              row_ids = nds_selection(points = t(as.matrix(y)), n_select = mu_current, minimize = minimize)
-            }
-
-            # update active configurations
-            assert_integer(row_ids, lower = 1, upper = nrow(active_configs))
-            active_configs = data[row_ids, archive$cols_x, with = FALSE]
-          }
-
-          # overwrite active configurations with the current budget
-          active_configs[[budget_id]] = budget_current_real
-
-          # extend active_configs with extras
-          xdt = cbind(active_configs,
-            bracket = bracket, # recycling puts this info in each column, ie for each x value we have the same hyperband info
-            bracket_stage = stage,
-            budget_scaled = budget_current,
-            budget_real = budget_current_real,
-            n_configs = mu_current
-          )
-
-          inst$eval_batch(xdt)
-        }
-      }
     }
   )
 )

@@ -23,16 +23,91 @@ different budget sizes. To get an idea of how the bracket layout looks like
 for a given argument set, please have a look in the \code{details}.
 
 To identify the budget for evaluating hyperband, the user has to specify
-explicitly which hyperparameter of the learner influences the budget by
-tagging a single hyperparameter in the \link[paradox:ParamSet]{paradox::ParamSet} with \code{"budget"}.
-An alternative approach using subsampling and pipelines is described below.
+explicitly which parameter of the objective function influences the budget by
+tagging a single parameter in the \link[paradox:ParamSet]{paradox::ParamSet} with \code{"budget"}.
 
 Naturally, hyperband terminates once all of its brackets are evaluated, so a
-\link[bbotk:Terminator]{bbotk::Terminator} in the tuning instance acts as an upper bound and should
-be only set to a low value if one is unsure of how long hyperband will take
-to finish under the given settings.
+\link[bbotk:Terminator]{bbotk::Terminator} in the \link{OptimInstanceSingleCrit} |
+\link{OptimInstanceMultiCrit} acts as an upper bound and should be only set to a
+low value if one is unsure of how long hyperband will take to finish under
+the given settings.
 }
-\details{
+\section{Parameters}{
+
+\describe{
+\item{\code{eta}}{\code{numeric(1)}\cr
+Fraction parameter of the successive halving algorithm: With every step the
+configuration budget is increased by a factor of \code{eta} and only the best
+\code{1/eta} configurations are used for the next stage. Non-integer values are
+supported, but \code{eta} is not allowed to be less or equal 1.}
+\item{\code{sampler}}{\link[paradox:Sampler]{paradox::Sampler}\cr
+Object defining how the samples of the parameter space should be drawn during
+the initialization of each bracket. The default is uniform sampling.}
+}
+}
+
+\section{Archive}{
+
+The \link[bbotk:Archive]{bbotk::Archive} holds the following additional columns that
+are specific to the hyperband tuner:
+\itemize{
+\item \code{bracket} (\code{integer(1)})\cr
+The console logs about the bracket index are actually not matching with
+the original hyperband algorithm, which counts down the brackets and
+stops after evaluating bracket 0. The true bracket indices are given in
+this column.
+\item \code{bracket_stage} (\verb{integer(1))}\cr
+The bracket stage of each bracket. Hyperband starts counting at 0.
+\item \code{budget_scaled} (\code{numeric(1)})\cr
+The intermediate budget in each bracket stage calculated by hyperband.
+Because hyperband is originally only considered for budgets starting at
+1, some rescaling is done to allow budgets starting at different values.
+For this, budgets are internally divided by the lower budget bound to get
+a lower budget of 1. Before the objective function receives its budgets
+for evaluation, the budget is transformed back to match the original
+scale again.
+\item \code{budget_real} (\code{numeric(1)})\cr
+The real budget values the objective function uses for evaluation after
+hyperband calculated its scaled budget.
+\item \code{n_configs} (\code{integer(1)})\cr
+The amount of evaluated configurations in each stage. These correspond to
+the \code{r_i} in the original paper.
+}
+}
+
+\section{Custom sampler}{
+
+Hyperband supports custom \link[paradox:Sampler]{paradox::Sampler} object for initial
+configurations in each bracket.
+A custom sampler may look like this (the full example is given in the
+\code{examples} section):\preformatted{# - beta distribution with alpha = 2 and beta = 5
+# - categorical distribution with custom probabilities
+sampler = SamplerJointIndep$new(list(
+  Sampler1DRfun$new(params[[2]], function(n) rbeta(n, 2, 5)),
+  Sampler1DCateg$new(params[[3]], prob = c(0.2, 0.3, 0.5))
+))
+}
+}
+
+\section{Runtime}{
+
+The calculation of each bracket currently assumes a linear runtime in the
+chosen budget parameter is always given. Hyperband is designed so each
+bracket requires approximately the same runtime as the sum of the budget
+over all configurations in each bracket is roughly the same. This will not
+hold true once the scaling in the budget parameter is not linear
+anymore, even though the sum of the budgets in each bracket remains the
+same. A basic example can be viewed by calling the function
+\code{hyperband_brackets} below with the arguments \code{R = 2} and \code{eta = 2}. If we
+run a learner with O(budget^2) time complexity, the runtime of the last
+bracket will be 33\% longer than the first bracket
+(time of bracket 1 = 2 * 1^2 + 2^2 = 6; time of bracket 2 = 2 * 2^2 = 8).
+Of course, this won't break anything, but it should be kept in mind when
+applying hyperband.
+}
+
+\section{Brakets}{
+
 This sections explains the calculation of the constants for each bracket.
 A small overview will be given here, but for more details please check
 out the original paper (see \code{references}).
@@ -73,103 +148,64 @@ and execute it for the desired \code{R} and \code{eta}.\preformatted{hyperband_b
 hyperband_brackets(R = 81L, eta = 3L)
 }
 }
-\section{Parameters}{
-
-\describe{
-\item{\code{eta}}{\code{numeric(1)}\cr
-Fraction parameter of the successive halving algorithm: With every step the
-configuration budget is increased by a factor of \code{eta} and only the best
-\code{1/eta} configurations are used for the next stage. Non-integer values are
-supported, but \code{eta} is not allowed to be less or equal 1.}
-\item{\code{sampler}}{\link[paradox:Sampler]{paradox::Sampler}\cr
-Object defining how the samples of the parameter space should be drawn during
-the initialization of each bracket. The default is uniform sampling.}
-}
-}
-
-\section{Archive}{
-
-The \link[bbotk:Archive]{bbotk::Archive} holds the following additional columns that
-are specific to the hyperband tuner:
-\itemize{
-\item \code{bracket} (\code{integer(1)})\cr
-The console logs about the bracket index are actually not matching
-with the original hyperband algorithm, which counts down the brackets
-and stops after evaluating bracket 0. The true bracket indices are
-given in this column.
-\item \code{bracket_stage} (\verb{integer(1))}\cr
-The bracket stage of each bracket. Hyperband starts counting at 0.
-\item \code{budget_scaled} (\code{numeric(1)})\cr
-The intermediate budget in each bracket stage calculated by hyperband.
-Because hyperband is originally only considered for budgets starting at 1, some
-rescaling is done to allow budgets starting at different values.
-For this, budgets are internally divided by the lower budget bound to
-get a lower budget of 1. Before the learner
-receives its budgets for evaluation, the budget is transformed back to
-match the original scale again.
-\item \code{budget_real} (\code{numeric(1)})\cr
-The real budget values the learner uses for evaluation after hyperband
-calculated its scaled budget.
-\item \code{n_configs} (\code{integer(1)})\cr
-The amount of evaluated configurations in each stage. These correspond
-to the \code{r_i} in the original paper.
-}
-}
-
-\section{Hyperband without learner budget}{
-
-Thanks to \CRANpkg{mlr3pipelines}, it is possible to use hyperband in
-combination with learners lacking a natural budget parameter. For example,
-any \link[mlr3:Learner]{mlr3::Learner} can be augmented with a \link[mlr3pipelines:PipeOp]{mlr3pipelines::PipeOp}
-operator such as \link[mlr3pipelines:mlr_pipeops_subsample]{mlr3pipelines::PipeOpSubsample}. With the
-subsampling rate as budget parameter, the resulting
-\link[mlr3pipelines:mlr_learners_graph]{mlr3pipelines::GraphLearner} is fitted on small proportions of
-the \link[mlr3:Task]{mlr3::Task} in the first brackets, and on the complete Task in
-last brackets. See examples for some code.
-}
-
-\section{Custom sampler}{
-
-Hyperband supports custom \link[paradox:Sampler]{paradox::Sampler} object for initial
-configurations in each bracket.
-A custom sampler may look like this (the full example is given in the
-\code{examples} section):\preformatted{# - beta distribution with alpha = 2 and beta = 5
-# - categorical distribution with custom probabilities
-sampler = SamplerJointIndep$new(list(
-  Sampler1DRfun$new(params[[2]], function(n) rbeta(n, 2, 5)),
-  Sampler1DCateg$new(params[[3]], prob = c(0.2, 0.3, 0.5))
-))
-}
-}
-
-\section{Runtime scaling w.r.t. the chosen budget}{
-
-The calculation of each bracket currently assumes a linear runtime in the
-chosen budget parameter is always given. Hyperband is designed so each
-bracket requires approximately the same runtime as the sum of the budget
-over all configurations in each bracket is roughly the same. This will not
-hold true once the scaling in the budget parameter is not linear
-anymore, even though the sum of the budgets in each bracket remains the
-same. A basic example can be viewed by calling the function
-\code{hyperband_brackets} below with the arguments \code{R = 2} and \code{eta = 2}. If we
-run a learner with O(budget^2) time complexity, the runtime of the last
-bracket will be 33\% longer than the first bracket
-(time of bracket 1 = 2 * 1^2 + 2^2 = 6; time of bracket 2 = 2 * 2^2 = 8).
-Of course, this won't break anything, but it should be kept in mind when
-applying hyperband. A possible adaption would be to introduce a trafo,
-like it is shown in the \code{examples}.
-}
 
 \section{Logging}{
 
-When loading the \link{mlr3hyperband} package, two loggers based on the \link{lgr}
-package are made available. One is called \code{mlr3}, the other \code{bbotk}. All
-\code{mlr3} methods log into the \code{mlr3} logger. All optimization methods form the
-packags \link{bbotk}, \link{mlr3tuning} and \link{mlr3hyperband} log into the \code{bbotk}
-logger. To hide the \link{mlr3} logging messages run:\preformatted{lgr::get_logger("mlr3")$set_threshold("warn")
+When loading the \link{mlr3hyperband} package, two loggers based on the
+\CRANpkg{lgr} package are made available. One is called \code{mlr3}, the other
+\code{bbotk}. All \code{mlr3} methods log into the \code{mlr3} logger. All optimization
+methods form the packags \link{bbotk}, \link{mlr3tuning} and \link{mlr3hyperband} log into
+the \code{bbotk} logger. To hide the \link{mlr3} logging messages run:\preformatted{lgr::get_logger("mlr3")$set_threshold("warn")
 }
 }
 
+\examples{
+library(bbotk)
+library(mlr3hyperband)
+
+search_space = domain = ps(
+  x1 = p_dbl(-5, 10), 
+  x2 = p_dbl(0, 15), 
+  fidelity = p_dbl(1e-2, 1, tags = "budget")
+)
+
+# modified branin function
+objective = ObjectiveRFunDt$new(
+  fun = function(xdt) {
+    a = 1
+    b = 5.1 / (4 * (pi ^ 2))
+    c = 5 / pi
+    r = 6
+    s = 10
+    t = 1 / (8 * pi)
+    data.table(y = 
+      (a * ((xdt[["x2"]] - 
+      b * (xdt[["x1"]] ^ 2L) + 
+      c * xdt[["x1"]] - r) ^ 2) + 
+      ((s * (1 - t)) * cos(xdt[["x1"]])) + 
+      s - (5 * xdt[["fidelity"]] * xdt[["x1"]])))
+  },
+  domain = domain,
+  codomain = ps(y = p_dbl(tags = "minimize"))
+)
+
+instance = OptimInstanceSingleCrit$new(
+  objective = objective,
+  search_space = search_space,
+  terminator = trm("none")
+)
+
+optimizer = opt("hyperband")
+
+# modifies the instance by reference
+optimizer$optimize(instance)
+
+# best scoring evaluation
+instance$result
+
+# all evaluations
+as.data.table(instance$archive)
+}
 \section{Super class}{
 \code{\link[bbotk:Optimizer]{bbotk::Optimizer}} -> \code{OptimizerHyperband}
 }
