@@ -323,7 +323,7 @@ TunerHyperband = R6Class("TunerHyperband",
             minimize = !as.logical(mult_max_to_min(archive$codomain))
             if (archive$codomain$length == 1) {
               # single-crit
-              row_ids = head(order(y, decreasing = minimize), mu_current)
+              row_ids = head(order(unlist(y), decreasing = minimize), mu_current)
             } else {
               # multi-crit
               row_ids = nds_selection(points = t(as.matrix(y)), n_select = mu_current, minimize = minimize)
