@@ -30,9 +30,59 @@ the initialization of each bracket. The default is uniform sampling.}
 }
 }
 
+\section{Custom sampler}{
+
+Hyperband supports custom \link[paradox:Sampler]{paradox::Sampler} object for initial
+configurations in each bracket.
+A custom sampler may look like this (the full example is given in the
+\emph{examples} section):\preformatted{# - beta distribution with alpha = 2 and beta = 5
+# - categorical distribution with custom probabilities
+sampler = SamplerJointIndep$new(list(
+  Sampler1DRfun$new(params[[2]], function(n) rbeta(n, 2, 5)),
+  Sampler1DCateg$new(params[[3]], prob = c(0.2, 0.3, 0.5))
+))
+}
+}
+
+\section{Runtime}{
+
+The calculation of each bracket currently assumes a linear runtime in the
+chosen budget parameter is always given. Hyperband is designed so each
+bracket requires approximately the same runtime as the sum of the budget
+over all configurations in each bracket is roughly the same. This will not
+hold true once the scaling in the budget parameter is not linear
+anymore, even though the sum of the budgets in each bracket remains the
+same. A possible adaption would be to introduce a trafo, like it is shown in
+the \emph{examples} section.
+}
+
+\section{Progress Bars}{
+
+\verb{$optimize()} supports progress bars via the package \CRANpkg{progressr}
+combined with a \link{Terminator}. Simply wrap the function in
+\code{progressr::with_progress()} to enable them. We recommend to use package
+\CRANpkg{progress} as backend; enable with \code{progressr::handlers("progress")}.
+}
+
+\section{Parallelization}{
+
+In order to support general termination criteria and parallelization, we
+evaluate points in a batch-fashion of size \code{batch_size}. The points of one
+stage in a bracket are evaluated in one batch. Parallelization is supported
+via package \CRANpkg{future} (see \code{\link[mlr3:benchmark]{mlr3::benchmark()}}'s section on
+parallelization for more details).
+}
+
+\section{Logging}{
+
+Hyperband uses a logger (as implemented in \CRANpkg{lgr}) from package
+\CRANpkg{bbotk}.
+Use \code{lgr::get_logger("bbotk")} to access and control the logger.
+}
+
 \examples{
 library(bbotk)
-library(mlr3hyperband)
+library(data.table)
 
 search_space = domain = ps(
   x1 = p_dbl(-5, 10), 

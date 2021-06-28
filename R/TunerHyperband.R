@@ -97,7 +97,7 @@
 #'   booster = p_fct(levels = c("gbtree", "gblinear", "dart"))
 #' )
 #' 
-#' donttest{
+#' \donttest{
 #' # hyperparameter tuning on the pima indians diabetes data set
 #' instance = tune(
 #'   method = "hyperband",

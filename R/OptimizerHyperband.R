@@ -76,7 +76,7 @@
 #' @export
 #' @examples
 #' library(bbotk)
-#' library(mlr3hyperband)
+#' library(data.table)
 #' 
 #' search_space = domain = ps(
 #'   x1 = p_dbl(-5, 10), 

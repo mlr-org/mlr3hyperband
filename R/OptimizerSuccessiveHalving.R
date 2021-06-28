@@ -20,13 +20,19 @@
 #' the initialization of each bracket. The default is uniform sampling.}
 #' }
 #' 
+#' @template section_custom_sampler
+#' @template section_runtime
+#' @template section_progress_bars
+#' @template section_parallelization
+#' @template section_logging
+#' 
 #' @source
 #' `r format_bib("jamieson_2016")`
 #'
 #' @export
 #' @examples
 #' library(bbotk)
-#' library(mlr3hyperband)
+#' library(data.table)
 #' 
 #' search_space = domain = ps(
 #'   x1 = p_dbl(-5, 10), 
@@ -77,16 +83,16 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
     #' @description
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
-      ps = ParamSet$new(list(
-        ParamInt$new("n", lower = 1, default = 16),
-        ParamDbl$new("eta", lower = 1.0001, default = 2),
-        ParamUty$new("sampler", custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE))
-      ))
-      ps$values = list(n = 16L, eta = 2L, sampler = NULL)
+      param_set = ps(
+        n = p_int(lower = 1, default = 16),
+        eta = p_dbl(lower = 1.0001, default = 2),
+        sampler = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE))
+      )
+      param_set$values = list(n = 16L, eta = 2L, sampler = NULL)
 
       super$initialize(
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
-        param_set = ps,
+        param_set = param_set,
         properties = c("dependencies", "single-crit", "multi-crit"),
         packages = "emoa"
       )
@@ -99,16 +105,16 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
       n = pars$n
       eta = pars$eta
       sampler = pars$sampler
-      ps = inst$search_space
-      budget_id = ps$ids(tags = "budget")
+      param_set = inst$search_space
+      budget_id = param_set$ids(tags = "budget")
 
-      ps_sampler = ps$clone()$subset(setdiff(ps$ids(), budget_id))
+      param_set_sampler = param_set$clone()$subset(setdiff(param_set$ids(), budget_id))
       if (is.null(sampler)) {
-        sampler = SamplerUnif$new(ps_sampler)
+        sampler = SamplerUnif$new(param_set_sampler)
       }
 
-      r_min = ps$lower[[budget_id]]
-      r_max = ps$upper[[budget_id]]
+      r_min = param_set$lower[[budget_id]]
+      r_max = param_set$upper[[budget_id]]
 
       # number of stages if each configuration in the fist stage uses r_min resources
       # and each configuration in the last stage uses not more than r_max resources
@@ -138,8 +144,8 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
           }
           xdt = data[row_ids, archive$cols_x, with = FALSE]
         }
-        xdt[[budget_id]] = ri
-        xdt$stage = i + 1
+        set(xdt, j = budget_id, value = ri)
+        set(xdt, j = "stage", value = i + 1)
         inst$eval_batch(xdt)
       }
     }

@@ -32,39 +32,29 @@ the initialization of each bracket. The default is uniform sampling.}
 
 \examples{
 if(requireNamespace("xgboost")) {
-library(mlr3hyperband)
 library(mlr3learners)
 
-# Define hyperparameter and budget parameter for tuning with hyperband
-search_space = ParamSet$new(list(
-  ParamInt$new("nrounds", lower = 1, upper = 4, tag = "budget"),
-  ParamDbl$new("eta", lower = 0, upper = 1),
-  ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
-))
-
-# Define termination criterion
-# Successive halving terminates itself
-terminator = trm("none")
-
-# Create tuning instance
-inst = TuningInstanceSingleCrit$new(
-  task = tsk("iris"),
-  learner = lrn("classif.xgboost"),
-  resampling = rsmp("holdout"),
-  measure = msr("classif.ce"),
-  terminator = terminator,
-  search_space = search_space,
+# define hyperparameter and budget parameter
+search_space = ps(
+  nrounds = p_int(lower = 1, upper = 16, tags = "budget"),
+  eta = p_dbl(lower = 0, upper = 1),
+  booster = p_fct(levels = c("gbtree", "gblinear", "dart"))
 )
 
-# Load tuner
-tuner = tnr("successive_halving", n = 16L, eta = 2L)
-
 \donttest{
-# Trigger optimization
-tuner$optimize(inst)
+# hyperparameter tuning on the pima indians diabetes data set
+instance = tune(
+  method = "successive_halving",
+  task = tsk("pima"),
+  learner = lrn("classif.xgboost", eval_metric = "logloss"),
+  resampling = rsmp("cv", folds = 3),
+  measure = msr("classif.ce"),
+  search_space = search_space
+)
 
-# Print all evaluations
-as.data.table(inst$archive)}
+# best performing hyperparameter configuration
+instance$result
+}
 }
 }
 \section{Super classes}{
