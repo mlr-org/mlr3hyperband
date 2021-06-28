@@ -108,9 +108,7 @@ test_that("TunerHyperband throws an error if budget parameter is invalid", {
     search_space = search_space)
 
   tuner = tnr("hyperband", eta = 2L)
-  expect_error(tuner$optimize(instance), 
-    regexp = "Assertion on 'ps$class[[budget_id]]' failed: Must be element of set {'ParamInt','ParamDbl'}, but is 'ParamFct'", 
-    fixed = TRUE)
+  expect_error(tuner$optimize(instance), regexp = "ParamFct")
 
   # two budget parameters
   search_space = ps(
@@ -124,6 +122,5 @@ test_that("TunerHyperband throws an error if budget parameter is invalid", {
     search_space = search_space)
 
   tuner = tnr("hyperband", eta = 2L)
-  expect_error(tuner$optimize(instance), 
-    regexp = "Exactly one hyperparameter must be tagged with 'budget'", fixed = TRUE)
+  expect_error(tuner$optimize(instance), regexp = "Exactly one hyperparameter must be tagged with 'budget'")
 })
