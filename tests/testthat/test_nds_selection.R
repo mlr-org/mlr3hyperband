@@ -1,6 +1,5 @@
-context("nds_selection")
-
-points = matrix(
+test_that("nds_selection basics", {
+  points = matrix(
     c( # front 1
       # emoa puts always Inf weight on boundary points, so they always survive 
       # points 1 and points 4 have the highest hypervolume contributions 
@@ -18,27 +17,24 @@ points = matrix(
     ), byrow = FALSE, nrow = 2L
   )
 
-
-test_that("nds_selection basics", {
-
   # list of possible results for each n_select value
   results = list(
     # Point 3 is ommitted first, followed by point 2. Then, 1 or 4 survives randomly.
     "1" = c("1", "4"), 
     # Point 3 is ommitted first, followed by point 2. 1 and 4 survive both.
-    "2" = c("14"),
+    "2" = "14",
     # Point 3 is ommited first, so points 1, 2, and 4 survive
-    "3" = c("124"),
+    "3" = "124",
     # All points out of front 1 survive
-    "4" = c("1234"),
+    "4" = "1234",
     # Out of front 2, points 5 is ommitted first, then, either 5 or 7 are sampled randomly
     "5" = c("12345", "12347"),
     # Out of front 2, points 5 is ommitted first, and 5 and 7 survive
-    "6" = c("123457"),
+    "6" = "123457",
     # Whole front 2 survives
-    "7" = c('1234567'),
+    "7" = "1234567",
     # all candidates survive
-    "8" = c('12345678')
+    "8" = "12345678"
     )
 
   for (i in 1:8) {
@@ -60,5 +56,4 @@ test_that("nds_selection basics", {
       res = unique(res)
       expect_set_equal(res, results[[i]])
   }
-
 })
