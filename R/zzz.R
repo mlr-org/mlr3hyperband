@@ -10,10 +10,14 @@
 
 .onLoad = function(libname, pkgname) { # nolint
   # nocov start
-  # add hyperband to sugar
+  # add hyperband to tuner dictionary
   x = utils::getFromNamespace("mlr_tuners", ns = "mlr3tuning")
   x$add("hyperband", TunerHyperband)
   x$add("successive_halving", TunerSuccessiveHalving)
+
+  # add hyperband to optimizer dictionary
+  x = utils::getFromNamespace("mlr_optimizers", ns = "bbotk")
+  x$add("hyperband", OptimizerHyperband)
 
   assign("lg", lgr::get_logger("bbotk"), envir = parent.env(environment()))
 
