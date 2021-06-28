@@ -24,8 +24,54 @@
 #' `r format_bib("jamieson_2016")`
 #'
 #' @export
+#' @examples
+#' library(bbotk)
+#' library(mlr3hyperband)
+#' 
+#' search_space = domain = ps(
+#'   x1 = p_dbl(-5, 10), 
+#'   x2 = p_dbl(0, 15), 
+#'   fidelity = p_dbl(1e-2, 1, tags = "budget")
+#' )
+#' 
+#' # modified branin function
+#' objective = ObjectiveRFunDt$new(
+#'   fun = function(xdt) {
+#'     a = 1
+#'     b = 5.1 / (4 * (pi ^ 2))
+#'     c = 5 / pi
+#'     r = 6
+#'     s = 10
+#'     t = 1 / (8 * pi)
+#'     data.table(y = 
+#'       (a * ((xdt[["x2"]] - 
+#'       b * (xdt[["x1"]] ^ 2L) + 
+#'       c * xdt[["x1"]] - r) ^ 2) + 
+#'       ((s * (1 - t)) * cos(xdt[["x1"]])) + 
+#'       s - (5 * xdt[["fidelity"]] * xdt[["x1"]])))
+#'   },
+#'   domain = domain,
+#'   codomain = ps(y = p_dbl(tags = "minimize"))
+#' )
+#' 
+#' instance = OptimInstanceSingleCrit$new(
+#'   objective = objective,
+#'   search_space = search_space,
+#'   terminator = trm("none")
+#' )
+#' 
+#' optimizer = opt("successive_halving")
+#' 
+#' # modifies the instance by reference
+#' optimizer$optimize(instance)
+#' 
+#' # best scoring evaluation
+#' instance$result
+#' 
+#' # all evaluations
+#' as.data.table(instance$archive)
 OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
-  inherit = bbotk::Optimizer,
+  inherit = Optimizer,
   public = list(
 
     #' @description
@@ -86,7 +132,7 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
           minimize = !as.logical(mult_max_to_min(archive$codomain))
 
           if (archive$codomain$length == 1) {
-            row_ids = head(order(y, decreasing = minimize), ni)
+            row_ids = head(order(unlist(y), decreasing = minimize), ni)
           } else {
             row_ids = nds_selection(points = t(as.matrix(y)), n_select = ni, minimize = minimize)
           }

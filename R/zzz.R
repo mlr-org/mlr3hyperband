@@ -18,6 +18,7 @@
   # add hyperband to optimizer dictionary
   x = utils::getFromNamespace("mlr_optimizers", ns = "bbotk")
   x$add("hyperband", OptimizerHyperband)
+  x$add("successive_halving", OptimizerSuccessiveHalving)
 
   assign("lg", lgr::get_logger("bbotk"), envir = parent.env(environment()))
 
