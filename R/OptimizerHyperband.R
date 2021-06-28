@@ -23,7 +23,11 @@
 #' [OptimInstanceMultiCrit] acts as an upper bound and should be only set to a
 #' low value if one is unsure of how long hyperband will take to finish under
 #' the given settings.
-#'
+#' 
+#' @templateVar id hyperband
+#' 
+#' @template section_dictionary_optimizers
+#' 
 #' @section Parameters:
 #' \describe{
 #' \item{`eta`}{`numeric(1)`\cr
@@ -35,7 +39,7 @@
 #' Object defining how the samples of the parameter space should be drawn during
 #' the initialization of each bracket. The default is uniform sampling.}
 #' }
-#'
+#' 
 #' @section Archive:
 #' The [bbotk::Archive] holds the following additional columns that
 #' are specific to the hyperband tuner:
@@ -132,18 +136,11 @@
 #'
 #' hyperband_brackets(R = 81L, eta = 3L)
 #' ```
-#'
-#' @section Logging:
-#' When loading the [mlr3hyperband] package, two loggers based on the
-#' \CRANpkg{lgr} package are made available. One is called `mlr3`, the other
-#' `bbotk`. All `mlr3` methods log into the `mlr3` logger. All optimization
-#' methods form the packags [bbotk], [mlr3tuning] and [mlr3hyperband] log into
-#' the `bbotk` logger. To hide the [mlr3] logging messages run:
-#'
-#' ```
-#' lgr::get_logger("mlr3")$set_threshold("warn")
-#' ```
-#'
+#' 
+#' @template section_progress_bars
+#' @template section_parallelization
+#' @template section_logging
+#
 #' @source
 #' `r format_bib("li_2018")`
 #'

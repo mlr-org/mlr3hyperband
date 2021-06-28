@@ -23,6 +23,9 @@
 #' [bbotk::Terminator] in the tuning instance acts as an upper bound and should
 #' be only set to a low value if one is unsure of how long hyperband will take
 #' to finish under the given settings.
+#' 
+#' @templateVar id hyperband
+#' @template section_dictionary_optimizers
 #'
 #' @section Parameters:
 #' \describe{
@@ -85,7 +88,7 @@
 #' ))
 #' ```
 #'
-#' @section Runtime scaling w.r.t. the chosen budget:
+#' @section Runtime:
 #' The calculation of each bracket currently assumes a linear runtime in the
 #' chosen budget parameter is always given. Hyperband is designed so each
 #' bracket requires approximately the same runtime as the sum of the budget
@@ -145,16 +148,9 @@
 #' hyperband_brackets(R = 81L, eta = 3L)
 #' ```
 #'
-#' @section Logging:
-#' When loading the [mlr3hyperband] package, two loggers based on the [lgr]
-#' package are made available. One is called `mlr3`, the other `bbotk`. All
-#' `mlr3` methods log into the `mlr3` logger. All optimization methods form the
-#' packags [bbotk], [mlr3tuning] and [mlr3hyperband] log into the `bbotk`
-#' logger. To hide the [mlr3] logging messages run:
-#'
-#' ```
-#' lgr::get_logger("mlr3")$set_threshold("warn")
-#' ```
+#' @template section_progress_bars
+#' @template section_parallelization
+#' @template section_logging
 #'
 #' @source
 #' `r format_bib("li_2018")`
@@ -162,42 +158,29 @@
 #' @export
 #' @examples
 #' if(requireNamespace("xgboost")) {
-#' library(mlr3)
 #' library(mlr3learners)
-#' library(paradox)
-#' library(mlr3tuning)
-#' library(mlr3hyperband)
-#'
-#' # Define hyperparameter and budget parameter for tuning with hyperband
-#' search_space = ParamSet$new(list(
-#'   ParamInt$new("nrounds", lower = 1, upper = 4, tag = "budget"),
-#'   ParamDbl$new("eta", lower = 0, upper = 1),
-#'   ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
-#' ))
-#'
-#' # Define termination criterion
-#' # Hyperband terminates itself
-#' terminator = trm("none")
-#'
-#' # Create tuning instance
-#' inst = TuningInstanceSingleCrit$new(
-#'   task = tsk("iris"),
-#'   learner = lrn("classif.xgboost"),
-#'   resampling = rsmp("holdout"),
-#'   measure = msr("classif.ce"),
-#'   terminator = terminator,
-#'   search_space = search_space,
+#' 
+#' # define hyperparameter and budget parameter
+#' search_space = ps(
+#'   nrounds = p_int(lower = 1, upper = 16, tags = "budget"),
+#'   eta = p_dbl(lower = 0, upper = 1),
+#'   booster = p_fct(levels = c("gbtree", "gblinear", "dart"))
 #' )
-#'
-#' # Load tuner
-#' tuner = tnr("hyperband", eta = 2L)
-#'
-#' \donttest{
-#' # Trigger optimization
-#' tuner$optimize(inst)
-#'
-#' # Print all evaluations
-#' as.data.table(inst$archive)}
+#' 
+#' donttest{
+#' # hyperparameter tuning on the pima indians diabetes data set
+#' instance = tune(
+#'   method = "hyperband",
+#'   task = tsk("pima"),
+#'   learner = lrn("classif.xgboost", eval_metric = "logloss"),
+#'   resampling = rsmp("cv", folds = 3),
+#'   measure = msr("classif.ce"),
+#'   search_space = search_space
+#' )
+#' 
+#' # best performing hyperparameter configuration
+#' instance$result
+#' }
 #' }
 TunerHyperband = R6Class("TunerHyperband",
   inherit = TunerFromOptimizer,

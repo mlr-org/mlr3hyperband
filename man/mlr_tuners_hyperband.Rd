@@ -73,6 +73,14 @@ and execute it for the desired \code{R} and \code{eta}.\preformatted{hyperband_b
 hyperband_brackets(R = 81L, eta = 3L)
 }
 }
+\section{Dictionary}{
+
+This \link{Optimizer} can be instantiated via the \link[mlr3misc:Dictionary]{dictionary}
+\link{mlr_optimizers} or with the associated sugar function \code{\link[=opt]{opt()}}:\preformatted{mlr_optimizers$get("hyperband")
+opt("hyperband")
+}
+}
+
 \section{Parameters}{
 
 \describe{
@@ -142,7 +150,7 @@ sampler = SamplerJointIndep$new(list(
 }
 }
 
-\section{Runtime scaling w.r.t. the chosen budget}{
+\section{Runtime}{
 
 The calculation of each bracket currently assumes a linear runtime in the
 chosen budget parameter is always given. Hyperband is designed so each
@@ -160,54 +168,55 @@ applying hyperband. A possible adaption would be to introduce a trafo,
 like it is shown in the \code{examples}.
 }
 
+\section{Progress Bars}{
+
+\verb{$optimize()} supports progress bars via the package \CRANpkg{progressr}
+combined with a \link{Terminator}. Simply wrap the function in
+\code{progressr::with_progress()} to enable them. We recommend to use package
+\CRANpkg{progress} as backend; enable with \code{progressr::handlers("progress")}.
+}
+
+\section{Parallelization}{
+
+In order to support general termination criteria and parallelization, we
+evaluate points in a batch-fashion of size \code{batch_size}. The points of one
+stage in a bracket are evaluated in one batch. Parallelization is supported
+via package \CRANpkg{future} (see \code{\link[mlr3:benchmark]{mlr3::benchmark()}}'s section on
+parallelization for more details).
+}
+
 \section{Logging}{
 
-When loading the \link{mlr3hyperband} package, two loggers based on the \link{lgr}
-package are made available. One is called \code{mlr3}, the other \code{bbotk}. All
-\code{mlr3} methods log into the \code{mlr3} logger. All optimization methods form the
-packags \link{bbotk}, \link{mlr3tuning} and \link{mlr3hyperband} log into the \code{bbotk}
-logger. To hide the \link{mlr3} logging messages run:\preformatted{lgr::get_logger("mlr3")$set_threshold("warn")
-}
+Hyperband uses a logger (as implemented in \CRANpkg{lgr}) from package
+\CRANpkg{bbotk}.
+Use \code{lgr::get_logger("bbotk")} to access and control the logger.
 }
 
 \examples{
 if(requireNamespace("xgboost")) {
-library(mlr3)
 library(mlr3learners)
-library(paradox)
-library(mlr3tuning)
-library(mlr3hyperband)
 
-# Define hyperparameter and budget parameter for tuning with hyperband
-search_space = ParamSet$new(list(
-  ParamInt$new("nrounds", lower = 1, upper = 4, tag = "budget"),
-  ParamDbl$new("eta", lower = 0, upper = 1),
-  ParamFct$new("booster", levels = c("gbtree", "gblinear", "dart"))
-))
-
-# Define termination criterion
-# Hyperband terminates itself
-terminator = trm("none")
-
-# Create tuning instance
-inst = TuningInstanceSingleCrit$new(
-  task = tsk("iris"),
-  learner = lrn("classif.xgboost"),
-  resampling = rsmp("holdout"),
-  measure = msr("classif.ce"),
-  terminator = terminator,
-  search_space = search_space,
+# define hyperparameter and budget parameter
+search_space = ps(
+  nrounds = p_int(lower = 1, upper = 16, tags = "budget"),
+  eta = p_dbl(lower = 0, upper = 1),
+  booster = p_fct(levels = c("gbtree", "gblinear", "dart"))
 )
 
-# Load tuner
-tuner = tnr("hyperband", eta = 2L)
+donttest{
+# hyperparameter tuning on the pima indians diabetes data set
+instance = tune(
+  method = "hyperband",
+  task = tsk("pima"),
+  learner = lrn("classif.xgboost", eval_metric = "logloss"),
+  resampling = rsmp("cv", folds = 3),
+  measure = msr("classif.ce"),
+  search_space = search_space
+)
 
-\donttest{
-# Trigger optimization
-tuner$optimize(inst)
-
-# Print all evaluations
-as.data.table(inst$archive)}
+# best performing hyperparameter configuration
+instance$result
+}
 }
 }
 \section{Super classes}{

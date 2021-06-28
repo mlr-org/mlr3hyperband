@@ -32,6 +32,14 @@ Naturally, hyperband terminates once all of its brackets are evaluated, so a
 low value if one is unsure of how long hyperband will take to finish under
 the given settings.
 }
+\section{Dictionary}{
+
+This \link{Optimizer} can be instantiated via the \link[mlr3misc:Dictionary]{dictionary}
+\link{mlr_optimizers} or with the associated sugar function \code{\link[=opt]{opt()}}:\preformatted{mlr_optimizers$get("hyperband")
+opt("hyperband")
+}
+}
+
 \section{Parameters}{
 
 \describe{
@@ -121,7 +129,6 @@ For the starting configurations in each bracket it is
 \code{ceiling((B/R) * ((eta^s)/(s+1)))}, with \verb{B = (bracket amount) * R}.
 To receive a table with the full brackets layout, load the following function
 and execute it for the desired \code{R} and \code{eta}.\preformatted{hyperband_brackets = function(R, eta) \{
-
   result = data.frame()
   smax = floor(log(R, eta))
   B = (smax + 1) * R
@@ -149,14 +156,28 @@ hyperband_brackets(R = 81L, eta = 3L)
 }
 }
 
+\section{Progress Bars}{
+
+\verb{$optimize()} supports progress bars via the package \CRANpkg{progressr}
+combined with a \link{Terminator}. Simply wrap the function in
+\code{progressr::with_progress()} to enable them. We recommend to use package
+\CRANpkg{progress} as backend; enable with \code{progressr::handlers("progress")}.
+}
+
+\section{Parallelization}{
+
+In order to support general termination criteria and parallelization, we
+evaluate points in a batch-fashion of size \code{batch_size}. The points of one
+stage in a bracket are evaluated in one batch. Parallelization is supported
+via package \CRANpkg{future} (see \code{\link[mlr3:benchmark]{mlr3::benchmark()}}'s section on
+parallelization for more details).
+}
+
 \section{Logging}{
 
-When loading the \link{mlr3hyperband} package, two loggers based on the
-\CRANpkg{lgr} package are made available. One is called \code{mlr3}, the other
-\code{bbotk}. All \code{mlr3} methods log into the \code{mlr3} logger. All optimization
-methods form the packags \link{bbotk}, \link{mlr3tuning} and \link{mlr3hyperband} log into
-the \code{bbotk} logger. To hide the \link{mlr3} logging messages run:\preformatted{lgr::get_logger("mlr3")$set_threshold("warn")
-}
+Hyperband uses a logger (as implemented in \CRANpkg{lgr}) from package
+\CRANpkg{bbotk}.
+Use \code{lgr::get_logger("bbotk")} to access and control the logger.
 }
 
 \examples{
