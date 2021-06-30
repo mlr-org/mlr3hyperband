@@ -39,7 +39,7 @@
 #' @template section_progress_bars
 #' @template section_parallelization
 #' @template section_logging
-#' 
+#'
 #' @source
 #' `r format_bib("jamieson_2016")`
 #'
@@ -47,13 +47,13 @@
 #' @examples
 #' library(bbotk)
 #' library(data.table)
-#' 
+#'
 #' search_space = domain = ps(
-#'   x1 = p_dbl(-5, 10), 
-#'   x2 = p_dbl(0, 15), 
+#'   x1 = p_dbl(-5, 10),
+#'   x2 = p_dbl(0, 15),
 #'   fidelity = p_dbl(1e-2, 1, tags = "budget")
 #' )
-#' 
+#'
 #' # modified branin function
 #' objective = ObjectiveRFunDt$new(
 #'   fun = function(xdt) {
@@ -63,31 +63,31 @@
 #'     r = 6
 #'     s = 10
 #'     t = 1 / (8 * pi)
-#'     data.table(y = 
-#'       (a * ((xdt[["x2"]] - 
-#'       b * (xdt[["x1"]] ^ 2L) + 
-#'       c * xdt[["x1"]] - r) ^ 2) + 
-#'       ((s * (1 - t)) * cos(xdt[["x1"]])) + 
+#'     data.table(y =
+#'       (a * ((xdt[["x2"]] -
+#'       b * (xdt[["x1"]] ^ 2L) +
+#'       c * xdt[["x1"]] - r) ^ 2) +
+#'       ((s * (1 - t)) * cos(xdt[["x1"]])) +
 #'       s - (5 * xdt[["fidelity"]] * xdt[["x1"]])))
 #'   },
 #'   domain = domain,
 #'   codomain = ps(y = p_dbl(tags = "minimize"))
 #' )
-#' 
+#'
 #' instance = OptimInstanceSingleCrit$new(
 #'   objective = objective,
 #'   search_space = search_space,
 #'   terminator = trm("none")
 #' )
-#' 
+#'
 #' optimizer = opt("successive_halving")
-#' 
+#'
 #' # modifies the instance by reference
 #' optimizer$optimize(instance)
-#' 
+#'
 #' # best scoring evaluation
 #' instance$result
-#' 
+#'
 #' # all evaluations
 #' as.data.table(instance$archive)
 OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
@@ -98,8 +98,8 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
       param_set = ps(
-        n = p_int(lower = 1, default = 16),
-        eta = p_dbl(lower = 1.0001, default = 2),
+        n       = p_int(lower = 1, default = 16),
+        eta     = p_dbl(lower = 1.0001, default = 2),
         sampler = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE))
       )
       param_set$values = list(n = 16L, eta = 2L, sampler = NULL)

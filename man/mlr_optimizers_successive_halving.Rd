@@ -103,8 +103,8 @@ library(bbotk)
 library(data.table)
 
 search_space = domain = ps(
-  x1 = p_dbl(-5, 10), 
-  x2 = p_dbl(0, 15), 
+  x1 = p_dbl(-5, 10),
+  x2 = p_dbl(0, 15),
   fidelity = p_dbl(1e-2, 1, tags = "budget")
 )
 
@@ -117,11 +117,11 @@ objective = ObjectiveRFunDt$new(
     r = 6
     s = 10
     t = 1 / (8 * pi)
-    data.table(y = 
-      (a * ((xdt[["x2"]] - 
-      b * (xdt[["x1"]] ^ 2L) + 
-      c * xdt[["x1"]] - r) ^ 2) + 
-      ((s * (1 - t)) * cos(xdt[["x1"]])) + 
+    data.table(y =
+      (a * ((xdt[["x2"]] -
+      b * (xdt[["x1"]] ^ 2L) +
+      c * xdt[["x1"]] - r) ^ 2) +
+      ((s * (1 - t)) * cos(xdt[["x1"]])) +
       s - (5 * xdt[["fidelity"]] * xdt[["x1"]])))
   },
   domain = domain,
