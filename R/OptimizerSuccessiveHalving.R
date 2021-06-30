@@ -122,7 +122,7 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
       search_space = inst$search_space
       budget_id = search_space$ids(tags = "budget")
 
-       # check budget
+      # check budget
       if (length(budget_id) != 1) stopf("Exactly one parameter must be tagged with 'budget'")
       assert_choice(search_space$class[[budget_id]], c("ParamInt", "ParamDbl"))
 
@@ -190,8 +190,10 @@ successive_halving = function(s, rs, r_scale, n, eta, sampler, inst, bracket = N
   budget_id = search_space$ids(tags = "budget")
 
   for (i in 0:s) {
-    ni = floor(n * eta^(-i)) # number of configurations in stage
-    ri = r_scale * rs * eta^i # budget of a single configuration in stage
+    # number of configurations in stage
+    ni = floor(n * eta^(-i))
+    # budget of a single configuration in stage
+    ri = r_scale * rs * eta^i 
 
     if (search_space$class[[budget_id]] == "ParamInt") ri = round(ri)
 

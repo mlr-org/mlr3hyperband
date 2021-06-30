@@ -168,9 +168,9 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
 
       # loop brackets
       for (s in s_max:0) {
-        # n is the number of configurations in the first stage
+        # number of configurations in the first stage
         n = ceiling((budget / r) * (eta^s) / (s + 1))
-        # rs is the budget of a single configuration in the first stage
+        # budget of a single configuration in the first stage
         rs = r * eta^(-s)
 
         # loop stages by calling successive halving subroutine
