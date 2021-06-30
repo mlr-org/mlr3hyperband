@@ -32,7 +32,7 @@
 #' The [mlr3tuning::ArchiveTuning] holds the following additional column that is
 #' specific to the successive halving algorithm:
 #'   * `stage` (`integer(1))`\cr
-#'     The stages of each point. Starts counting at 0.
+#'     Stage index. Starts counting at 0.
 #' 
 #' @source
 #' `r format_bib("jamieson_2016")`

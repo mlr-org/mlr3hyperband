@@ -40,11 +40,11 @@ the initialization of each bracket. The default is uniform sampling.}
 
 \section{Archive}{
 
-The \link{mlr3tuning:ArchiveTuning} holds the following additional column that is
+The \link[mlr3tuning:ArchiveTuning]{mlr3tuning::ArchiveTuning} holds the following additional column that is
 specific to the successive halving algorithm:
 \itemize{
 \item \code{stage} (\verb{integer(1))}\cr
-The stages of each point. Starts counting at 0.
+Stage index. Starts counting at 0.
 }
 }
 

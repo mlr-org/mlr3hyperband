@@ -32,7 +32,7 @@
 #' The [bbotk::Archive] holds the following additional column that is specific
 #' to the successive halving algorithm:
 #'   * `stage` (`integer(1))`\cr
-#'     The stages of each point. Starts counting at 0.
+#'     Stage index. Starts counting at 0.
 #'
 #' @template section_custom_sampler
 #' @template section_runtime
