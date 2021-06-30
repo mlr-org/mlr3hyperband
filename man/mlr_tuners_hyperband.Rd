@@ -58,7 +58,7 @@ the initialization of each bracket. The default is uniform sampling.}
 
 \section{Archive}{
 
-The \link[bbotk:Archive]{bbotk::Archive} holds the following additional columns that are specific
+The \link[mlr3tuning:ArchiveTuning]{mlr3tuning::ArchiveTuning} holds the following additional columns that are specific
 to the hyperband algorithm:
 \itemize{
 \item \code{bracket} (\code{integer(1)})\cr
