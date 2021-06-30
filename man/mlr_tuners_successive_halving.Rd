@@ -12,6 +12,7 @@ In Gretton A, Robert CC (eds.), \emph{Proceedings of the 19th International Conf
 }
 \description{
 \code{TunerSuccessiveHalving} class that implements the successive halving
+<<<<<<< HEAD
 algorithm. The algorithm samples \code{n} configurations and evaluates them with
 the smallest budget (lower bound of the \code{budget} parameter). With every stage
 the budget is increased by a factor of \code{eta} and only the best \code{1/eta}
@@ -21,6 +22,9 @@ when the maximum budget is reached (upper bound of the \code{budget} parameter)
 To identify the budget, the user has to specify explicitly which parameter of
 the objective function influences the budget by tagging a single parameter in
 in the search_space (\link[paradox:ParamSet]{paradox::ParamSet}) with \code{"budget"}.
+=======
+algorithm.
+>>>>>>> main
 }
 \section{Parameters}{
 
@@ -28,7 +32,11 @@ in the search_space (\link[paradox:ParamSet]{paradox::ParamSet}) with \code{"bud
 \item{\code{n}}{\code{integer(1)}\cr
 Number of configurations in first stage.}
 \item{\code{eta}}{\code{numeric(1)}\cr
+<<<<<<< HEAD
 With every stage, the configuration budget is increased by a factor of \code{eta}
+=======
+With every step, the configuration budget is increased by a factor of \code{eta}
+>>>>>>> main
 and only the best \code{1/eta} configurations are used for the next stage.
 Non-integer values are supported, but \code{eta} is not allowed to be less or
 equal 1.}
@@ -38,6 +46,7 @@ the initialization of each bracket. The default is uniform sampling.}
 }
 }
 
+<<<<<<< HEAD
 \section{Archive}{
 
 The \link[bbotk:Archive]{bbotk::Archive} holds the following additional column that is specific
@@ -48,6 +57,8 @@ The stages of each point. Starts counting at 0.
 }
 }
 
+=======
+>>>>>>> main
 \examples{
 if(requireNamespace("xgboost")) {
 library(mlr3learners)
