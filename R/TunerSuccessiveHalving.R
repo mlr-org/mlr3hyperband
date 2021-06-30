@@ -4,14 +4,22 @@
 #'
 #' @description
 #' `TunerSuccessiveHalving` class that implements the successive halving
-#' algorithm.
+#' algorithm. The algorithm samples `n` configurations and evaluates them with
+#' the smallest budget (lower bound of the `budget` parameter). With every stage
+#' the budget is increased by a factor of `eta` and only the best `1/eta`
+#' configurations are promoted to the next stage. The optimization terminates
+#' when the maximum budget is reached (upper bound of the `budget` parameter)
+#' 
+#' To identify the budget, the user has to specify explicitly which parameter of
+#' the objective function influences the budget by tagging a single parameter in
+#' in the search_space ([paradox::ParamSet]) with `"budget"`.
 #' 
 #' @section Parameters:
 #' \describe{
 #' \item{`n`}{`integer(1)`\cr
 #' Number of configurations in first stage.}
 #' \item{`eta`}{`numeric(1)`\cr
-#' With every step, the configuration budget is increased by a factor of `eta`
+#' With every stage, the configuration budget is increased by a factor of `eta`
 #' and only the best `1/eta` configurations are used for the next stage.
 #' Non-integer values are supported, but `eta` is not allowed to be less or
 #' equal 1.}
@@ -19,6 +27,12 @@
 #' Object defining how the samples of the parameter space should be drawn during
 #' the initialization of each bracket. The default is uniform sampling.}
 #' }
+#' 
+#' @section Archive:
+#' The [bbotk::Archive] holds the following additional column that is specific
+#' to the successive halving algorithm:
+#'   * `stage` (`integer(1))`\cr
+#'     The stages of each point. Starts counting at 0.
 #' 
 #' @source
 #' `r format_bib("jamieson_2016")`
@@ -50,7 +64,6 @@
 #' instance$result
 #' }
 #' }
-
 TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
   inherit = TunerFromOptimizer,
   public = list(

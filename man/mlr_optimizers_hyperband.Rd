@@ -13,12 +13,12 @@ Li L, Jamieson K, DeSalvo G, Rostamizadeh A, Talwalkar A (2018).
 \description{
 \code{OptimizerHyperband} class that implements hyperband optimization. Hyperband
 is a budget oriented-procedure, weeding out suboptimal performing
-configurations early in a sequential training process, increasing
+points early in a sequential training process, increasing
 optimization efficiency as a consequence.
 
 For this, several brackets are constructed with an associated set of
-configurations for each bracket. Each bracket as several stages. Different
-brackets are initialized with different amounts of configurations and
+points for each bracket. Each bracket as several stages. Different
+brackets are initialized with different amounts of points and
 different budget sizes. To get an idea of how the bracket layout looks like
 for a given argument set, please have a look in the \code{details}.
 
@@ -44,9 +44,9 @@ opt("hyperband")
 
 \describe{
 \item{\code{eta}}{\code{numeric(1)}\cr
-Fraction parameter of the successive halving algorithm: With every step the
+Fraction parameter of the successive halving algorithm: With every stage the
 configuration budget is increased by a factor of \code{eta} and only the best
-\code{1/eta} configurations are used for the next stage. Non-integer values are
+\code{1/eta} points are used for the next stage. Non-integer values are
 supported, but \code{eta} is not allowed to be less or equal 1.}
 \item{\code{sampler}}{\link[paradox:Sampler]{paradox::Sampler}\cr
 Object defining how the samples of the parameter space should be drawn during
@@ -60,26 +60,9 @@ The \link[bbotk:Archive]{bbotk::Archive} holds the following additional columns 
 are specific to the hyperband tuner:
 \itemize{
 \item \code{bracket} (\code{integer(1)})\cr
-The console logs about the bracket index are actually not matching with
-the original hyperband algorithm, which counts down the brackets and
-stops after evaluating bracket 0. The true bracket indices are given in
-this column.
-\item \code{bracket_stage} (\verb{integer(1))}\cr
-The bracket stage of each bracket. Hyperband starts counting at 0.
-\item \code{budget_scaled} (\code{numeric(1)})\cr
-The intermediate budget in each bracket stage calculated by hyperband.
-Because hyperband is originally only considered for budgets starting at
-1, some rescaling is done to allow budgets starting at different values.
-For this, budgets are internally divided by the lower budget bound to get
-a lower budget of 1. Before the objective function receives its budgets
-for evaluation, the budget is transformed back to match the original
-scale again.
-\item \code{budget_real} (\code{numeric(1)})\cr
-The real budget values the objective function uses for evaluation after
-hyperband calculated its scaled budget.
-\item \code{n_configs} (\code{integer(1)})\cr
-The amount of evaluated configurations in each stage. These correspond to
-the \code{r_i} in the original paper.
+The bracket index. Counts down to 0.
+\item \code{stage} (\verb{integer(1))}\cr
+The stages of each bracket. Starts counting at 0.
 }
 }
 

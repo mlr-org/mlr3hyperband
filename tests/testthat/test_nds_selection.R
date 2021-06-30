@@ -1,4 +1,4 @@
-test_that("nds_selection basics", {
+test_that("nds_selection works", {
   points = matrix(
     c( # front 1
       # emoa puts always Inf weight on boundary points, so they always survive 
