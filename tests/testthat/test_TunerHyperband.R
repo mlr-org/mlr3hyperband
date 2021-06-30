@@ -5,7 +5,7 @@ test_that("TunerHyperband works", {
   # default
   learner = lrn("classif.rpart")
   search_space = ps(
-    minsplit  = p_int(1, 16, tags = "budget"), 
+    minsplit  = p_int(1, 16, tags = "budget"),
     cp        = p_dbl(1e-04, 1e-1, logscale = TRUE),
     minbucket = p_int(1, 64, logscale = TRUE))
 
@@ -13,7 +13,7 @@ test_that("TunerHyperband works", {
 
   # minimum budget different from 1
   search_space = ps(
-    minsplit  = p_int(2, 16, tags = "budget"), 
+    minsplit  = p_int(2, 16, tags = "budget"),
     cp        = p_dbl(1e-04, 1e-1, logscale = TRUE),
     minbucket = p_int(1, 64, logscale = TRUE))
 
@@ -21,7 +21,7 @@ test_that("TunerHyperband works", {
 
   # eta = 3
   search_space = ps(
-    minsplit  = p_int(1, 81, tags = "budget"), 
+    minsplit  = p_int(1, 81, tags = "budget"),
     cp        = p_dbl(1e-04, 1e-1, logscale = TRUE),
     minbucket = p_int(1, 64, logscale = TRUE))
 
@@ -29,7 +29,7 @@ test_that("TunerHyperband works", {
 
   # budget is rounded
   search_space = ps(
-    minsplit  = p_int(1, 15, tags = "budget"), 
+    minsplit  = p_int(1, 15, tags = "budget"),
     cp        = p_dbl(1e-04, 1e-1, logscale = TRUE),
     minbucket = p_int(1, 64, logscale = TRUE))
 
@@ -38,7 +38,7 @@ test_that("TunerHyperband works", {
   # eta = 2.5
   learner = lrn("classif.rpart")
   search_space = ps(
-    minsplit  = p_int(1, 16, tags = "budget"), 
+    minsplit  = p_int(1, 16, tags = "budget"),
     cp        = p_dbl(1e-04, 1e-1, logscale = TRUE),
     minbucket = p_int(1, 64, logscale = TRUE))
 
@@ -47,7 +47,7 @@ test_that("TunerHyperband works", {
   # multi-crit
   learner = lrn("classif.rpart")
   search_space = ps(
-    minsplit  = p_int(1, 16, tags = "budget"), 
+    minsplit  = p_int(1, 16, tags = "budget"),
     cp        = p_dbl(1e-04, 1e-1, logscale = TRUE),
     minbucket = p_int(1, 64, logscale = TRUE))
 
@@ -61,7 +61,7 @@ test_that("TunerHyperband works with xgboost", {
 
   learner = lrn("classif.xgboost")
   search_space = ps(
-    nrounds   = p_int(1, 16, tags = "budget"), 
+    nrounds   = p_int(1, 16, tags = "budget"),
     eta       = p_dbl(1e-4, 1, logscale = TRUE),
     max_depth = p_int(1, 2))
 
@@ -123,7 +123,7 @@ test_that("TunerHyperband works with custom sampler", {
     measures = msr("classif.ce"),
     resampling = rsmp("holdout"),
     search_space = search_space,
-    sampler = sampler), 
+    sampler = sampler),
     regexp = "Assertion on 'sampler$param_set$ids()' failed: Must be equal to set {'eta','booster'}, but is {'booster'}.",
     fixed = TRUE)
 
@@ -141,7 +141,7 @@ test_that("TunerHyperband works with custom sampler", {
     measures = msr("classif.ce"),
     resampling = rsmp("holdout"),
     search_space = search_space,
-    sampler = sampler), 
+    sampler = sampler),
     regexp = "Assertion on 'sampler$param_set$ids()' failed: Must be equal to set {'eta','booster'}, but is {'nrounds','eta','booster'}.",
     fixed = TRUE)
 })
@@ -165,7 +165,7 @@ test_that("TunerHyperband throws an error if budget parameter is invalid", {
     learner = learner,
     measures = msr("classif.ce"),
     resampling = rsmp("holdout"),
-    search_space = search_space), 
+    search_space = search_space),
     regexp = "Assertion on 'search_space$class[[budget_id]]' failed: Must be element of set {'ParamInt','ParamDbl'}, but is 'ParamFct'.",
     fixed = TRUE)
 
@@ -182,7 +182,7 @@ test_that("TunerHyperband throws an error if budget parameter is invalid", {
     learner = learner,
     measures = msr("classif.ce"),
     resampling = rsmp("holdout"),
-    search_space = search_space), 
+    search_space = search_space),
     regexp = "Exactly one parameter must be tagged with 'budget'",
     fixed = TRUE)
 })

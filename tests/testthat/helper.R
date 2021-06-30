@@ -11,12 +11,12 @@ lapply(list.files(system.file("testthat", package = "mlr3tuning"), pattern = "^h
 # nolint end
 
 #' @title Hyperband Brackets
-#' 
-#' @noRd 
-#' 
-#' @description 
-#' Calculates hyperband brackets and stages for a given `R` and `eta`. 
-#' 
+#'
+#' @noRd
+#'
+#' @description
+#' Calculates hyperband brackets and stages for a given `R` and `eta`.
+#'
 #' @param R (`numeric(1)`)\cr
 #' Maximum budget a single configuration in the last stage.
 #' @param eta (`numeric(1)`).
@@ -41,12 +41,12 @@ hyperband_brackets = function(R, eta, r_scale = 1, round) {
 }
 
 #' @title Test Tuner Hyperband
-#' 
-#' @noRd 
-#' 
-#' @description 
-#'  
-#' @param eta (`numeric(1)`).
+#'
+#' @noRd
+#'
+#' @description
+#' Tests bracket and stages constructed by the tuner against the ones based on
+#' the original hyperband paper.
 test_tuner_hyperband = function(eta, learner, search_space, measures = msr("classif.ce")) {
   budget_id = search_space$ids(tags = "budget")
   r_min = search_space$lower[[budget_id]]
@@ -62,7 +62,7 @@ test_tuner_hyperband = function(eta, learner, search_space, measures = msr("clas
     eta = eta
   )
 
-  # compare brackets and stages of tuner to theoretical hyperband 
+  # compare brackets and stages of tuner to theoretical hyperband
   plan_tuner = as.data.table(instance$archive)[, .N, by = c("bracket", "stage", budget_id)]
   round = search_space$class[[budget_id]] == "ParamInt"
   plan_hyperband = hyperband_brackets(r_max / r_min, eta, r_min, round)
@@ -76,12 +76,12 @@ test_tuner_hyperband = function(eta, learner, search_space, measures = msr("clas
 }
 
 #' @title Test Tuner Successive Halving
-#' 
-#' @noRd 
-#' 
-#' @description 
-#'  
-#' @param eta (`numeric(1)`).
+#'
+#' @noRd
+#'
+#' @description
+#' Tests budget and number of configs constructed by the tuner against supplied
+#' bounds
 test_tuner_successive_halving = function(n, eta, learner, search_space, measures = msr("classif.ce")) {
   budget_id = search_space$ids(tags = "budget")
   r_min = search_space$lower[[budget_id]]

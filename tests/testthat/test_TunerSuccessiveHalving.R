@@ -5,7 +5,7 @@ test_that("TunerSuccessiveHalving works", {
   # default
   learner = lrn("classif.rpart")
   search_space = ps(
-    minsplit  = p_int(1, 16, tags = "budget"), 
+    minsplit  = p_int(1, 16, tags = "budget"),
     cp        = p_dbl(1e-04, 1e-1, logscale = TRUE),
     minbucket = p_int(1, 64, logscale = TRUE))
 
@@ -14,7 +14,7 @@ test_that("TunerSuccessiveHalving works", {
   # r_max > n
   learner = lrn("classif.rpart")
   search_space = ps(
-    minsplit  = p_int(1, 17, tags = "budget"), 
+    minsplit  = p_int(1, 17, tags = "budget"),
     cp        = p_dbl(1e-04, 1e-1, logscale = TRUE),
     minbucket = p_int(1, 64, logscale = TRUE))
 
@@ -23,7 +23,7 @@ test_that("TunerSuccessiveHalving works", {
   # r_max < n
   learner = lrn("classif.rpart")
   search_space = ps(
-    minsplit  = p_int(1, 15, tags = "budget"), 
+    minsplit  = p_int(1, 15, tags = "budget"),
     cp        = p_dbl(1e-04, 1e-1, logscale = TRUE),
     minbucket = p_int(1, 64, logscale = TRUE))
 

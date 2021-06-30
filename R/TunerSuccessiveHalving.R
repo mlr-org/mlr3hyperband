@@ -9,11 +9,11 @@
 #' the budget is increased by a factor of `eta` and only the best `1/eta`
 #' configurations are promoted to the next stage. The optimization terminates
 #' when the maximum budget is reached (upper bound of the `budget` parameter)
-#' 
+#'
 #' To identify the budget, the user has to specify explicitly which parameter of
 #' the objective function influences the budget by tagging a single parameter in
 #' in the search_space ([paradox::ParamSet]) with `"budget"`.
-#' 
+#'
 #' @section Parameters:
 #' \describe{
 #' \item{`n`}{`integer(1)`\cr
@@ -27,13 +27,13 @@
 #' Object defining how the samples of the parameter space should be drawn during
 #' the initialization of each bracket. The default is uniform sampling.}
 #' }
-#' 
+#'
 #' @section Archive:
 #' The [mlr3tuning::ArchiveTuning] holds the following additional column that is specific
 #' to the successive halving algorithm:
 #'   * `stage` (`integer(1))`\cr
 #'     The stages of each point. Starts counting at 0.
-#' 
+#'
 #' @source
 #' `r format_bib("jamieson_2016")`
 #'
@@ -41,14 +41,14 @@
 #' @examples
 #' if(requireNamespace("xgboost")) {
 #' library(mlr3learners)
-#' 
+#'
 #' # define hyperparameter and budget parameter
 #' search_space = ps(
 #'   nrounds = p_int(lower = 1, upper = 16, tags = "budget"),
 #'   eta = p_dbl(lower = 0, upper = 1),
 #'   booster = p_fct(levels = c("gbtree", "gblinear", "dart"))
 #' )
-#' 
+#'
 #' \donttest{
 #' # hyperparameter tuning on the pima indians diabetes data set
 #' instance = tune(
@@ -59,7 +59,7 @@
 #'   measure = msr("classif.ce"),
 #'   search_space = search_space
 #' )
-#' 
+#'
 #' # best performing hyperparameter configuration
 #' instance$result
 #' }

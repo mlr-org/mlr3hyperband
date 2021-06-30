@@ -23,10 +23,10 @@
 #' [OptimInstanceMultiCrit] acts as an upper bound and should be only set to a
 #' low value if one is unsure of how long hyperband will take to finish under
 #' the given settings.
-#' 
+#'
 #' @templateVar id hyperband
 #' @template section_dictionary_optimizers
-#' 
+#'
 #' @section Parameters:
 #' \describe{
 #' \item{`eta`}{`numeric(1)`\cr
@@ -38,12 +38,12 @@
 #' Object defining how the samples of the parameter space should be drawn during
 #' the initialization of each bracket. The default is uniform sampling.}
 #' }
-#' 
+#'
 #' @section Archive:
 #' The [bbotk::Archive] holds the following additional columns that are specific
 #' to the hyperband algorithm:
 #'   * `bracket` (`integer(1)`)\cr
-#'     The bracket index. Counts down to 0. 
+#'     The bracket index. Counts down to 0.
 #'   * `stage` (`integer(1))`\cr
 #'     The stages of each bracket. Starts counting at 0.
 #'
@@ -60,13 +60,13 @@
 #' @examples
 #' library(bbotk)
 #' library(data.table)
-#' 
+#'
 #' search_space = domain = ps(
-#'   x1 = p_dbl(-5, 10), 
-#'   x2 = p_dbl(0, 15), 
+#'   x1 = p_dbl(-5, 10),
+#'   x2 = p_dbl(0, 15),
 #'   fidelity = p_dbl(1e-2, 1, tags = "budget")
 #' )
-#' 
+#'
 #' # modified branin function
 #' objective = ObjectiveRFunDt$new(
 #'   fun = function(xdt) {
@@ -76,31 +76,31 @@
 #'     r = 6
 #'     s = 10
 #'     t = 1 / (8 * pi)
-#'     data.table(y = 
-#'       (a * ((xdt[["x2"]] - 
-#'       b * (xdt[["x1"]] ^ 2L) + 
-#'       c * xdt[["x1"]] - r) ^ 2) + 
-#'       ((s * (1 - t)) * cos(xdt[["x1"]])) + 
+#'     data.table(y =
+#'       (a * ((xdt[["x2"]] -
+#'       b * (xdt[["x1"]] ^ 2L) +
+#'       c * xdt[["x1"]] - r) ^ 2) +
+#'       ((s * (1 - t)) * cos(xdt[["x1"]])) +
 #'       s - (5 * xdt[["fidelity"]] * xdt[["x1"]])))
 #'   },
 #'   domain = domain,
 #'   codomain = ps(y = p_dbl(tags = "minimize"))
 #' )
-#' 
+#'
 #' instance = OptimInstanceSingleCrit$new(
 #'   objective = objective,
 #'   search_space = search_space,
 #'   terminator = trm("none")
 #' )
-#' 
+#'
 #' optimizer = opt("hyperband")
-#' 
+#'
 #' # modifies the instance by reference
 #' optimizer$optimize(instance)
-#' 
+#'
 #' # best scoring evaluation
 #' instance$result
-#' 
+#'
 #' # all evaluations
 #' as.data.table(instance$archive)
 OptimizerHyperband = R6Class("OptimizerHyperband",
@@ -148,8 +148,8 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
       }
 
       # r_min is the budget of a single configuration in the first stage
-      # r_max is the maximum budget of a single configuration in the last stage 
-      # the internal budget is rescaled to a minimum budget of 1 
+      # r_max is the maximum budget of a single configuration in the last stage
+      # the internal budget is rescaled to a minimum budget of 1
       # for this, the budget is divided by r_min
       # the budget is transformed to the original scale before passing it to the objective function
       r_max = search_space$upper[[budget_id]]
@@ -173,7 +173,7 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
         # rs is the budget of a single configuration in the first stage
         rs = r * eta^(-s)
 
-        # loop stages by calling successive halving subroutine 
+        # loop stages by calling successive halving subroutine
         successive_halving(s, rs, r_scale = r_min, n, eta, sampler, inst, bracket = s)
       }
     }

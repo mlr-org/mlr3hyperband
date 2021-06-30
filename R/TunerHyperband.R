@@ -25,7 +25,7 @@
 #' [bbotk::Terminator] in the tuning instance acts as an upper bound and should
 #' be only set to a low value if one is unsure of how long hyperband will take
 #' to finish under the given settings.
-#' 
+#'
 #' @templateVar id hyperband
 #' @template section_dictionary_optimizers
 #'
@@ -45,7 +45,7 @@
 #' The [mlr3tuning::ArchiveTuning] holds the following additional columns that are specific
 #' to the hyperband algorithm:
 #'   * `bracket` (`integer(1)`)\cr
-#'     The bracket index. Counts down to 0. 
+#'     The bracket index. Counts down to 0.
 #'   * `stage` (`integer(1))`\cr
 #'     The stages of each bracket. Starts counting at 0.
 #'
@@ -72,14 +72,14 @@
 #' @examples
 #' if(requireNamespace("xgboost")) {
 #' library(mlr3learners)
-#' 
+#'
 #' # define hyperparameter and budget parameter
 #' search_space = ps(
 #'   nrounds = p_int(lower = 1, upper = 16, tags = "budget"),
 #'   eta = p_dbl(lower = 0, upper = 1),
 #'   booster = p_fct(levels = c("gbtree", "gblinear", "dart"))
 #' )
-#' 
+#'
 #' \donttest{
 #' # hyperparameter tuning on the pima indians diabetes data set
 #' instance = tune(
@@ -90,7 +90,7 @@
 #'   measure = msr("classif.ce"),
 #'   search_space = search_space
 #' )
-#' 
+#'
 #' # best performing hyperparameter configuration
 #' instance$result
 #' }

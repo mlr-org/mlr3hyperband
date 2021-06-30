@@ -9,11 +9,11 @@
 #' budget is increased by a factor of `eta` and only the best `1/eta` points are
 #' promoted to the next stage. The optimization terminates when the maximum
 #' budget is reached (upper bound of the `budget` parameter).
-#' 
+#'
 #' To identify the budget, the user has to specify explicitly which parameter of
 #' the objective function influences the budget by tagging a single parameter in
 #' the search_space ([paradox::ParamSet]) with `"budget"`.
-#' 
+#'
 #' @section Parameters:
 #' \describe{
 #' \item{`n`}{`integer(1)`\cr
@@ -27,13 +27,13 @@
 #' Object defining how the samples of the parameter space should be drawn during
 #' the initialization of each bracket. The default is uniform sampling.}
 #' }
-#' 
+#'
 #' @section Archive:
 #' The [bbotk::Archive] holds the following additional column that is specific
 #' to the successive halving algorithm:
 #'   * `stage` (`integer(1))`\cr
 #'     The stages of each point. Starts counting at 0.
-#' 
+#'
 #' @template section_custom_sampler
 #' @template section_runtime
 #' @template section_progress_bars
@@ -126,7 +126,7 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
       if (length(budget_id) != 1) stopf("Exactly one parameter must be tagged with 'budget'")
       assert_choice(search_space$class[[budget_id]], c("ParamInt", "ParamDbl"))
 
-      # required for calculation of hypervolume 
+      # required for calculation of hypervolume
       if (inst$archive$codomain$length > 1) require_namespaces("emoa")
 
       # sampler
@@ -136,24 +136,24 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
       } else {
         assert_set_equal(sampler$param_set$ids(), search_space_sampler$ids())
       }
-      
+
       # r_min is the budget of a single configuration in the first stage
-      # r_max is the maximum budget of a single configuration in the last stage 
-      # the internal budget is rescaled to a minimum budget of 1 
+      # r_max is the maximum budget of a single configuration in the last stage
+      # the internal budget is rescaled to a minimum budget of 1
       # for this, the budget is divided by r_min
       # the budget is transformed to the original scale before passing it to the objective function
       r_max = search_space$upper[[budget_id]]
       r_min = search_space$lower[[budget_id]]
-      
+
       # maximum budget of a single configuration in the last stage (scaled)
       r = r_max / r_min
 
-      # number of stages if each configuration in the first stage uses the minimum budget 
+      # number of stages if each configuration in the first stage uses the minimum budget
       # and each configuration in the last stage uses no more than maximum budget
       sr = floor(log(r, eta))
 
-      # reduce number of stages if n < r_max so that 
-      # the last stages evaluates at least one configuration 
+      # reduce number of stages if n < r_max so that
+      # the last stages evaluates at least one configuration
       sn = floor(log(n, eta))
 
       # s_max + 1 is the number of stages
@@ -165,12 +165,12 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
 )
 
 #' @title Successive Halving Loop
-#' 
-#' @noRd 
-#' 
+#'
+#' @noRd
+#'
 #' @description Loops stages of the successive halving algorithm. Used
-#' in [OptimizerSuccessiveHalving] and [OptimizerHyperband]. 
-#' 
+#' in [OptimizerSuccessiveHalving] and [OptimizerHyperband].
+#'
 #' @param s (`ìnteger(1)`)\cr
 #' Number of stages.
 #' @param rs (`numeric(1)`)\cr
