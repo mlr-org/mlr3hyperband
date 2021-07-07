@@ -11,7 +11,6 @@ Package website: [release](https://mlr3hyperband.mlr-org.com/) |
 Status](https://www.r-pkg.org/badges/version-ago/mlr3hyperband)](https://cran.r-project.org/package=mlr3hyperband)
 [![StackOverflow](https://img.shields.io/badge/stackoverflow-mlr3-orange.svg)](https://stackoverflow.com/questions/tagged/mlr3)
 [![Mattermost](https://img.shields.io/badge/chat-mattermost-orange.svg)](https://lmmisld-lmu-stats-slds.srv.mwn.de/mlr_invite/)
-[![CodeFactor](https://www.codefactor.io/repository/github/mlr-org/mlr3hyperband/badge)](https://www.codefactor.io/repository/github/mlr-org/mlr3hyperband)
 <!-- badges: end -->
 
 This package provides hyperband tuning for
@@ -39,7 +38,7 @@ remotes::install_github("mlr-org/mlr3hyperband")
   - The original [paper](https://arxiv.org/abs/1603.06560) introducing
     the hyperband algorithm.
 
-## Short description
+## Hyperband
 
 Hyperband is a budget oriented-procedure, weeding out suboptimally
 performing configurations early on during their training process aiming
@@ -69,6 +68,7 @@ Originally, hyperband was created with a “natural” learning parameter as
 the budget parameter in mind, like `nrounds` of the XGBoost learner.
 
 ``` r
+library(mlr3verse)
 library(mlr3hyperband)
 library(mlr3learners)
 
@@ -96,6 +96,8 @@ instance$result
     ##    nrounds       eta booster learner_param_vals  x_domain classif.ce
     ## 1:       2 0.4364793    dart          <list[6]> <list[3]>  0.2669271
 
+### Subsampling
+
 Additionally, it is also possible to use `mlr3hyperband` to tune
 learners that do not have a natural fidelity parameter. In such a case
 `mlr3pipelines` can be used to define data subsampling as a
@@ -104,9 +106,6 @@ the fraction of the training data to be used, can act as the budget
 parameter.
 
 ``` r
-library(mlr3verse)
-library(mlr3hyperband)
-
 learner = po("subsample") %>>% lrn("classif.rpart")
 
 # define subsampling parameter as budget
