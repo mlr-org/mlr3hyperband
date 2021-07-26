@@ -150,38 +150,71 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
 
       # number of stages if each configuration in the first stage uses the minimum budget
       # and each configuration in the last stage uses no more than maximum budget
-      k_n = floor(log(r, eta))
+      sr = floor(log(r, eta))
 
       # reduce number of stages if n < r_max so that
       # the last stages evaluates at least one configuration
-      k_r = floor(log(n, eta))
+      sn = floor(log(n, eta))
 
-      # k + 1 is the number of stages
-      k = min(k_n, k_r)
+      # s_max + 1 is the number of stages
+      s_max = min(sr, sn)
 
-      for (i in 0:k) {
-        ni = floor(n * eta^(-i)) # number of configurations in stage
-        ri = r_min * eta^i # resources of each configuration in stage
-
-        if (i == 0) {
-          xdt = sampler$sample(ni)$data
-        } else {
-          archive = inst$archive
-          data = archive$data[batch_nr %in% archive$n_batch]
-          y = data[, archive$cols_y, with = FALSE]
-          minimize = !as.logical(mult_max_to_min(archive$codomain))
-
-          if (archive$codomain$length == 1) {
-            row_ids = head(order(unlist(y), decreasing = minimize), ni)
-          } else {
-            row_ids = nds_selection(points = t(as.matrix(y)), n_select = ni, minimize = minimize)
-          }
-          xdt = data[row_ids, archive$cols_x, with = FALSE]
-        }
-        set(xdt, j = budget_id, value = ri)
-        set(xdt, j = "stage", value = i)
-        inst$eval_batch(xdt)
-      }
+      successive_halving(s = s_max, rs = 1, r_scale = r_min, n , eta, sampler, inst)
     }
   )
 )
+
+#' @title Successive Halving Loop
+#'
+#' @noRd
+#'
+#' @description Loops stages of the successive halving algorithm. Used
+#' in [OptimizerSuccessiveHalving] and [OptimizerHyperband].
+#'
+#' @param s (`ìnteger(1)`)\cr
+#' Number of stages.
+#' @param rs (`numeric(1)`)\cr
+#' Budget (scaled) of a single configuration in the first stage.
+#' @param r_scale (`numeric(1)`)\cr
+#' Scaling factor to retransform budget to original scale.
+#' @param n (`ìnteger(1)`)\cr
+#' Number of configurations in the first stage.
+#' @param eta (`numeric(1)`)\cr
+#' Controls the proportion of configurations discarded for the next stage.
+#' @param sampler ([paradox::Sampler]).
+#' @param inst ([bbotk::OptimInstanceSingleCrit] | [bbotk::OptimInstanceMultiCrit]).
+#' @param bracket (`ìnteger(1)`)\cr
+#' Optionally, a bracket number which is logged to the archive.
+successive_halving = function(s, rs, r_scale, n, eta, sampler, inst, bracket = NULL) {
+  search_space = inst$search_space
+  budget_id = search_space$ids(tags = "budget")
+
+  for (i in 0:s) {
+    # number of configurations in stage
+    ni = floor(n * eta^(-i))
+    # budget of a single configuration in stage
+    ri = r_scale * rs * eta^i 
+
+    if (search_space$class[[budget_id]] == "ParamInt") ri = round(ri)
+
+    if (i == 0) {
+      xdt = sampler$sample(ni)$data
+    } else {
+      archive = inst$archive
+      data = archive$data[batch_nr %in% archive$n_batch]
+      y = data[, archive$cols_y, with = FALSE]
+      minimize = !as.logical(mult_max_to_min(archive$codomain))
+
+      if (archive$codomain$length == 1) {
+        row_ids = head(order(unlist(y), decreasing = minimize), ni)
+      } else {
+        row_ids = nds_selection(points = t(as.matrix(y)), n_select = ni, minimize = minimize)
+      }
+      xdt = data[row_ids, archive$cols_x, with = FALSE]
+    }
+    set(xdt, j = budget_id, value = ri)
+    if (!is.null(bracket)) set(xdt, j = "bracket", value = bracket)
+    set(xdt, j = "stage", value = i)
+    inst$eval_batch(xdt)
+  }
+}

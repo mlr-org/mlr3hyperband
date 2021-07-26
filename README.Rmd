@@ -18,7 +18,6 @@ Package website: [release](https://mlr3hyperband.mlr-org.com/) | [dev](https://m
 [![CRAN Status](https://www.r-pkg.org/badges/version-ago/mlr3hyperband)](https://cran.r-project.org/package=mlr3hyperband)
 [![StackOverflow](https://img.shields.io/badge/stackoverflow-mlr3-orange.svg)](https://stackoverflow.com/questions/tagged/mlr3)
 [![Mattermost](https://img.shields.io/badge/chat-mattermost-orange.svg)](https://lmmisld-lmu-stats-slds.srv.mwn.de/mlr_invite/)
-[![CodeFactor](https://www.codefactor.io/repository/github/mlr-org/mlr3hyperband/badge)](https://www.codefactor.io/repository/github/mlr-org/mlr3hyperband)
 <!-- badges: end -->
 
 This package provides hyperband tuning for [`mlr3`](https://mlr3.mlr-org.com).
@@ -27,13 +26,13 @@ This package provides hyperband tuning for [`mlr3`](https://mlr3.mlr-org.com).
 
 Install the last release from CRAN:
 
-```r
+```{r, eval = FALSE}
 install.packages("mlr3hyperband")
 ```
 
 Install the development version from GitHub:
 
-```r
+```{r, eval = FALSE}
 remotes::install_github("mlr-org/mlr3hyperband")
 ```
 
@@ -43,13 +42,11 @@ remotes::install_github("mlr-org/mlr3hyperband")
 and [hyperparameter tuning](https://mlr3book.mlr-org.com/tuning.html).
 * The original [paper](https://arxiv.org/abs/1603.06560) introducing the hyperband algorithm.
 
-## Short description
+## Hyperband
 
 Hyperband is a budget oriented-procedure, weeding out suboptimally performing configurations early on during their training process aiming at increasing the efficiency of the tuning procedure.
-For this, several brackets are constructed with an associated set of configurations for
-each bracket.
-These configuration are initialized by stochastic, often
-uniform, sampling.
+For this, several brackets are constructed with an associated set of configurations for each bracket.
+These configuration are initialized by stochastic, often uniform, sampling.
 Each bracket is divided into multiple stages, and configurations are evaluated for a increasing budget in each stage.
 Note that currently all configurations are trained completely from the beginning, so no online updates to the models are performed.
 
@@ -59,13 +56,21 @@ An alternative approach using subsampling and pipelines is described further bel
 
 ## Examples
 
+```{r, include = FALSE}
+# mute load messages
+library(mlr3verse)
+library(mlr3hyperband)
+library(mlr3learners)
+```
+
 ### Basic
 
 If you are already familiar with `mlr3tuning`, then the only change compared to other tuners is to give a numeric hyperparameter a `budget` tag.
 Afterwards, you can handle hyperband like all other tuners.
 Originally, hyperband was created with a “natural” learning parameter as the budget parameter in mind, like `nrounds` of the XGBoost learner.
 
-```{r, message = FALSE}
+```{r}
+library(mlr3verse)
 library(mlr3hyperband)
 library(mlr3learners)
 
@@ -96,10 +101,7 @@ Additionally, it is also possible to use `mlr3hyperband` to tune learners that d
 In such a case `mlr3pipelines` can be used to define data subsampling as a preprocessing step.
 Then, the `frac` parameter of subsampling, defining the fraction of the training data to be used, can act as the budget parameter.
 
-```{r, message = FALSE}
-library(mlr3verse)
-library(mlr3hyperband)
-
+```{r}
 learner = po("subsample") %>>% lrn("classif.rpart")
 
 # define subsampling parameter as budget

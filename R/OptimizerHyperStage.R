@@ -103,7 +103,7 @@
 #'
 #' # all evaluations
 #' as.data.table(instance$archive)
-OptimizerHyperband = R6Class("OptimizerHyperband",
+OptimizerHyperStage = R6Class("OptimizerHyperStage",
   inherit = Optimizer,
   public = list(
 
@@ -166,16 +166,68 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
       # B in the original paper
       budget = (s_max + 1) * r
 
-      # loop brackets
-      for (s in s_max:0) {
+      # create plan
+      # remove empty stages after discussion
+      plan = map_dtr(s_max:0, function(s) {
         # number of configurations in the first stage
         n = ceiling((budget / r) * (eta^s) / (s + 1))
         # budget of a single configuration in the first stage
         rs = r * eta^(-s)
 
-        # loop stages by calling successive halving subroutine
-        successive_halving(s, rs, r_scale = r_min, n, eta, sampler, inst, bracket = s)
-      }
+        map_dtr(0:s, function(i) {
+          # number of configurations in stage
+          ni = floor(n * eta^(-i))
+          
+          # budget of a single configuration in stage
+          # (unscaled)
+          ri = r_min * rs * eta^i
+
+          if (i == 0) {
+            xdt = sampler$sample(ni)$data
+            set(xdt, j = budget_id, value = ri)
+          } else {
+            xdt = setnames(data.table(rep(ri, ni)), budget_id)
+          }
+          set(xdt, j = "bracket", value = s)
+          set(xdt, j = "stage", value = i)
+
+        }, .fill = TRUE)
+      }, .fill = TRUE)
+
+      # k groups configurations with the same budget
+      plan[, k := bracket-stage]
+
+      # map over stages with same budget
+      map(s_max:0, function(ki) {
+
+        xdt = plan[k == ki,]
+
+        if (ki != s_max) {
+          archive = inst$archive
+          data = archive$data[k == ki + 1, ]
+          minimize = !as.logical(mult_max_to_min(archive$codomain))
+
+          # for each bracket, get best configurations of previous stage
+          xdt_promoted = map_dtr(split(data, f = data$bracket), function(data_bracket) {
+            y = data_bracket[, archive$cols_y, with = FALSE]
+            row_ids = head(order(unlist(y), decreasing = minimize), floor(nrow(y)/eta))
+            data_bracket[row_ids, ]
+          })
+
+          xdt_promoted = xdt_promoted[, c(inst$archive$cols_x, "stage", "bracket"), with = FALSE]
+
+          # increase budget and stage
+          set(xdt_promoted, j = budget_id, value = xdt_promoted[[budget_id]] * eta)
+          set(xdt_promoted, j = "stage", value = xdt_promoted[["stage"]] + 1)
+          set(xdt_promoted, j = "k", value = xdt_promoted[["bracket"]]- xdt_promoted[["stage"]])
+
+          # remove after discussion
+          xdt = xdt[complete.cases(xdt), ]
+
+          xdt = rbindlist(list(xdt, xdt_promoted), use.names = TRUE)
+        }
+        inst$eval_batch(xdt)
+      })
     }
   )
 )

@@ -95,7 +95,7 @@
 #' instance$result
 #' }
 #' }
-TunerHyperband = R6Class("TunerHyperband",
+TunerHyperStage = R6Class("TunerHyperStage",
   inherit = TunerFromOptimizer,
   public = list(
 
@@ -103,7 +103,7 @@ TunerHyperband = R6Class("TunerHyperband",
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
       super$initialize(
-        optimizer = OptimizerHyperband$new()
+        optimizer = OptimizerHyperStage$new()
       )
     }
   )
