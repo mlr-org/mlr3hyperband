@@ -166,15 +166,51 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
       # B in the original paper
       budget = (s_max + 1) * r
 
-      # loop brackets
+      # loop over stages with same budget
       for (s in s_max:0) {
         # number of configurations in the first stage
         n = ceiling((budget / r) * (eta^s) / (s + 1))
-        # budget of a single configuration in the first stage
-        rs = r * eta^(-s)
+        # budget of a single configuration in the first stage (unscaled)
+        rs = r_min * r * eta^(-s)
+        # sample initial configurations of bracket
+        xdt = sampler$sample(n)$data
+        set(xdt, j = budget_id, value = rs)
+        set(xdt, j = "bracket", value = s)
+        set(xdt, j = "stage", value = 0)
 
-        # loop stages by calling successive halving subroutine
-        successive_halving(s, rs, r_scale = r_min, n, eta, sampler, inst, bracket = s)
+        # promote configurations of previous batch
+        if (s != s_max) {
+          archive = inst$archive
+          data = archive$data[batch_nr == archive$n_batch, ]
+          minimize = !as.logical(mult_max_to_min(archive$codomain))
+
+          # for each bracket, promote configurations of previous stage
+          xdt_promoted = map_dtr(s_max:(s + 1), function(i) {
+            # number of configuration to promote
+            n = ceiling((budget / r) * (eta^i) / (i + 1))
+            ni = floor(n * eta^(-(i - s)))
+
+            data_bracket = data[get("bracket") == i, ]
+            y = data_bracket[, archive$cols_y, with = FALSE]
+
+            row_ids = if (archive$codomain$length == 1) {
+              head(order(unlist(y), decreasing = minimize), ni)
+            } else {
+              nds_selection(points = t(as.matrix(y)), n_select = ni, minimize = minimize)
+            }
+            data_bracket[row_ids, ]
+          })
+
+          # increase budget and stage
+          xdt_promoted = xdt_promoted[, c(inst$archive$cols_x, "stage", "bracket"), with = FALSE]
+          set(xdt_promoted, j = budget_id, value = rs)
+          set(xdt_promoted, j = "stage", value = xdt_promoted[["stage"]] + 1)
+
+          xdt = rbindlist(list(xdt, xdt_promoted), use.names = TRUE)
+        }
+
+        if (search_space$class[[budget_id]] == "ParamInt") set(xdt, j = budget_id, value = round(xdt[[budget_id]]))
+        inst$eval_batch(xdt)
       }
     }
   )

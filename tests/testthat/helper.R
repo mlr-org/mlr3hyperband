@@ -67,10 +67,10 @@ test_tuner_hyperband = function(eta, learner, search_space, measures = msr("clas
   round = search_space$class[[budget_id]] == "ParamInt"
   plan_hyperband = hyperband_brackets(r_max / r_min, eta, r_min, round)
 
-  expect_equal(plan_tuner$bracket, plan_hyperband$bracket)
-  expect_equal(plan_tuner$stage, plan_hyperband$stage)
-  expect_equal(plan_tuner[[budget_id]], plan_hyperband$budget)
-  expect_equal(plan_tuner$N, plan_hyperband$n)
+  expect_set_equal(plan_tuner$bracket, plan_hyperband$bracket)
+  expect_set_equal(plan_tuner$stage, plan_hyperband$stage)
+  expect_set_equal(plan_tuner[[budget_id]], plan_hyperband$budget)
+  expect_set_equal(plan_tuner$N, plan_hyperband$n)
 
   instance
 }
