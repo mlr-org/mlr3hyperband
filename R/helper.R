@@ -78,7 +78,7 @@ hyperband_n_configs = function(r_min, r_max, eta) {
 #'
 #' @return `integer(1)`
 #' @export
-hyperband_bduget = function(r_min, r_max, eta, round = FALSE) {
+hyperband_budget = function(r_min, r_max, eta, round = FALSE) {
   schedule = hyperband_schedule(r_min, r_max, eta, round)
   sum(schedule[, budget * n])
 }
