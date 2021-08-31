@@ -5,7 +5,6 @@ test_that("TunerHyperband works with TuningInstanceSingleCrit", {
 
   test_tuner_hyperband(eta = 3L, lower_budget = 1, upper_budget = 27)
   test_tuner_hyperband(eta = 2L, lower_budget = 1, upper_budget = 8, term_evals = 10, n_dim = 2L)
-  test_tuner_hyperband_dependencies(eta = 3L, lower_budget = 1, upper_budget = 27)
 })
 
 test_that("TunerHyperband works with TuningInstanceMultiCrit", {
