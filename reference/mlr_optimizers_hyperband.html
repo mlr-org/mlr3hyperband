@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tuner using the Hyperband algorithm — mlr_tuners_hyperband • mlr3hyperband</title>
+<title>Optimizer using the Hyperband algorithm — mlr_optimizers_hyperband • mlr3hyperband</title>
 
 
 <!-- jquery -->
@@ -40,26 +40,24 @@
 
 
 
-<meta property="og:title" content="Tuner using the Hyperband algorithm — mlr_tuners_hyperband" />
-<meta property="og:description" content="TunerHyperband class that implements hyperband tuning. Hyperband is a
-budget oriented-procedure, weeding out suboptimal performing configurations
-early in a sequential training process, increasing tuning efficiency as a
-consequence.
+<meta property="og:title" content="Optimizer using the Hyperband algorithm — mlr_optimizers_hyperband" />
+<meta property="og:description" content="OptimizerHyperband class that implements hyperband optimization. Hyperband
+is a budget oriented-procedure, weeding out suboptimal performing
+configurations early in a sequential training process, increasing
+optimization efficiency as a consequence.
 For this, several brackets are constructed with an associated set of
-configurations for each bracket. Each bracket has several stages. Different
+configurations for each bracket. Each bracket as several stages. Different
 brackets are initialized with different amounts of configurations and
-different budget sizes.
-Within the context of hyperband each evaluation of a learner consumes a
-certain budget. This budget is not fixed but controlled by a certain
-hyperparameter, e.g. the number of boosting iterations or the number of trees
-in a random forest. The user has to specify explicitly which hyperparameter
-of the learner controls the consumption of the budget by
-tagging a single hyperparameter in the paradox::ParamSet with &quot;budget&quot;.
-An alternative approach using subsampling and pipelines is described below.
+different budget sizes. To get an idea of how the bracket layout looks like
+for a given argument set, please have a look in the details.
+To identify the budget for evaluating hyperband, the user has to specify
+explicitly which parameter of the objective function influences the budget by
+tagging a single parameter in the paradox::ParamSet with &quot;budget&quot;.
 Naturally, hyperband terminates once all of its brackets are evaluated, so a
-bbotk::Terminator in the tuning instance acts as an upper bound and should
-be only set to a low value if one is unsure of how long hyperband will take
-to finish under the given settings." />
+bbotk::Terminator in the OptimInstanceSingleCrit |
+OptimInstanceMultiCrit acts as an upper bound and should be only set to a
+low value if one is unsure of how long hyperband will take to finish under
+the given settings." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -152,31 +150,29 @@ to finish under the given settings." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Tuner using the Hyperband algorithm</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mlr-org/mlr3hyperband/blob/master/R/TunerHyperband.R'><code>R/TunerHyperband.R</code></a></small>
-    <div class="hidden name"><code>mlr_tuners_hyperband.Rd</code></div>
+    <h1>Optimizer using the Hyperband algorithm</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mlr-org/mlr3hyperband/blob/master/R/OptimizerHyperband.R'><code>R/OptimizerHyperband.R</code></a></small>
+    <div class="hidden name"><code>mlr_optimizers_hyperband.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><code>TunerHyperband</code> class that implements hyperband tuning. Hyperband is a
-budget oriented-procedure, weeding out suboptimal performing configurations
-early in a sequential training process, increasing tuning efficiency as a
-consequence.</p>
+    <p><code>OptimizerHyperband</code> class that implements hyperband optimization. Hyperband
+is a budget oriented-procedure, weeding out suboptimal performing
+configurations early in a sequential training process, increasing
+optimization efficiency as a consequence.</p>
 <p>For this, several brackets are constructed with an associated set of
-configurations for each bracket. Each bracket has several stages. Different
+configurations for each bracket. Each bracket as several stages. Different
 brackets are initialized with different amounts of configurations and
-different budget sizes.</p>
-<p>Within the context of hyperband each evaluation of a learner consumes a
-certain budget. This budget is not fixed but controlled by a certain
-hyperparameter, e.g. the number of boosting iterations or the number of trees
-in a random forest. The user has to specify explicitly which hyperparameter
-of the learner controls the consumption of the budget by
-tagging a single hyperparameter in the <a href='https://paradox.mlr-org.com/reference/ParamSet.html'>paradox::ParamSet</a> with <code>"budget"</code>.
-An alternative approach using subsampling and pipelines is described below.</p>
+different budget sizes. To get an idea of how the bracket layout looks like
+for a given argument set, please have a look in the <code>details</code>.</p>
+<p>To identify the budget for evaluating hyperband, the user has to specify
+explicitly which parameter of the objective function influences the budget by
+tagging a single parameter in the <a href='https://paradox.mlr-org.com/reference/ParamSet.html'>paradox::ParamSet</a> with <code>"budget"</code>.</p>
 <p>Naturally, hyperband terminates once all of its brackets are evaluated, so a
-<a href='https://bbotk.mlr-org.com/reference/Terminator.html'>bbotk::Terminator</a> in the tuning instance acts as an upper bound and should
-be only set to a low value if one is unsure of how long hyperband will take
-to finish under the given settings.</p>
+<a href='https://bbotk.mlr-org.com/reference/Terminator.html'>bbotk::Terminator</a> in the OptimInstanceSingleCrit |
+OptimInstanceMultiCrit acts as an upper bound and should be only set to a
+low value if one is unsure of how long hyperband will take to finish under
+the given settings.</p>
     </div>
 
 
@@ -216,43 +212,31 @@ the initialization of each bracket. The default is uniform sampling.</p></dd>
 
     
 
-<p>The <a href='https://mlr3tuning.mlr-org.com/reference/ArchiveTuning.html'>mlr3tuning::ArchiveTuning</a> holds the following additional columns that
+<p>The <a href='https://bbotk.mlr-org.com/reference/Archive.html'>bbotk::Archive</a> holds the following additional columns that
 are specific to the hyperband tuner:</p><ul>
 <li><p><code>bracket</code> (<code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code>)<br />
-The console logs about the bracket index are actually not matching
-with the original hyperband algorithm, which counts down the brackets
-and stops after evaluating bracket 0. The true bracket indices are
-given in this column.</p></li>
+The console logs about the bracket index are actually not matching with
+the original hyperband algorithm, which counts down the brackets and
+stops after evaluating bracket 0. The true bracket indices are given in
+this column.</p></li>
 <li><p><code>bracket_stage</code> (<code>integer(1))</code><br />
 The bracket stage of each bracket. Hyperband starts counting at 0.</p></li>
 <li><p><code>budget_scaled</code> (<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>)<br />
 The intermediate budget in each bracket stage calculated by hyperband.
-Because hyperband is originally only considered for budgets starting at 1, some
-rescaling is done to allow budgets starting at different values.
-For this, budgets are internally divided by the lower budget bound to
-get a lower budget of 1. Before the learner
-receives its budgets for evaluation, the budget is transformed back to
-match the original scale again.</p></li>
+Because hyperband is originally only considered for budgets starting at
+1, some rescaling is done to allow budgets starting at different values.
+For this, budgets are internally divided by the lower budget bound to get
+a lower budget of 1. Before the objective function receives its budgets
+for evaluation, the budget is transformed back to match the original
+scale again.</p></li>
 <li><p><code>budget_real</code> (<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>)<br />
-The real budget values the learner uses for evaluation after hyperband
-calculated its scaled budget.</p></li>
+The real budget values the objective function uses for evaluation after
+hyperband calculated its scaled budget.</p></li>
 <li><p><code>n_configs</code> (<code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code>)<br />
-The amount of evaluated configurations in each stage. These correspond
-to the <code>r_i</code> in the original paper.</p></li>
+The amount of evaluated configurations in each stage. These correspond to
+the <code>r_i</code> in the original paper.</p></li>
 </ul>
 
-    <h2 class="hasAnchor" id="hyperband-without-learner-budget"><a class="anchor" href="#hyperband-without-learner-budget"></a>Hyperband without learner budget</h2>
-
-    
-
-<p>Thanks to <a href='https://CRAN.R-project.org/package=mlr3pipelines'><span class="pkg">mlr3pipelines</span></a>, it is possible to use hyperband in
-combination with learners lacking a natural budget parameter. For example,
-any <a href='https://mlr3.mlr-org.com/reference/Learner.html'>mlr3::Learner</a> can be augmented with a <a href='https://mlr3pipelines.mlr-org.com//reference/PipeOp.html'>mlr3pipelines::PipeOp</a>
-operator such as <a href='https://mlr3pipelines.mlr-org.com//reference/mlr_pipeops_subsample.html'>mlr3pipelines::PipeOpSubsample</a>. With the
-subsampling rate as budget parameter, the resulting
-<a href='https://mlr3pipelines.mlr-org.com//reference/mlr_learners_graph.html'>mlr3pipelines::GraphLearner</a> is fitted on small proportions of
-the <a href='https://mlr3.mlr-org.com/reference/Task.html'>mlr3::Task</a> in the first brackets, and on the complete Task in
-last brackets. See examples for some code.</p>
     <h2 class="hasAnchor" id="custom-sampler"><a class="anchor" href="#custom-sampler"></a>Custom sampler</h2>
 
     
@@ -304,35 +288,35 @@ parallelization for more details).</p>
 <p>Hyperband uses a logger (as implemented in <a href='https://CRAN.R-project.org/package=lgr'><span class="pkg">lgr</span></a>) from package
 <a href='https://CRAN.R-project.org/package=bbotk'><span class="pkg">bbotk</span></a>.
 Use <code><a href='https://s-fleck.github.io/lgr/reference/get_logger.html'>lgr::get_logger("bbotk")</a></code> to access and control the logger.</p>
-    <h2 class="hasAnchor" id="super-classes"><a class="anchor" href="#super-classes"></a>Super classes</h2>
+    <h2 class="hasAnchor" id="super-class"><a class="anchor" href="#super-class"></a>Super class</h2>
 
-    <p><code><a href='https://mlr3tuning.mlr-org.com/reference/Tuner.html'>mlr3tuning::Tuner</a></code> -&gt; <code><a href='https://mlr3tuning.mlr-org.com/reference/TunerFromOptimizer.html'>mlr3tuning::TunerFromOptimizer</a></code> -&gt; <code>TunerHyperband</code></p>
+    <p><code><a href='https://bbotk.mlr-org.com/reference/Optimizer.html'>bbotk::Optimizer</a></code> -&gt; <code>OptimizerHyperband</code></p>
     <h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
 
     
 <h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Public methods</h3>
 
 <ul>
-<li><p><a href='#method-new'><code>TunerHyperband$new()</code></a></p></li>
-<li><p><a href='#method-clone'><code>TunerHyperband$clone()</code></a></p></li>
+<li><p><a href='#method-new'><code>OptimizerHyperband$new()</code></a></p></li>
+<li><p><a href='#method-clone'><code>OptimizerHyperband$clone()</code></a></p></li>
 </ul>
 <p><details open ><summary>Inherited methods</summary>
 <ul>
-<li><p><span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="format"><a href='../../mlr3tuning/html/Tuner.html#method-format'><code>mlr3tuning::Tuner$format()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="print"><a href='../../mlr3tuning/html/Tuner.html#method-print'><code>mlr3tuning::Tuner$print()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="mlr3tuning" data-topic="TunerFromOptimizer" data-id="optimize"><a href='../../mlr3tuning/html/TunerFromOptimizer.html#method-optimize'><code>mlr3tuning::TunerFromOptimizer$optimize()</code></a></span></p></li>
+<li><p><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="format"><a href='../../bbotk/html/Optimizer.html#method-format'><code>bbotk::Optimizer$format()</code></a></span></p></li>
+<li><p><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="optimize"><a href='../../bbotk/html/Optimizer.html#method-optimize'><code>bbotk::Optimizer$optimize()</code></a></span></p></li>
+<li><p><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="print"><a href='../../bbotk/html/Optimizer.html#method-print'><code>bbotk::Optimizer$print()</code></a></span></p></li>
 </ul>
 </details>
 
 <hr>
 <a id="method-new"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>new()</code></h3>
 <p>Creates a new instance of this <a href='https://r6.r-lib.org/reference/R6Class.html'>R6</a> class.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
-<p><div class="r"></p><pre><span class='va'>TunerHyperband</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='op'>)</span></pre><p></div></p>
+<p><div class="r"></p><pre><span class='va'>OptimizerHyperband</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='op'>)</span></pre><p></div></p>
 
 <p><hr>
 <a id="method-clone"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>clone()</code></h3>
 <p>The objects of this class are cloneable with this method.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
-<p><div class="r"></p><pre><span class='va'>TunerHyperband</span><span class='op'>$</span><span class='fu'>clone</span><span class='op'>(</span>deep <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre><p></div></p>
+<p><div class="r"></p><pre><span class='va'>OptimizerHyperband</span><span class='op'>$</span><span class='fu'>clone</span><span class='op'>(</span>deep <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre><p></div></p>
 
 <h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Arguments</h4>
 <p><div class="arguments"></p><dl>
@@ -343,33 +327,77 @@ Use <code><a href='https://s-fleck.github.io/lgr/reference/get_logger.html'>lgr:
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/ns-load.html'>requireNamespace</a></span><span class='op'>(</span><span class='st'>"xgboost"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://mlr3learners.mlr-org.com'>mlr3learners</a></span><span class='op'>)</span>
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://bbotk.mlr-org.com'>bbotk</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://r-datatable.com'>data.table</a></span><span class='op'>)</span>
 
-<span class='co'># define hyperparameter and budget parameter</span>
-<span class='va'>search_space</span> <span class='op'>=</span> <span class='fu'>ps</span><span class='op'>(</span>
-  nrounds <span class='op'>=</span> <span class='fu'>p_int</span><span class='op'>(</span>lower <span class='op'>=</span> <span class='fl'>1</span>, upper <span class='op'>=</span> <span class='fl'>16</span>, tags <span class='op'>=</span> <span class='st'>"budget"</span><span class='op'>)</span>,
-  eta <span class='op'>=</span> <span class='fu'>p_dbl</span><span class='op'>(</span>lower <span class='op'>=</span> <span class='fl'>0</span>, upper <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>,
-  booster <span class='op'>=</span> <span class='fu'>p_fct</span><span class='op'>(</span>levels <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"gbtree"</span>, <span class='st'>"gblinear"</span>, <span class='st'>"dart"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>search_space</span> <span class='op'>=</span> <span class='va'>domain</span> <span class='op'>=</span> <span class='fu'>ps</span><span class='op'>(</span>
+  x1 <span class='op'>=</span> <span class='fu'>p_dbl</span><span class='op'>(</span><span class='op'>-</span><span class='fl'>5</span>, <span class='fl'>10</span><span class='op'>)</span>, 
+  x2 <span class='op'>=</span> <span class='fu'>p_dbl</span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>15</span><span class='op'>)</span>, 
+  fidelity <span class='op'>=</span> <span class='fu'>p_dbl</span><span class='op'>(</span><span class='fl'>1e-2</span>, <span class='fl'>1</span>, tags <span class='op'>=</span> <span class='st'>"budget"</span><span class='op'>)</span>
 <span class='op'>)</span>
 
-<span class='co'># \donttest{</span>
-<span class='co'># hyperparameter tuning on the pima indians diabetes data set</span>
-<span class='va'>instance</span> <span class='op'>=</span> <span class='fu'>tune</span><span class='op'>(</span>
-  method <span class='op'>=</span> <span class='st'>"hyperband"</span>,
-  task <span class='op'>=</span> <span class='fu'>tsk</span><span class='op'>(</span><span class='st'>"pima"</span><span class='op'>)</span>,
-  learner <span class='op'>=</span> <span class='fu'>lrn</span><span class='op'>(</span><span class='st'>"classif.xgboost"</span>, eval_metric <span class='op'>=</span> <span class='st'>"logloss"</span><span class='op'>)</span>,
-  resampling <span class='op'>=</span> <span class='fu'>rsmp</span><span class='op'>(</span><span class='st'>"cv"</span>, folds <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>,
-  measure <span class='op'>=</span> <span class='fu'>msr</span><span class='op'>(</span><span class='st'>"classif.ce"</span><span class='op'>)</span>,
-  search_space <span class='op'>=</span> <span class='va'>search_space</span>
+<span class='co'># modified branin function</span>
+<span class='va'>objective</span> <span class='op'>=</span> <span class='va'><a href='https://bbotk.mlr-org.com/reference/ObjectiveRFunDt.html'>ObjectiveRFunDt</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span>
+  fun <span class='op'>=</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>xdt</span><span class='op'>)</span> <span class='op'>{</span>
+    <span class='va'>a</span> <span class='op'>=</span> <span class='fl'>1</span>
+    <span class='va'>b</span> <span class='op'>=</span> <span class='fl'>5.1</span> <span class='op'>/</span> <span class='op'>(</span><span class='fl'>4</span> <span class='op'>*</span> <span class='op'>(</span><span class='va'>pi</span> <span class='op'>^</span> <span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
+    <span class='va'>c</span> <span class='op'>=</span> <span class='fl'>5</span> <span class='op'>/</span> <span class='va'>pi</span>
+    <span class='va'>r</span> <span class='op'>=</span> <span class='fl'>6</span>
+    <span class='va'>s</span> <span class='op'>=</span> <span class='fl'>10</span>
+    <span class='va'>t</span> <span class='op'>=</span> <span class='fl'>1</span> <span class='op'>/</span> <span class='op'>(</span><span class='fl'>8</span> <span class='op'>*</span> <span class='va'>pi</span><span class='op'>)</span>
+    <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span><span class='op'>(</span>y <span class='op'>=</span> 
+      <span class='op'>(</span><span class='va'>a</span> <span class='op'>*</span> <span class='op'>(</span><span class='op'>(</span><span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"x2"</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>-</span> 
+      <span class='va'>b</span> <span class='op'>*</span> <span class='op'>(</span><span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"x1"</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>^</span> <span class='fl'>2L</span><span class='op'>)</span> <span class='op'>+</span> 
+      <span class='va'>c</span> <span class='op'>*</span> <span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"x1"</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>-</span> <span class='va'>r</span><span class='op'>)</span> <span class='op'>^</span> <span class='fl'>2</span><span class='op'>)</span> <span class='op'>+</span> 
+      <span class='op'>(</span><span class='op'>(</span><span class='va'>s</span> <span class='op'>*</span> <span class='op'>(</span><span class='fl'>1</span> <span class='op'>-</span> <span class='va'>t</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>*</span> <span class='fu'><a href='https://rdrr.io/r/base/Trig.html'>cos</a></span><span class='op'>(</span><span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"x1"</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span> 
+      <span class='va'>s</span> <span class='op'>-</span> <span class='op'>(</span><span class='fl'>5</span> <span class='op'>*</span> <span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"fidelity"</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>*</span> <span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"x1"</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+  <span class='op'>}</span>,
+  domain <span class='op'>=</span> <span class='va'>domain</span>,
+  codomain <span class='op'>=</span> <span class='fu'>ps</span><span class='op'>(</span>y <span class='op'>=</span> <span class='fu'>p_dbl</span><span class='op'>(</span>tags <span class='op'>=</span> <span class='st'>"minimize"</span><span class='op'>)</span><span class='op'>)</span>
 <span class='op'>)</span>
 
-<span class='co'># best performing hyperparameter configuration</span>
+<span class='va'>instance</span> <span class='op'>=</span> <span class='va'><a href='https://bbotk.mlr-org.com/reference/OptimInstanceSingleCrit.html'>OptimInstanceSingleCrit</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span>
+  objective <span class='op'>=</span> <span class='va'>objective</span>,
+  search_space <span class='op'>=</span> <span class='va'>search_space</span>,
+  terminator <span class='op'>=</span> <span class='fu'><a href='https://bbotk.mlr-org.com/reference/trm.html'>trm</a></span><span class='op'>(</span><span class='st'>"none"</span><span class='op'>)</span>
+<span class='op'>)</span>
+
+<span class='va'>optimizer</span> <span class='op'>=</span> <span class='fu'><a href='https://bbotk.mlr-org.com/reference/opt.html'>opt</a></span><span class='op'>(</span><span class='st'>"hyperband"</span><span class='op'>)</span>
+
+<span class='co'># modifies the instance by reference</span>
+<span class='va'>optimizer</span><span class='op'>$</span><span class='fu'>optimize</span><span class='op'>(</span><span class='va'>instance</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;          x1       x2 fidelity  x_domain         y
+#&gt; 1: 9.633218 4.350752        1 &lt;list[3]&gt; -44.68965</div><div class='input'>
+<span class='co'># best scoring evaluation</span>
 <span class='va'>instance</span><span class='op'>$</span><span class='va'>result</span>
-<span class='co'># }</span>
-<span class='op'>}</span>
-</div><div class='output co'>#&gt; <span class='message'>Loading required namespace: xgboost</span></div><div class='output co'>#&gt;    nrounds       eta booster learner_param_vals  x_domain classif.ce
-#&gt; 1:       8 0.4480606  gbtree          &lt;list[6]&gt; &lt;list[3]&gt;  0.2278646</div></pre>
+</div><div class='output co'>#&gt;          x1       x2 fidelity  x_domain         y
+#&gt; 1: 9.633218 4.350752        1 &lt;list[3]&gt; -44.68965</div><div class='input'>
+<span class='co'># all evaluations</span>
+<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/as.data.table.html'>as.data.table</a></span><span class='op'>(</span><span class='va'>instance</span><span class='op'>$</span><span class='va'>archive</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;              x1        x2 fidelity bracket bracket_stage budget_scaled
+#&gt;   1: -3.7887479  8.943942 0.015625       6             0        1.5625
+#&gt;   2:  7.5149956  2.872770 0.015625       6             0        1.5625
+#&gt;   3:  4.0114133 14.216459 0.015625       6             0        1.5625
+#&gt;   4: -2.6418734  8.137206 0.015625       6             0        1.5625
+#&gt;   5: -4.8890084  8.169051 0.015625       6             0        1.5625
+#&gt;  ---                                                                  
+#&gt; 297:  0.4116634 11.789267 1.000000       0             0      100.0000
+#&gt; 298: -2.4440674 12.379618 1.000000       0             0      100.0000
+#&gt; 299:  6.7471101 14.478606 1.000000       0             0      100.0000
+#&gt; 300: -4.5361416  5.679618 1.000000       0             0      100.0000
+#&gt; 301:  6.8413054  2.615795 1.000000       0             0      100.0000
+#&gt;      budget_real n_configs         y           timestamp batch_nr
+#&gt;   1:    0.015625        64  27.04327 2021-09-13 12:57:37        1
+#&gt;   2:    0.015625        64  14.96993 2021-09-13 12:57:37        1
+#&gt;   3:    0.015625        64 160.29551 2021-09-13 12:57:37        1
+#&gt;   4:    0.015625        64  10.59406 2021-09-13 12:57:37        1
+#&gt;   5:    0.015625        64  87.75677 2021-09-13 12:57:37        1
+#&gt;  ---                                                             
+#&gt; 297:    1.000000         7  57.99085 2021-09-13 12:57:37       28
+#&gt; 298:    1.000000         7  17.81277 2021-09-13 12:57:37       28
+#&gt; 299:    1.000000         7 162.70148 2021-09-13 12:57:37       28
+#&gt; 300:    1.000000         7 134.99736 2021-09-13 12:57:37       28
+#&gt; 301:    1.000000         7 -13.93637 2021-09-13 12:57:37       28</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
