@@ -247,11 +247,11 @@ to the <code>r_i</code> in the original paper.</p></li>
 
 <p>Thanks to <a href='https://CRAN.R-project.org/package=mlr3pipelines'><span class="pkg">mlr3pipelines</span></a>, it is possible to use hyperband in
 combination with learners lacking a natural budget parameter. For example,
-any <a href='https://mlr3.mlr-org.com/reference/Learner.html'>mlr3::Learner</a> can be augmented with a <a href='https://mlr3pipelines.mlr-org.com//reference/PipeOp.html'>mlr3pipelines::PipeOp</a>
+any <a href='https://rdrr.io/pkg/mlr3/man/Learner.html'>mlr3::Learner</a> can be augmented with a <a href='https://mlr3pipelines.mlr-org.com//reference/PipeOp.html'>mlr3pipelines::PipeOp</a>
 operator such as <a href='https://mlr3pipelines.mlr-org.com//reference/mlr_pipeops_subsample.html'>mlr3pipelines::PipeOpSubsample</a>. With the
 subsampling rate as budget parameter, the resulting
 <a href='https://mlr3pipelines.mlr-org.com//reference/mlr_learners_graph.html'>mlr3pipelines::GraphLearner</a> is fitted on small proportions of
-the <a href='https://mlr3.mlr-org.com/reference/Task.html'>mlr3::Task</a> in the first brackets, and on the complete Task in
+the <a href='https://rdrr.io/pkg/mlr3/man/Task.html'>mlr3::Task</a> in the first brackets, and on the complete Task in
 last brackets. See examples for some code.</p>
     <h2 class="hasAnchor" id="custom-sampler"><a class="anchor" href="#custom-sampler"></a>Custom sampler</h2>
 
@@ -295,7 +295,7 @@ combined with a <a href='https://bbotk.mlr-org.com/reference/Terminator.html'>Te
 <p>In order to support general termination criteria and parallelization, we
 evaluate points in a batch-fashion of size <code>batch_size</code>. The points of one
 stage in a bracket are evaluated in one batch. Parallelization is supported
-via package <a href='https://CRAN.R-project.org/package=future'><span class="pkg">future</span></a> (see <code><a href='https://mlr3.mlr-org.com/reference/benchmark.html'>mlr3::benchmark()</a></code>'s section on
+via package <a href='https://CRAN.R-project.org/package=future'><span class="pkg">future</span></a> (see <code><a href='https://rdrr.io/pkg/mlr3/man/benchmark.html'>mlr3::benchmark()</a></code>'s section on
 parallelization for more details).</p>
     <h2 class="hasAnchor" id="logging"><a class="anchor" href="#logging"></a>Logging</h2>
 
