@@ -82,7 +82,3 @@ hyperband_budget = function(r_min, r_max, eta, round = FALSE) {
   schedule = hyperband_schedule(r_min, r_max, eta, round)
   sum(schedule[, get("budget") * get("n")])
 }
-
-
-
-     

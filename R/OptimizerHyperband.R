@@ -219,5 +219,3 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
     }
   )
 )
-
-
