@@ -46,10 +46,10 @@ algorithm. The algorithm samples n configurations and evaluates them with
 the smallest budget (lower bound of the budget parameter). With every stage
 the budget is increased by a factor of eta and only the best 1/eta
 configurations are promoted to the next stage. The optimization terminates
-when the maximum budget is reached (upper bound of the budget parameter).
+when the maximum budget is reached (upper bound of the budget parameter)
 To identify the budget, the user has to specify explicitly which parameter of
 the objective function influences the budget by tagging a single parameter in
-the search_space (paradox::ParamSet) with &quot;budget&quot;." />
+in the search_space (paradox::ParamSet) with &quot;budget&quot;." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -153,10 +153,10 @@ algorithm. The algorithm samples <code>n</code> configurations and evaluates the
 the smallest budget (lower bound of the <code>budget</code> parameter). With every stage
 the budget is increased by a factor of <code>eta</code> and only the best <code>1/eta</code>
 configurations are promoted to the next stage. The optimization terminates
-when the maximum budget is reached (upper bound of the <code>budget</code> parameter).</p>
+when the maximum budget is reached (upper bound of the <code>budget</code> parameter)</p>
 <p>To identify the budget, the user has to specify explicitly which parameter of
 the objective function influences the budget by tagging a single parameter in
-the search_space (<a href='https://paradox.mlr-org.com/reference/ParamSet.html'>paradox::ParamSet</a>) with <code>"budget"</code>.</p>
+in the search_space (<a href='https://paradox.mlr-org.com/reference/ParamSet.html'>paradox::ParamSet</a>) with <code>"budget"</code>.</p>
     </div>
 
 
@@ -175,7 +175,7 @@ In Gretton A, Robert CC (eds.), <em>Proceedings of the 19th International Confer
 <dt><code>n</code></dt><dd><p><code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code><br />
 Number of configurations in first stage.</p></dd>
 <dt><code>eta</code></dt><dd><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code><br />
-With every step, the configuration budget is increased by a factor of <code>eta</code>
+With every stage, the configuration budget is increased by a factor of <code>eta</code>
 and only the best <code>1/eta</code> configurations are used for the next stage.
 Non-integer values are supported, but <code>eta</code> is not allowed to be less or
 equal 1.</p></dd>
@@ -189,8 +189,8 @@ the initialization of each bracket. The default is uniform sampling.</p></dd>
 
     
 
-<p>The <a href='https://mlr3tuning.mlr-org.com/reference/ArchiveTuning.html'>mlr3tuning::ArchiveTuning</a> holds the following additional column that is
-specific to the successive halving algorithm:</p><ul>
+<p>The <a href='https://mlr3tuning.mlr-org.com/reference/ArchiveTuning.html'>mlr3tuning::ArchiveTuning</a> holds the following additional column that is specific
+to the successive halving algorithm:</p><ul>
 <li><p><code>stage</code> (<code>integer(1))</code><br />
 Stage index. Starts counting at 0.</p></li>
 </ul>
@@ -260,7 +260,7 @@ Stage index. Starts counting at 0.</p></li>
 <span class='co'># }</span>
 <span class='op'>}</span>
 </div><div class='output co'>#&gt;    nrounds       eta booster learner_param_vals  x_domain classif.ce
-#&gt; 1:       8 0.2370871    dart          &lt;list[6]&gt; &lt;list[3]&gt;  0.2382812</div></pre>
+#&gt; 1:       4 0.2602081    dart          &lt;list[6]&gt; &lt;list[3]&gt;  0.2330729</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

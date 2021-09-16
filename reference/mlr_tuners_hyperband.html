@@ -216,29 +216,12 @@ the initialization of each bracket. The default is uniform sampling.</p></dd>
 
     
 
-<p>The <a href='https://mlr3tuning.mlr-org.com/reference/ArchiveTuning.html'>mlr3tuning::ArchiveTuning</a> holds the following additional columns that
-are specific to the hyperband tuner:</p><ul>
+<p>The <a href='https://mlr3tuning.mlr-org.com/reference/ArchiveTuning.html'>mlr3tuning::ArchiveTuning</a> holds the following additional columns that are specific
+to the hyperband algorithm:</p><ul>
 <li><p><code>bracket</code> (<code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code>)<br />
-The console logs about the bracket index are actually not matching
-with the original hyperband algorithm, which counts down the brackets
-and stops after evaluating bracket 0. The true bracket indices are
-given in this column.</p></li>
-<li><p><code>bracket_stage</code> (<code>integer(1))</code><br />
-The bracket stage of each bracket. Hyperband starts counting at 0.</p></li>
-<li><p><code>budget_scaled</code> (<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>)<br />
-The intermediate budget in each bracket stage calculated by hyperband.
-Because hyperband is originally only considered for budgets starting at 1, some
-rescaling is done to allow budgets starting at different values.
-For this, budgets are internally divided by the lower budget bound to
-get a lower budget of 1. Before the learner
-receives its budgets for evaluation, the budget is transformed back to
-match the original scale again.</p></li>
-<li><p><code>budget_real</code> (<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>)<br />
-The real budget values the learner uses for evaluation after hyperband
-calculated its scaled budget.</p></li>
-<li><p><code>n_configs</code> (<code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code>)<br />
-The amount of evaluated configurations in each stage. These correspond
-to the <code>r_i</code> in the original paper.</p></li>
+The bracket index. Counts down to 0.</p></li>
+<li><p><code>stage</code> (<code>integer(1))</code><br />
+The stages of each bracket. Starts counting at 0.</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="hyperband-without-learner-budget"><a class="anchor" href="#hyperband-without-learner-budget"></a>Hyperband without learner budget</h2>
@@ -369,7 +352,7 @@ Use <code><a href='https://s-fleck.github.io/lgr/reference/get_logger.html'>lgr:
 <span class='co'># }</span>
 <span class='op'>}</span>
 </div><div class='output co'>#&gt; <span class='message'>Loading required namespace: xgboost</span></div><div class='output co'>#&gt;    nrounds       eta booster learner_param_vals  x_domain classif.ce
-#&gt; 1:       8 0.4480606  gbtree          &lt;list[6]&gt; &lt;list[3]&gt;  0.2278646</div></pre>
+#&gt; 1:      16 0.2202471    dart          &lt;list[6]&gt; &lt;list[3]&gt;  0.2265625</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
