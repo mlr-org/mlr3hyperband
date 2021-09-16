@@ -80,7 +80,7 @@ hyperband_n_configs = function(r_min, r_max, eta) {
 #' @export
 hyperband_budget = function(r_min, r_max, eta, round = FALSE) {
   schedule = hyperband_schedule(r_min, r_max, eta, round)
-  sum(schedule[, budget * n])
+  sum(schedule[, get("budget") * get("n")])
 }
 
 
