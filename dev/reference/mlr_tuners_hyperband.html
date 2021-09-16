@@ -93,7 +93,7 @@ to finish under the given settings." />
 
       <div class="navbar-brand-container">
         <a href="https://mlr-org.com"><img src="https://raw.githubusercontent.com/mlr-org/mlr3/master/man/figures/logo.png" id="hexlogo" alt="mlr-org" /></a>
-        <a class="navbar-brand" href="../index.html">mlr3hyperband <small>v0.1.2.9000</small></a>
+        <a class="navbar-brand" href="../index.html">mlr3hyperband <small>v0.2.0.9000</small></a>
       </div>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
@@ -216,29 +216,12 @@ the initialization of each bracket. The default is uniform sampling.</p></dd>
 
     
 
-<p>The <a href='https://mlr3tuning.mlr-org.com/reference/ArchiveTuning.html'>mlr3tuning::ArchiveTuning</a> holds the following additional columns that
-are specific to the hyperband tuner:</p><ul>
+<p>The <a href='https://mlr3tuning.mlr-org.com/reference/ArchiveTuning.html'>mlr3tuning::ArchiveTuning</a> holds the following additional columns that are specific
+to the hyperband algorithm:</p><ul>
 <li><p><code>bracket</code> (<code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code>)<br />
-The console logs about the bracket index are actually not matching
-with the original hyperband algorithm, which counts down the brackets
-and stops after evaluating bracket 0. The true bracket indices are
-given in this column.</p></li>
-<li><p><code>bracket_stage</code> (<code>integer(1))</code><br />
-The bracket stage of each bracket. Hyperband starts counting at 0.</p></li>
-<li><p><code>budget_scaled</code> (<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>)<br />
-The intermediate budget in each bracket stage calculated by hyperband.
-Because hyperband is originally only considered for budgets starting at 1, some
-rescaling is done to allow budgets starting at different values.
-For this, budgets are internally divided by the lower budget bound to
-get a lower budget of 1. Before the learner
-receives its budgets for evaluation, the budget is transformed back to
-match the original scale again.</p></li>
-<li><p><code>budget_real</code> (<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>)<br />
-The real budget values the learner uses for evaluation after hyperband
-calculated its scaled budget.</p></li>
-<li><p><code>n_configs</code> (<code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code>)<br />
-The amount of evaluated configurations in each stage. These correspond
-to the <code>r_i</code> in the original paper.</p></li>
+The bracket index. Counts down to 0.</p></li>
+<li><p><code>stage</code> (<code>integer(1))</code><br />
+The stages of each bracket. Starts counting at 0.</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="hyperband-without-learner-budget"><a class="anchor" href="#hyperband-without-learner-budget"></a>Hyperband without learner budget</h2>
@@ -247,11 +230,11 @@ to the <code>r_i</code> in the original paper.</p></li>
 
 <p>Thanks to <a href='https://CRAN.R-project.org/package=mlr3pipelines'><span class="pkg">mlr3pipelines</span></a>, it is possible to use hyperband in
 combination with learners lacking a natural budget parameter. For example,
-any <a href='https://rdrr.io/pkg/mlr3/man/Learner.html'>mlr3::Learner</a> can be augmented with a <a href='https://mlr3pipelines.mlr-org.com//reference/PipeOp.html'>mlr3pipelines::PipeOp</a>
+any <a href='https://mlr3.mlr-org.com/reference/Learner.html'>mlr3::Learner</a> can be augmented with a <a href='https://mlr3pipelines.mlr-org.com//reference/PipeOp.html'>mlr3pipelines::PipeOp</a>
 operator such as <a href='https://mlr3pipelines.mlr-org.com//reference/mlr_pipeops_subsample.html'>mlr3pipelines::PipeOpSubsample</a>. With the
 subsampling rate as budget parameter, the resulting
 <a href='https://mlr3pipelines.mlr-org.com//reference/mlr_learners_graph.html'>mlr3pipelines::GraphLearner</a> is fitted on small proportions of
-the <a href='https://rdrr.io/pkg/mlr3/man/Task.html'>mlr3::Task</a> in the first brackets, and on the complete Task in
+the <a href='https://mlr3.mlr-org.com/reference/Task.html'>mlr3::Task</a> in the first brackets, and on the complete Task in
 last brackets. See examples for some code.</p>
     <h2 class="hasAnchor" id="custom-sampler"><a class="anchor" href="#custom-sampler"></a>Custom sampler</h2>
 
@@ -295,7 +278,7 @@ combined with a <a href='https://bbotk.mlr-org.com/reference/Terminator.html'>Te
 <p>In order to support general termination criteria and parallelization, we
 evaluate points in a batch-fashion of size <code>batch_size</code>. The points of one
 stage in a bracket are evaluated in one batch. Parallelization is supported
-via package <a href='https://CRAN.R-project.org/package=future'><span class="pkg">future</span></a> (see <code><a href='https://rdrr.io/pkg/mlr3/man/benchmark.html'>mlr3::benchmark()</a></code>'s section on
+via package <a href='https://CRAN.R-project.org/package=future'><span class="pkg">future</span></a> (see <code><a href='https://mlr3.mlr-org.com/reference/benchmark.html'>mlr3::benchmark()</a></code>'s section on
 parallelization for more details).</p>
     <h2 class="hasAnchor" id="logging"><a class="anchor" href="#logging"></a>Logging</h2>
 
@@ -369,7 +352,7 @@ Use <code><a href='https://s-fleck.github.io/lgr/reference/get_logger.html'>lgr:
 <span class='co'># }</span>
 <span class='op'>}</span>
 </div><div class='output co'>#&gt; <span class='message'>Loading required namespace: xgboost</span></div><div class='output co'>#&gt;    nrounds       eta booster learner_param_vals  x_domain classif.ce
-#&gt; 1:       8 0.4480606  gbtree          &lt;list[6]&gt; &lt;list[3]&gt;  0.2278646</div></pre>
+#&gt; 1:      16 0.2202471    dart          &lt;list[6]&gt; &lt;list[3]&gt;  0.2265625</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
