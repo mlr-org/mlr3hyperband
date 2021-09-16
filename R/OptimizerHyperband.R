@@ -166,14 +166,17 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
       # B in the original paper
       budget = (s_max + 1) * r
 
-      # loop over stages with same budget
+      # number of configurations in first stages
+      n = ceiling((budget / r) * (eta^(0:s_max)) / ((0:s_max) + 1))
+
+      # original hyperband algorithm iterates over brackets
+      # this implementation iterates over stages with same budget 
+      # the number of iterations (s_max + 1) remains the same in both implementations 
       for (s in s_max:0) {
-        # number of configurations in the first stage
-        n = ceiling((budget / r) * (eta^s) / (s + 1))
         # budget of a single configuration in the first stage (unscaled)
         rs = r_min * r * eta^(-s)
         # sample initial configurations of bracket
-        xdt = sampler$sample(n)$data
+        xdt = sampler$sample(n[s + 1])$data
         set(xdt, j = budget_id, value = rs)
         set(xdt, j = "bracket", value = s)
         set(xdt, j = "stage", value = 0)
@@ -187,12 +190,13 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
           # for each bracket, promote configurations of previous stage
           xdt_promoted = map_dtr(s_max:(s + 1), function(i) {
             # number of configuration to promote
-            n = ceiling((budget / r) * (eta^i) / (i + 1))
-            ni = floor(n * eta^(-(i - s)))
+            ni = floor(n[i + 1] * eta^(-(i - s)))
 
+            # get performances of previous stage
             data_bracket = data[get("bracket") == i, ]
             y = data_bracket[, archive$cols_y, with = FALSE]
 
+            # select best ni configurations
             row_ids = if (archive$codomain$length == 1) {
               head(order(unlist(y), decreasing = minimize), ni)
             } else {

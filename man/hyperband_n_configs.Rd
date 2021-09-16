@@ -18,9 +18,6 @@ Fraction parameter of the successive halving algorithm: With every stage the
 configuration budget is increased by a factor of \code{eta} and only the best
 \code{1/eta} points are used for the next stage. Non-integer values are supported,
 but \code{eta} is not allowed to be less or equal 1.}
-
-\item{round}{(\code{logical(1)})\cr
-Determines if budget is an integer.}
 }
 \value{
 \code{integer(1)}

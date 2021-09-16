@@ -48,8 +48,6 @@ hyperband_schedule = function(r_min, r_max, eta, round = FALSE) {
 #' configuration budget is increased by a factor of `eta` and only the best
 #' `1/eta` points are used for the next stage. Non-integer values are supported,
 #' but `eta` is not allowed to be less or equal 1.
-#' @param round (`logical(1)`)\cr
-#' Determines if budget is an integer.
 #'
 #' @return `integer(1)`
 #' @export
@@ -75,6 +73,8 @@ hyperband_n_configs = function(r_min, r_max, eta) {
 #' configuration budget is increased by a factor of `eta` and only the best
 #' `1/eta` points are used for the next stage. Non-integer values are supported,
 #' but `eta` is not allowed to be less or equal 1.
+#' @param round (`logical(1)`)\cr
+#' Determines if budget is an integer.
 #'
 #' @return `integer(1)`
 #' @export
