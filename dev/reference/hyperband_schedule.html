@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Changelog • mlr3hyperband</title>
+<title>Hyperband Schedule — hyperband_schedule • mlr3hyperband</title>
 
 
 <!-- jquery -->
@@ -40,7 +40,9 @@
 
 
 
-<meta property="og:title" content="Changelog" />
+<meta property="og:title" content="Hyperband Schedule — hyperband_schedule" />
+<meta property="og:description" content="Returns hyperband schedule." />
+<meta name="twitter:card" content="summary" />
 
 
 <meta name="robots" content="noindex">
@@ -59,7 +61,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-news">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -132,59 +134,55 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-      <h1 data-toc-skip>Changelog <small></small></h1>
-      <small>Source: <a href='https://github.com/mlr-org/mlr3hyperband/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
+    <h1>Hyperband Schedule</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mlr-org/mlr3hyperband/blob/master/R/helper.R'><code>R/helper.R</code></a></small>
+    <div class="hidden name"><code>hyperband_schedule.Rd</code></div>
     </div>
 
-    <div id="mlr3hyperband-0209000" class="section level1">
-<h1 class="page-header" data-toc-text="0.2.0.9000">
-<a href="#mlr3hyperband-0209000" class="anchor"></a>mlr3hyperband 0.2.0.9000<small> Unreleased </small>
-</h1>
-<ul>
-<li>Implements parallel evaluation of stages.</li>
-</ul>
-</div>
-    <div id="mlr3hyperband-020" class="section level1">
-<h1 class="page-header" data-toc-text="0.2.0">
-<a href="#mlr3hyperband-020" class="anchor"></a>mlr3hyperband 0.2.0<small> 2021-09-13 </small>
-</h1>
-<ul>
-<li>Adds <code>OptimizerHyperband</code>.</li>
-<li>Adds <code>OptimizerSuccessiveHalving</code>.</li>
-</ul>
-</div>
-    <div id="mlr3hyperband-012" class="section level1">
-<h1 class="page-header" data-toc-text="0.1.2">
-<a href="#mlr3hyperband-012" class="anchor"></a>mlr3hyperband 0.1.2<small> 2021-01-29 </small>
-</h1>
-<ul>
-<li>Internal changes only.</li>
-</ul>
-</div>
-    <div id="mlr3hyperband-011" class="section level1">
-<h1 class="page-header" data-toc-text="0.1.1">
-<a href="#mlr3hyperband-011" class="anchor"></a>mlr3hyperband 0.1.1<small> 2020-12-07 </small>
-</h1>
-<ul>
-<li>Fixed dependency on <code>emoa</code>.</li>
-</ul>
-</div>
-    <div id="mlr3hyperband-010" class="section level1">
-<h1 class="page-header" data-toc-text="0.1.0">
-<a href="#mlr3hyperband-010" class="anchor"></a>mlr3hyperband 0.1.0<small> 2020-10-26 </small>
-</h1>
-<ul>
-<li>Initial CRAN release.</li>
-</ul>
-</div>
-  </div>
+    <div class="ref-description">
+    <p>Returns hyperband schedule.</p>
+    </div>
 
+    <pre class="usage"><span class='fu'>hyperband_schedule</span><span class='op'>(</span><span class='va'>r_min</span>, <span class='va'>r_max</span>, <span class='va'>eta</span>, integer_budget <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>r_min</th>
+      <td><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>)<br />
+Lower bound of budget parameter.</p></td>
+    </tr>
+    <tr>
+      <th>r_max</th>
+      <td><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>)<br />
+Upper bound of budget parameter.</p></td>
+    </tr>
+    <tr>
+      <th>eta</th>
+      <td><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>)<br />
+Fraction parameter of the successive halving algorithm: With every stage the
+configuration budget is increased by a factor of <code>eta</code> and only the best
+<code>1/eta</code> points are used for the next stage. Non-integer values are supported,
+but <code>eta</code> is not allowed to be less or equal 1.</p></td>
+    </tr>
+    <tr>
+      <th>integer_budget</th>
+      <td><p>(<code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code>)<br />
+Determines if budget is an integer.</p></td>
+    </tr>
+    </table>
+
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p><code><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table::data.table()</a></code></p>
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
     </nav>
   </div>
-
 </div>
 
 
