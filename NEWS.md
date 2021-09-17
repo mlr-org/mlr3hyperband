@@ -1,3 +1,5 @@
+# mlr3hyperband 0.2.0.9000
+
 # mlr3hyperband 0.2.0
 
 - Adds `OptimizerHyperband`.
