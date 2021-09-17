@@ -20,15 +20,15 @@ For this, several brackets are constructed with an associated set of
 points for each bracket. Each bracket as several stages. Different
 brackets are initialized with different amounts of points and
 different budget sizes. To get an idea of how the bracket layout looks like
-for a given argument set, please have a look in the \code{details}.
+for a given argument set, use \code{\link[=hyperband_schedule]{hyperband_schedule()}}.
 
 To identify the budget for evaluating hyperband, the user has to specify
 explicitly which parameter of the objective function influences the budget by
 tagging a single parameter in the \link[paradox:ParamSet]{paradox::ParamSet} with \code{"budget"}.
 
 Naturally, hyperband terminates once all of its brackets are evaluated, so a
-\link[bbotk:Terminator]{bbotk::Terminator} in the \link{OptimInstanceSingleCrit} |
-\link{OptimInstanceMultiCrit} acts as an upper bound and should be only set to a
+\link[bbotk:Terminator]{bbotk::Terminator} in the \link[bbotk:OptimInstanceSingleCrit]{bbotk::OptimInstanceSingleCrit} |
+\link[bbotk:OptimInstanceMultiCrit]{bbotk::OptimInstanceMultiCrit} acts as an upper bound and should be only set to a
 low value if one is unsure of how long hyperband will take to finish under
 the given settings.
 }

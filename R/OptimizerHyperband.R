@@ -12,15 +12,15 @@
 #' points for each bracket. Each bracket as several stages. Different
 #' brackets are initialized with different amounts of points and
 #' different budget sizes. To get an idea of how the bracket layout looks like
-#' for a given argument set, please have a look in the `details`.
+#' for a given argument set, use [hyperband_schedule()].
 #'
 #' To identify the budget for evaluating hyperband, the user has to specify
 #' explicitly which parameter of the objective function influences the budget by
 #' tagging a single parameter in the [paradox::ParamSet] with `"budget"`.
 #'
 #' Naturally, hyperband terminates once all of its brackets are evaluated, so a
-#' [bbotk::Terminator] in the [OptimInstanceSingleCrit] |
-#' [OptimInstanceMultiCrit] acts as an upper bound and should be only set to a
+#' [bbotk::Terminator] in the [bbotk::OptimInstanceSingleCrit] |
+#' [bbotk::OptimInstanceMultiCrit] acts as an upper bound and should be only set to a
 #' low value if one is unsure of how long hyperband will take to finish under
 #' the given settings.
 #'

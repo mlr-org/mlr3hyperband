@@ -1,23 +1,16 @@
 #' @title Hyperband Schedule
 #'
 #' @description
-#' Calculates hyperband schedule.
+#' Returns hyperband schedule.
 #'
-#' @param r_min (`numeric(1)`)\cr
-#' Lower bound of budget parameter.
-#' @param r_max (`numeric(1)`)\cr
-#' Upper bound of budget parameter.
-#' @param eta (`numeric(1)`)\cr
-#' Fraction parameter of the successive halving algorithm: With every stage the
-#' configuration budget is increased by a factor of `eta` and only the best
-#' `1/eta` points are used for the next stage. Non-integer values are supported,
-#' but `eta` is not allowed to be less or equal 1.
-#' @param round (`logical(1)`)\cr
-#' Determines if budget is an integer.
+#' @template param_r_min
+#' @template param_r_max
+#' @template param_eta
+#' @template param_integer_budget
 #'
 #' @return [data.table::data.table()]
 #' @export
-hyperband_schedule = function(r_min, r_max, eta, round = FALSE) {
+hyperband_schedule = function(r_min, r_max, eta, integer_budget = FALSE) {
   r = r_max / r_min
   s_max = floor(log(r, eta))
   b = (s_max + 1) * r
@@ -28,26 +21,20 @@ hyperband_schedule = function(r_min, r_max, eta, round = FALSE) {
     map_dtr(0:s, function(i) {
       ni = floor(nb * eta^(-i))
       ri = r_min * rb * eta^i
-      if (round) ri = round(ri)
+      if (integer_budget) ri = round(ri)
       data.table(bracket = s, stage = i, budget = ri, n = ni)
     })
   })
 }
 
-#' @title Hyperband Schedule
+#' @title Hyperband Configs
 #'
 #' @description
 #' Calculates how many different configurations are sampled.
 #'
-#' @param r_min (`numeric(1)`)\cr
-#' Lower bound of budget parameter.
-#' @param r_max (`numeric(1)`)\cr
-#' Upper bound of budget parameter.
-#' @param eta (`numeric(1)`)\cr
-#' Fraction parameter of the successive halving algorithm: With every stage the
-#' configuration budget is increased by a factor of `eta` and only the best
-#' `1/eta` points are used for the next stage. Non-integer values are supported,
-#' but `eta` is not allowed to be less or equal 1.
+#' @template param_r_min
+#' @template param_r_max
+#' @template param_eta
 #'
 #' @return `integer(1)`
 #' @export
@@ -64,21 +51,14 @@ hyperband_n_configs = function(r_min, r_max, eta) {
 #' @description
 #' Calculates the total budget used by hyperband.
 #'
-#' @param r_min (`numeric(1)`)\cr
-#' Lower bound of budget parameter.
-#' @param r_max (`numeric(1)`)\cr
-#' Upper bound of budget parameter.
-#' @param eta (`numeric(1)`)\cr
-#' Fraction parameter of the successive halving algorithm: With every stage the
-#' configuration budget is increased by a factor of `eta` and only the best
-#' `1/eta` points are used for the next stage. Non-integer values are supported,
-#' but `eta` is not allowed to be less or equal 1.
-#' @param round (`logical(1)`)\cr
-#' Determines if budget is an integer.
-#'
+#' @template param_r_min
+#' @template param_r_max
+#' @template param_eta
+#' @template param_integer_budget
+#' 
 #' @return `integer(1)`
 #' @export
-hyperband_budget = function(r_min, r_max, eta, round = FALSE) {
-  schedule = hyperband_schedule(r_min, r_max, eta, round)
+hyperband_budget = function(r_min, r_max, eta, integer_budget = FALSE) {
+  schedule = hyperband_schedule(r_min, r_max, eta, integer_budget)
   sum(schedule[, get("budget") * get("n")])
 }

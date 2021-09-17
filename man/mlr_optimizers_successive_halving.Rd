@@ -20,7 +20,7 @@ budget is reached (upper bound of the \code{budget} parameter).
 
 To identify the budget, the user has to specify explicitly which parameter of
 the objective function influences the budget by tagging a single parameter in
-the search_space (\link[paradox:ParamSet]{paradox::ParamSet}) with \code{"budget"}.
+the search space (\link[paradox:ParamSet]{paradox::ParamSet}) with \code{"budget"}.
 }
 \section{Parameters}{
 

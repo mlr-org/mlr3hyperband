@@ -4,7 +4,7 @@
 \alias{hyperband_schedule}
 \title{Hyperband Schedule}
 \usage{
-hyperband_schedule(r_min, r_max, eta, round = FALSE)
+hyperband_schedule(r_min, r_max, eta, integer_budget = FALSE)
 }
 \arguments{
 \item{r_min}{(\code{numeric(1)})\cr
@@ -19,12 +19,12 @@ configuration budget is increased by a factor of \code{eta} and only the best
 \code{1/eta} points are used for the next stage. Non-integer values are supported,
 but \code{eta} is not allowed to be less or equal 1.}
 
-\item{round}{(\code{logical(1)})\cr
+\item{integer_budget}{(\code{logical(1)})\cr
 Determines if budget is an integer.}
 }
 \value{
 \code{\link[data.table:data.table]{data.table::data.table()}}
 }
 \description{
-Calculates hyperband schedule.
+Returns hyperband schedule.
 }

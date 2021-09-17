@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper.R
 \name{hyperband_n_configs}
 \alias{hyperband_n_configs}
-\title{Hyperband Schedule}
+\title{Hyperband Configs}
 \usage{
 hyperband_n_configs(r_min, r_max, eta)
 }

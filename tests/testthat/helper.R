@@ -10,36 +10,6 @@ lapply(list.files(system.file("testthat", package = "mlr3"), pattern = "^helper.
 lapply(list.files(system.file("testthat", package = "mlr3tuning"), pattern = "^helper.*\\.[rR]$", full.names = TRUE), source)
 # nolint end
 
-#' @title Hyperband Brackets
-#'
-#' @noRd
-#'
-#' @description
-#' Calculates hyperband brackets and stages for a given `R` and `eta`.
-#'
-#' @param R (`numeric(1)`)\cr
-#' Maximum budget a single configuration in the last stage.
-#' @param eta (`numeric(1)`).
-#' @param r_scale (`numeric(1)`)\cr
-#' Scaling factor to retransform budget to original scale.
-#' @param round (`logical(1)`)\cr
-#' Determines if budget is an integer.
-hyperband_brackets = function(R, eta, r_scale = 1, round) {
-  s_max = floor(log(R, eta))
-  B = (s_max + 1) * R
-
-  map_dtr(s_max:0, function(s) {
-    n = ceiling((B / R) * ((eta^s) / (s + 1)))
-    r = R * eta^(-s)
-    map_dtr(0:s, function(i) {
-      ni = floor(n * eta^(-i))
-      ri = r_scale * r * eta^i
-      if (round) ri = round(ri)
-      data.table(bracket = s, stage = i, budget = ri, n = ni)
-    })
-  })
-}
-
 #' @title Test Tuner Hyperband
 #'
 #' @noRd
@@ -65,7 +35,7 @@ test_tuner_hyperband = function(eta, learner, search_space, measures = msr("clas
   # compare brackets and stages of tuner to theoretical hyperband
   plan_tuner = as.data.table(instance$archive)[, .N, by = c("bracket", "stage", budget_id)]
   round = search_space$class[[budget_id]] == "ParamInt"
-  plan_hyperband = hyperband_brackets(r_max / r_min, eta, r_min, round)
+  plan_hyperband = hyperband_schedule(r_min, r_max, eta, round)
 
   expect_set_equal(plan_tuner$bracket, plan_hyperband$bracket)
   expect_set_equal(plan_tuner$stage, plan_hyperband$stage)
