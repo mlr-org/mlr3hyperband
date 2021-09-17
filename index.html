@@ -102,7 +102,7 @@
 <a href="#mlr3hyperband" class="anchor"></a>mlr3hyperband</h1></div>
 <p>Package website: <a href="https://mlr3hyperband.mlr-org.com/">release</a> | <a href="https://mlr3hyperband.mlr-org.com/dev/">dev</a></p>
 <!-- badges: start -->
-<p><a href="https://github.com/mlr-org/mlr3hyperband/actions"><img src="https://github.com/mlr-org/mlr3hyperband/workflows/tic/badge.svg?branch=main" alt="tic"></a> <a href="https://cran.r-project.org/package=mlr3hyperband"><img src="https://www.r-pkg.org/badges/version-ago/mlr3hyperband" alt="CRAN Status"></a> <a href="https://stackoverflow.com/questions/tagged/mlr3"><img src="https://img.shields.io/badge/stackoverflow-mlr3-orange.svg" alt="StackOverflow"></a> <a href="https://lmmisld-lmu-stats-slds.srv.mwn.de/mlr_invite/"><img src="https://img.shields.io/badge/chat-mattermost-orange.svg" alt="Mattermost"></a> <!-- badges: end --></p>
+<p><a href="https://github.com/mlr-org/mlr3hyperband/actions"><img src="https://github.com/mlr-org/mlr3hyperband/workflows/tic/badge.svg?branch=main" alt="tic"></a> <a href="https://cran.r-project.org/package=mlr3hyperband"><img src="https://www.r-pkg.org/badges/version-ago/mlr3hyperband" alt="CRAN Status"></a> <a href="https://stackoverflow.com/questions/tagged/mlr3"><img src="https://img.shields.io/badge/stackoverflow-mlr3-orange.svg" alt="StackOverflow"></a> <a href="https://lmmisld-lmu-stats-slds.srv.mwn.de/mlr_invite/"><img src="https://img.shields.io/badge/chat-mattermost-orange.svg" alt="Mattermost"></a> <a href="https://www.codefactor.io/repository/github/mlr-org/mlr3hyperband"><img src="https://www.codefactor.io/repository/github/mlr-org/mlr3hyperband/badge" alt="CodeFactor"></a> <!-- badges: end --></p>
 <p>This package provides hyperband tuning for <a href="https://mlr3.mlr-org.com"><code>mlr3</code></a>.</p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
@@ -122,9 +122,9 @@
 <li>The original <a href="https://arxiv.org/abs/1603.06560">paper</a> introducing the hyperband algorithm.</li>
 </ul>
 </div>
-<div id="hyperband" class="section level2">
+<div id="short-description" class="section level2">
 <h2 class="hasAnchor">
-<a href="#hyperband" class="anchor"></a>Hyperband</h2>
+<a href="#short-description" class="anchor"></a>Short description</h2>
 <p>Hyperband is a budget oriented-procedure, weeding out suboptimally performing configurations early on during their training process aiming at increasing the efficiency of the tuning procedure. For this, several brackets are constructed with an associated set of configurations for each bracket. These configuration are initialized by stochastic, often uniform, sampling. Each bracket is divided into multiple stages, and configurations are evaluated for a increasing budget in each stage. Note that currently all configurations are trained completely from the beginning, so no online updates to the models are performed.</p>
 <p>Different brackets are initialized with different number of configurations, and different budget sizes. To identify the budget for evaluating hyperband, the user has to specify explicitly which hyperparameter of the learner influences the budget by tagging a single hyperparameter in the parameter set with <code>"budget"</code>. An alternative approach using subsampling and pipelines is described further below.</p>
 </div>
@@ -136,8 +136,7 @@
 <a href="#basic" class="anchor"></a>Basic</h3>
 <p>If you are already familiar with <code>mlr3tuning</code>, then the only change compared to other tuners is to give a numeric hyperparameter a <code>budget</code> tag. Afterwards, you can handle hyperband like all other tuners. Originally, hyperband was created with a “natural” learning parameter as the budget parameter in mind, like <code>nrounds</code> of the XGBoost learner.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">mlr3verse</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mlr3hyperband.mlr-org.com">mlr3hyperband</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mlr3hyperband.mlr-org.com">mlr3hyperband</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mlr3learners.mlr-org.com">mlr3learners</a></span><span class="op">)</span>
 
 <span class="co"># define hyperparameter and budget parameter</span>
@@ -167,7 +166,10 @@
 <a href="#subsampling" class="anchor"></a>Subsampling</h3>
 <p>Additionally, it is also possible to use <code>mlr3hyperband</code> to tune learners that do not have a natural fidelity parameter. In such a case <code>mlr3pipelines</code> can be used to define data subsampling as a preprocessing step. Then, the <code>frac</code> parameter of subsampling, defining the fraction of the training data to be used, can act as the budget parameter.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">learner</span> <span class="op">=</span> <span class="fu">po</span><span class="op">(</span><span class="st">"subsample"</span><span class="op">)</span> <span class="op">%&gt;&gt;%</span> <span class="fu">lrn</span><span class="op">(</span><span class="st">"classif.rpart"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">mlr3verse</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mlr3hyperband.mlr-org.com">mlr3hyperband</a></span><span class="op">)</span>
+
+<span class="va">learner</span> <span class="op">=</span> <span class="fu">po</span><span class="op">(</span><span class="st">"subsample"</span><span class="op">)</span> <span class="op">%&gt;&gt;%</span> <span class="fu">lrn</span><span class="op">(</span><span class="st">"classif.rpart"</span><span class="op">)</span>
 
 <span class="co"># define subsampling parameter as budget</span>
 <span class="va">search_space</span> <span class="op">=</span> <span class="fu">ps</span><span class="op">(</span>
