@@ -167,16 +167,13 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
           xdt = sampler$sample(ni)$data
         } else {
           archive = inst$archive
-          data = archive$data[batch_nr %in% archive$n_batch]
-          y = data[, archive$cols_y, with = FALSE]
-          minimize = !as.logical(mult_max_to_min(archive$codomain))
 
-          if (archive$codomain$length == 1) {
-            row_ids = head(order(unlist(y), decreasing = minimize), ni)
+          xdt = if (archive$codomain$length == 1) {
+            archive$best(batch = archive$n_batch, n_select = ni)
           } else {
-            row_ids = nds_selection(points = t(as.matrix(y)), n_select = ni, minimize = minimize)
+            archive$nds_selection(batch = archive$n_batch, n_select = ni)
           }
-          xdt = data[row_ids, archive$cols_x, with = FALSE]
+          xdt = xdt[, archive$cols_x, with = FALSE]
         }
         set(xdt, j = budget_id, value = ri)
         set(xdt, j = "stage", value = i)

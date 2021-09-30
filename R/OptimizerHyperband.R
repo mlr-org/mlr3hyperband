@@ -232,19 +232,14 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
             data = archive$data[batch_nr %in% archive$n_batch]
             y = data[, archive$cols_y, with = FALSE]
 
-            # select best mu_current indices
-            minimize = !as.logical(mult_max_to_min(archive$codomain))
-            if (archive$codomain$length == 1) {
+            active_configs = if (archive$codomain$length == 1) {
               # single-crit
-              row_ids = head(order(unlist(y), decreasing = minimize), mu_current)
+              archive$best(batch = archive$n_batch, n_select = mu_current)
             } else {
               # multi-crit
-              row_ids = nds_selection(points = t(as.matrix(y)), n_select = mu_current, minimize = minimize)
+              archive$nds_selection(batch = archive$n_batch, n_select = mu_current)
             }
-
-            # update active configurations
-            assert_integer(row_ids, lower = 1, upper = nrow(active_configs))
-            active_configs = data[row_ids, archive$cols_x, with = FALSE]
+            active_configs = active_configs[, archive$cols_x, with = FALSE]
           }
 
           # overwrite active configurations with the current budget
