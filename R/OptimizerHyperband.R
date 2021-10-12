@@ -170,8 +170,8 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
       n = ceiling((budget / r) * (eta^(0:s_max)) / ((0:s_max) + 1))
 
       # original hyperband algorithm iterates over brackets
-      # this implementation iterates over stages with same budget 
-      # the number of iterations (s_max + 1) remains the same in both implementations 
+      # this implementation iterates over stages with same budget
+      # the number of iterations (s_max + 1) remains the same in both implementations
       for (s in s_max:0) {
         # budget of a single configuration in the first stage (unscaled)
         rs = r_min * r * eta^(-s)
@@ -185,7 +185,7 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
         if (s != s_max) {
           archive = inst$archive
           data = archive$data[batch_nr == archive$n_batch, ]
-          minimize = !as.logical(mult_max_to_min(archive$codomain))
+          minimize = !as.logical(archive$codomain$maximization_to_minimization)
 
           # for each bracket, promote configurations of previous stage
           xdt_promoted = map_dtr(s_max:(s + 1), function(i) {
