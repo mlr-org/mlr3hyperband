@@ -1,5 +1,7 @@
 # mlr3hyperband 0.2.0.9000
 
+- Implements parallel evaluation of stages.
+
 # mlr3hyperband 0.2.0
 
 - Adds `OptimizerHyperband`.

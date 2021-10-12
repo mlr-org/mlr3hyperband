@@ -25,7 +25,7 @@
 #' [bbotk::Terminator] in the tuning instance acts as an upper bound and should
 #' be only set to a low value if one is unsure of how long hyperband will take
 #' to finish under the given settings.
-#' 
+#'
 #' @templateVar id hyperband
 #' @template section_dictionary_optimizers
 #'
@@ -42,29 +42,12 @@
 #' }
 #'
 #' @section Archive:
-#' The [mlr3tuning::ArchiveTuning] holds the following additional columns that
-#' are specific to the hyperband tuner:
+#' The [mlr3tuning::ArchiveTuning] holds the following additional columns that are specific
+#' to the hyperband algorithm:
 #'   * `bracket` (`integer(1)`)\cr
-#'     The console logs about the bracket index are actually not matching
-#'     with the original hyperband algorithm, which counts down the brackets
-#'     and stops after evaluating bracket 0. The true bracket indices are
-#'     given in this column.
-#'   * `bracket_stage` (`integer(1))`\cr
-#'     The bracket stage of each bracket. Hyperband starts counting at 0.
-#'   * `budget_scaled` (`numeric(1)`)\cr
-#'     The intermediate budget in each bracket stage calculated by hyperband.
-#'     Because hyperband is originally only considered for budgets starting at 1, some
-#'     rescaling is done to allow budgets starting at different values.
-#'     For this, budgets are internally divided by the lower budget bound to
-#'     get a lower budget of 1. Before the learner
-#'     receives its budgets for evaluation, the budget is transformed back to
-#'     match the original scale again.
-#'   * `budget_real` (`numeric(1)`)\cr
-#'     The real budget values the learner uses for evaluation after hyperband
-#'     calculated its scaled budget.
-#'   * `n_configs` (`integer(1)`)\cr
-#'     The amount of evaluated configurations in each stage. These correspond
-#'     to the `r_i` in the original paper.
+#'     The bracket index. Counts down to 0.
+#'   * `stage` (`integer(1))`\cr
+#'     The stages of each bracket. Starts counting at 0.
 #'
 #' @section Hyperband without learner budget:
 #' Thanks to \CRANpkg{mlr3pipelines}, it is possible to use hyperband in
@@ -89,14 +72,14 @@
 #' @examples
 #' if(requireNamespace("xgboost")) {
 #' library(mlr3learners)
-#' 
+#'
 #' # define hyperparameter and budget parameter
 #' search_space = ps(
 #'   nrounds = p_int(lower = 1, upper = 16, tags = "budget"),
 #'   eta = p_dbl(lower = 0, upper = 1),
 #'   booster = p_fct(levels = c("gbtree", "gblinear", "dart"))
 #' )
-#' 
+#'
 #' \donttest{
 #' # hyperparameter tuning on the pima indians diabetes data set
 #' instance = tune(
@@ -107,7 +90,7 @@
 #'   measure = msr("classif.ce"),
 #'   search_space = search_space
 #' )
-#' 
+#'
 #' # best performing hyperparameter configuration
 #' instance$result
 #' }

@@ -58,30 +58,13 @@ the initialization of each bracket. The default is uniform sampling.}
 
 \section{Archive}{
 
-The \link[mlr3tuning:ArchiveTuning]{mlr3tuning::ArchiveTuning} holds the following additional columns that
-are specific to the hyperband tuner:
+The \link[mlr3tuning:ArchiveTuning]{mlr3tuning::ArchiveTuning} holds the following additional columns that are specific
+to the hyperband algorithm:
 \itemize{
 \item \code{bracket} (\code{integer(1)})\cr
-The console logs about the bracket index are actually not matching
-with the original hyperband algorithm, which counts down the brackets
-and stops after evaluating bracket 0. The true bracket indices are
-given in this column.
-\item \code{bracket_stage} (\verb{integer(1))}\cr
-The bracket stage of each bracket. Hyperband starts counting at 0.
-\item \code{budget_scaled} (\code{numeric(1)})\cr
-The intermediate budget in each bracket stage calculated by hyperband.
-Because hyperband is originally only considered for budgets starting at 1, some
-rescaling is done to allow budgets starting at different values.
-For this, budgets are internally divided by the lower budget bound to
-get a lower budget of 1. Before the learner
-receives its budgets for evaluation, the budget is transformed back to
-match the original scale again.
-\item \code{budget_real} (\code{numeric(1)})\cr
-The real budget values the learner uses for evaluation after hyperband
-calculated its scaled budget.
-\item \code{n_configs} (\code{integer(1)})\cr
-The amount of evaluated configurations in each stage. These correspond
-to the \code{r_i} in the original paper.
+The bracket index. Counts down to 0.
+\item \code{stage} (\verb{integer(1))}\cr
+The stages of each bracket. Starts counting at 0.
 }
 }
 

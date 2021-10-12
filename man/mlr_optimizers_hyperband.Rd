@@ -13,22 +13,22 @@ Li L, Jamieson K, DeSalvo G, Rostamizadeh A, Talwalkar A (2018).
 \description{
 \code{OptimizerHyperband} class that implements hyperband optimization. Hyperband
 is a budget oriented-procedure, weeding out suboptimal performing
-configurations early in a sequential training process, increasing
+points early in a sequential training process, increasing
 optimization efficiency as a consequence.
 
 For this, several brackets are constructed with an associated set of
-configurations for each bracket. Each bracket as several stages. Different
-brackets are initialized with different amounts of configurations and
+points for each bracket. Each bracket as several stages. Different
+brackets are initialized with different amounts of points and
 different budget sizes. To get an idea of how the bracket layout looks like
-for a given argument set, please have a look in the \code{details}.
+for a given argument set, use \code{\link[=hyperband_schedule]{hyperband_schedule()}}.
 
 To identify the budget for evaluating hyperband, the user has to specify
 explicitly which parameter of the objective function influences the budget by
 tagging a single parameter in the \link[paradox:ParamSet]{paradox::ParamSet} with \code{"budget"}.
 
 Naturally, hyperband terminates once all of its brackets are evaluated, so a
-\link[bbotk:Terminator]{bbotk::Terminator} in the \link{OptimInstanceSingleCrit} |
-\link{OptimInstanceMultiCrit} acts as an upper bound and should be only set to a
+\link[bbotk:Terminator]{bbotk::Terminator} in the \link[bbotk:OptimInstanceSingleCrit]{bbotk::OptimInstanceSingleCrit} |
+\link[bbotk:OptimInstanceMultiCrit]{bbotk::OptimInstanceMultiCrit} acts as an upper bound and should be only set to a
 low value if one is unsure of how long hyperband will take to finish under
 the given settings.
 }
@@ -44,9 +44,9 @@ opt("hyperband")
 
 \describe{
 \item{\code{eta}}{\code{numeric(1)}\cr
-Fraction parameter of the successive halving algorithm: With every step the
+Fraction parameter of the successive halving algorithm: With every stage the
 configuration budget is increased by a factor of \code{eta} and only the best
-\code{1/eta} configurations are used for the next stage. Non-integer values are
+\code{1/eta} points are used for the next stage. Non-integer values are
 supported, but \code{eta} is not allowed to be less or equal 1.}
 \item{\code{sampler}}{\link[paradox:Sampler]{paradox::Sampler}\cr
 Object defining how the samples of the parameter space should be drawn during
@@ -56,30 +56,13 @@ the initialization of each bracket. The default is uniform sampling.}
 
 \section{Archive}{
 
-The \link[bbotk:Archive]{bbotk::Archive} holds the following additional columns that
-are specific to the hyperband tuner:
+The \link[bbotk:Archive]{bbotk::Archive} holds the following additional columns that are specific
+to the hyperband algorithm:
 \itemize{
 \item \code{bracket} (\code{integer(1)})\cr
-The console logs about the bracket index are actually not matching with
-the original hyperband algorithm, which counts down the brackets and
-stops after evaluating bracket 0. The true bracket indices are given in
-this column.
-\item \code{bracket_stage} (\verb{integer(1))}\cr
-The bracket stage of each bracket. Hyperband starts counting at 0.
-\item \code{budget_scaled} (\code{numeric(1)})\cr
-The intermediate budget in each bracket stage calculated by hyperband.
-Because hyperband is originally only considered for budgets starting at
-1, some rescaling is done to allow budgets starting at different values.
-For this, budgets are internally divided by the lower budget bound to get
-a lower budget of 1. Before the objective function receives its budgets
-for evaluation, the budget is transformed back to match the original
-scale again.
-\item \code{budget_real} (\code{numeric(1)})\cr
-The real budget values the objective function uses for evaluation after
-hyperband calculated its scaled budget.
-\item \code{n_configs} (\code{integer(1)})\cr
-The amount of evaluated configurations in each stage. These correspond to
-the \code{r_i} in the original paper.
+The bracket index. Counts down to 0.
+\item \code{stage} (\verb{integer(1))}\cr
+The stages of each bracket. Starts counting at 0.
 }
 }
 
@@ -138,8 +121,8 @@ library(bbotk)
 library(data.table)
 
 search_space = domain = ps(
-  x1 = p_dbl(-5, 10), 
-  x2 = p_dbl(0, 15), 
+  x1 = p_dbl(-5, 10),
+  x2 = p_dbl(0, 15),
   fidelity = p_dbl(1e-2, 1, tags = "budget")
 )
 
@@ -152,11 +135,11 @@ objective = ObjectiveRFunDt$new(
     r = 6
     s = 10
     t = 1 / (8 * pi)
-    data.table(y = 
-      (a * ((xdt[["x2"]] - 
-      b * (xdt[["x1"]] ^ 2L) + 
-      c * xdt[["x1"]] - r) ^ 2) + 
-      ((s * (1 - t)) * cos(xdt[["x1"]])) + 
+    data.table(y =
+      (a * ((xdt[["x2"]] -
+      b * (xdt[["x1"]] ^ 2L) +
+      c * xdt[["x1"]] - r) ^ 2) +
+      ((s * (1 - t)) * cos(xdt[["x1"]])) +
       s - (5 * xdt[["fidelity"]] * xdt[["x1"]])))
   },
   domain = domain,

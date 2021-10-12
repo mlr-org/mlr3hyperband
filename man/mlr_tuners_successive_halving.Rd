@@ -16,11 +16,11 @@ algorithm. The algorithm samples \code{n} configurations and evaluates them with
 the smallest budget (lower bound of the \code{budget} parameter). With every stage
 the budget is increased by a factor of \code{eta} and only the best \code{1/eta}
 configurations are promoted to the next stage. The optimization terminates
-when the maximum budget is reached (upper bound of the \code{budget} parameter).
+when the maximum budget is reached (upper bound of the \code{budget} parameter)
 
 To identify the budget, the user has to specify explicitly which parameter of
 the objective function influences the budget by tagging a single parameter in
-the search_space (\link[paradox:ParamSet]{paradox::ParamSet}) with \code{"budget"}.
+in the search_space (\link[paradox:ParamSet]{paradox::ParamSet}) with \code{"budget"}.
 }
 \section{Parameters}{
 
@@ -28,7 +28,7 @@ the search_space (\link[paradox:ParamSet]{paradox::ParamSet}) with \code{"budget
 \item{\code{n}}{\code{integer(1)}\cr
 Number of configurations in first stage.}
 \item{\code{eta}}{\code{numeric(1)}\cr
-With every step, the configuration budget is increased by a factor of \code{eta}
+With every stage, the configuration budget is increased by a factor of \code{eta}
 and only the best \code{1/eta} configurations are used for the next stage.
 Non-integer values are supported, but \code{eta} is not allowed to be less or
 equal 1.}
@@ -40,8 +40,8 @@ the initialization of each bracket. The default is uniform sampling.}
 
 \section{Archive}{
 
-The \link[mlr3tuning:ArchiveTuning]{mlr3tuning::ArchiveTuning} holds the following additional column that is
-specific to the successive halving algorithm:
+The \link[mlr3tuning:ArchiveTuning]{mlr3tuning::ArchiveTuning} holds the following additional column that is specific
+to the successive halving algorithm:
 \itemize{
 \item \code{stage} (\verb{integer(1))}\cr
 Stage index. Starts counting at 0.

@@ -12,7 +12,7 @@
 #'
 #' To identify the budget, the user has to specify explicitly which parameter of
 #' the objective function influences the budget by tagging a single parameter in
-#' the search_space ([paradox::ParamSet]) with `"budget"`.
+#' the search space ([paradox::ParamSet]) with `"budget"`.
 #'
 #' @section Parameters:
 #' \describe{
@@ -150,22 +150,28 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
 
       # number of stages if each configuration in the first stage uses the minimum budget
       # and each configuration in the last stage uses no more than maximum budget
-      k_n = floor(log(r, eta))
+      sr = floor(log(r, eta))
 
       # reduce number of stages if n < r_max so that
       # the last stages evaluates at least one configuration
-      k_r = floor(log(n, eta))
+      sn = floor(log(n, eta))
 
-      # k + 1 is the number of stages
-      k = min(k_n, k_r)
+      # s_max + 1 is the number of stages
+      s_max = min(sr, sn)
 
-      for (i in 0:k) {
-        ni = floor(n * eta^(-i)) # number of configurations in stage
-        ri = r_min * eta^i # resources of each configuration in stage
+      # iterate stages
+      for (i in 0:s_max) {
+        # number of configurations in stage
+        ni = floor(n * eta^(-i))
+        # budget of a single configuration in stage
+        ri = r_min * eta^i
+
+        if (search_space$class[[budget_id]] == "ParamInt") ri = round(ri)
 
         if (i == 0) {
           xdt = sampler$sample(ni)$data
         } else {
+          # get performances of previous stage
           archive = inst$archive
 
           xdt = if (archive$codomain$length == 1) {
@@ -175,8 +181,10 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
           }
           xdt = xdt[, archive$cols_x, with = FALSE]
         }
+        # increase budget and stage
         set(xdt, j = budget_id, value = ri)
         set(xdt, j = "stage", value = i)
+
         inst$eval_batch(xdt)
       }
     }

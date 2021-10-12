@@ -5,64 +5,47 @@
 #' @description
 #' `OptimizerHyperband` class that implements hyperband optimization. Hyperband
 #' is a budget oriented-procedure, weeding out suboptimal performing
-#' configurations early in a sequential training process, increasing
+#' points early in a sequential training process, increasing
 #' optimization efficiency as a consequence.
 #'
 #' For this, several brackets are constructed with an associated set of
-#' configurations for each bracket. Each bracket as several stages. Different
-#' brackets are initialized with different amounts of configurations and
+#' points for each bracket. Each bracket as several stages. Different
+#' brackets are initialized with different amounts of points and
 #' different budget sizes. To get an idea of how the bracket layout looks like
-#' for a given argument set, please have a look in the `details`.
+#' for a given argument set, use [hyperband_schedule()].
 #'
 #' To identify the budget for evaluating hyperband, the user has to specify
 #' explicitly which parameter of the objective function influences the budget by
 #' tagging a single parameter in the [paradox::ParamSet] with `"budget"`.
 #'
 #' Naturally, hyperband terminates once all of its brackets are evaluated, so a
-#' [bbotk::Terminator] in the [OptimInstanceSingleCrit] |
-#' [OptimInstanceMultiCrit] acts as an upper bound and should be only set to a
+#' [bbotk::Terminator] in the [bbotk::OptimInstanceSingleCrit] |
+#' [bbotk::OptimInstanceMultiCrit] acts as an upper bound and should be only set to a
 #' low value if one is unsure of how long hyperband will take to finish under
 #' the given settings.
-#' 
+#'
 #' @templateVar id hyperband
 #' @template section_dictionary_optimizers
-#' 
+#'
 #' @section Parameters:
 #' \describe{
 #' \item{`eta`}{`numeric(1)`\cr
-#' Fraction parameter of the successive halving algorithm: With every step the
+#' Fraction parameter of the successive halving algorithm: With every stage the
 #' configuration budget is increased by a factor of `eta` and only the best
-#' `1/eta` configurations are used for the next stage. Non-integer values are
+#' `1/eta` points are used for the next stage. Non-integer values are
 #' supported, but `eta` is not allowed to be less or equal 1.}
 #' \item{`sampler`}{[paradox::Sampler]\cr
 #' Object defining how the samples of the parameter space should be drawn during
 #' the initialization of each bracket. The default is uniform sampling.}
 #' }
-#' 
+#'
 #' @section Archive:
-#' The [bbotk::Archive] holds the following additional columns that
-#' are specific to the hyperband tuner:
+#' The [bbotk::Archive] holds the following additional columns that are specific
+#' to the hyperband algorithm:
 #'   * `bracket` (`integer(1)`)\cr
-#'     The console logs about the bracket index are actually not matching with
-#'     the original hyperband algorithm, which counts down the brackets and
-#'     stops after evaluating bracket 0. The true bracket indices are given in
-#'     this column.
-#'   * `bracket_stage` (`integer(1))`\cr
-#'     The bracket stage of each bracket. Hyperband starts counting at 0.
-#'   * `budget_scaled` (`numeric(1)`)\cr
-#'     The intermediate budget in each bracket stage calculated by hyperband.
-#'     Because hyperband is originally only considered for budgets starting at
-#'     1, some rescaling is done to allow budgets starting at different values.
-#'     For this, budgets are internally divided by the lower budget bound to get
-#'     a lower budget of 1. Before the objective function receives its budgets
-#'     for evaluation, the budget is transformed back to match the original
-#'     scale again.
-#'   * `budget_real` (`numeric(1)`)\cr
-#'     The real budget values the objective function uses for evaluation after
-#'     hyperband calculated its scaled budget.
-#'   * `n_configs` (`integer(1)`)\cr
-#'     The amount of evaluated configurations in each stage. These correspond to
-#'     the `r_i` in the original paper.
+#'     The bracket index. Counts down to 0.
+#'   * `stage` (`integer(1))`\cr
+#'     The stages of each bracket. Starts counting at 0.
 #'
 #' @template section_custom_sampler
 #' @template section_runtime
@@ -77,13 +60,13 @@
 #' @examples
 #' library(bbotk)
 #' library(data.table)
-#' 
+#'
 #' search_space = domain = ps(
-#'   x1 = p_dbl(-5, 10), 
-#'   x2 = p_dbl(0, 15), 
+#'   x1 = p_dbl(-5, 10),
+#'   x2 = p_dbl(0, 15),
 #'   fidelity = p_dbl(1e-2, 1, tags = "budget")
 #' )
-#' 
+#'
 #' # modified branin function
 #' objective = ObjectiveRFunDt$new(
 #'   fun = function(xdt) {
@@ -93,31 +76,31 @@
 #'     r = 6
 #'     s = 10
 #'     t = 1 / (8 * pi)
-#'     data.table(y = 
-#'       (a * ((xdt[["x2"]] - 
-#'       b * (xdt[["x1"]] ^ 2L) + 
-#'       c * xdt[["x1"]] - r) ^ 2) + 
-#'       ((s * (1 - t)) * cos(xdt[["x1"]])) + 
+#'     data.table(y =
+#'       (a * ((xdt[["x2"]] -
+#'       b * (xdt[["x1"]] ^ 2L) +
+#'       c * xdt[["x1"]] - r) ^ 2) +
+#'       ((s * (1 - t)) * cos(xdt[["x1"]])) +
 #'       s - (5 * xdt[["fidelity"]] * xdt[["x1"]])))
 #'   },
 #'   domain = domain,
 #'   codomain = ps(y = p_dbl(tags = "minimize"))
 #' )
-#' 
+#'
 #' instance = OptimInstanceSingleCrit$new(
 #'   objective = objective,
 #'   search_space = search_space,
 #'   terminator = trm("none")
 #' )
-#' 
+#'
 #' optimizer = opt("hyperband")
-#' 
+#'
 #' # modifies the instance by reference
 #' optimizer$optimize(instance)
-#' 
+#'
 #' # best scoring evaluation
 #' instance$result
-#' 
+#'
 #' # all evaluations
 #' as.data.table(instance$archive)
 OptimizerHyperband = R6Class("OptimizerHyperband",
@@ -128,7 +111,7 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
       param_set = ps(
-        eta = p_dbl(lower = 1.0001, tags = "required", default = 2),
+        eta     = p_dbl(lower = 1.0001, tags = "required", default = 2),
         sampler = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE))
       )
       param_set$values = list(eta = 2, sampler = NULL)
@@ -144,182 +127,95 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
 
   private = list(
     .optimize = function(inst) {
-      eta = self$param_set$values$eta
-      sampler = self$param_set$values$sampler
+      pars = self$param_set$values
+      eta = pars$eta
+      sampler = pars$sampler
       search_space = inst$search_space
-      archive = inst$archive
-
-      if (archive$codomain$length > 1) require_namespaces("emoa")
-
-      # name of the hyperparameters with a budget tag
       budget_id = search_space$ids(tags = "budget")
 
-      # check if we have EXACTLY 1 budget parameter, or else throw an informative error
-      if (length(budget_id) != 1) stopf("Exactly one hyperparameter must be tagged with 'budget'")
-
-      # budget parameter MUST be defined as integer or double in paradox
+      # check budget
+      if (length(budget_id) != 1) stopf("Exactly one parameter must be tagged with 'budget'")
       assert_choice(search_space$class[[budget_id]], c("ParamInt", "ParamDbl"))
-      search_space_sampler = search_space$clone()$subset(setdiff(search_space$ids(), budget_id))
 
-      # construct unif sampler if non is given
+      if (inst$archive$codomain$length > 1) require_namespaces("emoa")
+
+      # sampler
+      search_space_sampler = search_space$clone()$subset(setdiff(search_space$ids(), budget_id))
       if (is.null(sampler)) {
         sampler = SamplerUnif$new(search_space_sampler)
       } else {
         assert_set_equal(sampler$param_set$ids(), search_space_sampler$ids())
       }
 
-      # use parameter tagged with 'budget' as budget for hyperband
-      budget_lower = search_space$lower[[budget_id]]
-      budget_upper = search_space$upper[[budget_id]]
+      # r_min is the budget of a single configuration in the first stage
+      # r_max is the maximum budget of a single configuration in the last stage
+      # the internal budget is rescaled to a minimum budget of 1
+      # for this, the budget is divided by r_min
+      # the budget is transformed to the original scale before passing it to the objective function
+      r_max = search_space$upper[[budget_id]]
+      r_min = search_space$lower[[budget_id]]
 
-      # we need the budget to start with a SMALL NONNEGATIVE value
-      assert_number(budget_lower, lower = 1e-8)
+      # maximum budget of a single configuration in the last stage (scaled)
+      # R in the original paper
+      r = r_max / r_min
 
-      # rescale config max budget (:= 'R' in the original paper)
-      # this represents the maximum budget a single configuration
-      # will run for in the last stage of each bracket
-      config_max_b = budget_upper / budget_lower
+      # s_max + 1 is the number of brackets and the number stages of the first bracket
+      s_max = floor(log(r, eta))
 
-      # cannot use config_max_b due to stability reasons
-      bracket_max = floor(log(budget_upper, eta) - log(budget_lower, eta))
-      # <=> eta^bracket_max = config_max_b
-      lg$info("Amount of brackets to be evaluated = %i, ", bracket_max + 1)
+      # approximately the used budget of an entire bracket
+      # B in the original paper
+      budget = (s_max + 1) * r
 
-      # 'B' is approximately the used budget of an entire bracket.
-      # The reference states a single execution of hyperband uses (smax+1) * B
-      # amount of budget, and with (smax+1) as the amount of brackets follows
-      # the claim. (smax is 'bracket_max' here)
-      B = (bracket_max + 1L) * config_max_b
+      # number of configurations in first stages
+      n = ceiling((budget / r) * (eta^(0:s_max)) / ((0:s_max) + 1))
 
-      # outer loop - iterating over brackets
-      for (bracket in seq(bracket_max, 0)) {
+      # original hyperband algorithm iterates over brackets
+      # this implementation iterates over stages with same budget
+      # the number of iterations (s_max + 1) remains the same in both implementations
+      for (s in s_max:0) {
+        # budget of a single configuration in the first stage (unscaled)
+        rs = r_min * r * eta^(-s)
+        # sample initial configurations of bracket
+        xdt = sampler$sample(n[s + 1])$data
+        set(xdt, j = budget_id, value = rs)
+        set(xdt, j = "bracket", value = s)
+        set(xdt, j = "stage", value = 0)
 
-        # for less confusion of the user we start the print with bracket 1
-        lg$info("Start evaluation of bracket %i", bracket_max - bracket + 1)
+        # promote configurations of previous batch
+        if (s != s_max) {
+          archive = inst$archive
+          data = archive$data[batch_nr == archive$n_batch, ]
+          minimize = !as.logical(archive$codomain$maximization_to_minimization)
 
-        # amount of active configs and budget in bracket
-        mu_start = mu_current = ceiling((B * eta^bracket) / (config_max_b * (bracket + 1)))
+          # for each bracket, promote configurations of previous stage
+          xdt_promoted = map_dtr(s_max:(s + 1), function(i) {
+            # number of configuration to promote
+            ni = floor(n[i + 1] * eta^(-(i - s)))
 
-        budget_start = budget_current = config_max_b / eta^bracket
+            # get performances of previous stage
+            data_bracket = data[get("bracket") == i, ]
+            y = data_bracket[, archive$cols_y, with = FALSE]
 
-        # generate design based on given parameter set and sampler
-        active_configs = sampler$sample(mu_current)$data
-
-        # inner loop - iterating over bracket stages
-        for (stage in seq(0, bracket)) {
-
-          # amount of configs of the previous stage
-          mu_previous = mu_current
-
-          # make configs smaller, increase budget and increment stage counter
-          mu_current = floor(mu_start / eta^stage)
-          budget_current = budget_start * eta^stage
-
-          # rescale budget back to real world scale
-          budget_current_real = budget_current * budget_lower
-          # round if the budget is an integer parameter
-          if (search_space$class[[budget_id]] == "ParamInt") {
-            budget_current_real = round(budget_current_real)
-          }
-
-          lg$info("Training %i configs with budget of %g for each",
-            mu_current, budget_current_real)
-
-          # only rank and pick configurations if we are not in the first stage
-          if (stage > 0) {
-
-            # get performance of each active configuration
-            data = archive$data[batch_nr %in% archive$n_batch]
-            y = data[, archive$cols_y, with = FALSE]
-
-            active_configs = if (archive$codomain$length == 1) {
-              # single-crit
-              archive$best(batch = archive$n_batch, n_select = mu_current)
+            # select best ni configurations
+            row_ids = if (archive$codomain$length == 1) {
+              head(order(unlist(y), decreasing = minimize), ni)
             } else {
-              # multi-crit
-              archive$nds_selection(batch = archive$n_batch, n_select = mu_current)
+              nds_selection(points = t(as.matrix(y)), n_select = ni, minimize = minimize)
             }
-            active_configs = active_configs[, archive$cols_x, with = FALSE]
-          }
+            data_bracket[row_ids, ]
+          })
 
-          # overwrite active configurations with the current budget
-          active_configs[[budget_id]] = budget_current_real
+          # increase budget and stage
+          xdt_promoted = xdt_promoted[, c(inst$archive$cols_x, "stage", "bracket"), with = FALSE]
+          set(xdt_promoted, j = budget_id, value = rs)
+          set(xdt_promoted, j = "stage", value = xdt_promoted[["stage"]] + 1)
 
-          # extend active_configs with extras
-          xdt = cbind(active_configs,
-            bracket = bracket,
-            bracket_stage = stage,
-            budget_scaled = budget_current,
-            budget_real = budget_current_real,
-            n_configs = mu_current
-          )
-
-          inst$eval_batch(xdt)
+          xdt = rbindlist(list(xdt, xdt_promoted), use.names = TRUE)
         }
+
+        if (search_space$class[[budget_id]] == "ParamInt") set(xdt, j = budget_id, value = round(xdt[[budget_id]]))
+        inst$eval_batch(xdt)
       }
     }
   )
 )
-
-#' @title Hyperband-details
-#'
-#' @description
-#' Here, it is explained how the bracket layout looks like for a given argument
-#' set.
-#'
-#' @noRd
-#'
-#' @details
-#' How the budget behaves if the runtime is not linear, can be seen in the
-#' following example.
-#' It can be viewed by calling the function
-#' `hyperband_brackets` below with the arguments `R = 2` and `eta = 2`. If we
-#' run a learner with O(budget^2) time complexity, the runtime of the last
-#' bracket will be 33% longer than the first bracket
-#' (time of bracket 1 = 2 * 1^2 + 2^2 = 6; time of bracket 2 = 2 * 2^2 = 8).
-#' Of course, this won't break anything, but it should be kept in mind when
-#' applying hyperband.
-#'
-#' @details
-#' This sections explains the calculation of the constants for each bracket.
-#' A small overview will be given here, but for more details please check
-#' out the original paper (see "references").
-#' To keep things uniform with the notation in the paper (and to safe space in
-#' the formulas), `R` is used for the upper budget that last remaining
-#' configuration should reach. The formula to calculate the amount of brackets
-#' is `floor(log(R, eta)) + 1`. To calculate the starting budget in each
-#' bracket, use `R * eta^(-s)`, where `s` is the maximum bracket minus the
-#' current bracket index.
-#' For the starting configurations in each bracket it is
-#' `ceiling((B/R) * ((eta^s)/(s+1)))`, with `B = (bracket amount) * R`.
-#' To receive a table with the full brackets layout, load the following function
-#' and execute it for the desired `R` and `eta`.
-#'
-#' ```
-#' hyperband_brackets = function(R, eta) {
-#'
-#'   result = data.frame()
-#'   smax = floor(log(R, eta))
-#'   B = (smax + 1) * R
-#'
-#'   # outer loop - iterate over brackets
-#'   for (s in smax:0) {
-#'
-#'     n = ceiling((B/R) * ((eta^s)/(s+1)))
-#'     r = R * eta^(-s)
-#'
-#'     # inner loop - iterate over bracket stages
-#'     for (i in 0:s) {
-#'
-#'       ni = floor(n * eta^(-i))
-#'       ri = r * eta^i
-#'       result = rbind(result, c(smax - s + 1, i + 1, ri, ni))
-#'     }
-#'   }
-#'
-#'   names(result) = c("bracket", "bracket_stage", "budget", "n_configs")
-#'   return(result)
-#' }
-#'
-#' hyperband_brackets(R = 81L, eta = 3L)
-#' ```
