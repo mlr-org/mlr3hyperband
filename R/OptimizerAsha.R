@@ -73,7 +73,6 @@ OptimizerAsha = R6Class("OptimizerAsha",
 
           inst$archive$add_evals(xdt, status = "proposed")
           inst$eval_proposed(async = TRUE, single_worker = FALSE)
-          print(inst$archive$data)
         })
 
       inst$archive$resolve_promise()
