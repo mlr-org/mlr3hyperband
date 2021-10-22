@@ -64,17 +64,17 @@ OptimizerAsha = R6Class("OptimizerAsha",
       worker = future::availableCores()
 
       repeat({
-        replicate(worker - instance$archive$n_in_progress, {
+        replicate(worker - inst$archive$n_in_progress, {
           xdt = get_job(k_max, eta, s, r_min, inst$archive, sampler, budget_id)
 
-          if (is.null(xdt$asha_id)) set(xdt, j = "asha_id", value = n_rung(instance$archive, 0) + 1)
+          if (is.null(xdt$asha_id)) set(xdt, j = "asha_id", value = n_rung(inst$archive, 0) + 1)
 
-          instance$archive$add_evals(xdt, status = "proposed")
-          instance$eval_proposed(async = TRUE, single_worker = FALSE)
+          inst$archive$add_evals(xdt, status = "proposed")
+          inst$eval_proposed(async = TRUE, single_worker = FALSE)
           print(inst$archive$data)
         })
 
-      instance$archive$resolve_promise()
+      inst$archive$resolve_promise()
       })
      }
   )
