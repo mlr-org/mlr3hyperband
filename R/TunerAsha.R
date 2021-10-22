@@ -1,3 +1,5 @@
+#' @title Tuner using Asynchronous Successive Halving
+#'
 #' @export
 TunerAsha = R6Class("TunerAsha",
   inherit = TunerFromOptimizer,

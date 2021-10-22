@@ -1,3 +1,5 @@
+#' @title Optimizer using Asynchronous Successive Halving
+#'
 #' @export
 OptimizerAsha = R6Class("OptimizerAsha",
   inherit = Optimizer,
