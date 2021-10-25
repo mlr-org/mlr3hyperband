@@ -22,11 +22,17 @@
 #' With every stage, the point budget is increased by a factor of `eta`
 #' and only the best `1/eta` points are used for the next stage.
 #' Non-integer values are supported, but `eta` is not allowed to be less or
-#' equal 1.}
+#' equal 1.
+#' }
 #' \item{`sampler`}{[paradox::Sampler]\cr
 #' Object defining how the samples of the parameter space should be drawn during
-#' the initialization of each bracket. The default is uniform sampling.}
+#' the initialization of each bracket. The default is uniform sampling.
 #' }
+#' \item{`repeats`}{`logical(1)`\cr
+#' If `FALSE` (default), successive halving terminates once all stages are
+#' evaluated. Otherwise, successive halving starts over again once the last
+#' stage is evaluated.
+#' }}
 #'
 #' @section Archive:
 #' The [bbotk::Archive] holds the following additional column that is specific
@@ -100,9 +106,10 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
       param_set = ps(
         n       = p_int(lower = 1, default = 16),
         eta     = p_dbl(lower = 1.0001, default = 2),
-        sampler = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE))
+        sampler = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)),
+        repeats = p_lgl(default = FALSE)
       )
-      param_set$values = list(n = 16L, eta = 2L, sampler = NULL)
+      param_set$values = list(n = 16L, eta = 2L, sampler = NULL, repeats = FALSE)
 
       super$initialize(
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
@@ -159,34 +166,37 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
       # s_max + 1 is the number of stages
       s_max = min(sr, sn)
 
-      # iterate stages
-      for (i in 0:s_max) {
-        # number of configurations in stage
-        ni = floor(n * eta^(-i))
-        # budget of a single configuration in stage
-        ri = r_min * eta^i
+      repeat({
+        # iterate stages
+        for (i in 0:s_max) {
+          # number of configurations in stage
+          ni = floor(n * eta^(-i))
+          # budget of a single configuration in stage
+          ri = r_min * eta^i
 
-        if (search_space$class[[budget_id]] == "ParamInt") ri = round(ri)
+          if (search_space$class[[budget_id]] == "ParamInt") ri = round(ri)
 
-        if (i == 0) {
-          xdt = sampler$sample(ni)$data
-        } else {
-          # get performances of previous stage
-          archive = inst$archive
-
-          xdt = if (archive$codomain$length == 1) {
-            archive$best(batch = archive$n_batch, n_select = ni)
+          if (i == 0) {
+            xdt = sampler$sample(ni)$data
           } else {
-            archive$nds_selection(batch = archive$n_batch, n_select = ni)
-          }
-          xdt = xdt[, archive$cols_x, with = FALSE]
-        }
-        # increase budget and stage
-        set(xdt, j = budget_id, value = ri)
-        set(xdt, j = "stage", value = i)
+            # get performances of previous stage
+            archive = inst$archive
 
-        inst$eval_batch(xdt)
-      }
+            xdt = if (archive$codomain$length == 1) {
+              archive$best(batch = archive$n_batch, n_select = ni)
+            } else {
+              archive$nds_selection(batch = archive$n_batch, n_select = ni)
+            }
+            xdt = xdt[, archive$cols_x, with = FALSE]
+          }
+          # increase budget and stage
+          set(xdt, j = budget_id, value = ri)
+          set(xdt, j = "stage", value = i)
+
+          inst$eval_batch(xdt)
+        }
+        if (!pars$repeats) break
+      })
     }
   )
 )

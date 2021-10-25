@@ -86,7 +86,7 @@ instance = tune(
   task = tsk("pima"),
   learner = lrn("classif.xgboost", eval_metric = "logloss"),
   resampling = rsmp("cv", folds = 3),
-  measure = msr("classif.ce"),
+  measures = msr("classif.ce"),
   search_space = search_space
 )
 
@@ -94,8 +94,8 @@ instance = tune(
 instance$result
 ```
 
-    ##    nrounds       eta booster learner_param_vals  x_domain classif.ce
-    ## 1:       2 0.4364793    dart          <list[6]> <list[3]>  0.2669271
+    ##    nrounds     eta booster learner_param_vals  x_domain classif.ce
+    ## 1:       4 0.27844  gbtree          <list[6]> <list[3]>  0.2682292
 
 ### Subsampling
 
@@ -122,7 +122,7 @@ instance = tune(
   task = tsk("pima"),
   learner = learner,
   resampling = rsmp("cv", folds = 3),
-  measure = msr("classif.ce"),
+  measures = msr("classif.ce"),
   search_space = search_space
 )
 
@@ -131,7 +131,7 @@ instance$result
 ```
 
     ##    classif.rpart.cp classif.rpart.minsplit subsample.frac learner_param_vals  x_domain classif.ce
-    ## 1:       0.02258595                      4              1          <list[6]> <list[3]>  0.2421875
+    ## 1:        0.0246659                      5            0.5          <list[6]> <list[3]>  0.2395833
 
 ### Successive Halving
 
@@ -152,7 +152,7 @@ instance = tune(
   task = tsk("pima"),
   learner = lrn("classif.xgboost", eval_metric = "logloss"),
   resampling = rsmp("cv", folds = 3),
-  measure = msr("classif.ce"),
+  measures = msr("classif.ce"),
   search_space = search_space
 )
 
@@ -160,5 +160,5 @@ instance = tune(
 instance$result
 ```
 
-    ##    nrounds     eta booster learner_param_vals  x_domain classif.ce
-    ## 1:       8 0.57244  gbtree          <list[6]> <list[3]>  0.2304688
+    ##    nrounds       eta booster learner_param_vals  x_domain classif.ce
+    ## 1:       2 0.8726027    dart          <list[6]> <list[3]>  0.2265625

@@ -33,7 +33,7 @@
 #' to the successive halving algorithm:
 #'   * `stage` (`integer(1))`\cr
 #'     Stage index. Starts counting at 0.
-#' 
+#'
 #' @source
 #' `r format_bib("jamieson_2016")`
 #'
@@ -56,7 +56,7 @@
 #'   task = tsk("pima"),
 #'   learner = lrn("classif.xgboost", eval_metric = "logloss"),
 #'   resampling = rsmp("cv", folds = 3),
-#'   measure = msr("classif.ce"),
+#'   measures = msr("classif.ce"),
 #'   search_space = search_space
 #' )
 #'
