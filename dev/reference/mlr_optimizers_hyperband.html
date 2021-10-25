@@ -200,12 +200,14 @@ the given settings.</p>
 <dt><code>eta</code></dt><dd><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code><br />
 Fraction parameter of the successive halving algorithm: With every stage the
 configuration budget is increased by a factor of <code>eta</code> and only the best
-<code>1/eta</code> points are used for the next stage. Non-integer values are
-supported, but <code>eta</code> is not allowed to be less or equal 1.</p></dd>
+<code>1/eta</code> points are used for the next stage. Non-integer values are supported,
+but <code>eta</code> is not allowed to be less or equal 1.</p></dd>
 <dt><code>sampler</code></dt><dd><p><a href='https://paradox.mlr-org.com/reference/Sampler.html'>paradox::Sampler</a><br />
 Object defining how the samples of the parameter space should be drawn during
 the initialization of each bracket. The default is uniform sampling.</p></dd>
-
+<dt><code>repeats</code></dt><dd><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code><br />
+If <code>FALSE</code> (default), hyperband terminates once all brackets are evaluated.
+Otherwise, hyperband starts over again once the last bracket is evaluated.</p></dd>
 </dl>
 
     <h2 class="hasAnchor" id="archive"><a class="anchor" href="#archive"></a>Archive</h2>
@@ -370,17 +372,17 @@ Use <code><a href='https://s-fleck.github.io/lgr/reference/get_logger.html'>lgr:
 #&gt; 300:  4.991380  0.2215352 1.000000       1     1 -11.2039660
 #&gt; 301:  3.228872  6.2107174 1.000000       1     1   0.3124757
 #&gt;                timestamp batch_nr
-#&gt;   1: 2021-10-25 04:32:01        1
-#&gt;   2: 2021-10-25 04:32:01        1
-#&gt;   3: 2021-10-25 04:32:01        1
-#&gt;   4: 2021-10-25 04:32:01        1
-#&gt;   5: 2021-10-25 04:32:01        1
+#&gt;   1: 2021-10-25 13:03:29        1
+#&gt;   2: 2021-10-25 13:03:29        1
+#&gt;   3: 2021-10-25 13:03:29        1
+#&gt;   4: 2021-10-25 13:03:29        1
+#&gt;   5: 2021-10-25 13:03:29        1
 #&gt;  ---                             
-#&gt; 297: 2021-10-25 04:32:01        7
-#&gt; 298: 2021-10-25 04:32:01        7
-#&gt; 299: 2021-10-25 04:32:01        7
-#&gt; 300: 2021-10-25 04:32:01        7
-#&gt; 301: 2021-10-25 04:32:01        7</div></pre>
+#&gt; 297: 2021-10-25 13:03:29        7
+#&gt; 298: 2021-10-25 13:03:29        7
+#&gt; 299: 2021-10-25 13:03:29        7
+#&gt; 300: 2021-10-25 13:03:29        7
+#&gt; 301: 2021-10-25 13:03:29        7</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

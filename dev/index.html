@@ -154,14 +154,14 @@
   task <span class="op">=</span> <span class="fu">tsk</span><span class="op">(</span><span class="st">"pima"</span><span class="op">)</span>,
   learner <span class="op">=</span> <span class="fu">lrn</span><span class="op">(</span><span class="st">"classif.xgboost"</span>, eval_metric <span class="op">=</span> <span class="st">"logloss"</span><span class="op">)</span>,
   resampling <span class="op">=</span> <span class="fu">rsmp</span><span class="op">(</span><span class="st">"cv"</span>, folds <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,
-  measure <span class="op">=</span> <span class="fu">msr</span><span class="op">(</span><span class="st">"classif.ce"</span><span class="op">)</span>,
+  measures <span class="op">=</span> <span class="fu">msr</span><span class="op">(</span><span class="st">"classif.ce"</span><span class="op">)</span>,
   search_space <span class="op">=</span> <span class="va">search_space</span>
 <span class="op">)</span>
 
 <span class="co"># best performing hyperparameter configuration</span>
 <span class="va">instance</span><span class="op">$</span><span class="va">result</span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co">##    nrounds       eta booster learner_param_vals  x_domain classif.ce</span></span>
-<span id="cb4-2"><a href="#cb4-2"></a><span class="co">## 1:       2 0.4364793    dart          &lt;list[6]&gt; &lt;list[3]&gt;  0.2669271</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co">##    nrounds     eta booster learner_param_vals  x_domain classif.ce</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="co">## 1:       4 0.27844  gbtree          &lt;list[6]&gt; &lt;list[3]&gt;  0.2682292</span></span></code></pre></div>
 </div>
 <div id="subsampling" class="section level3">
 <h3 class="hasAnchor">
@@ -183,14 +183,14 @@
   task <span class="op">=</span> <span class="fu">tsk</span><span class="op">(</span><span class="st">"pima"</span><span class="op">)</span>,
   learner <span class="op">=</span> <span class="va">learner</span>,
   resampling <span class="op">=</span> <span class="fu">rsmp</span><span class="op">(</span><span class="st">"cv"</span>, folds <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,
-  measure <span class="op">=</span> <span class="fu">msr</span><span class="op">(</span><span class="st">"classif.ce"</span><span class="op">)</span>,
+  measures <span class="op">=</span> <span class="fu">msr</span><span class="op">(</span><span class="st">"classif.ce"</span><span class="op">)</span>,
   search_space <span class="op">=</span> <span class="va">search_space</span>
 <span class="op">)</span>
 
 <span class="co"># best performing hyperparameter configuration</span>
 <span class="va">instance</span><span class="op">$</span><span class="va">result</span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co">##    classif.rpart.cp classif.rpart.minsplit subsample.frac learner_param_vals  x_domain classif.ce</span></span>
-<span id="cb6-2"><a href="#cb6-2"></a><span class="co">## 1:       0.02258595                      4              1          &lt;list[6]&gt; &lt;list[3]&gt;  0.2421875</span></span></code></pre></div>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="co">## 1:        0.0246659                      5            0.5          &lt;list[6]&gt; &lt;list[3]&gt;  0.2395833</span></span></code></pre></div>
 </div>
 <div id="successive-halving" class="section level3">
 <h3 class="hasAnchor">
@@ -212,14 +212,14 @@
   task <span class="op">=</span> <span class="fu">tsk</span><span class="op">(</span><span class="st">"pima"</span><span class="op">)</span>,
   learner <span class="op">=</span> <span class="fu">lrn</span><span class="op">(</span><span class="st">"classif.xgboost"</span>, eval_metric <span class="op">=</span> <span class="st">"logloss"</span><span class="op">)</span>,
   resampling <span class="op">=</span> <span class="fu">rsmp</span><span class="op">(</span><span class="st">"cv"</span>, folds <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,
-  measure <span class="op">=</span> <span class="fu">msr</span><span class="op">(</span><span class="st">"classif.ce"</span><span class="op">)</span>,
+  measures <span class="op">=</span> <span class="fu">msr</span><span class="op">(</span><span class="st">"classif.ce"</span><span class="op">)</span>,
   search_space <span class="op">=</span> <span class="va">search_space</span>
 <span class="op">)</span>
 
 <span class="co"># best performing hyperparameter configuration</span>
 <span class="va">instance</span><span class="op">$</span><span class="va">result</span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co">##    nrounds     eta booster learner_param_vals  x_domain classif.ce</span></span>
-<span id="cb8-2"><a href="#cb8-2"></a><span class="co">## 1:       8 0.57244  gbtree          &lt;list[6]&gt; &lt;list[3]&gt;  0.2304688</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co">##    nrounds       eta booster learner_param_vals  x_domain classif.ce</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="co">## 1:       2 0.8726027    dart          &lt;list[6]&gt; &lt;list[3]&gt;  0.2265625</span></span></code></pre></div>
 </div>
 </div>
 </div>
