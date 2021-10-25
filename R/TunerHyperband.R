@@ -87,7 +87,7 @@
 #'   task = tsk("pima"),
 #'   learner = lrn("classif.xgboost", eval_metric = "logloss"),
 #'   resampling = rsmp("cv", folds = 3),
-#'   measure = msr("classif.ce"),
+#'   measures = msr("classif.ce"),
 #'   search_space = search_space
 #' )
 #'

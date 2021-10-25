@@ -31,11 +31,17 @@ Number of points in first stage.}
 With every stage, the point budget is increased by a factor of \code{eta}
 and only the best \code{1/eta} points are used for the next stage.
 Non-integer values are supported, but \code{eta} is not allowed to be less or
-equal 1.}
+equal 1.
+}
 \item{\code{sampler}}{\link[paradox:Sampler]{paradox::Sampler}\cr
 Object defining how the samples of the parameter space should be drawn during
-the initialization of each bracket. The default is uniform sampling.}
+the initialization of each bracket. The default is uniform sampling.
 }
+\item{\code{repeats}}{\code{logical(1)}\cr
+If \code{FALSE} (default), successive halving terminates once all stages are
+evaluated. Otherwise, successive halving starts over again once the last
+stage is evaluated.
+}}
 }
 
 \section{Archive}{
