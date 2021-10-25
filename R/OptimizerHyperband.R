@@ -32,12 +32,17 @@
 #' \item{`eta`}{`numeric(1)`\cr
 #' Fraction parameter of the successive halving algorithm: With every stage the
 #' configuration budget is increased by a factor of `eta` and only the best
-#' `1/eta` points are used for the next stage. Non-integer values are
-#' supported, but `eta` is not allowed to be less or equal 1.}
+#' `1/eta` points are used for the next stage. Non-integer values are supported,
+#' but `eta` is not allowed to be less or equal 1.
+#' }
 #' \item{`sampler`}{[paradox::Sampler]\cr
 #' Object defining how the samples of the parameter space should be drawn during
-#' the initialization of each bracket. The default is uniform sampling.}
+#' the initialization of each bracket. The default is uniform sampling.
 #' }
+#' \item{`repeats`}{`logical(1)`\cr
+#' If `FALSE` (default), hyperband terminates once all brackets are evaluated.
+#' Otherwise, hyperband starts over again once the last bracket is evaluated.
+#' }}
 #'
 #' @section Archive:
 #' The [bbotk::Archive] holds the following additional columns that are specific
@@ -112,9 +117,10 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
     initialize = function() {
       param_set = ps(
         eta     = p_dbl(lower = 1.0001, tags = "required", default = 2),
-        sampler = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE))
+        sampler = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)),
+        repeats = p_lgl(default = FALSE)
       )
-      param_set$values = list(eta = 2, sampler = NULL)
+      param_set$values = list(eta = 2, sampler = NULL, repeats = FALSE)
 
       super$initialize(
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
@@ -169,53 +175,56 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
       # number of configurations in first stages
       n = ceiling((budget / r) * (eta^(0:s_max)) / ((0:s_max) + 1))
 
-      # original hyperband algorithm iterates over brackets
-      # this implementation iterates over stages with same budget
-      # the number of iterations (s_max + 1) remains the same in both implementations
-      for (s in s_max:0) {
-        # budget of a single configuration in the first stage (unscaled)
-        rs = r_min * r * eta^(-s)
-        # sample initial configurations of bracket
-        xdt = sampler$sample(n[s + 1])$data
-        set(xdt, j = budget_id, value = rs)
-        set(xdt, j = "bracket", value = s)
-        set(xdt, j = "stage", value = 0)
+      repeat({
+        # original hyperband algorithm iterates over brackets
+        # this implementation iterates over stages with same budget
+        # the number of iterations (s_max + 1) remains the same in both implementations
+        for (s in s_max:0) {
+          # budget of a single configuration in the first stage (unscaled)
+          rs = r_min * r * eta^(-s)
+          # sample initial configurations of bracket
+          xdt = sampler$sample(n[s + 1])$data
+          set(xdt, j = budget_id, value = rs)
+          set(xdt, j = "bracket", value = s)
+          set(xdt, j = "stage", value = 0)
 
-        # promote configurations of previous batch
-        if (s != s_max) {
-          archive = inst$archive
-          data = archive$data[batch_nr == archive$n_batch, ]
-          minimize = !as.logical(archive$codomain$maximization_to_minimization)
+          # promote configurations of previous batch
+          if (s != s_max) {
+            archive = inst$archive
+            data = archive$data[batch_nr == archive$n_batch, ]
+            minimize = !as.logical(archive$codomain$maximization_to_minimization)
 
-          # for each bracket, promote configurations of previous stage
-          xdt_promoted = map_dtr(s_max:(s + 1), function(i) {
-            # number of configuration to promote
-            ni = floor(n[i + 1] * eta^(-(i - s)))
+            # for each bracket, promote configurations of previous stage
+            xdt_promoted = map_dtr(s_max:(s + 1), function(i) {
+              # number of configuration to promote
+              ni = floor(n[i + 1] * eta^(-(i - s)))
 
-            # get performances of previous stage
-            data_bracket = data[get("bracket") == i, ]
-            y = data_bracket[, archive$cols_y, with = FALSE]
+              # get performances of previous stage
+              data_bracket = data[get("bracket") == i, ]
+              y = data_bracket[, archive$cols_y, with = FALSE]
 
-            # select best ni configurations
-            row_ids = if (archive$codomain$length == 1) {
-              head(order(unlist(y), decreasing = minimize), ni)
-            } else {
-              nds_selection(points = t(as.matrix(y)), n_select = ni, minimize = minimize)
-            }
-            data_bracket[row_ids, ]
-          })
+              # select best ni configurations
+              row_ids = if (archive$codomain$length == 1) {
+                head(order(unlist(y), decreasing = minimize), ni)
+              } else {
+                nds_selection(points = t(as.matrix(y)), n_select = ni, minimize = minimize)
+              }
+              data_bracket[row_ids, ]
+            })
 
-          # increase budget and stage
-          xdt_promoted = xdt_promoted[, c(inst$archive$cols_x, "stage", "bracket"), with = FALSE]
-          set(xdt_promoted, j = budget_id, value = rs)
-          set(xdt_promoted, j = "stage", value = xdt_promoted[["stage"]] + 1)
+            # increase budget and stage
+            xdt_promoted = xdt_promoted[, c(inst$archive$cols_x, "stage", "bracket"), with = FALSE]
+            set(xdt_promoted, j = budget_id, value = rs)
+            set(xdt_promoted, j = "stage", value = xdt_promoted[["stage"]] + 1)
 
-          xdt = rbindlist(list(xdt, xdt_promoted), use.names = TRUE)
+            xdt = rbindlist(list(xdt, xdt_promoted), use.names = TRUE)
+          }
+
+          if (search_space$class[[budget_id]] == "ParamInt") set(xdt, j = budget_id, value = round(xdt[[budget_id]]))
+          inst$eval_batch(xdt)
         }
-
-        if (search_space$class[[budget_id]] == "ParamInt") set(xdt, j = budget_id, value = round(xdt[[budget_id]]))
-        inst$eval_batch(xdt)
-      }
+        if (!pars$repeats) break
+      })
     }
   )
 )

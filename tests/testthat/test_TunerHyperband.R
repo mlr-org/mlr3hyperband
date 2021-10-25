@@ -124,7 +124,7 @@ test_that("TunerHyperband works with custom sampler", {
     resampling = rsmp("holdout"),
     search_space = search_space,
     sampler = sampler),
-    regexp = "Assertion on 'sampler$param_set$ids()' failed: Must be equal to set {'eta','booster'}, but is {'booster'}.",
+    regexp = "Must be equal to set",
     fixed = TRUE)
 
   # budget parameter defined
@@ -185,4 +185,32 @@ test_that("TunerHyperband throws an error if budget parameter is invalid", {
     search_space = search_space),
     regexp = "Exactly one parameter must be tagged with 'budget'",
     fixed = TRUE)
+})
+
+test_that("repeating hyperband works", {
+  learner = lrn("classif.rpart",
+    minsplit  = to_tune(p_int(1, 16, tags = "budget")),
+    cp        = to_tune(1e-04, 1e-1, logscale = TRUE),
+    minbucket = to_tune(1, 64, logscale = TRUE))
+
+  instance = tune(
+    method = "hyperband",
+    task = tsk("pima"),
+    learner = learner,
+    resampling = rsmp("cv", folds = 3),
+    measures = msr("classif.ce"),
+    repeats = TRUE,
+    term_evals = 144)
+
+  expect_equal(nrow(instance$archive$data), 144)
+
+  instance = tune(
+    method = "hyperband",
+    task = tsk("pima"),
+    learner = learner,
+    resampling = rsmp("cv", folds = 3),
+    measures = msr("classif.ce"),
+    repeats = FALSE)
+
+  expect_equal(nrow(instance$archive$data), 72)
 })
