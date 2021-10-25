@@ -1,11 +1,12 @@
 # mlr3hyperband 0.2.0.9000
 
-- Implements parallel evaluation of stages.
+* Implements parallel evaluation of stages.
+* Allows to start over again once the last stage is evaluated.
 
 # mlr3hyperband 0.2.0
 
-- Adds `OptimizerHyperband`.
-- Adds `OptimizerSuccessiveHalving`.
+* Adds `OptimizerHyperband`.
+* Adds `OptimizerSuccessiveHalving`.
 
 # mlr3hyperband 0.1.2
 
