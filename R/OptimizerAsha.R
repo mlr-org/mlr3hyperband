@@ -75,7 +75,7 @@ OptimizerAsha = R6Class("OptimizerAsha",
           inst$eval_proposed(async = TRUE, single_worker = FALSE)
         })
 
-      inst$archive$resolve_promise()
+      inst$resolve_promise()
       })
      }
   )
@@ -83,7 +83,7 @@ OptimizerAsha = R6Class("OptimizerAsha",
 
 get_job = function(k_max, eta, s, r_min, archive, sampler, budget_id) {
   for (k in (k_max  - s - 1):0) {
-    # top configurations (n = |rung|/eta)
+    # top configurations (n = |stage|/eta)
     candidates = top_rung(archive, k, eta)
     # select canidates that are not promoted yet
     promotable = setdiff(candidates$asha_id, ids_rung(archive, k + 1))
@@ -95,30 +95,30 @@ get_job = function(k_max, eta, s, r_min, archive, sampler, budget_id) {
       xdt = candidates[asha_id == promotable[1], archive$cols_x, with = FALSE]
       set(xdt, j = budget_id, value = ri)
       asha_id = candidates[asha_id == promotable[1], asha_id]
-      set(xdt, j = "rung", value = k + 1)
+      set(xdt, j = "stage", value = k + 1)
       set(xdt, j = "asha_id", value = asha_id)
       return(xdt)
     }
   }
-  # If no promotion is possible, add new configuration to buttom rung
+  # If no promotion is possible, add new configuration to bottom stage
   xdt = sampler$sample(1)$data
   set(xdt, j = budget_id, value = r_min * eta^s)
-  set(xdt, j = "rung", value = 0)
+  set(xdt, j = "stage", value = 0)
   return(xdt)
 }
 
 ids_rung = function(archive, k) {
-  if (nrow(archive$data) == 0) NULL  else archive$data[rung == k, asha_id]
+  if (nrow(archive$data) == 0) NULL  else archive$data[stage == k, asha_id]
 }
 
 n_rung = function(archive, k) {
-  if (nrow(archive$data) == 0) 0 else nrow(archive$data[rung == k])
+  if (nrow(archive$data) == 0) 0 else nrow(archive$data[stage == k])
 }
 
 top_rung = function(archive, k, eta) {
   if(nrow(archive$data) == 0) return(data.table())
-  # evaluated configurations of rung
-  data = archive$data[rung == k & status == "evaluated"]
+  # evaluated configurations of stage
+  data = archive$data[stage == k & status == "evaluated"]
   if(nrow(data) > 0) {
     n = floor(nrow(data) / eta)
     head(setorderv(data, archive$cols_y), n)
