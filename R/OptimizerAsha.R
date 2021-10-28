@@ -121,7 +121,8 @@ top_rung = function(archive, k, eta) {
   data = archive$data[stage == k & status == "evaluated"]
   if(nrow(data) > 0) {
     n = floor(nrow(data) / eta)
-    head(setorderv(data, archive$cols_y), n)
+    max_to_min = archive$codomain$maximization_to_minimization
+    head(setorderv(data, archive$cols_y, order = max_to_min, na.last = TRUE), n)
   } else {
     data.table()
   }
