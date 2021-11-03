@@ -126,7 +126,7 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
         param_set = param_set,
         properties = c("dependencies", "single-crit", "multi-crit"),
-        packages = character(0)
+        packages = "mlr3hyperband"
       )
     }
   ),
