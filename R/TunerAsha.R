@@ -25,13 +25,15 @@ TunerAsha = R6Class("TunerAsha",
       private$.optimizer$optimize(inst)
 
       # combine resample results to single benchmark result
-      if (!is.null(inst$archive$data$resample_result)) {
+      if (inst$objective$store_benchmark_result) {
         rdatas = map(unlist(inst$archive$data$resample_result), function(rr) get_private(rr)$.data)
         rdata = Reduce(function(x, y) x$combine(y), rdatas)
         inst$archive$benchmark_result = BenchmarkResult$new(rdata)
         inst$archive$data["evaluated", uhash := inst$archive$benchmark_result$uhashes, on = "status"]
-        inst$archive$data[, resample_result := NULL]
       }
+
+      # remove resample result column
+      if (!is.null(inst$archive$data$resample_result)) inst$archive$data[, resample_result := NULL]
     }
   )
 )
