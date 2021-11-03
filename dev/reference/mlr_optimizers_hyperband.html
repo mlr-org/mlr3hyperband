@@ -197,7 +197,7 @@ the given settings.</p>
     
 
 <dl>
-<dt><code>eta</code></dt><dd><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code><br />
+<dt><code>eta</code></dt><dd><p><code>numeric(1)</code><br />
 Fraction parameter of the successive halving algorithm: With every stage the
 configuration budget is increased by a factor of <code>eta</code> and only the best
 <code>1/eta</code> points are used for the next stage. Non-integer values are supported,
@@ -205,7 +205,7 @@ but <code>eta</code> is not allowed to be less or equal 1.</p></dd>
 <dt><code>sampler</code></dt><dd><p><a href='https://paradox.mlr-org.com/reference/Sampler.html'>paradox::Sampler</a><br />
 Object defining how the samples of the parameter space should be drawn during
 the initialization of each bracket. The default is uniform sampling.</p></dd>
-<dt><code>repeats</code></dt><dd><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code><br />
+<dt><code>repeats</code></dt><dd><p><code>logical(1)</code><br />
 If <code>FALSE</code> (default), hyperband terminates once all brackets are evaluated.
 Otherwise, hyperband starts over again once the last bracket is evaluated.</p></dd>
 </dl>
@@ -216,7 +216,7 @@ Otherwise, hyperband starts over again once the last bracket is evaluated.</p></
 
 <p>The <a href='https://bbotk.mlr-org.com/reference/Archive.html'>bbotk::Archive</a> holds the following additional columns that are specific
 to the hyperband algorithm:</p><ul>
-<li><p><code>bracket</code> (<code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code>)<br />
+<li><p><code>bracket</code> (<code>integer(1)</code>)<br />
 The bracket index. Counts down to 0.</p></li>
 <li><p><code>stage</code> (<code>integer(1))</code><br />
 The stages of each bracket. Starts counting at 0.</p></li>
@@ -231,9 +231,9 @@ configurations in each bracket.
 A custom sampler may look like this (the full example is given in the
 <em>examples</em> section):</p><pre><span class='co'># - beta distribution with alpha = 2 and beta = 5</span>
 <span class='co'># - categorical distribution with custom probabilities</span>
-<span class='va'>sampler</span> <span class='op'>=</span> <span class='va'>SamplerJointIndep</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
-  <span class='va'>Sampler1DRfun</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='va'>params</span><span class='op'>[[</span><span class='fl'>2</span><span class='op'>]</span><span class='op'>]</span>, <span class='kw'>function</span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/stats/Beta.html'>rbeta</a></span><span class='op'>(</span><span class='va'>n</span>, <span class='fl'>2</span>, <span class='fl'>5</span><span class='op'>)</span><span class='op'>)</span>,
-  <span class='va'>Sampler1DCateg</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='va'>params</span><span class='op'>[[</span><span class='fl'>3</span><span class='op'>]</span><span class='op'>]</span>, prob <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.2</span>, <span class='fl'>0.3</span>, <span class='fl'>0.5</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>sampler</span> <span class='op'>=</span> <span class='va'><a href='https://paradox.mlr-org.com/reference/SamplerJointIndep.html'>SamplerJointIndep</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
+  <span class='va'><a href='https://paradox.mlr-org.com/reference/Sampler1DRfun.html'>Sampler1DRfun</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='va'>params</span><span class='op'>[[</span><span class='fl'>2</span><span class='op'>]</span><span class='op'>]</span>, <span class='kw'>function</span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/stats/Beta.html'>rbeta</a></span><span class='op'>(</span><span class='va'>n</span>, <span class='fl'>2</span>, <span class='fl'>5</span><span class='op'>)</span><span class='op'>)</span>,
+  <span class='va'><a href='https://paradox.mlr-org.com/reference/Sampler1DCateg.html'>Sampler1DCateg</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='va'>params</span><span class='op'>[[</span><span class='fl'>3</span><span class='op'>]</span><span class='op'>]</span>, prob <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.2</span>, <span class='fl'>0.3</span>, <span class='fl'>0.5</span><span class='op'>)</span><span class='op'>)</span>
 <span class='op'>)</span><span class='op'>)</span>
 </pre>
 
@@ -272,7 +272,7 @@ parallelization for more details).</p>
 
 <p>Hyperband uses a logger (as implemented in <a href='https://CRAN.R-project.org/package=lgr'><span class="pkg">lgr</span></a>) from package
 <a href='https://CRAN.R-project.org/package=bbotk'><span class="pkg">bbotk</span></a>.
-Use <code><a href='https://s-fleck.github.io/lgr/reference/get_logger.html'>lgr::get_logger("bbotk")</a></code> to access and control the logger.</p>
+Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
     <h2 class="hasAnchor" id="super-class"><a class="anchor" href="#super-class"></a>Super class</h2>
 
     <p><code><a href='https://bbotk.mlr-org.com/reference/Optimizer.html'>bbotk::Optimizer</a></code> -&gt; <code>OptimizerHyperband</code></p>
@@ -312,77 +312,80 @@ Use <code><a href='https://s-fleck.github.io/lgr/reference/get_logger.html'>lgr:
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://bbotk.mlr-org.com'>bbotk</a></span><span class='op'>)</span>
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://r-datatable.com'>data.table</a></span><span class='op'>)</span>
-
-<span class='va'>search_space</span> <span class='op'>=</span> <span class='va'>domain</span> <span class='op'>=</span> <span class='fu'>ps</span><span class='op'>(</span>
-  x1 <span class='op'>=</span> <span class='fu'>p_dbl</span><span class='op'>(</span><span class='op'>-</span><span class='fl'>5</span>, <span class='fl'>10</span><span class='op'>)</span>,
-  x2 <span class='op'>=</span> <span class='fu'>p_dbl</span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>15</span><span class='op'>)</span>,
-  fidelity <span class='op'>=</span> <span class='fu'>p_dbl</span><span class='op'>(</span><span class='fl'>1e-2</span>, <span class='fl'>1</span>, tags <span class='op'>=</span> <span class='st'>"budget"</span><span class='op'>)</span>
-<span class='op'>)</span>
-
-<span class='co'># modified branin function</span>
-<span class='va'>objective</span> <span class='op'>=</span> <span class='va'><a href='https://bbotk.mlr-org.com/reference/ObjectiveRFunDt.html'>ObjectiveRFunDt</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span>
-  fun <span class='op'>=</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>xdt</span><span class='op'>)</span> <span class='op'>{</span>
-    <span class='va'>a</span> <span class='op'>=</span> <span class='fl'>1</span>
-    <span class='va'>b</span> <span class='op'>=</span> <span class='fl'>5.1</span> <span class='op'>/</span> <span class='op'>(</span><span class='fl'>4</span> <span class='op'>*</span> <span class='op'>(</span><span class='va'>pi</span> <span class='op'>^</span> <span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
-    <span class='va'>c</span> <span class='op'>=</span> <span class='fl'>5</span> <span class='op'>/</span> <span class='va'>pi</span>
-    <span class='va'>r</span> <span class='op'>=</span> <span class='fl'>6</span>
-    <span class='va'>s</span> <span class='op'>=</span> <span class='fl'>10</span>
-    <span class='va'>t</span> <span class='op'>=</span> <span class='fl'>1</span> <span class='op'>/</span> <span class='op'>(</span><span class='fl'>8</span> <span class='op'>*</span> <span class='va'>pi</span><span class='op'>)</span>
-    <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span><span class='op'>(</span>y <span class='op'>=</span>
-      <span class='op'>(</span><span class='va'>a</span> <span class='op'>*</span> <span class='op'>(</span><span class='op'>(</span><span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"x2"</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>-</span>
-      <span class='va'>b</span> <span class='op'>*</span> <span class='op'>(</span><span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"x1"</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>^</span> <span class='fl'>2L</span><span class='op'>)</span> <span class='op'>+</span>
-      <span class='va'>c</span> <span class='op'>*</span> <span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"x1"</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>-</span> <span class='va'>r</span><span class='op'>)</span> <span class='op'>^</span> <span class='fl'>2</span><span class='op'>)</span> <span class='op'>+</span>
-      <span class='op'>(</span><span class='op'>(</span><span class='va'>s</span> <span class='op'>*</span> <span class='op'>(</span><span class='fl'>1</span> <span class='op'>-</span> <span class='va'>t</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>*</span> <span class='fu'><a href='https://rdrr.io/r/base/Trig.html'>cos</a></span><span class='op'>(</span><span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"x1"</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
-      <span class='va'>s</span> <span class='op'>-</span> <span class='op'>(</span><span class='fl'>5</span> <span class='op'>*</span> <span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"fidelity"</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>*</span> <span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"x1"</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-  <span class='op'>}</span>,
-  domain <span class='op'>=</span> <span class='va'>domain</span>,
-  codomain <span class='op'>=</span> <span class='fu'>ps</span><span class='op'>(</span>y <span class='op'>=</span> <span class='fu'>p_dbl</span><span class='op'>(</span>tags <span class='op'>=</span> <span class='st'>"minimize"</span><span class='op'>)</span><span class='op'>)</span>
-<span class='op'>)</span>
-
-<span class='va'>instance</span> <span class='op'>=</span> <span class='va'><a href='https://bbotk.mlr-org.com/reference/OptimInstanceSingleCrit.html'>OptimInstanceSingleCrit</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span>
-  objective <span class='op'>=</span> <span class='va'>objective</span>,
-  search_space <span class='op'>=</span> <span class='va'>search_space</span>,
-  terminator <span class='op'>=</span> <span class='fu'><a href='https://bbotk.mlr-org.com/reference/trm.html'>trm</a></span><span class='op'>(</span><span class='st'>"none"</span><span class='op'>)</span>
-<span class='op'>)</span>
-
-<span class='va'>optimizer</span> <span class='op'>=</span> <span class='fu'><a href='https://bbotk.mlr-org.com/reference/opt.html'>opt</a></span><span class='op'>(</span><span class='st'>"hyperband"</span><span class='op'>)</span>
-
-<span class='co'># modifies the instance by reference</span>
-<span class='va'>optimizer</span><span class='op'>$</span><span class='fu'>optimize</span><span class='op'>(</span><span class='va'>instance</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;          x1       x2 fidelity  x_domain         y
-#&gt; 1: 9.633218 4.350752        1 &lt;list[3]&gt; -44.68965</div><div class='input'>
-<span class='co'># best scoring evaluation</span>
-<span class='va'>instance</span><span class='op'>$</span><span class='va'>result</span>
-</div><div class='output co'>#&gt;          x1       x2 fidelity  x_domain         y
-#&gt; 1: 9.633218 4.350752        1 &lt;list[3]&gt; -44.68965</div><div class='input'>
-<span class='co'># all evaluations</span>
-<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/as.data.table.html'>as.data.table</a></span><span class='op'>(</span><span class='va'>instance</span><span class='op'>$</span><span class='va'>archive</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;             x1         x2 fidelity bracket stage           y
-#&gt;   1: -3.788748  8.9439418 0.015625       6     0  27.0432697
-#&gt;   2:  7.514996  2.8727705 0.015625       6     0  14.9699262
-#&gt;   3:  4.011413 14.2164591 0.015625       6     0 160.2955132
-#&gt;   4: -2.641873  8.1372061 0.015625       6     0  10.5940635
-#&gt;   5: -4.889008  8.1690509 0.015625       6     0  87.7567694
-#&gt;  ---                                                        
-#&gt; 297:  8.285662  1.8973893 1.000000       2     2 -35.3993144
-#&gt; 298:  3.287085  0.5386471 1.000000       2     2 -13.2934351
-#&gt; 299:  9.059953  3.9177918 1.000000       1     1 -41.2654783
-#&gt; 300:  4.991380  0.2215352 1.000000       1     1 -11.2039660
-#&gt; 301:  3.228872  6.2107174 1.000000       1     1   0.3124757
-#&gt;                timestamp batch_nr    status
-#&gt;   1: 2021-10-29 21:34:38        1 evaluated
-#&gt;   2: 2021-10-29 21:34:38        1 evaluated
-#&gt;   3: 2021-10-29 21:34:38        1 evaluated
-#&gt;   4: 2021-10-29 21:34:38        1 evaluated
-#&gt;   5: 2021-10-29 21:34:38        1 evaluated
-#&gt;  ---                                       
-#&gt; 297: 2021-10-29 21:34:38        7 evaluated
-#&gt; 298: 2021-10-29 21:34:38        7 evaluated
-#&gt; 299: 2021-10-29 21:34:38        7 evaluated
-#&gt; 300: 2021-10-29 21:34:38        7 evaluated
-#&gt; 301: 2021-10-29 21:34:38        7 evaluated</div></pre>
+    <pre class="examples"><span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://bbotk.mlr-org.com'>bbotk</a></span><span class='op'>)</span></span>
+<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://r-datatable.com'>data.table</a></span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>search_space</span> <span class='op'>=</span> <span class='va'>domain</span> <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/ps.html'>ps</a></span><span class='op'>(</span></span>
+<span class='r-in'>  x1 <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/Domain.html'>p_dbl</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>5</span>, <span class='fl'>10</span><span class='op'>)</span>,</span>
+<span class='r-in'>  x2 <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/Domain.html'>p_dbl</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>15</span><span class='op'>)</span>,</span>
+<span class='r-in'>  fidelity <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/Domain.html'>p_dbl</a></span><span class='op'>(</span><span class='fl'>1e-2</span>, <span class='fl'>1</span>, tags <span class='op'>=</span> <span class='st'>"budget"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># modified branin function</span></span>
+<span class='r-in'><span class='va'>objective</span> <span class='op'>=</span> <span class='va'><a href='https://bbotk.mlr-org.com/reference/ObjectiveRFunDt.html'>ObjectiveRFunDt</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span></span>
+<span class='r-in'>  fun <span class='op'>=</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>xdt</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'>    <span class='va'>a</span> <span class='op'>=</span> <span class='fl'>1</span></span>
+<span class='r-in'>    <span class='va'>b</span> <span class='op'>=</span> <span class='fl'>5.1</span> <span class='op'>/</span> <span class='op'>(</span><span class='fl'>4</span> <span class='op'>*</span> <span class='op'>(</span><span class='va'>pi</span> <span class='op'>^</span> <span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'>    <span class='va'>c</span> <span class='op'>=</span> <span class='fl'>5</span> <span class='op'>/</span> <span class='va'>pi</span></span>
+<span class='r-in'>    <span class='va'>r</span> <span class='op'>=</span> <span class='fl'>6</span></span>
+<span class='r-in'>    <span class='va'>s</span> <span class='op'>=</span> <span class='fl'>10</span></span>
+<span class='r-in'>    <span class='va'>t</span> <span class='op'>=</span> <span class='fl'>1</span> <span class='op'>/</span> <span class='op'>(</span><span class='fl'>8</span> <span class='op'>*</span> <span class='va'>pi</span><span class='op'>)</span></span>
+<span class='r-in'>    <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span><span class='op'>(</span>y <span class='op'>=</span></span>
+<span class='r-in'>      <span class='op'>(</span><span class='va'>a</span> <span class='op'>*</span> <span class='op'>(</span><span class='op'>(</span><span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"x2"</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>-</span></span>
+<span class='r-in'>      <span class='va'>b</span> <span class='op'>*</span> <span class='op'>(</span><span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"x1"</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>^</span> <span class='fl'>2L</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span class='r-in'>      <span class='va'>c</span> <span class='op'>*</span> <span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"x1"</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>-</span> <span class='va'>r</span><span class='op'>)</span> <span class='op'>^</span> <span class='fl'>2</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span class='r-in'>      <span class='op'>(</span><span class='op'>(</span><span class='va'>s</span> <span class='op'>*</span> <span class='op'>(</span><span class='fl'>1</span> <span class='op'>-</span> <span class='va'>t</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>*</span> <span class='fu'><a href='https://rdrr.io/r/base/Trig.html'>cos</a></span><span class='op'>(</span><span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"x1"</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span class='r-in'>      <span class='va'>s</span> <span class='op'>-</span> <span class='op'>(</span><span class='fl'>5</span> <span class='op'>*</span> <span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"fidelity"</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>*</span> <span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"x1"</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'>  <span class='op'>}</span>,</span>
+<span class='r-in'>  domain <span class='op'>=</span> <span class='va'>domain</span>,</span>
+<span class='r-in'>  codomain <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/ps.html'>ps</a></span><span class='op'>(</span>y <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/Domain.html'>p_dbl</a></span><span class='op'>(</span>tags <span class='op'>=</span> <span class='st'>"minimize"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>instance</span> <span class='op'>=</span> <span class='va'><a href='https://bbotk.mlr-org.com/reference/OptimInstanceSingleCrit.html'>OptimInstanceSingleCrit</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span></span>
+<span class='r-in'>  objective <span class='op'>=</span> <span class='va'>objective</span>,</span>
+<span class='r-in'>  search_space <span class='op'>=</span> <span class='va'>search_space</span>,</span>
+<span class='r-in'>  terminator <span class='op'>=</span> <span class='fu'><a href='https://bbotk.mlr-org.com/reference/trm.html'>trm</a></span><span class='op'>(</span><span class='st'>"none"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>optimizer</span> <span class='op'>=</span> <span class='fu'><a href='https://bbotk.mlr-org.com/reference/opt.html'>opt</a></span><span class='op'>(</span><span class='st'>"hyperband"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># modifies the instance by reference</span></span>
+<span class='r-in'><span class='va'>optimizer</span><span class='op'>$</span><span class='fu'>optimize</span><span class='op'>(</span><span class='va'>instance</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          x1       x2 fidelity  x_domain         y</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1: 9.633218 4.350752        1 &lt;list[3]&gt; -44.68965</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># best scoring evaluation</span></span>
+<span class='r-in'><span class='va'>instance</span><span class='op'>$</span><span class='va'>result</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          x1       x2 fidelity  x_domain         y</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1: 9.633218 4.350752        1 &lt;list[3]&gt; -44.68965</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># all evaluations</span></span>
+<span class='r-in'><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/as.data.table.html'>as.data.table</a></span><span class='op'>(</span><span class='va'>instance</span><span class='op'>$</span><span class='va'>archive</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>             x1         x2 fidelity bracket stage           y</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   1: -3.788748  8.9439418 0.015625       6     0  27.0432697</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   2:  7.514996  2.8727705 0.015625       6     0  14.9699262</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   3:  4.011413 14.2164591 0.015625       6     0 160.2955132</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   4: -2.641873  8.1372061 0.015625       6     0  10.5940635</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   5: -4.889008  8.1690509 0.015625       6     0  87.7567694</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  ---                                                        </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 297:  8.285662  1.8973893 1.000000       2     2 -35.3993144</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 298:  3.287085  0.5386471 1.000000       2     2 -13.2934351</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 299:  9.059953  3.9177918 1.000000       1     1 -41.2654783</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 300:  4.991380  0.2215352 1.000000       1     1 -11.2039660</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 301:  3.228872  6.2107174 1.000000       1     1   0.3124757</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                timestamp batch_nr</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   1: 2021-11-03 13:50:32        1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   2: 2021-11-03 13:50:32        1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   3: 2021-11-03 13:50:32        1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   4: 2021-11-03 13:50:32        1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   5: 2021-11-03 13:50:32        1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  ---                             </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 297: 2021-11-03 13:50:32        7</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 298: 2021-11-03 13:50:32        7</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 299: 2021-11-03 13:50:32        7</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 300: 2021-11-03 13:50:32        7</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 301: 2021-11-03 13:50:32        7</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
