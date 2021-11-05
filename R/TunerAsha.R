@@ -21,6 +21,7 @@ TunerAsha = R6Class("TunerAsha",
         resampling = inst$objective$resampling, measures = inst$objective$measures,
         store_benchmark_result = inst$objective$store_benchmark_result, store_models = inst$objective$store_models,
         check_values = inst$objective$check_values, allow_hotstart = inst$objective$allow_hotstart)
+      inst$objective$hotstart_stack$learner_limit = 2000
 
       private$.optimizer$optimize(inst)
 
