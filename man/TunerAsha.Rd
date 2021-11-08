@@ -15,6 +15,7 @@ Tuner using Asynchronous Successive Halving
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-new}{\code{TunerAsha$new()}}
+\item \href{#method-optimize}{\code{TunerAsha$optimize()}}
 \item \href{#method-clone}{\code{TunerAsha$clone()}}
 }
 }
@@ -23,7 +24,6 @@ Tuner using Asynchronous Successive Halving
 \itemize{
 \item \out{<span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="format">}\href{../../mlr3tuning/html/Tuner.html#method-format}{\code{mlr3tuning::Tuner$format()}}\out{</span>}
 \item \out{<span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="print">}\href{../../mlr3tuning/html/Tuner.html#method-print}{\code{mlr3tuning::Tuner$print()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="mlr3tuning" data-topic="TunerFromOptimizer" data-id="optimize">}\href{../../mlr3tuning/html/TunerFromOptimizer.html#method-optimize}{\code{mlr3tuning::TunerFromOptimizer$optimize()}}\out{</span>}
 }
 \out{</details>}
 }
@@ -36,6 +36,30 @@ Creates a new instance of this \link[R6:R6Class]{R6} class.
 \if{html}{\out{<div class="r">}}\preformatted{TunerAsha$new()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-optimize"></a>}}
+\if{latex}{\out{\hypertarget{method-optimize}{}}}
+\subsection{Method \code{optimize()}}{
+Performs the tuning on a \link{TuningInstanceSingleCrit} /
+\link{TuningInstanceMultiCrit} until termination. The single evaluations and
+the final results will be written into the \link{ArchiveTuning} that
+resides in the \link{TuningInstanceSingleCrit}/\link{TuningInstanceMultiCrit}.
+The final result is returned.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{TunerAsha$optimize(inst)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{inst}}{(\link{TuningInstanceSingleCrit} | \link{TuningInstanceMultiCrit}).}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+\link[data.table:data.table]{data.table::data.table}.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}

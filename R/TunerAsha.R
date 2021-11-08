@@ -13,10 +13,19 @@ TunerAsha = R6Class("TunerAsha",
       )
     },
 
+    #' @description
+    #' Performs the tuning on a [TuningInstanceSingleCrit] /
+    #' [TuningInstanceMultiCrit] until termination. The single evaluations and
+    #' the final results will be written into the [ArchiveTuning] that
+    #' resides in the [TuningInstanceSingleCrit]/[TuningInstanceMultiCrit].
+    #' The final result is returned.
+    #'
+    #' @param inst ([TuningInstanceSingleCrit] | [TuningInstanceMultiCrit]).
+    #'
+    #' @return [data.table::data.table].
     optimize = function(inst) {
-      assert_multi_class(inst, c("TuningInstanceSingleCrit", "TuningInstanceMultiCrit"))
       inst$async = TRUE
-      private$.optimizer$optimize(inst)
+      super$optimize(inst)
     }
   )
 )
