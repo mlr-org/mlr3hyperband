@@ -68,6 +68,7 @@ OptimizerAsha = R6Class("OptimizerAsha",
       repeat({
         replicate(worker - inst$archive$n_in_progress, {
           xdt = get_job(k_max, eta, s, r_min, inst$archive, sampler, budget_id)
+          if (search_space$class[[budget_id]] == "ParamInt") set(xdt, j = budget_id, value = as.integer(round(xdt[[budget_id]])))
 
           if (is.null(xdt$asha_id)) set(xdt, j = "asha_id", value = n_rung(inst$archive, 0) + 1)
 
