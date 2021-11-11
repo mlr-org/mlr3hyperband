@@ -124,7 +124,7 @@ test_that("TunerHyperband works with custom sampler", {
     resampling = rsmp("holdout"),
     search_space = search_space,
     sampler = sampler),
-    regexp = "but is missing elements"
+    regexp = "Assertion on 'sampler$param_set$ids()' failed:"
   )
 
   # budget parameter defined
@@ -142,8 +142,8 @@ test_that("TunerHyperband works with custom sampler", {
     resampling = rsmp("holdout"),
     search_space = search_space,
     sampler = sampler),
-    regexp = "Assertion on 'sampler$param_set$ids()' failed: Must be equal to set {'eta','booster'}, but is {'nrounds','eta','booster'}.",
-    fixed = TRUE)
+    regexp = "Assertion on 'sampler$param_set$ids()' failed",
+  )
 })
 
 test_that("TunerHyperband throws an error if budget parameter is invalid", {
