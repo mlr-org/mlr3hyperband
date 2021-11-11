@@ -75,6 +75,8 @@ test_tuner_successive_halving = function(n, eta, learner, search_space, measures
     expect_gte(min(budget), r_min)
     # check number of configs
     expect_lte(max(n_configs$N), n)
+
+    instance
 }
 
 #' @title Test Tuner Asha
@@ -82,8 +84,9 @@ test_tuner_successive_halving = function(n, eta, learner, search_space, measures
 #' @noRd
 #'
 #' @description
-#'
-test_tuner_asha = function(eta, learner, measures = msr("classif.ce"), term_evals = 50, allow_hotstart = FALSE,
+#' Tests budget and number of configs constructed by the tuner against supplied
+#' bounds
+test_tuner_asha = function(eta, learner, measures = msr("classif.ce"), term_evals = 15, allow_hotstart = FALSE,
   keep_hotstart_stack = TRUE) {
 
   search_space = learner$param_set$search_space()
@@ -112,4 +115,6 @@ test_tuner_asha = function(eta, learner, measures = msr("classif.ce"), term_eval
   expect_integer(instance$archive$data$stage)
   expect_gte(min(instance$archive$data[[budget_id]]), r_min)
   expect_lte(max(instance$archive$data[[budget_id]]), r_max)
+
+  instance
 }

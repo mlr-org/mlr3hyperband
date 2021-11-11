@@ -3,26 +3,22 @@
 \name{mlr_optimizers_asha}
 \alias{mlr_optimizers_asha}
 \alias{OptimizerAsha}
-\title{Optimizer using Asynchronous Successive Halving}
+\title{Optimizer Asynchronous Successive Halving}
 \description{
-\code{OptimizerAsha} class that implements asynchronous successive halving (ASHA).
-Compared to \code{OptimizerSuccessiveHalving}, ASHA promotes points whenever
-possible to the next stage instead of waiting until a complete stage
-finishes. Additionally, new points are sampled and added to the base stage if
-no promotion is possible.
+\code{OptimizerAsha} class that implements the asynchronous successive halving
+algorithm.
 }
 \section{Parameters}{
 
 \describe{
 \item{\code{eta}}{\code{numeric(1)}\cr
-With every stage, the point budget is increased by a factor of \code{eta}
-and only the best \code{1/eta} points are used for the next stage.
-Non-integer values are supported, but \code{eta} is not allowed to be less or
-equal 1.
+With every stage, the budget is increased by a factor of \code{eta} and only the
+best \code{1/eta} points are promoted for the next stage. Non-integer values are
+supported, but \code{eta} is not allowed to be less or equal 1.
 }
 \item{\code{sampler}}{\link[paradox:Sampler]{paradox::Sampler}\cr
-Object defining how the samples of the parameter space should be drawn during
-the initialization of each bracket. The default is uniform sampling.
+Object defining how the samples of the parameter space should be drawn. The
+default is uniform sampling.
 }
 \item{\code{s}}{\code{integer(1)}\cr
 Minimum early-stopping rate.
@@ -71,11 +67,6 @@ the \emph{examples} section.
 combined with a \link{Terminator}. Simply wrap the function in
 \code{progressr::with_progress()} to enable them. We recommend to use package
 \CRANpkg{progress} as backend; enable with \code{progressr::handlers("progress")}.
-}
-
-\section{Parallelization}{
-
-Parallelization is supported via the package \CRANpkg{future}.
 }
 
 \section{Logging}{

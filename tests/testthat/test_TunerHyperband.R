@@ -166,7 +166,7 @@ test_that("TunerHyperband throws an error if budget parameter is invalid", {
     measures = msr("classif.ce"),
     resampling = rsmp("holdout"),
     search_space = search_space),
-    regexp = "Assertion on 'search_space$class[[budget_id]]' failed: Must be element of set {'ParamInt','ParamDbl'}, but is 'ParamFct'.",
+    regexp = "but is 'ParamFct'.",
     fixed = TRUE)
 
   # two budget parameters
