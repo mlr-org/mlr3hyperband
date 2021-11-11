@@ -124,8 +124,8 @@ test_that("TunerHyperband works with custom sampler", {
     resampling = rsmp("holdout"),
     search_space = search_space,
     sampler = sampler),
-    regexp = "Must be equal to set",
-    fixed = TRUE)
+    regexp = "but is missing elements"
+  )
 
   # budget parameter defined
   sampler = SamplerJointIndep$new(list(
