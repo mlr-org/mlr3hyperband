@@ -61,63 +61,58 @@ OptimizerAsha = R6Class("OptimizerAsha",
       r = r_max / r_min
 
       # k_max + 1 is the number of brackets and the number stages of the first bracket
-      k_max = ceiling(log(r, eta))
+      k_max = floor(log(r, eta))
 
       worker = future::availableCores()
-
+      integer_budget = search_space$class[[budget_id]] == "ParamInt"
       repeat({
         replicate(worker - inst$archive$n_in_progress, {
-          xdt = get_job(k_max, eta, s, r_min, inst$archive, sampler, budget_id)
-          if (search_space$class[[budget_id]] == "ParamInt") set(xdt, j = budget_id, value = as.integer(round(xdt[[budget_id]])))
-
-          if (is.null(xdt$asha_id)) set(xdt, j = "asha_id", value = n_rung(inst$archive, 0) + 1)
-
+          xdt = get_job(k_max, eta, s, r_min, inst$archive, sampler, budget_id, integer_budget)
           inst$archive$add_evals(xdt, status = "proposed")
           inst$eval_proposed(async = TRUE, single_worker = FALSE)
         })
-
       inst$resolve_promise()
       })
      }
   )
 )
 
-get_job = function(k_max, eta, s, r_min, archive, sampler, budget_id) {
+get_job = function(k_max, eta, s, r_min, archive, sampler, budget_id, integer_budget) {
+  # try to promote configuration
+  # iterate backwards to base stage
   for (k in (k_max  - s - 1):0) {
     # top configurations (n = |stage|/eta)
     candidates = top_rung(archive, k, eta)
-    # select canidates that are not promoted yet
-    promotable = setdiff(candidates$asha_id, ids_rung(archive, k + 1))
+    # select candidates that are not promoted yet
+    stage_asha_ids = if (nrow(archive$data) == 0) NULL else archive$data[stage == k + 1, asha_id]
+    promotable = setdiff(candidates$asha_id, stage_asha_ids)
 
     # promote configuration
     if (length(promotable) > 0) {
       # increased budget
       ri = r_min * eta^(k + s + 1)
+      if (integer_budget) ri = as.integer(round(ri))
       xdt = candidates[asha_id == promotable[1], archive$cols_x, with = FALSE]
       set(xdt, j = budget_id, value = ri)
       asha_id = candidates[asha_id == promotable[1], asha_id]
-      set(xdt, j = "stage", value = k + 1)
+      set(xdt, j = "stage", value = k + 1L)
       set(xdt, j = "asha_id", value = asha_id)
       return(xdt)
     }
   }
   # If no promotion is possible, add new configuration to bottom stage
   xdt = sampler$sample(1)$data
-  set(xdt, j = budget_id, value = r_min * eta^s)
-  set(xdt, j = "stage", value = 0)
+  ri = r_min * eta^s
+  if (integer_budget) ri = as.integer(round(ri))
+  set(xdt, j = budget_id, value = ri)
+  set(xdt, j = "stage", value = 0L)
+  asha_id = if(!nrow(archive$data)) 0L else nrow(archive$data[stage == 0]) + 1L
+  set(xdt, j = "asha_id", value = asha_id)
   return(xdt)
 }
 
-ids_rung = function(archive, k) {
-  if (nrow(archive$data) == 0) NULL  else archive$data[stage == k, asha_id]
-}
-
-n_rung = function(archive, k) {
-  if (nrow(archive$data) == 0) 0 else nrow(archive$data[stage == k])
-}
-
 top_rung = function(archive, k, eta) {
-  if(nrow(archive$data) == 0) return(data.table())
+  if(!nrow(archive$data)) return(data.table())
   # evaluated configurations of stage
   data = archive$data[stage == k & status == "evaluated"]
   if(nrow(data) > 0) {

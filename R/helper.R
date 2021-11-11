@@ -66,3 +66,13 @@ hyperband_budget = function(r_min, r_max, eta, integer_budget = FALSE) {
 get_private = function(x) {
   x[[".__enclos_env__"]][["private"]]
 }
+
+top_n_ids = function(ydt, n, minimize) {
+  if (!nrow(ydt)) {
+    integer(0)
+  } else if (nrow(ydt) == 1) {
+    head(order(unlist(ydt), decreasing = minimize), n)
+  } else {
+    nds_selection(points = t(as.matrix(ydt)), n_select = n, minimize = minimize)
+  }
+}
