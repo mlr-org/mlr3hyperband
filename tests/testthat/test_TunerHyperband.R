@@ -124,7 +124,7 @@ test_that("TunerHyperband works with custom sampler", {
     resampling = rsmp("holdout"),
     search_space = search_space,
     sampler = sampler),
-    regexp = "Assertion on 'sampler$param_set$ids()' failed:"
+    regexp = "Assertion on 'sampler$param_set$ids()' failed"
   )
 
   # budget parameter defined

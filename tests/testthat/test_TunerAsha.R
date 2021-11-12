@@ -106,14 +106,16 @@ test_that("TunerAsha throws an error if budget parameter is invalid", {
 })
 
 test_that("TunerAsha works with hotstarting", {
-learner = lrn("classif.debug",
-  x  = to_tune(),
-  iter = to_tune(p_int(1, 4, tags = "budget"))
-)
-instance = test_tuner_asha(eta = 2, learner, allow_hotstart = TRUE)
+  skip_if_not_installed("RSQLite")
 
-expect_file_exists(instance$objective$hotstart_stack$stack)
-expect_equal(get_private(instance$objective$hotstart_stack)$.learner_count, 15)
-expect_null(instance$archive$data$expect_resample_result)
-})
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 4, tags = "budget"))
+  )
+  instance = test_tuner_asha(eta = 2, learner, allow_hotstart = TRUE)
+
+  expect_file_exists(instance$objective$hotstart_stack$stack)
+  expect_equal(get_private(instance$objective$hotstart_stack)$.learner_count, 15)
+  expect_null(instance$archive$data$expect_resample_result)
+  })
 

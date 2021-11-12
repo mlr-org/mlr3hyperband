@@ -6,6 +6,7 @@
 #' @import mlr3tuning
 #' @import bbotk
 #' @importFrom R6 R6Class
+#' @importFrom utils head
 "_PACKAGE"
 
 .onLoad = function(libname, pkgname) { # nolint
