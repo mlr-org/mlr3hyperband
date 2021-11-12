@@ -133,13 +133,12 @@ get_job = function(k_max, eta, s, r_min, archive, sampler, budget_id, integer_bu
 
       # promote configuration
       if (length(promotable)) {
+        browser()
         ri = r_min * eta^(k + s + 1)
         if (integer_budget) ri = as.integer(round(ri))
-        xdt = candidates[asha_id == promotable[1], archive$cols_x, with = FALSE]
+        xdt = candidates[get("asha_id") == promotable[1], c(archive$cols_x, "asha_id"), with = FALSE]
         set(xdt, j = budget_id, value = ri)
-        asha_id = candidates[asha_id == promotable[1], asha_id]
         set(xdt, j = "stage", value = k + 1L)
-        set(xdt, j = "asha_id", value = asha_id)
         return(xdt)
       }
     }
