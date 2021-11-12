@@ -115,7 +115,7 @@ get_job = function(k_max, eta, s, r_min, archive, sampler, budget_id, integer_bu
     # try to promote configuration
     # iterate stages from top to base stage
     for (k in (k_max  - s - 1):0) {
-      data_stage = archive$data[stage == k & status == "evaluated"]
+      data_stage = archive$data[get("stage") == k & get("status") == "evaluated"]
       if (!nrow(data_stage)) next
 
       # select best n configurations of stage
@@ -129,11 +129,10 @@ get_job = function(k_max, eta, s, r_min, archive, sampler, budget_id, integer_bu
       candidates = data_stage[row_ids, ]
 
       # select candidates that are not promoted yet
-      promotable = setdiff(candidates$asha_id, archive$data[stage == k + 1, asha_id])
+      promotable = setdiff(candidates$asha_id, archive$data[get("stage") == k + 1, get("asha_id")])
 
       # promote configuration
       if (length(promotable)) {
-        browser()
         ri = r_min * eta^(k + s + 1)
         if (integer_budget) ri = as.integer(round(ri))
         xdt = candidates[get("asha_id") == promotable[1], c(archive$cols_x, "asha_id"), with = FALSE]
@@ -150,7 +149,7 @@ get_job = function(k_max, eta, s, r_min, archive, sampler, budget_id, integer_bu
   if (integer_budget) ri = as.integer(round(ri))
   set(xdt, j = budget_id, value = ri)
   set(xdt, j = "stage", value = 0L)
-  asha_id = if (!nrow(archive$data)) 1L else nrow(archive$data[stage == 0]) + 1L
+  asha_id = if (!nrow(archive$data)) 1L else nrow(archive$data[get("stage") == 0]) + 1L
   set(xdt, j = "asha_id", value = asha_id)
   xdt
 }
