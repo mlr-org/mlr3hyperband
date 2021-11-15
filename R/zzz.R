@@ -16,12 +16,14 @@
   x$add("hyperband", TunerHyperband)
   x$add("successive_halving", TunerSuccessiveHalving)
   x$add("asha", TunerAsha)
+  x$add("ahb", TunerAhb)
 
   # add hyperband to optimizer dictionary
   x = utils::getFromNamespace("mlr_optimizers", ns = "bbotk")
   x$add("hyperband", OptimizerHyperband)
   x$add("successive_halving", OptimizerSuccessiveHalving)
   x$add("asha", OptimizerAsha)
+  x$add("ahb", OptimizerAhb)
 
   assign("lg", lgr::get_logger("bbotk"), envir = parent.env(environment()))
 

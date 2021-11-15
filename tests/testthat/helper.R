@@ -87,7 +87,7 @@ test_tuner_successive_halving = function(n, eta, learner, search_space, measures
 #' Tests budget and number of configs constructed by the tuner against supplied
 #' bounds
 test_tuner_asha = function(eta, learner, measures = msr("classif.ce"), term_evals = 15, allow_hotstart = FALSE,
-  keep_hotstart_stack = TRUE) {
+  keep_hotstart_stack = TRUE, early_stopping_rate = 0) {
 
   search_space = learner$param_set$search_space()
   budget_id = search_space$ids(tags = "budget")
@@ -102,6 +102,7 @@ test_tuner_asha = function(eta, learner, measures = msr("classif.ce"), term_eval
     resampling = rsmp("holdout"),
     term_evals = term_evals,
     eta = eta,
+    early_stopping_rate = early_stopping_rate,
     allow_hotstart = allow_hotstart,
     keep_hotstart_stack = keep_hotstart_stack
   )
@@ -115,6 +116,55 @@ test_tuner_asha = function(eta, learner, measures = msr("classif.ce"), term_eval
   expect_integer(instance$archive$data$stage)
   expect_gte(min(instance$archive$data[[budget_id]]), r_min)
   expect_lte(max(instance$archive$data[[budget_id]]), r_max)
+
+  instance
+}
+
+#' @title Test Tuner Ahb
+#'
+#' @noRd
+#'
+#' @description
+#' Tests budget and number of configs constructed by the tuner against supplied
+#' bounds
+test_tuner_ahb = function(eta, learner, measures = msr("classif.ce"), term_evals = 100, allow_hotstart = FALSE,
+  keep_hotstart_stack = TRUE) {
+
+  search_space = learner$param_set$search_space()
+  budget_id = search_space$ids(tags = "budget")
+  r_min = search_space$lower[[budget_id]]
+  r_max = search_space$upper[[budget_id]]
+  integer_budget = search_space$class[[budget_id]] == "ParamInt"
+
+  instance = tune(
+    method = "ahb",
+    task = tsk("pima"),
+    learner = learner,
+    measures = measures,
+    resampling = rsmp("holdout"),
+    term_evals = term_evals,
+    eta = eta,
+    allow_hotstart = allow_hotstart,
+    keep_hotstart_stack = keep_hotstart_stack
+  )
+
+  archive = as.data.table(instance$archive)
+  k_max = floor(log(r_max / r_min, eta))
+
+  expect_null(instance$archive$data$resample_result)
+  expect_null(instance$archive$data$promise)
+  expect_null(instance$archive$data$resolve_id)
+  expect_true(instance$async)
+  expect_set_equal(archive$bracket, k_max:0)
+  map(k_max:0, function(k) {
+    ri = r_min * eta^(k_max - k)
+    if (integer_budget) ri = as.integer(round(ri))
+    expect_gte(min(archive[bracket == k][[budget_id]]), ri)
+    expect_lte(max(archive[bracket == k][[budget_id]]), r_max)
+  })
+  expect_r6(instance$objective, "ObjectiveTuningAsync")
+  expect_integer(instance$archive$data$asha_id)
+  expect_integer(instance$archive$data$stage)
 
   instance
 }

@@ -44,6 +44,56 @@ test_that("TunerAsha works with eta = 2.5", {
   test_tuner_asha(eta = 2.5, learner)
 })
 
+test_that("TunerAsha works with 4 stages and early_stopping_rate = 3", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 8, tags = "budget"))
+  )
+
+  instance = test_tuner_asha(eta = 2, early_stopping_rate = 3, learner)
+  expect_set_equal(instance$archive$data$iter, 8)
+})
+
+test_that("TunerAsha works with 3 stages early_stopping_rate = 3", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 8, tags = "budget"))
+  )
+
+  instance = test_tuner_asha(eta = 2, early_stopping_rate = 2, learner)
+  expect_set_equal(instance$archive$data$iter, c(8, 4))
+})
+
+test_that("TunerAsha works with 2 stages and early_stopping_rate = 3", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 8, tags = "budget"))
+  )
+
+  instance = test_tuner_asha(eta = 2, early_stopping_rate = 1, learner)
+  expect_set_equal(instance$archive$data$iter, c(8, 4, 2))
+})
+
+test_that("TunerAsha works with 1 stage and early_stopping_rate = 3", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 8, tags = "budget"))
+  )
+
+  instance = test_tuner_asha(eta = 2, early_stopping_rate = 0, learner)
+  expect_set_equal(instance$archive$data$iter, c(8, 4, 2, 1))
+})
+
+test_that("error if early stopping rate is greater than number of stages", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 8, tags = "budget"))
+  )
+
+  expect_error(test_tuner_asha(eta = 2, learner, early_stopping_rate = 4),
+    regexp = "Early stopping rate 4 is not <= number of stages 3")
+})
+
 test_that("TunerAsha works with subsampling", {
   skip_if_not_installed("mlr3pipelines")
   library(mlr3pipelines)
@@ -78,7 +128,7 @@ test_that("TunerAsha throws an error if budget parameter is invalid", {
   )
 
   expect_error(tune(
-    method = "asha",
+    method = "ahb",
     task = tsk("pima"),
     learner = learner,
     measures = msr("classif.ce"),
@@ -95,7 +145,7 @@ test_that("TunerAsha throws an error if budget parameter is invalid", {
   )
 
   expect_error(tune(
-    method = "hyperband",
+    method = "ahb",
     task = tsk("pima"),
     learner = learner,
     measures = msr("classif.ce"),

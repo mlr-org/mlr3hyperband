@@ -41,11 +41,11 @@ OptimizerAsha = R6Class("OptimizerAsha",
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
       param_set = ps(
-        eta     = p_dbl(lower = 1.0001, tags = "required", default = 2),
-        sampler = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)),
-        s       = p_int(lower = 0)
+        eta                 = p_dbl(lower = 1.0001, tags = "required", default = 2),
+        sampler             = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)),
+        early_stopping_rate = p_int(lower = 0)
       )
-      param_set$values = list(eta = 2, sampler = NULL, s = 0)
+      param_set$values = list(eta = 2, sampler = NULL, early_stopping_rate = 0)
 
       super$initialize(
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
@@ -62,16 +62,16 @@ OptimizerAsha = R6Class("OptimizerAsha",
       pars = self$param_set$values
       eta = pars$eta
       sampler = pars$sampler
-      s = pars$s
+      early_stopping_rate = pars$early_stopping_rate
       search_space = inst$search_space
       budget_id = search_space$ids(tags = "budget")
-      integer_budget = search_space$class[[budget_id]] == "ParamInt"
       minimize = !as.logical(inst$archive$codomain$maximization_to_minimization)
       n_workers = future::nbrOfWorkers()
 
       # check budget
       if (length(budget_id) != 1) stopf("Exactly one parameter must be tagged with 'budget'")
       assert_choice(search_space$class[[budget_id]], c("ParamInt", "ParamDbl"))
+      integer_budget = search_space$class[[budget_id]] == "ParamInt"
 
       if (inst$archive$codomain$length > 1) require_namespaces("emoa")
 
@@ -95,12 +95,16 @@ OptimizerAsha = R6Class("OptimizerAsha",
       # R in the original paper
       r = r_max / r_min
 
-      # k_max + 1 is the number of stages
-      k_max = floor(log(r, eta))
+      # s_max + 1 is the number of stages
+      s_max = floor(log(r, eta))
+
+      if (early_stopping_rate > s_max) {
+        stopf("Early stopping rate %i is not <= number of stages %i", early_stopping_rate, s_max)
+      }
 
       repeat({
         replicate(n_workers - inst$archive$n_in_progress, {
-          xdt = get_job(k_max, eta, s, r_min, inst$archive, sampler, budget_id, integer_budget, minimize)
+          xdt = get_job(s_max, eta, early_stopping_rate, r_min, inst$archive, sampler, budget_id, integer_budget, minimize)
           inst$archive$add_evals(xdt, status = "proposed")
           inst$eval_proposed(async = TRUE, single_worker = FALSE)
         })
@@ -110,15 +114,19 @@ OptimizerAsha = R6Class("OptimizerAsha",
   )
 )
 
-get_job = function(k_max, eta, s, r_min, archive, sampler, budget_id, integer_budget, minimize) {
-  if (nrow(archive$data)) {
+get_job = function(s_max, eta, early_stopping_rate, r_min, archive, sampler, budget_id, integer_budget, minimize,
+  brackets = FALSE) {
+  # s_max - early_stopping_rate == 0 is random search with full budget
+  if (nrow(archive$data) && s_max - early_stopping_rate) {
     # try to promote configuration
     # iterate stages from top to base stage
-    for (k in (k_max  - s - 1):0) {
-      data_stage = archive$data[get("stage") == k & get("status") == "evaluated"]
+    for (s in (s_max - early_stopping_rate - 1):0) {
+      data_stage = archive$data[get("stage") == s & get("status") == "evaluated"]
+      # only use configurations if bracket
+      if (brackets) data_stage = data_stage[get("bracket") == s_max, ]
       if (!nrow(data_stage)) next
 
-      # select best n configurations of stage
+      # best n configurations in stage
       y = data_stage[, archive$cols_y, with = FALSE]
       n = floor(nrow(data_stage) / eta)
       row_ids = if (archive$codomain$length == 1) {
@@ -128,16 +136,20 @@ get_job = function(k_max, eta, s, r_min, archive, sampler, budget_id, integer_bu
       }
       candidates = data_stage[row_ids, ]
 
+      # configurations in stage + 1
+      promoted = archive$data[get("stage") == s + 1, ]
+      if (brackets) promoted = promoted[get("bracket") == s_max]
+
       # select candidates that are not promoted yet
-      promotable = setdiff(candidates$asha_id, archive$data[get("stage") == k + 1, get("asha_id")])
+      promotable = setdiff(candidates$asha_id, promoted$asha_id)
 
       # promote configuration
       if (length(promotable)) {
-        ri = r_min * eta^(k + s + 1)
+        ri = r_min * eta^(s + early_stopping_rate + 1)
         if (integer_budget) ri = as.integer(round(ri))
         xdt = candidates[get("asha_id") == promotable[1], c(archive$cols_x, "asha_id"), with = FALSE]
         set(xdt, j = budget_id, value = ri)
-        set(xdt, j = "stage", value = k + 1L)
+        set(xdt, j = "stage", value = s + 1L)
         return(xdt)
       }
     }
@@ -145,7 +157,7 @@ get_job = function(k_max, eta, s, r_min, archive, sampler, budget_id, integer_bu
 
   # if no promotion is possible, add new configuration to base stage
   xdt = sampler$sample(1)$data
-  ri = r_min * eta^s
+  ri = r_min * eta^early_stopping_rate
   if (integer_budget) ri = as.integer(round(ri))
   set(xdt, j = budget_id, value = ri)
   set(xdt, j = "stage", value = 0L)
