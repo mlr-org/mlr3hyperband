@@ -192,10 +192,11 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
           if (s != s_max) {
             archive = inst$archive
             data = archive$data[batch_nr == archive$n_batch, ]
-            minimize = !as.logical(archive$codomain$maximization_to_minimization)
+            minimize = ifelse(archive$codomain$maximization_to_minimization == -1, TRUE, FALSE)
 
             # for each bracket, promote configurations of previous stage
             xdt_promoted = map_dtr(s_max:(s + 1), function(i) {
+
               # number of configuration to promote
               ni = floor(n[i + 1] * eta^(-(i - s)))
 

@@ -1,57 +1,37 @@
 test_that("TunerHyperband works", {
-  # minsplit is misused as a budget parameter
-  # xgboost has a real budget parameter but evaluation takes longer
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 4, tags = "budget"))
+  )
 
-  # default
-  learner = lrn("classif.rpart")
-  search_space = ps(
-    minsplit  = p_int(1, 16, tags = "budget"),
-    cp        = p_dbl(1e-04, 1e-1, logscale = TRUE),
-    minbucket = p_int(1, 64, logscale = TRUE))
+  test_tuner_hyperband(eta = 2, learner)
+})
 
-  test_tuner_hyperband(eta = 2, learner, search_space)
+test_that("TunerHyperband works with minimum budget greater than 1", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(2, 8, tags = "budget"))
+  )
 
-  # minimum budget different from 1
-  search_space = ps(
-    minsplit  = p_int(2, 16, tags = "budget"),
-    cp        = p_dbl(1e-04, 1e-1, logscale = TRUE),
-    minbucket = p_int(1, 64, logscale = TRUE))
+  test_tuner_hyperband(eta = 2, learner)
+})
 
-  test_tuner_hyperband(eta = 2, learner, search_space)
+test_that("TunerHyperband rounds budget", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 7, tags = "budget"))
+  )
 
-  # eta = 3
-  search_space = ps(
-    minsplit  = p_int(1, 81, tags = "budget"),
-    cp        = p_dbl(1e-04, 1e-1, logscale = TRUE),
-    minbucket = p_int(1, 64, logscale = TRUE))
+  test_tuner_hyperband(eta = 2, learner)
+})
 
-  test_tuner_hyperband(eta = 3, learner, search_space)
+test_that("TunerHyperband works with eta = 2.5", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 8, tags = "budget"))
+  )
 
-  # budget is rounded
-  search_space = ps(
-    minsplit  = p_int(1, 15, tags = "budget"),
-    cp        = p_dbl(1e-04, 1e-1, logscale = TRUE),
-    minbucket = p_int(1, 64, logscale = TRUE))
-
-  test_tuner_hyperband(eta = 2, learner, search_space)
-
-  # eta = 2.5
-  learner = lrn("classif.rpart")
-  search_space = ps(
-    minsplit  = p_int(1, 16, tags = "budget"),
-    cp        = p_dbl(1e-04, 1e-1, logscale = TRUE),
-    minbucket = p_int(1, 64, logscale = TRUE))
-
-  test_tuner_hyperband(eta = 2.5, learner, search_space)
-
-  # multi-crit
-  learner = lrn("classif.rpart")
-  search_space = ps(
-    minsplit  = p_int(1, 16, tags = "budget"),
-    cp        = p_dbl(1e-04, 1e-1, logscale = TRUE),
-    minbucket = p_int(1, 64, logscale = TRUE))
-
-  test_tuner_hyperband(eta = 2, learner, search_space, msrs(c("classif.ce", "classif.acc")))
+  test_tuner_hyperband(eta = 2.5, learner)
 })
 
 test_that("TunerHyperband works with xgboost", {
@@ -59,26 +39,31 @@ test_that("TunerHyperband works with xgboost", {
   skip_if_not_installed("xgboost")
   library(mlr3learners) # nolint
 
-  learner = lrn("classif.xgboost")
-  search_space = ps(
-    nrounds   = p_int(1, 16, tags = "budget"),
-    eta       = p_dbl(1e-4, 1, logscale = TRUE),
-    max_depth = p_int(1, 2))
-
-  test_tuner_hyperband(eta = 2, learner, search_space)
+  learner = lrn("classif.xgboost",
+    nrounds   = to_tune(p_int(1, 16, tags = "budget")),
+    eta       = to_tune(1e-4, 1, logscale = TRUE),
+    max_depth = to_tune(1, 2))
+  test_tuner_hyperband(eta = 2, learner)
 })
 
 test_that("TunerHyperband works with subsampling", {
   skip_if_not_installed("mlr3pipelines")
   library(mlr3pipelines)
 
-  graph_learner = as_learner(po("subsample") %>>% lrn("classif.rpart"))
-  search_space = ps(
-    classif.rpart.cp        = p_dbl(1e-04, 1e-1, logscale = TRUE),
-    classif.rpart.minsplit  = p_int(2, 128, logscale = TRUE),
-    subsample.frac          = p_dbl(lower = 0.1, upper = 1, tags = "budget"))
+  graph_learner = as_learner(po("subsample") %>>% lrn("classif.debug"))
+  graph_learner$param_set$values$classif.debug.x = to_tune()
+  graph_learner$param_set$values$subsample.frac = to_tune(p_dbl(lower = 1/9, upper = 1, tags = "budget"))
 
-  test_tuner_hyperband(eta = 2, graph_learner, search_space, msr("classif.ce"))
+  test_tuner_hyperband(eta = 3, graph_learner)
+})
+
+test_that("TunerHyperbandworks with multi-crit", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 4, tags = "budget"))
+  )
+
+  test_tuner_hyperband(eta = 2, learner, measures = msrs(c("classif.ce", "classif.acc")))
 })
 
 test_that("TunerHyperband works with custom sampler", {
@@ -88,6 +73,7 @@ test_that("TunerHyperband works with custom sampler", {
 
   # default
   learner = lrn("classif.xgboost")
+
   search_space = ps(
     nrounds = p_int(lower = 1, upper = 8, tags = "budget"),
     eta     = p_dbl(lower = 0, upper = 1),
@@ -215,4 +201,26 @@ test_that("repeating hyperband works", {
     repeats = FALSE)
 
   expect_equal(nrow(instance$archive$data), 72)
+})
+
+test_that("minimize works", {
+  learner = lrn("classif.debug",
+    x = to_tune(),
+    iter = to_tune(p_int(1, 16, tags = "budget"))
+  )
+
+  instance = test_tuner_hyperband(eta = 2, learner, measures = msr("dummy", parameter_id = "x", minimize = TRUE))
+  expect_equal(min(instance$archive$data[bracket == 4 & stage == 0, dummy]),
+    instance$archive$data[bracket == 4 & stage == 4, dummy])
+})
+
+test_that("maximize works", {
+  learner = lrn("classif.debug",
+    x = to_tune(),
+    iter = to_tune(p_int(1, 16, tags = "budget"))
+  )
+
+  instance = test_tuner_hyperband(eta = 2, learner, measures = msr("dummy", parameter_id = "x", minimize = FALSE))
+  expect_equal(max(instance$archive$data[bracket == 4 & stage == 0, dummy]),
+    instance$archive$data[bracket == 4 & stage == 4, dummy])
 })

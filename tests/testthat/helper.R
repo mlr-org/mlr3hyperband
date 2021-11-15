@@ -17,7 +17,8 @@ lapply(list.files(system.file("testthat", package = "mlr3tuning"), pattern = "^h
 #' @description
 #' Tests bracket and stages constructed by the tuner against the ones based on
 #' the original hyperband paper.
-test_tuner_hyperband = function(eta, learner, search_space, measures = msr("classif.ce")) {
+test_tuner_hyperband = function(eta, learner, measures = msr("classif.ce")) {
+  search_space = learner$param_set$search_space()
   budget_id = search_space$ids(tags = "budget")
   r_min = search_space$lower[[budget_id]]
   r_max = search_space$upper[[budget_id]]
@@ -28,7 +29,6 @@ test_tuner_hyperband = function(eta, learner, search_space, measures = msr("clas
     learner = learner,
     measures = measures,
     resampling = rsmp("holdout"),
-    search_space = search_space,
     eta = eta
   )
 
@@ -52,7 +52,8 @@ test_tuner_hyperband = function(eta, learner, search_space, measures = msr("clas
 #' @description
 #' Tests budget and number of configs constructed by the tuner against supplied
 #' bounds
-test_tuner_successive_halving = function(n, eta, learner, search_space, measures = msr("classif.ce")) {
+test_tuner_successive_halving = function(n, eta, learner, measures = msr("classif.ce")) {
+  search_space = learner$param_set$search_space()
   budget_id = search_space$ids(tags = "budget")
   r_min = search_space$lower[[budget_id]]
   r_max = search_space$upper[[budget_id]]
@@ -63,7 +64,6 @@ test_tuner_successive_halving = function(n, eta, learner, search_space, measures
     learner = learner,
     measures = measures,
     resampling = rsmp("holdout"),
-    search_space = search_space,
     n = n,
     eta = eta)
 
@@ -180,7 +180,7 @@ MeasureClassifDummy = R6Class("MeasureClassifDummy",
     initialize = function(parameter_id, minimize = FALSE) {
       self$parameter_id = parameter_id
       super$initialize(
-        id = "budget",
+        id = "dummy",
         range = c(-Inf, Inf),
         minimize = minimize,
         properties = "requires_learner"
@@ -196,4 +196,4 @@ MeasureClassifDummy = R6Class("MeasureClassifDummy",
   )
 )
 
-mlr_measures$add("budget", MeasureClassifDummy)
+mlr_measures$add("dummy", MeasureClassifDummy)
