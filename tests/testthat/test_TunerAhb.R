@@ -108,3 +108,23 @@ test_that("TunerAhb works with hotstarting", {
   expect_equal(get_private(instance$objective$hotstart_stack)$.learner_count, 100)
   expect_null(instance$archive$data$expect_resample_result)
 })
+
+test_that("minimize works", {
+  learner = lrn("classif.debug",
+    x = to_tune(),
+    iter = to_tune(p_int(1, 16, tags = "budget"))
+  )
+
+  instance = test_tuner_ahb(eta = 2, learner, measures = msr("dummy", parameter_id = "x", minimize = TRUE))
+  expect_equal(min(instance$archive$data[c(1, 2), dummy]), instance$archive$data[3, dummy])
+})
+
+test_that("maximize works", {
+  learner = lrn("classif.debug",
+    x = to_tune(),
+    iter = to_tune(p_int(1, 16, tags = "budget"))
+  )
+
+  instance = test_tuner_ahb(eta = 2, learner, measures = msr("dummy", parameter_id = "x", minimize = FALSE))
+  expect_equal(max(instance$archive$data[c(1, 2), dummy]), instance$archive$data[3, dummy])
+})

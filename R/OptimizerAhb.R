@@ -62,7 +62,7 @@ OptimizerAhb = R6Class("OptimizerAhb",
       search_space = inst$search_space
       budget_id = search_space$ids(tags = "budget")
       archive = inst$archive
-      minimize = !as.logical(archive$codomain$maximization_to_minimization)
+      minimize = ifelse(archive$codomain$maximization_to_minimization == -1, TRUE, FALSE)
       n_workers = future::nbrOfWorkers()
       terminator = inst$terminator
 

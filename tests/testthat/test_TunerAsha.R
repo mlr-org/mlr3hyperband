@@ -17,15 +17,6 @@ test_that("promotion works in the right order", {
   expect_equal(instance$archive$data$stage, c(0, 0, 1, 0, 0, 1, 2, 0))
 })
 
-test_that("maximization works", {
-  learner = lrn("classif.debug",
-    x  = to_tune(),
-    iter = to_tune(p_int(1, 16, tags = "budget"))
-  )
-
-  instance = test_tuner_asha(eta = 2, learner, msr("budget", parameter_id = "x", minimize = FALSE))
-})
-
 test_that("TunerAsha works with minimum budget greater than 1", {
   learner = lrn("classif.debug",
     x  = to_tune(),
@@ -178,3 +169,22 @@ test_that("TunerAsha works with hotstarting", {
   expect_null(instance$archive$data$expect_resample_result)
   })
 
+test_that("minimize works", {
+  learner = lrn("classif.debug",
+    x = to_tune(),
+    iter = to_tune(p_int(1, 16, tags = "budget"))
+  )
+
+  instance = test_tuner_asha(eta = 2, learner, measures = msr("dummy", parameter_id = "x", minimize = TRUE))
+  expect_equal(min(instance$archive$data[c(1, 2), dummy]), instance$archive$data[3, dummy])
+})
+
+test_that("maximize works", {
+  learner = lrn("classif.debug",
+    x = to_tune(),
+    iter = to_tune(p_int(1, 16, tags = "budget"))
+  )
+
+  instance = test_tuner_asha(eta = 2, learner, measures = msr("dummy", parameter_id = "x", minimize = FALSE))
+  expect_equal(max(instance$archive$data[c(1, 2), dummy]), instance$archive$data[3, dummy])
+})
