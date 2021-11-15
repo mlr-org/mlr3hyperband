@@ -65,7 +65,7 @@ OptimizerAsha = R6Class("OptimizerAsha",
       early_stopping_rate = pars$early_stopping_rate
       search_space = inst$search_space
       budget_id = search_space$ids(tags = "budget")
-      minimize = !as.logical(inst$archive$codomain$maximization_to_minimization)
+      minimize = as.logical(inst$archive$codomain$maximization_to_minimization)
       n_workers = future::nbrOfWorkers()
 
       # check budget

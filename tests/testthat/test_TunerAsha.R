@@ -17,6 +17,15 @@ test_that("promotion works in the right order", {
   expect_equal(instance$archive$data$stage, c(0, 0, 1, 0, 0, 1, 2, 0))
 })
 
+test_that("maximization works", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 16, tags = "budget"))
+  )
+
+  instance = test_tuner_asha(eta = 2, learner, msr("budget", parameter_id = "x", minimize = FALSE))
+})
+
 test_that("TunerAsha works with minimum budget greater than 1", {
   learner = lrn("classif.debug",
     x  = to_tune(),

@@ -168,3 +168,32 @@ test_tuner_ahb = function(eta, learner, measures = msr("classif.ce"), term_evals
 
   instance
 }
+
+#' @title MeasureClassifBudget
+#'
+#' @noRd
+MeasureClassifDummy = R6Class("MeasureClassifDummy",
+  inherit = MeasureClassif,
+  public = list(
+    parameter_id = NULL,
+
+    initialize = function(parameter_id, minimize = FALSE) {
+      self$parameter_id = parameter_id
+      super$initialize(
+        id = "budget",
+        range = c(-Inf, Inf),
+        minimize = minimize,
+        properties = "requires_learner"
+      )
+    }
+  ),
+
+  private = list(
+    .score = function(prediction, learner, ...) {
+      minimize = if (self$minimize) -1 else 1
+      minimize * learner$param_set$values[[self$parameter_id]]
+    }
+  )
+)
+
+mlr_measures$add("budget", MeasureClassifDummy)
