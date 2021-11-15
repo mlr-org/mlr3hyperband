@@ -214,3 +214,23 @@ test_that("repeating hyperband works", {
 
   expect_equal(nrow(instance$archive$data), 72)
 })
+
+test_that("minimize works", {
+  learner = lrn("classif.debug",
+    x = to_tune(),
+    iter = to_tune(p_int(1, 16, tags = "budget"))
+  )
+
+  instance = test_tuner_hyperband(eta = 2, learner, measure = msr("dummy", parameter_id = "x", minimize = TRUE))
+  expect_equal(min(instance$archive$data[bracket == 4 & stage == 0, dummy]), instance$archive$data[bracket == 4 & stage == 4, dummy])
+})
+
+test_that("maximize works", {
+  learner = lrn("classif.debug",
+    x = to_tune(),
+    iter = to_tune(p_int(1, 16, tags = "budget"))
+  )
+
+  instance = test_tuner_hyperband(eta = 2, learner, measure = msr("dummy", parameter_id = "x", minimize = FALSE))
+  expect_equal(max(instance$archive$data[bracket == 4 & stage == 0, dummy]), instance$archive$data[bracket == 4 & stage == 4, dummy])
+})
