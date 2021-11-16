@@ -73,7 +73,7 @@
 #' @source
 #' `r format_bib("li_2018")`
 #'
-#' @export
+#' @noRd
 OptimizerHyperbandLegacy = R6Class("OptimizerHyperbandLegacy",
   inherit = Optimizer,
   public = list(

@@ -85,7 +85,7 @@
 #' @source
 #' `r format_bib("li_2018")`
 #'
-#' @export
+#' @noRd
 TunerHyperbandLegacy = R6Class("TunerHyperbandLegacy",
   inherit = TunerFromOptimizer,
   public = list(
