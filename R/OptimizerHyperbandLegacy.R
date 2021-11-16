@@ -74,52 +74,6 @@
 #' `r format_bib("li_2018")`
 #'
 #' @export
-#' @examples
-#' library(bbotk)
-#' library(data.table)
-#'
-#' search_space = domain = ps(
-#'   x1 = p_dbl(-5, 10),
-#'   x2 = p_dbl(0, 15),
-#'   fidelity = p_dbl(1e-2, 1, tags = "budget")
-#' )
-#'
-#' # modified branin function
-#' objective = ObjectiveRFunDt$new(
-#'   fun = function(xdt) {
-#'     a = 1
-#'     b = 5.1 / (4 * (pi ^ 2))
-#'     c = 5 / pi
-#'     r = 6
-#'     s = 10
-#'     t = 1 / (8 * pi)
-#'     data.table(y =
-#'       (a * ((xdt[["x2"]] -
-#'       b * (xdt[["x1"]] ^ 2L) +
-#'       c * xdt[["x1"]] - r) ^ 2) +
-#'       ((s * (1 - t)) * cos(xdt[["x1"]])) +
-#'       s - (5 * xdt[["fidelity"]] * xdt[["x1"]])))
-#'   },
-#'   domain = domain,
-#'   codomain = ps(y = p_dbl(tags = "minimize"))
-#' )
-#'
-#' instance = OptimInstanceSingleCrit$new(
-#'   objective = objective,
-#'   search_space = search_space,
-#'   terminator = trm("none")
-#' )
-#'
-#' optimizer = opt("hyperband")
-#'
-#' # modifies the instance by reference
-#' optimizer$optimize(instance)
-#'
-#' # best scoring evaluation
-#' instance$result
-#'
-#' # all evaluations
-#' as.data.table(instance$archive)
 OptimizerHyperbandLegacy = R6Class("OptimizerHyperbandLegacy",
   inherit = Optimizer,
   public = list(
