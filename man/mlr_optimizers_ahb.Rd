@@ -4,20 +4,42 @@
 \alias{mlr_optimizers_ahb}
 \alias{OptimizerAhb}
 \title{Optimizer Asynchronous Hyperband}
+\source{
+Li L, Jamieson K, Rostamizadeh A, Gonina E, Ben-tzur J, Hardt M, Recht B, Talwalkar A (2020).
+\dQuote{A System for Massively Parallel Hyperparameter Tuning.}
+\emph{Proceedings of Machine Learning and Systems}, \bold{2}, 230-246.
+\url{https://proceedings.mlsys.org/paper/2020/hash/f4b9ec30ad9f68f89b29639786cb62ef-Abstract.html}.
+}
 \description{
 \code{OptimizerAhb} class that implements the asynchronous hyperband algorithm.
+Asynchronous hyperband (AHB) repeatedly runs ASHA (\link{OptimizerASHA}) with
+different minimum budgets in the base stage. Each run of ASHA within AHB is
+called a bracket. AHB considers \code{s_max + 1} brackets with
+\verb{s_max = floor(log(r_max / r_min, eta)}. The most explorative bracket
+\code{s = s_max} constructs \code{s_max + 1} stages and allocates the minimum budget
+(\code{r_min}) in the base stage.  The minimum budget (\code{r_min}) is increased in
+each bracket by a factor of \code{eta} until the maximum budget is allocated in
+the base stage. The bracket \code{s = 0} is a random search with full budget. Each
+ASHA run uses \code{1 / s_max + 1} of the \link[bbotk:Terminator]{bbotk::Terminator}.
+
+The budget hyperparameter must be tagged with \code{"budget"} in the search space.
+The minimum budget (\code{r_min}) which is allocated in the base stage of the most
+explorative bracket, is set by the lower bound of the budget parameter. The
+upper bound defines the maximum budget (\code{r_max}) which which is allocated to
+the candidates in the last stages.
 }
 \section{Parameters}{
 
 \describe{
 \item{\code{eta}}{\code{numeric(1)}\cr
-With every stage, the budget is increased by a factor of \code{eta} and only the
-best \code{1/eta} points are promoted for the next stage. Non-integer values are
-supported, but \code{eta} is not allowed to be less or equal 1.
+With every stage, the budget is increased by a factor of \code{eta}
+and only the best \code{1 / eta} points are promoted to the next stage.
+Non-integer values are supported, but \code{eta} is not allowed to be less or
+equal 1.
 }
 \item{\code{sampler}}{\link[paradox:Sampler]{paradox::Sampler}\cr
-Object defining how the samples of the parameter space should be drawn. The
-default is uniform sampling.
+Object defining how the samples of the parameter space should be drawn in the
+base stage of each bracket. The default is uniform sampling.
 }}
 }
 
@@ -27,7 +49,7 @@ The \link[bbotk:Archive]{bbotk::Archive} holds the following additional columns 
 to the hyperband algorithm:
 \itemize{
 \item \code{bracket} (\code{integer(1)})\cr
-The bracket index. Starts counting at 0.
+The bracket index. Counts down to 0.
 \item \code{stage} (\verb{integer(1))}\cr
 The stages of each bracket. Starts counting at 0.
 }
@@ -47,18 +69,6 @@ sampler = SamplerJointIndep$new(list(
 }
 }
 
-\section{Runtime}{
-
-The calculation of each bracket currently assumes a linear runtime in the
-chosen budget parameter is always given. Hyperband is designed so each
-bracket requires approximately the same runtime as the sum of the budget
-over all configurations in each bracket is roughly the same. This will not
-hold true once the scaling in the budget parameter is not linear
-anymore, even though the sum of the budgets in each bracket remains the
-same. A possible adaption would be to introduce a trafo, like it is shown in
-the \emph{examples} section.
-}
-
 \section{Progress Bars}{
 
 \verb{$optimize()} supports progress bars via the package \CRANpkg{progressr}
@@ -74,6 +84,53 @@ Hyperband uses a logger (as implemented in \CRANpkg{lgr}) from package
 Use \code{lgr::get_logger("bbotk")} to access and control the logger.
 }
 
+\examples{
+library(bbotk)
+library(data.table)
+
+search_space = domain = ps(
+  x1 = p_dbl(-5, 10),
+  x2 = p_dbl(0, 15),
+  fidelity = p_dbl(1e-2, 1, tags = "budget")
+)
+
+# modified branin function
+objective = ObjectiveRFunDt$new(
+  fun = function(xdt) {
+    a = 1
+    b = 5.1 / (4 * (pi ^ 2))
+    c = 5 / pi
+    r = 6
+    s = 10
+    t = 1 / (8 * pi)
+    data.table(y =
+      (a * ((xdt[["x2"]] -
+      b * (xdt[["x1"]] ^ 2L) +
+      c * xdt[["x1"]] - r) ^ 2) +
+      ((s * (1 - t)) * cos(xdt[["x1"]])) +
+      s - (5 * xdt[["fidelity"]] * xdt[["x1"]])))
+  },
+  domain = domain,
+  codomain = ps(y = p_dbl(tags = "minimize"))
+)
+
+instance = OptimInstanceSingleCrit$new(
+  objective = objective,
+  search_space = search_space,
+  terminator = trm("evals", n_evals = 100)
+)
+
+optimizer = opt("ahb")
+
+# modifies the instance by reference
+optimizer$optimize(instance)
+
+# best scoring evaluation
+instance$result
+
+# all evaluations
+as.data.table(instance$archive)
+}
 \section{Super class}{
 \code{\link[bbotk:Optimizer]{bbotk::Optimizer}} -> \code{OptimizerAhb}
 }

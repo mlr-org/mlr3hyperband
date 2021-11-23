@@ -12,40 +12,95 @@ In Gretton A, Robert CC (eds.), \emph{Proceedings of the 19th International Conf
 }
 \description{
 \code{TunerSuccessiveHalving} class that implements the successive halving
-algorithm. The algorithm samples \code{n} configurations and evaluates them with
-the smallest budget (lower bound of the \code{budget} parameter). With every stage
-the budget is increased by a factor of \code{eta} and only the best \code{1/eta}
-configurations are promoted to the next stage. The optimization terminates
-when the maximum budget is reached (upper bound of the \code{budget} parameter)
+algorithm. Successive halving (SHA) randomly samples \code{n} candidate
+hyperparameter configurations and allocates a minimum budget (\code{r_min}) to all
+candidates. The candidates are raced down in stages to a single best
+candidate by repeatedly increasing the budget by a factor of \code{eta} and
+promoting only the best \code{1 / eta } fraction to the next stage. This means
+promising hyperparameter configurations are allocated a higher budget overall
+and lower performing ones are discarded early on.
 
-To identify the budget, the user has to specify explicitly which parameter of
-the objective function influences the budget by tagging a single parameter in
-in the search_space (\link[paradox:ParamSet]{paradox::ParamSet}) with \code{"budget"}.
+The budget hyperparameter must be tagged with \code{"budget"} in the search space.
+The minimum budget (\code{r_min}) which is allocated in the base stage, is set by
+the lower bound of the budget parameter. The upper bound  defines the maximum
+budget (\code{r_max}) which is allocated to the candidates in the last stage. The
+number of stages is computed that each candidate in base stage is allocated
+the minimum budget and the candidates in the last stage are not evaluated on
+more than the maximum budget. The following table is the stage layout for
+\code{eta = 2}, \code{r_min = 1} and \code{r_max = 8}.\tabular{rrr}{
+   i \tab ni \tab ri \cr
+   0 \tab 8 \tab 1 \cr
+   1 \tab 4 \tab 2 \cr
+   2 \tab 2 \tab 4 \cr
+   3 \tab 1 \tab 8 \cr
+}
 }
 \section{Parameters}{
 
 \describe{
 \item{\code{n}}{\code{integer(1)}\cr
-Number of configurations in first stage.}
-\item{\code{eta}}{\code{numeric(1)}\cr
-With every stage, the configuration budget is increased by a factor of \code{eta}
-and only the best \code{1/eta} configurations are used for the next stage.
-Non-integer values are supported, but \code{eta} is not allowed to be less or
-equal 1.}
-\item{\code{sampler}}{\link[paradox:Sampler]{paradox::Sampler}\cr
-Object defining how the samples of the parameter space should be drawn during
-the initialization of each bracket. The default is uniform sampling.}
+Number of candidates in base stage.
 }
+\item{\code{eta}}{\code{numeric(1)}\cr
+With every stage, the budget is increased by a factor of \code{eta}
+and only the best \code{1 / eta} candidates are promoted to the next stage.
+Non-integer values are supported, but \code{eta} is not allowed to be less or
+equal 1.
+}
+\item{\code{sampler}}{\link[paradox:Sampler]{paradox::Sampler}\cr
+Object defining how the samples of the parameter space should be drawn. The
+default is uniform sampling.
+}
+\item{\code{repeats}}{\code{logical(1)}\cr
+If \code{FALSE} (default), SHA terminates once all stages are evaluated.
+Otherwise, SHA starts over again once the last stage is evaluated.
+}}
 }
 
 \section{Archive}{
 
-The \link[mlr3tuning:ArchiveTuning]{mlr3tuning::ArchiveTuning} holds the following additional column that is specific
-to the successive halving algorithm:
+The \link[mlr3tuning:ArchiveTuning]{mlr3tuning::ArchiveTuning} holds the following additional column that is
+specific to the successive halving algorithm:
 \itemize{
 \item \code{stage} (\verb{integer(1))}\cr
 Stage index. Starts counting at 0.
 }
+}
+
+\section{Custom sampler}{
+
+Hyperband supports custom \link[paradox:Sampler]{paradox::Sampler} object for initial
+configurations in each bracket.
+A custom sampler may look like this (the full example is given in the
+\emph{examples} section):\preformatted{# - beta distribution with alpha = 2 and beta = 5
+# - categorical distribution with custom probabilities
+sampler = SamplerJointIndep$new(list(
+  Sampler1DRfun$new(params[[2]], function(n) rbeta(n, 2, 5)),
+  Sampler1DCateg$new(params[[3]], prob = c(0.2, 0.3, 0.5))
+))
+}
+}
+
+\section{Progress Bars}{
+
+\verb{$optimize()} supports progress bars via the package \CRANpkg{progressr}
+combined with a \link{Terminator}. Simply wrap the function in
+\code{progressr::with_progress()} to enable them. We recommend to use package
+\CRANpkg{progress} as backend; enable with \code{progressr::handlers("progress")}.
+}
+
+\section{Parallelization}{
+
+The hyperparameter configurations of one stage are evaluated in parallel with
+the \CRANpkg{future} package. To select a parallel backend, use
+\code{\link[future:plan]{future::plan()}}.
+}
+
+\section{Logging}{
+
+Hyperband uses a logger (as implemented in \CRANpkg{lgr}) from package
+\CRANpkg{bbotk}.
+Use \code{lgr::get_logger("bbotk")} to access and control the logger.
 }
 
 \examples{

@@ -6,22 +6,35 @@
 \title{Tuner Asynchronous Successive Halving}
 \description{
 \code{TunerAsha} class that implements the asynchronous successive halving
-algorithm.
+algorithm. Asynchronous successive halving (ASHA) parallelizes SHA
+(\link{TunerSuccessiveHalving}) by promoting candidates to the next stage as soon
+as possible instead of waiting for all candidates in the stage to finish.
+ASHA starts with sampling a candidate hyperparameter configuration for each
+available worker. When an evaluation finishes and the worker is available
+again, ASHA checks the stages from top to bottom for promotable candidates.
+Promotions are possible when the evaluated candidates belong to the top
+\code{1 / eta} of each stage. If no promotions are possible, a new candidate is
+sampled and added to the base stage, which increases the number of possible
+promotions for all stages.
+
+The budget hyperparameter must be tagged with \code{"budget"} in the search space.
+The minimum budget (\code{r_min}) which is allocated in the base stage, is set by
+the lower bound of the budget parameter. The upper bound defines the maximum
+budget (\code{r_max}) which which is allocated to the candidates in the last
+stage.
 }
 \section{Parameters}{
 
 \describe{
 \item{\code{eta}}{\code{numeric(1)}\cr
-With every stage, the budget is increased by a factor of \code{eta} and only the
-best \code{1/eta} configurations are promoted for the next stage. Non-integer
-values are supported, but \code{eta} is not allowed to be less or equal 1.
+With every stage, the budget is increased by a factor of \code{eta}
+and only the best \code{1 / eta} candidates are promoted to the next stage.
+Non-integer values are supported, but \code{eta} is not allowed to be less or
+equal 1.
 }
 \item{\code{sampler}}{\link[paradox:Sampler]{paradox::Sampler}\cr
 Object defining how the samples of the parameter space should be drawn. The
 default is uniform sampling.
-}
-\item{\code{s}}{\code{integer(1)}\cr
-Minimum early-stopping rate.
 }}
 }
 
@@ -49,24 +62,19 @@ sampler = SamplerJointIndep$new(list(
 }
 }
 
-\section{Runtime}{
-
-The calculation of each bracket currently assumes a linear runtime in the
-chosen budget parameter is always given. Hyperband is designed so each
-bracket requires approximately the same runtime as the sum of the budget
-over all configurations in each bracket is roughly the same. This will not
-hold true once the scaling in the budget parameter is not linear
-anymore, even though the sum of the budgets in each bracket remains the
-same. A possible adaption would be to introduce a trafo, like it is shown in
-the \emph{examples} section.
-}
-
 \section{Progress Bars}{
 
 \verb{$optimize()} supports progress bars via the package \CRANpkg{progressr}
 combined with a \link{Terminator}. Simply wrap the function in
 \code{progressr::with_progress()} to enable them. We recommend to use package
 \CRANpkg{progress} as backend; enable with \code{progressr::handlers("progress")}.
+}
+
+\section{Parallelization}{
+
+The hyperparameter configurations are asynchronously evaluated with the
+\CRANpkg{future} package. The resampling of each candidate is send to an
+available worker. To select a parallel backend, use \code{\link[future:plan]{future::plan()}}.
 }
 
 \section{Logging}{
@@ -76,6 +84,34 @@ Hyperband uses a logger (as implemented in \CRANpkg{lgr}) from package
 Use \code{lgr::get_logger("bbotk")} to access and control the logger.
 }
 
+\examples{
+if(requireNamespace("xgboost")) {
+library(mlr3learners)
+
+# define hyperparameter and budget parameter
+search_space = ps(
+  nrounds = p_int(lower = 1, upper = 16, tags = "budget"),
+  eta = p_dbl(lower = 0, upper = 1),
+  booster = p_fct(levels = c("gbtree", "gblinear", "dart"))
+)
+
+\donttest{
+# hyperparameter tuning on the pima indians diabetes data set
+instance = tune(
+  method = "asha",
+  task = tsk("pima"),
+  learner = lrn("classif.xgboost", eval_metric = "logloss"),
+  resampling = rsmp("cv", folds = 3),
+  measures = msr("classif.ce"),
+  search_space = search_space,
+  term_evals = 100
+)
+
+# best performing hyperparameter configuration
+instance$result
+}
+}
+}
 \section{Super classes}{
 \code{\link[mlr3tuning:Tuner]{mlr3tuning::Tuner}} -> \code{\link[mlr3tuning:TunerFromOptimizer]{mlr3tuning::TunerFromOptimizer}} -> \code{TunerAsha}
 }

@@ -4,21 +4,34 @@
 #'
 #' @description
 #' `OptimizerAsha` class that implements the asynchronous successive halving
-#' algorithm.
+#' algorithm. Asynchronous successive halving (ASHA) parallelizes SHA
+#' ([OptimizerSuccessiveHalving]) by promoting candidates to the next stage as
+#' soon as possible instead of waiting for all candidates in the stage to
+#' finish. ASHA starts with sampling a candidate points for each available
+#' worker. When an evaluation finishes and the worker is available again, ASHA
+#' checks the stages from top to bottom for promotable candidates. Promotions
+#' are possible when the evaluated candidates belong to the top `1 / eta` of
+#' each stage. If no promotions are possible, a new candidate is sampled and
+#' added to the base stage, which increases the number of possible promotions
+#' for all stages.
+#'
+#' The budget hyperparameter must be tagged with `"budget"` in the search space.
+#' The minimum budget (`r_min`) which is allocated in the base stage, is set by
+#' the lower bound of the budget parameter. The upper bound defines the maximum
+#' budget (`r_max`) which which is allocated to the candidates in the last
+#' stage.
 #'
 #' @section Parameters:
 #' \describe{
 #' \item{`eta`}{`numeric(1)`\cr
-#' With every stage, the budget is increased by a factor of `eta` and only the
-#' best `1/eta` points are promoted for the next stage. Non-integer values are
-#' supported, but `eta` is not allowed to be less or equal 1.
+#' With every stage, the budget is increased by a factor of `eta`
+#' and only the best `1/eta` points are promoted to the next stage.
+#' Non-integer values are supported, but `eta` is not allowed to be less or
+#' equal 1.
 #' }
 #' \item{`sampler`}{[paradox::Sampler]\cr
 #' Object defining how the samples of the parameter space should be drawn. The
 #' default is uniform sampling.
-#' }
-#' \item{`s`}{`integer(1)`\cr
-#' Minimum early-stopping rate.
 #' }}
 #'
 #' @section Archive:
@@ -28,11 +41,59 @@
 #'     Stage index. Starts counting at 0.
 #'
 #' @template section_custom_sampler
-#' @template section_runtime
 #' @template section_progress_bars
 #' @template section_logging
 #'
+#' @source
+#' `r format_bib("li_2020")`
+#'
 #' @export
+#' @examples
+#' library(bbotk)
+#' library(data.table)
+#'
+#' search_space = domain = ps(
+#'   x1 = p_dbl(-5, 10),
+#'   x2 = p_dbl(0, 15),
+#'   fidelity = p_dbl(1e-2, 1, tags = "budget")
+#' )
+#'
+#' # modified branin function
+#' objective = ObjectiveRFunDt$new(
+#'   fun = function(xdt) {
+#'     a = 1
+#'     b = 5.1 / (4 * (pi ^ 2))
+#'     c = 5 / pi
+#'     r = 6
+#'     s = 10
+#'     t = 1 / (8 * pi)
+#'     data.table(y =
+#'       (a * ((xdt[["x2"]] -
+#'       b * (xdt[["x1"]] ^ 2L) +
+#'       c * xdt[["x1"]] - r) ^ 2) +
+#'       ((s * (1 - t)) * cos(xdt[["x1"]])) +
+#'       s - (5 * xdt[["fidelity"]] * xdt[["x1"]])))
+#'   },
+#'   domain = domain,
+#'   codomain = ps(y = p_dbl(tags = "minimize"))
+#' )
+#'
+#' instance = OptimInstanceSingleCrit$new(
+#'   objective = objective,
+#'   search_space = search_space,
+#'   terminator = trm("evals", n_evals = 100)
+#' )
+#'
+#' optimizer = opt("asha")
+#'
+#' # modifies the instance by reference
+#' optimizer$optimize(instance)
+#'
+#' # best scoring evaluation
+#' instance$result
+#'
+#' # all evaluations
+#' as.data.table(instance$archive)
 OptimizerAsha = R6Class("OptimizerAsha",
   inherit = Optimizer,
   public = list(
@@ -171,6 +232,7 @@ get_job = function(s_max, eta, r_min, archive, sampler, budget_id, integer_budge
 
   # if no promotion is possible, add new configuration to base stage
   xdt = sampler$sample(1)$data
+  if (integer_budget) r_min = as.integer(round(r_min))
   set(xdt, j = budget_id, value = r_min)
   asha_id = if (!nrow(archive$data)) 1L else nrow(archive$data[get("stage") == 0]) + 1L
   set(xdt, j = "asha_id", value = asha_id)

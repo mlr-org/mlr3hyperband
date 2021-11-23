@@ -4,24 +4,43 @@
 \alias{mlr_optimizers_asha}
 \alias{OptimizerAsha}
 \title{Optimizer Asynchronous Successive Halving}
+\source{
+Li L, Jamieson K, Rostamizadeh A, Gonina E, Ben-tzur J, Hardt M, Recht B, Talwalkar A (2020).
+\dQuote{A System for Massively Parallel Hyperparameter Tuning.}
+\emph{Proceedings of Machine Learning and Systems}, \bold{2}, 230-246.
+\url{https://proceedings.mlsys.org/paper/2020/hash/f4b9ec30ad9f68f89b29639786cb62ef-Abstract.html}.
+}
 \description{
 \code{OptimizerAsha} class that implements the asynchronous successive halving
-algorithm.
+algorithm. Asynchronous successive halving (ASHA) parallelizes SHA
+(\link{OptimizerSuccessiveHalving}) by promoting candidates to the next stage as
+soon as possible instead of waiting for all candidates in the stage to
+finish. ASHA starts with sampling a candidate points for each available
+worker. When an evaluation finishes and the worker is available again, ASHA
+checks the stages from top to bottom for promotable candidates. Promotions
+are possible when the evaluated candidates belong to the top \code{1 / eta} of
+each stage. If no promotions are possible, a new candidate is sampled and
+added to the base stage, which increases the number of possible promotions
+for all stages.
+
+The budget hyperparameter must be tagged with \code{"budget"} in the search space.
+The minimum budget (\code{r_min}) which is allocated in the base stage, is set by
+the lower bound of the budget parameter. The upper bound defines the maximum
+budget (\code{r_max}) which which is allocated to the candidates in the last
+stage.
 }
 \section{Parameters}{
 
 \describe{
 \item{\code{eta}}{\code{numeric(1)}\cr
-With every stage, the budget is increased by a factor of \code{eta} and only the
-best \code{1/eta} points are promoted for the next stage. Non-integer values are
-supported, but \code{eta} is not allowed to be less or equal 1.
+With every stage, the budget is increased by a factor of \code{eta}
+and only the best \code{1/eta} points are promoted to the next stage.
+Non-integer values are supported, but \code{eta} is not allowed to be less or
+equal 1.
 }
 \item{\code{sampler}}{\link[paradox:Sampler]{paradox::Sampler}\cr
 Object defining how the samples of the parameter space should be drawn. The
 default is uniform sampling.
-}
-\item{\code{s}}{\code{integer(1)}\cr
-Minimum early-stopping rate.
 }}
 }
 
@@ -49,18 +68,6 @@ sampler = SamplerJointIndep$new(list(
 }
 }
 
-\section{Runtime}{
-
-The calculation of each bracket currently assumes a linear runtime in the
-chosen budget parameter is always given. Hyperband is designed so each
-bracket requires approximately the same runtime as the sum of the budget
-over all configurations in each bracket is roughly the same. This will not
-hold true once the scaling in the budget parameter is not linear
-anymore, even though the sum of the budgets in each bracket remains the
-same. A possible adaption would be to introduce a trafo, like it is shown in
-the \emph{examples} section.
-}
-
 \section{Progress Bars}{
 
 \verb{$optimize()} supports progress bars via the package \CRANpkg{progressr}
@@ -76,6 +83,53 @@ Hyperband uses a logger (as implemented in \CRANpkg{lgr}) from package
 Use \code{lgr::get_logger("bbotk")} to access and control the logger.
 }
 
+\examples{
+library(bbotk)
+library(data.table)
+
+search_space = domain = ps(
+  x1 = p_dbl(-5, 10),
+  x2 = p_dbl(0, 15),
+  fidelity = p_dbl(1e-2, 1, tags = "budget")
+)
+
+# modified branin function
+objective = ObjectiveRFunDt$new(
+  fun = function(xdt) {
+    a = 1
+    b = 5.1 / (4 * (pi ^ 2))
+    c = 5 / pi
+    r = 6
+    s = 10
+    t = 1 / (8 * pi)
+    data.table(y =
+      (a * ((xdt[["x2"]] -
+      b * (xdt[["x1"]] ^ 2L) +
+      c * xdt[["x1"]] - r) ^ 2) +
+      ((s * (1 - t)) * cos(xdt[["x1"]])) +
+      s - (5 * xdt[["fidelity"]] * xdt[["x1"]])))
+  },
+  domain = domain,
+  codomain = ps(y = p_dbl(tags = "minimize"))
+)
+
+instance = OptimInstanceSingleCrit$new(
+  objective = objective,
+  search_space = search_space,
+  terminator = trm("evals", n_evals = 100)
+)
+
+optimizer = opt("asha")
+
+# modifies the instance by reference
+optimizer$optimize(instance)
+
+# best scoring evaluation
+instance$result
+
+# all evaluations
+as.data.table(instance$archive)
+}
 \section{Super class}{
 \code{\link[bbotk:Optimizer]{bbotk::Optimizer}} -> \code{OptimizerAsha}
 }

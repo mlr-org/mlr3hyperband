@@ -12,35 +12,46 @@ In Gretton A, Robert CC (eds.), \emph{Proceedings of the 19th International Conf
 }
 \description{
 \code{OptimizerSuccessiveHalving} class that implements the successive halving
-algorithm. The algorithm samples \code{n} points and evaluates them with the
-smallest budget (lower bound of the \code{budget} parameter). With every stage the
-budget is increased by a factor of \code{eta} and only the best \code{1/eta} points are
-promoted to the next stage. The optimization terminates when the maximum
-budget is reached (upper bound of the \code{budget} parameter).
+algorithm. Successive halving (SHA) randomly samples \code{n} candidate points and
+allocates a minimum budget (\code{r_min}) to all candidates. The candidates are
+raced down in stages to a single best candidate by repeatedly increasing the
+budget by a factor of \code{eta} and promoting only the best \code{1 / eta } fraction
+to the next stage. This means promising points are allocated a higher budget
+overall and lower performing ones are discarded early on.
 
-To identify the budget, the user has to specify explicitly which parameter of
-the objective function influences the budget by tagging a single parameter in
-the search space (\link[paradox:ParamSet]{paradox::ParamSet}) with \code{"budget"}.
+The budget hyperparameter must be tagged with \code{"budget"} in the search space.
+The minimum budget (\code{r_min}) which is allocated in the base stage, is set by
+the lower bound of the budget parameter. The upper bound  defines the maximum
+budget (\code{r_max}) which is allocated to the candidates in the last stage. The
+number of stages is computed that each candidate in base stage is allocated
+the minimum budget and the candidates in the last stage are not evaluated on
+more than the maximum budget. The following table is the stage layout for
+\code{eta = 2}, \code{r_min = 1} and \code{r_max = 8}.\tabular{rrr}{
+   i \tab ni \tab ri \cr
+   0 \tab 8 \tab 1 \cr
+   1 \tab 4 \tab 2 \cr
+   2 \tab 2 \tab 4 \cr
+   3 \tab 1 \tab 8 \cr
+}
 }
 \section{Parameters}{
 
 \describe{
 \item{\code{n}}{\code{integer(1)}\cr
-Number of points in first stage.}
+Number of points in base stage.}
 \item{\code{eta}}{\code{numeric(1)}\cr
-With every stage, the point budget is increased by a factor of \code{eta}
-and only the best \code{1/eta} points are used for the next stage.
+With every stage, the budget is increased by a factor of \code{eta}
+and only the best \code{1 / eta} points are promoted to the next stage.
 Non-integer values are supported, but \code{eta} is not allowed to be less or
 equal 1.
 }
 \item{\code{sampler}}{\link[paradox:Sampler]{paradox::Sampler}\cr
-Object defining how the samples of the parameter space should be drawn during
-the initialization of each bracket. The default is uniform sampling.
+Object defining how the samples of the parameter space should be drawn. The
+default is uniform sampling.
 }
 \item{\code{repeats}}{\code{logical(1)}\cr
-If \code{FALSE} (default), successive halving terminates once all stages are
-evaluated. Otherwise, successive halving starts over again once the last
-stage is evaluated.
+If \code{FALSE} (default), SHA terminates once all stages are evaluated.
+Otherwise, SHA starts over again once the last stage is evaluated.
 }}
 }
 
@@ -68,33 +79,12 @@ sampler = SamplerJointIndep$new(list(
 }
 }
 
-\section{Runtime}{
-
-The calculation of each bracket currently assumes a linear runtime in the
-chosen budget parameter is always given. Hyperband is designed so each
-bracket requires approximately the same runtime as the sum of the budget
-over all configurations in each bracket is roughly the same. This will not
-hold true once the scaling in the budget parameter is not linear
-anymore, even though the sum of the budgets in each bracket remains the
-same. A possible adaption would be to introduce a trafo, like it is shown in
-the \emph{examples} section.
-}
-
 \section{Progress Bars}{
 
 \verb{$optimize()} supports progress bars via the package \CRANpkg{progressr}
 combined with a \link{Terminator}. Simply wrap the function in
 \code{progressr::with_progress()} to enable them. We recommend to use package
 \CRANpkg{progress} as backend; enable with \code{progressr::handlers("progress")}.
-}
-
-\section{Parallelization}{
-
-In order to support general termination criteria and parallelization, we
-evaluate points in a batch-fashion of size \code{batch_size}. The points of one
-stage in a bracket are evaluated in one batch. Parallelization is supported
-via package \CRANpkg{future} (see \code{\link[mlr3:benchmark]{mlr3::benchmark()}}'s section on
-parallelization for more details).
 }
 
 \section{Logging}{

@@ -6,28 +6,44 @@
 \title{Tuner Asynchronous Hyperband}
 \description{
 \code{TunerAhb} class that implements the asynchronous hyperband algorithm.
+Asynchronous hyperband (AHB) repeatedly runs ASHA (\link{TunerASHA}) with
+different minimum budgets in the base stage. Each run of ASHA within AHB is
+called a bracket. AHB considers \code{s_max + 1} brackets with
+\verb{s_max = floor(log(r_max / r_min, eta)}. The most explorative bracket
+\code{s = s_max} constructs \code{s_max + 1} stages and allocates the minimum budget
+(\code{r_min}) in the base stage.  The minimum budget (\code{r_min}) is increased in
+each bracket by a factor of \code{eta} until the maximum budget is allocated in
+the base stage. The bracket \code{s = 0} is a random search with full budget. Each
+ASHA run uses \code{1 / s_max + 1} of the \link[bbotk:Terminator]{bbotk::Terminator}.
+
+The budget hyperparameter must be tagged with \code{"budget"} in the search space.
+The minimum budget (\code{r_min}) which is allocated in the base stage of the most
+explorative bracket, is set by the lower bound of the budget parameter. The
+upper bound defines the maximum budget (\code{r_max}) which which is allocated to
+the candidates in the last stages.
 }
 \section{Parameters}{
 
 \describe{
 \item{\code{eta}}{\code{numeric(1)}\cr
-With every stage, the budget is increased by a factor of \code{eta} and only the
-best \code{1/eta} points are promoted for the next stage. Non-integer values are
-supported, but \code{eta} is not allowed to be less or equal 1.
+With every stage, the budget is increased by a factor of \code{eta}
+and only the best \code{1 / eta} candidates are promoted to the next stage.
+Non-integer values are supported, but \code{eta} is not allowed to be less or
+equal 1.
 }
 \item{\code{sampler}}{\link[paradox:Sampler]{paradox::Sampler}\cr
-Object defining how the samples of the parameter space should be drawn. The
-default is uniform sampling.
+Object defining how the samples of the parameter space should be drawn in the
+base stage of each bracket. The default is uniform sampling.
 }}
 }
 
 \section{Archive}{
 
-The \link[bbotk:Archive]{bbotk::Archive} holds the following additional columns that are specific
-to the hyperband algorithm:
+The \link[mlr3tuning:ArchiveTuning]{mlr3tuning::ArchiveTuning} holds the following additional columns that
+are specific to the hyperband algorithm:
 \itemize{
 \item \code{bracket} (\code{integer(1)})\cr
-The bracket index. Starts counting at 0.
+The bracket index. Counts down to 0.
 \item \code{stage} (\verb{integer(1))}\cr
 The stages of each bracket. Starts counting at 0.
 }
@@ -47,24 +63,19 @@ sampler = SamplerJointIndep$new(list(
 }
 }
 
-\section{Runtime}{
-
-The calculation of each bracket currently assumes a linear runtime in the
-chosen budget parameter is always given. Hyperband is designed so each
-bracket requires approximately the same runtime as the sum of the budget
-over all configurations in each bracket is roughly the same. This will not
-hold true once the scaling in the budget parameter is not linear
-anymore, even though the sum of the budgets in each bracket remains the
-same. A possible adaption would be to introduce a trafo, like it is shown in
-the \emph{examples} section.
-}
-
 \section{Progress Bars}{
 
 \verb{$optimize()} supports progress bars via the package \CRANpkg{progressr}
 combined with a \link{Terminator}. Simply wrap the function in
 \code{progressr::with_progress()} to enable them. We recommend to use package
 \CRANpkg{progress} as backend; enable with \code{progressr::handlers("progress")}.
+}
+
+\section{Parallelization}{
+
+The hyperparameter configurations are asynchronously evaluated with
+the \CRANpkg{future} package. The resampling of each candidate is send to an
+available worker. To select a parallel backend, use \code{\link[future:plan]{future::plan()}}.
 }
 
 \section{Logging}{
@@ -74,6 +85,34 @@ Hyperband uses a logger (as implemented in \CRANpkg{lgr}) from package
 Use \code{lgr::get_logger("bbotk")} to access and control the logger.
 }
 
+\examples{
+if(requireNamespace("xgboost")) {
+library(mlr3learners)
+
+# define hyperparameter and budget parameter
+search_space = ps(
+  nrounds = p_int(lower = 1, upper = 16, tags = "budget"),
+  eta = p_dbl(lower = 0, upper = 1),
+  booster = p_fct(levels = c("gbtree", "gblinear", "dart"))
+)
+
+\donttest{
+# hyperparameter tuning on the pima indians diabetes data set
+instance = tune(
+  method = "ahb",
+  task = tsk("pima"),
+  learner = lrn("classif.xgboost", eval_metric = "logloss"),
+  resampling = rsmp("cv", folds = 3),
+  measures = msr("classif.ce"),
+  search_space = search_space,
+  term_evals = 100
+)
+
+# best performing hyperparameter configuration
+instance$result
+}
+}
+}
 \section{Super classes}{
 \code{\link[mlr3tuning:Tuner]{mlr3tuning::Tuner}} -> \code{\link[mlr3tuning:TunerFromOptimizer]{mlr3tuning::TunerFromOptimizer}} -> \code{TunerAhb}
 }

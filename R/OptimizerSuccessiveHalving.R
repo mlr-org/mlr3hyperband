@@ -4,34 +4,46 @@
 #'
 #' @description
 #' `OptimizerSuccessiveHalving` class that implements the successive halving
-#' algorithm. The algorithm samples `n` points and evaluates them with the
-#' smallest budget (lower bound of the `budget` parameter). With every stage the
-#' budget is increased by a factor of `eta` and only the best `1/eta` points are
-#' promoted to the next stage. The optimization terminates when the maximum
-#' budget is reached (upper bound of the `budget` parameter).
+#' algorithm. Successive halving (SHA) randomly samples `n` candidate points and
+#' allocates a minimum budget (`r_min`) to all candidates. The candidates are
+#' raced down in stages to a single best candidate by repeatedly increasing the
+#' budget by a factor of `eta` and promoting only the best `1 / eta ` fraction
+#' to the next stage. This means promising points are allocated a higher budget
+#' overall and lower performing ones are discarded early on.
 #'
-#' To identify the budget, the user has to specify explicitly which parameter of
-#' the objective function influences the budget by tagging a single parameter in
-#' the search space ([paradox::ParamSet]) with `"budget"`.
+#' The budget hyperparameter must be tagged with `"budget"` in the search space.
+#' The minimum budget (`r_min`) which is allocated in the base stage, is set by
+#' the lower bound of the budget parameter. The upper bound  defines the maximum
+#' budget (`r_max`) which is allocated to the candidates in the last stage. The
+#' number of stages is computed that each candidate in base stage is allocated
+#' the minimum budget and the candidates in the last stage are not evaluated on
+#' more than the maximum budget. The following table is the stage layout for
+#' `eta = 2`, `r_min = 1` and `r_max = 8`.
+#'
+#' |   i |  ni |  ri |
+#' | ---:| ---:| ---:|
+#' |   0 |   8 |   1 |
+#' |   1 |   4 |   2 |
+#' |   2 |   2 |   4 |
+#' |   3 |   1 |   8 |
 #'
 #' @section Parameters:
 #' \describe{
 #' \item{`n`}{`integer(1)`\cr
-#' Number of points in first stage.}
+#' Number of points in base stage.}
 #' \item{`eta`}{`numeric(1)`\cr
-#' With every stage, the point budget is increased by a factor of `eta`
-#' and only the best `1/eta` points are used for the next stage.
+#' With every stage, the budget is increased by a factor of `eta`
+#' and only the best `1 / eta` points are promoted to the next stage.
 #' Non-integer values are supported, but `eta` is not allowed to be less or
 #' equal 1.
 #' }
 #' \item{`sampler`}{[paradox::Sampler]\cr
-#' Object defining how the samples of the parameter space should be drawn during
-#' the initialization of each bracket. The default is uniform sampling.
+#' Object defining how the samples of the parameter space should be drawn. The
+#' default is uniform sampling.
 #' }
 #' \item{`repeats`}{`logical(1)`\cr
-#' If `FALSE` (default), successive halving terminates once all stages are
-#' evaluated. Otherwise, successive halving starts over again once the last
-#' stage is evaluated.
+#' If `FALSE` (default), SHA terminates once all stages are evaluated.
+#' Otherwise, SHA starts over again once the last stage is evaluated.
 #' }}
 #'
 #' @section Archive:
@@ -41,9 +53,7 @@
 #'     Stage index. Starts counting at 0.
 #'
 #' @template section_custom_sampler
-#' @template section_runtime
 #' @template section_progress_bars
-#' @template section_parallelization
 #' @template section_logging
 #'
 #' @source

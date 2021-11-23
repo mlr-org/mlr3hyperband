@@ -4,33 +4,97 @@
 #'
 #' @description
 #' `OptimizerAhb` class that implements the asynchronous hyperband algorithm.
+#' Asynchronous hyperband (AHB) repeatedly runs ASHA ([OptimizerAsha]) with
+#' different minimum budgets in the base stage. Each run of ASHA within AHB is
+#' called a bracket. AHB considers `s_max + 1` brackets with
+#' `s_max = floor(log(r_max / r_min, eta)`. The most explorative bracket
+#' `s = s_max` constructs `s_max + 1` stages and allocates the minimum budget
+#' (`r_min`) in the base stage.  The minimum budget (`r_min`) is increased in
+#' each bracket by a factor of `eta` until the maximum budget is allocated in
+#' the base stage. The bracket `s = 0` is a random search with full budget. Each
+#' ASHA run uses `1 / s_max + 1` of the [bbotk::Terminator].
+#'
+#' The budget hyperparameter must be tagged with `"budget"` in the search space.
+#' The minimum budget (`r_min`) which is allocated in the base stage of the most
+#' explorative bracket, is set by the lower bound of the budget parameter. The
+#' upper bound defines the maximum budget (`r_max`) which which is allocated to
+#' the candidates in the last stages.
 #'
 #' @section Parameters:
 #' \describe{
 #' \item{`eta`}{`numeric(1)`\cr
-#' With every stage, the budget is increased by a factor of `eta` and only the
-#' best `1/eta` points are promoted for the next stage. Non-integer values are
-#' supported, but `eta` is not allowed to be less or equal 1.
+#' With every stage, the budget is increased by a factor of `eta`
+#' and only the best `1 / eta` points are promoted to the next stage.
+#' Non-integer values are supported, but `eta` is not allowed to be less or
+#' equal 1.
 #' }
 #' \item{`sampler`}{[paradox::Sampler]\cr
-#' Object defining how the samples of the parameter space should be drawn. The
-#' default is uniform sampling.
+#' Object defining how the samples of the parameter space should be drawn in the
+#' base stage of each bracket. The default is uniform sampling.
 #' }}
 #'
 #' @section Archive:
 #' The [bbotk::Archive] holds the following additional columns that are specific
 #' to the hyperband algorithm:
 #'   * `bracket` (`integer(1)`)\cr
-#'     The bracket index. Starts counting at 0.
+#'     The bracket index. Counts down to 0.
 #'   * `stage` (`integer(1))`\cr
 #'     The stages of each bracket. Starts counting at 0.
 #'
 #' @template section_custom_sampler
-#' @template section_runtime
 #' @template section_progress_bars
 #' @template section_logging
 #'
+#' @source
+#' `r format_bib("li_2020")`
+#'
 #' @export
+#' @examples
+#' library(bbotk)
+#' library(data.table)
+#'
+#' search_space = domain = ps(
+#'   x1 = p_dbl(-5, 10),
+#'   x2 = p_dbl(0, 15),
+#'   fidelity = p_dbl(1e-2, 1, tags = "budget")
+#' )
+#'
+#' # modified branin function
+#' objective = ObjectiveRFunDt$new(
+#'   fun = function(xdt) {
+#'     a = 1
+#'     b = 5.1 / (4 * (pi ^ 2))
+#'     c = 5 / pi
+#'     r = 6
+#'     s = 10
+#'     t = 1 / (8 * pi)
+#'     data.table(y =
+#'       (a * ((xdt[["x2"]] -
+#'       b * (xdt[["x1"]] ^ 2L) +
+#'       c * xdt[["x1"]] - r) ^ 2) +
+#'       ((s * (1 - t)) * cos(xdt[["x1"]])) +
+#'       s - (5 * xdt[["fidelity"]] * xdt[["x1"]])))
+#'   },
+#'   domain = domain,
+#'   codomain = ps(y = p_dbl(tags = "minimize"))
+#' )
+#'
+#' instance = OptimInstanceSingleCrit$new(
+#'   objective = objective,
+#'   search_space = search_space,
+#'   terminator = trm("evals", n_evals = 100)
+#' )
+#'
+#' optimizer = opt("ahb")
+#'
+#' # modifies the instance by reference
+#' optimizer$optimize(instance)
+#'
+#' # best scoring evaluation
+#' instance$result
+#'
+#' # all evaluations
+#' as.data.table(instance$archive)
 OptimizerAhb = R6Class("OptimizerAhb",
   inherit = Optimizer,
   public = list(

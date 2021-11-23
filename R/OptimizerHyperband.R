@@ -3,26 +3,31 @@
 #' @name mlr_optimizers_hyperband
 #'
 #' @description
-#' `OptimizerHyperband` class that implements hyperband optimization. Hyperband
-#' is a budget oriented-procedure, weeding out suboptimal performing
-#' points early in a sequential training process, increasing
-#' optimization efficiency as a consequence.
+#' `OptimizerHyperband` class that implements hyperband optimization. HyperbandX
+#' (HBX) repeatedly calls SH ([OptimizerSuccessiveHalving]) with different
+#' numbers of starting points. A larger number of starting points corresponds to
+#' a smaller budget allocated in the base stage. Each run of SH within HBX is
+#' called a bracket. HBX considers `s_max + 1` brackets with `s_max =
+#' floor(log(r_max / r_min, eta)`. The most explorative bracket `s = s_max`
+#' constructs `s_max + 1` stages and allocates the minimum budget (`r_min`) in
+#' the base stage. The minimum budget is increased in each bracket by a factor
+#' of `eta` and the number of starting points is computed so that each bracket
+#' approximately spends the same budget. Use [hyperband_schedule()] to get a
+#' preview of the bracket layout.
 #'
-#' For this, several brackets are constructed with an associated set of
-#' points for each bracket. Each bracket as several stages. Different
-#' brackets are initialized with different amounts of points and
-#' different budget sizes. To get an idea of how the bracket layout looks like
-#' for a given argument set, use [hyperband_schedule()].
+#' |   s |     |   3 |     |     |   2 |     |     |   1 |     |     |   0 |
+#' | ---:| ---:| ---:| --- | ---:| ---:| --- | ---:| ---:| --- | ---:| ---:|
+#' |   i |  ni |  ri |     |  ni |  ri |     |  ni |  ri |     |  ni |  ri |
+#' |   0 |   8 |   1 |     |   6 |   2 |     |   4 |   4 |     |   8 |   4 |
+#' |   1 |   4 |   2 |     |   3 |   4 |     |   2 |   8 |     |     |     |
+#' |   2 |   2 |   4 |     |   1 |   8 |     |     |     |     |     |     |
+#' |   3 |   1 |   8 |     |     |     |     |     |     |     |     |     |
 #'
-#' To identify the budget for evaluating hyperband, the user has to specify
-#' explicitly which parameter of the objective function influences the budget by
-#' tagging a single parameter in the [paradox::ParamSet] with `"budget"`.
-#'
-#' Naturally, hyperband terminates once all of its brackets are evaluated, so a
-#' [bbotk::Terminator] in the [bbotk::OptimInstanceSingleCrit] |
-#' [bbotk::OptimInstanceMultiCrit] acts as an upper bound and should be only set to a
-#' low value if one is unsure of how long hyperband will take to finish under
-#' the given settings.
+#' The budget hyperparameter must be tagged with `"budget"` in the search space.
+#' The minimum budget (`r_min`) which is allocated in the base stage of the most
+#' explorative bracket, is set by the lower bound of the budget parameter. The
+#' upper bound defines the maximum budget (`r_max`) which which is allocated to
+#' the candidates in the last stages.
 #'
 #' @templateVar id hyperband
 #' @template section_dictionary_optimizers
@@ -30,14 +35,14 @@
 #' @section Parameters:
 #' \describe{
 #' \item{`eta`}{`numeric(1)`\cr
-#' Fraction parameter of the successive halving algorithm: With every stage the
-#' configuration budget is increased by a factor of `eta` and only the best
-#' `1/eta` points are used for the next stage. Non-integer values are supported,
-#' but `eta` is not allowed to be less or equal 1.
+#' With every stage, the budget is increased by a factor of `eta`
+#' and only the best `1 / eta` points are promoted to the next stage.
+#' Non-integer values are supported, but `eta` is not allowed to be less or
+#' equal 1.
 #' }
 #' \item{`sampler`}{[paradox::Sampler]\cr
-#' Object defining how the samples of the parameter space should be drawn during
-#' the initialization of each bracket. The default is uniform sampling.
+#' Object defining how the samples of the parameter space should be drawn in the
+#' base stage of each bracket. The default is uniform sampling.
 #' }
 #' \item{`repeats`}{`logical(1)`\cr
 #' If `FALSE` (default), hyperband terminates once all brackets are evaluated.
@@ -53,9 +58,7 @@
 #'     The stages of each bracket. Starts counting at 0.
 #'
 #' @template section_custom_sampler
-#' @template section_runtime
 #' @template section_progress_bars
-#' @template section_parallelization
 #' @template section_logging
 #
 #' @source
