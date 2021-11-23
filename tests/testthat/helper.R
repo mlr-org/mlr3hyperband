@@ -87,7 +87,7 @@ test_tuner_successive_halving = function(n, eta, learner, measures = msr("classi
 #' Tests budget and number of configs constructed by the tuner against supplied
 #' bounds
 test_tuner_asha = function(eta, learner, measures = msr("classif.ce"), term_evals = 15, allow_hotstart = FALSE,
-  keep_hotstart_stack = TRUE, early_stopping_rate = 0) {
+  keep_hotstart_stack = TRUE) {
 
   search_space = learner$param_set$search_space()
   budget_id = search_space$ids(tags = "budget")
@@ -102,7 +102,6 @@ test_tuner_asha = function(eta, learner, measures = msr("classif.ce"), term_eval
     resampling = rsmp("holdout"),
     term_evals = term_evals,
     eta = eta,
-    early_stopping_rate = early_stopping_rate,
     allow_hotstart = allow_hotstart,
     keep_hotstart_stack = keep_hotstart_stack
   )

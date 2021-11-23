@@ -41,11 +41,10 @@ OptimizerAsha = R6Class("OptimizerAsha",
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
       param_set = ps(
-        eta                 = p_dbl(lower = 1.0001, tags = "required", default = 2),
-        sampler             = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)),
-        early_stopping_rate = p_int(lower = 0)
+        eta     = p_dbl(lower = 1.0001, tags = "required", default = 2),
+        sampler = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE))
       )
-      param_set$values = list(eta = 2, sampler = NULL, early_stopping_rate = 0)
+      param_set$values = list(eta = 2, sampler = NULL)
 
       super$initialize(
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
@@ -62,7 +61,6 @@ OptimizerAsha = R6Class("OptimizerAsha",
       pars = self$param_set$values
       eta = pars$eta
       sampler = pars$sampler
-      early_stopping_rate = pars$early_stopping_rate
       search_space = inst$search_space
       budget_id = search_space$ids(tags = "budget")
       minimize = ifelse(inst$archive$codomain$maximization_to_minimization == -1, TRUE, FALSE)
@@ -98,13 +96,9 @@ OptimizerAsha = R6Class("OptimizerAsha",
       # s_max + 1 is the number of stages
       s_max = floor(log(r, eta))
 
-      if (early_stopping_rate > s_max) {
-        stopf("Early stopping rate %i is not <= number of stages %i", early_stopping_rate, s_max)
-      }
-
       repeat({
         replicate(n_workers - inst$archive$n_in_progress, {
-          xdt = get_job(s_max, eta, early_stopping_rate, r_min, inst$archive, sampler, budget_id, integer_budget, minimize)
+          xdt = get_job(s_max, eta, r_min, inst$archive, sampler, budget_id, integer_budget, minimize)
           inst$archive$add_evals(xdt, status = "proposed")
           inst$eval_proposed(async = TRUE, single_worker = FALSE)
         })
@@ -114,15 +108,35 @@ OptimizerAsha = R6Class("OptimizerAsha",
   )
 )
 
-get_job = function(s_max, eta, early_stopping_rate, r_min, archive, sampler, budget_id, integer_budget, minimize,
-  brackets = FALSE) {
-  # s_max - early_stopping_rate == 0 is random search with full budget
-  if (nrow(archive$data) && s_max - early_stopping_rate) {
+#' @description
+#' Returns promoted or newly sampled configuration.
+#'
+#' @param s_max (`integer(1)`)\cr
+#'   Number of stages + 1
+#' @param eta (`numeric(1)`)\cr
+#'   Reduction factor.
+#' @param r_min (`numeric(1)`)\cr
+#'   Minimum budget in base stage.
+#' @param archive ([ArchiveTuning]).
+#' @param sampler ([paradox::Sampler]).
+#' @param budget_id (`character(1)`)\cr
+#'   Budget hyperparameter id.
+#' @param integer_budget (`logical(1)`)\cr
+#'   If `TRUE`, budget is rounded.
+#' @param minimize (`logical()`)\cr
+#'   If `TRUE`, measure is minimized.
+#' @param brackets (`logical(1)`)\cr
+#'   If `TRUE`, operates on brackets. `s_max` is bracket number.
+#'
+#' @noRd
+get_job = function(s_max, eta, r_min, archive, sampler, budget_id, integer_budget, minimize, brackets = FALSE) {
+  # s_max == 0 is random search with full budget
+  if (nrow(archive$data) && s_max) {
     # try to promote configuration
     # iterate stages from top to base stage
-    for (s in (s_max - early_stopping_rate - 1):0) {
+    for (s in (s_max - 1):0) {
       data_stage = archive$data[get("stage") == s & get("status") == "evaluated"]
-      # only use configurations if bracket
+      # only use configurations of current bracket
       if (brackets) data_stage = data_stage[get("bracket") == s_max, ]
       if (!nrow(data_stage)) next
 
@@ -145,7 +159,7 @@ get_job = function(s_max, eta, early_stopping_rate, r_min, archive, sampler, bud
 
       # promote configuration
       if (length(promotable)) {
-        ri = r_min * eta^(s + early_stopping_rate + 1)
+        ri = r_min * eta^(s + 1)
         if (integer_budget) ri = as.integer(round(ri))
         xdt = candidates[get("asha_id") == promotable[1], c(archive$cols_x, "asha_id"), with = FALSE]
         set(xdt, j = budget_id, value = ri)
@@ -157,11 +171,9 @@ get_job = function(s_max, eta, early_stopping_rate, r_min, archive, sampler, bud
 
   # if no promotion is possible, add new configuration to base stage
   xdt = sampler$sample(1)$data
-  ri = r_min * eta^early_stopping_rate
-  if (integer_budget) ri = as.integer(round(ri))
-  set(xdt, j = budget_id, value = ri)
-  set(xdt, j = "stage", value = 0L)
+  set(xdt, j = budget_id, value = r_min)
   asha_id = if (!nrow(archive$data)) 1L else nrow(archive$data[get("stage") == 0]) + 1L
   set(xdt, j = "asha_id", value = asha_id)
+  set(xdt, j = "stage", value = 0L)
   xdt
 }
