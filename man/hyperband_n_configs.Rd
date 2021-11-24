@@ -23,5 +23,6 @@ but \code{eta} is not allowed to be less or equal 1.}
 \code{integer(1)}
 }
 \description{
-Calculates how many different configurations are sampled.
+Calculates how many different configurations are sampled by
+\link{OptimizerHyperband}.
 }

@@ -4,9 +4,9 @@
 \name{mlr3hyperband-package}
 \alias{mlr3hyperband}
 \alias{mlr3hyperband-package}
-\title{mlr3hyperband: Hyperband for 'mlr3'}
+\title{mlr3hyperband: Successive Halving and Hyperband Algorithms for 'mlr3'}
 \description{
-Implements hyperband method for hyperparameter tuning. Various termination criteria can be set and combined. The class 'AutoTuner' provides a convenient way to perform nested resampling in combination with 'mlr3'. The hyperband algorithm was proposed by Lisha Li, Kevin Jamieson, Giulia DeSalvo, Afshin Rostamizadeh and Ameet Talwalkar (2018) <arXiv:1603.06560>.
+Multifidelity optimization algorithms based on the successive halving algorithm. Implements the successive halving, asynchronous successive halving, hyperband and asynchronous hyperband algorithm as general purpose optimizers for 'bbotk' and tuners for `mlr3tuning`. Various termination criteria can be set and combined. If possible learners are hotstarted to accelerate tuning. The class 'AutoTuner' provides a convenient way to perform nested resampling in combination with 'mlr3'.
 }
 \seealso{
 Useful links:

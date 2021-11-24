@@ -67,10 +67,8 @@ Stage index. Starts counting at 0.
 
 \section{Custom sampler}{
 
-Hyperband supports custom \link[paradox:Sampler]{paradox::Sampler} object for initial
-configurations in each bracket.
-A custom sampler may look like this (the full example is given in the
-\emph{examples} section):\preformatted{# - beta distribution with alpha = 2 and beta = 5
+All algorithms support custom \link[paradox:Sampler]{paradox::Sampler}s to draw candidates in the
+base stage.\preformatted{# - beta distribution with alpha = 2 and beta = 5
 # - categorical distribution with custom probabilities
 sampler = SamplerJointIndep$new(list(
   Sampler1DRfun$new(params[[2]], function(n) rbeta(n, 2, 5)),

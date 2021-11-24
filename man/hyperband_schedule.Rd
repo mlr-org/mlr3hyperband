@@ -20,11 +20,11 @@ configuration budget is increased by a factor of \code{eta} and only the best
 but \code{eta} is not allowed to be less or equal 1.}
 
 \item{integer_budget}{(\code{logical(1)})\cr
-Determines if budget is an integer.}
+If \code{TRUE}, budget parameter is rounded to an integer.}
 }
 \value{
 \code{\link[data.table:data.table]{data.table::data.table()}}
 }
 \description{
-Returns hyperband schedule.
+Returns schedule of \link{OptimizerHyperband}.
 }

@@ -1,8 +1,7 @@
 #' @section Custom sampler:
-#' Hyperband supports custom [paradox::Sampler] object for initial
-#' configurations in each bracket.
-#' A custom sampler may look like this (the full example is given in the
-#' *examples* section):
+#' All algorithms support custom [paradox::Sampler]s to draw candidates in the
+#' base stage.
+#'
 #' ```
 #' # - beta distribution with alpha = 2 and beta = 5
 #' # - categorical distribution with custom probabilities

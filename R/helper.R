@@ -1,7 +1,7 @@
 #' @title Hyperband Schedule
 #'
 #' @description
-#' Returns hyperband schedule.
+#' Returns schedule of [OptimizerHyperband].
 #'
 #' @template param_r_min
 #' @template param_r_max
@@ -30,7 +30,8 @@ hyperband_schedule = function(r_min, r_max, eta, integer_budget = FALSE) {
 #' @title Hyperband Configs
 #'
 #' @description
-#' Calculates how many different configurations are sampled.
+#' Calculates how many different configurations are sampled by
+#' [OptimizerHyperband].
 #'
 #' @template param_r_min
 #' @template param_r_max
@@ -49,7 +50,7 @@ hyperband_n_configs = function(r_min, r_max, eta) {
 #' @title Hyperband Budget
 #'
 #' @description
-#' Calculates the total budget used by hyperband.
+#' Calculates the total budget used by [OptimizerHyperband].
 #'
 #' @template param_r_min
 #' @template param_r_max
