@@ -41,31 +41,23 @@
 
 
 <meta property="og:title" content="Optimizer using the Hyperband algorithm — mlr_optimizers_hyperband" />
-<meta property="og:description" content="OptimizerHyperband class that implements hyperband optimization. HyperbandX
-(HBX) repeatedly calls SH (OptimizerSuccessiveHalving) with different
-numbers of starting points. A larger number of starting points corresponds to
-a smaller budget allocated in the base stage. Each run of SH within HBX is
-called a bracket. HBX considers s_max + 1 brackets with s_max = floor(log(r_max / r_min, eta). The most explorative bracket s = s_max
-constructs s_max + 1 stages and allocates the minimum budget (r_min) in
-the base stage. The minimum budget is increased in each bracket by a factor
-of eta and the number of starting points is computed so that each bracket
-approximately spends the same budget. Use hyperband_schedule() to get a
-preview of the bracket layout.
-s3210
-iniriniriniriniri
-081624484
-1423428
-22418
-318
-
-
-
-
-The budget hyperparameter must be tagged with &quot;budget&quot; in the search space.
-The minimum budget (r_min) which is allocated in the base stage of the most
-explorative bracket, is set by the lower bound of the budget parameter. The
-upper bound defines the maximum budget (r_max) which which is allocated to
-the candidates in the last stages." />
+<meta property="og:description" content="OptimizerHyperband class that implements hyperband optimization. Hyperband
+is a budget oriented-procedure, weeding out suboptimal performing
+points early in a sequential training process, increasing
+optimization efficiency as a consequence.
+For this, several brackets are constructed with an associated set of
+points for each bracket. Each bracket as several stages. Different
+brackets are initialized with different amounts of points and
+different budget sizes. To get an idea of how the bracket layout looks like
+for a given argument set, use hyperband_schedule().
+To identify the budget for evaluating hyperband, the user has to specify
+explicitly which parameter of the objective function influences the budget by
+tagging a single parameter in the paradox::ParamSet with &quot;budget&quot;.
+Naturally, hyperband terminates once all of its brackets are evaluated, so a
+bbotk::Terminator in the bbotk::OptimInstanceSingleCrit |
+bbotk::OptimInstanceMultiCrit acts as an upper bound and should be only set to a
+low value if one is unsure of how long hyperband will take to finish under
+the given settings." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -164,31 +156,23 @@ the candidates in the last stages." />
     </div>
 
     <div class="ref-description">
-    <p><code>OptimizerHyperband</code> class that implements hyperband optimization. HyperbandX
-(HBX) repeatedly calls SH (<a href='mlr_optimizers_successive_halving.html'>OptimizerSuccessiveHalving</a>) with different
-numbers of starting points. A larger number of starting points corresponds to
-a smaller budget allocated in the base stage. Each run of SH within HBX is
-called a bracket. HBX considers <code>s_max + 1</code> brackets with <code>s_max = floor(log(r_max / r_min, eta)</code>. The most explorative bracket <code>s = s_max</code>
-constructs <code>s_max + 1</code> stages and allocates the minimum budget (<code>r_min</code>) in
-the base stage. The minimum budget is increased in each bracket by a factor
-of <code>eta</code> and the number of starting points is computed so that each bracket
-approximately spends the same budget. Use <code><a href='hyperband_schedule.html'>hyperband_schedule()</a></code> to get a
-preview of the bracket layout.</p><table class='table'>
-<tr><td>s</td><td></td><td>3</td><td></td><td></td><td>2</td><td></td><td></td><td>1</td><td></td><td></td><td>0</td></tr>
-<tr><td>i</td><td>ni</td><td>ri</td><td></td><td>ni</td><td>ri</td><td></td><td>ni</td><td>ri</td><td></td><td>ni</td><td>ri</td></tr>
-<tr><td>0</td><td>8</td><td>1</td><td></td><td>6</td><td>2</td><td></td><td>4</td><td>4</td><td></td><td>8</td><td>4</td></tr>
-<tr><td>1</td><td>4</td><td>2</td><td></td><td>3</td><td>4</td><td></td><td>2</td><td>8</td><td></td><td></td><td></td></tr>
-<tr><td>2</td><td>2</td><td>4</td><td></td><td>1</td><td>8</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr><td>3</td><td>1</td><td>8</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-</table>
-
-
-
-<p>The budget hyperparameter must be tagged with <code>"budget"</code> in the search space.
-The minimum budget (<code>r_min</code>) which is allocated in the base stage of the most
-explorative bracket, is set by the lower bound of the budget parameter. The
-upper bound defines the maximum budget (<code>r_max</code>) which which is allocated to
-the candidates in the last stages.</p>
+    <p><code>OptimizerHyperband</code> class that implements hyperband optimization. Hyperband
+is a budget oriented-procedure, weeding out suboptimal performing
+points early in a sequential training process, increasing
+optimization efficiency as a consequence.</p>
+<p>For this, several brackets are constructed with an associated set of
+points for each bracket. Each bracket as several stages. Different
+brackets are initialized with different amounts of points and
+different budget sizes. To get an idea of how the bracket layout looks like
+for a given argument set, use <code><a href='hyperband_schedule.html'>hyperband_schedule()</a></code>.</p>
+<p>To identify the budget for evaluating hyperband, the user has to specify
+explicitly which parameter of the objective function influences the budget by
+tagging a single parameter in the <a href='https://paradox.mlr-org.com/reference/ParamSet.html'>paradox::ParamSet</a> with <code>"budget"</code>.</p>
+<p>Naturally, hyperband terminates once all of its brackets are evaluated, so a
+<a href='https://bbotk.mlr-org.com/reference/Terminator.html'>bbotk::Terminator</a> in the <a href='https://bbotk.mlr-org.com/reference/OptimInstanceSingleCrit.html'>bbotk::OptimInstanceSingleCrit</a> |
+<a href='https://bbotk.mlr-org.com/reference/OptimInstanceMultiCrit.html'>bbotk::OptimInstanceMultiCrit</a> acts as an upper bound and should be only set to a
+low value if one is unsure of how long hyperband will take to finish under
+the given settings.</p>
     </div>
 
 
@@ -214,13 +198,13 @@ the candidates in the last stages.</p>
 
 <dl>
 <dt><code>eta</code></dt><dd><p><code>numeric(1)</code><br />
-With every stage, the budget is increased by a factor of <code>eta</code>
-and only the best <code>1 / eta</code> points are promoted to the next stage.
-Non-integer values are supported, but <code>eta</code> is not allowed to be less or
-equal 1.</p></dd>
+Fraction parameter of the successive halving algorithm: With every stage the
+configuration budget is increased by a factor of <code>eta</code> and only the best
+<code>1/eta</code> points are used for the next stage. Non-integer values are supported,
+but <code>eta</code> is not allowed to be less or equal 1.</p></dd>
 <dt><code>sampler</code></dt><dd><p><a href='https://paradox.mlr-org.com/reference/Sampler.html'>paradox::Sampler</a><br />
-Object defining how the samples of the parameter space should be drawn in the
-base stage of each bracket. The default is uniform sampling.</p></dd>
+Object defining how the samples of the parameter space should be drawn during
+the initialization of each bracket. The default is uniform sampling.</p></dd>
 <dt><code>repeats</code></dt><dd><p><code>logical(1)</code><br />
 If <code>FALSE</code> (default), hyperband terminates once all brackets are evaluated.
 Otherwise, hyperband starts over again once the last bracket is evaluated.</p></dd>
@@ -242,8 +226,10 @@ The stages of each bracket. Starts counting at 0.</p></li>
 
     
 
-<p>All algorithms support custom <a href='https://paradox.mlr-org.com/reference/Sampler.html'>paradox::Sampler</a>s to draw candidates in the
-base stage.</p><pre><span class='co'># - beta distribution with alpha = 2 and beta = 5</span>
+<p>Hyperband supports custom <a href='https://paradox.mlr-org.com/reference/Sampler.html'>paradox::Sampler</a> object for initial
+configurations in each bracket.
+A custom sampler may look like this (the full example is given in the
+<em>examples</em> section):</p><pre><span class='co'># - beta distribution with alpha = 2 and beta = 5</span>
 <span class='co'># - categorical distribution with custom probabilities</span>
 <span class='va'>sampler</span> <span class='op'>=</span> <span class='va'><a href='https://paradox.mlr-org.com/reference/SamplerJointIndep.html'>SamplerJointIndep</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
   <span class='va'><a href='https://paradox.mlr-org.com/reference/Sampler1DRfun.html'>Sampler1DRfun</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='va'>params</span><span class='op'>[[</span><span class='fl'>2</span><span class='op'>]</span><span class='op'>]</span>, <span class='kw'>function</span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/stats/Beta.html'>rbeta</a></span><span class='op'>(</span><span class='va'>n</span>, <span class='fl'>2</span>, <span class='fl'>5</span><span class='op'>)</span><span class='op'>)</span>,
@@ -251,6 +237,18 @@ base stage.</p><pre><span class='co'># - beta distribution with alpha = 2 and be
 <span class='op'>)</span><span class='op'>)</span>
 </pre>
 
+    <h2 class="hasAnchor" id="runtime"><a class="anchor" href="#runtime"></a>Runtime</h2>
+
+    
+
+<p>The calculation of each bracket currently assumes a linear runtime in the
+chosen budget parameter is always given. Hyperband is designed so each
+bracket requires approximately the same runtime as the sum of the budget
+over all configurations in each bracket is roughly the same. This will not
+hold true once the scaling in the budget parameter is not linear
+anymore, even though the sum of the budgets in each bracket remains the
+same. A possible adaption would be to introduce a trafo, like it is shown in
+the <em>examples</em> section.</p>
     <h2 class="hasAnchor" id="progress-bars"><a class="anchor" href="#progress-bars"></a>Progress Bars</h2>
 
     
@@ -259,6 +257,15 @@ base stage.</p><pre><span class='co'># - beta distribution with alpha = 2 and be
 combined with a <a href='https://bbotk.mlr-org.com/reference/Terminator.html'>Terminator</a>. Simply wrap the function in
 <code>progressr::with_progress()</code> to enable them. We recommend to use package
 <a href='https://CRAN.R-project.org/package=progress'><span class="pkg">progress</span></a> as backend; enable with <code>progressr::handlers("progress")</code>.</p>
+    <h2 class="hasAnchor" id="parallelization"><a class="anchor" href="#parallelization"></a>Parallelization</h2>
+
+    
+
+<p>In order to support general termination criteria and parallelization, we
+evaluate points in a batch-fashion of size <code>batch_size</code>. The points of one
+stage in a bracket are evaluated in one batch. Parallelization is supported
+via package <a href='https://CRAN.R-project.org/package=future'><span class="pkg">future</span></a> (see <code><a href='https://mlr3.mlr-org.com/reference/benchmark.html'>mlr3::benchmark()</a></code>'s section on
+parallelization for more details).</p>
     <h2 class="hasAnchor" id="logging"><a class="anchor" href="#logging"></a>Logging</h2>
 
     
@@ -345,39 +352,39 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
 <span class='r-in'><span class='co'># modifies the instance by reference</span></span>
 <span class='r-in'><span class='va'>optimizer</span><span class='op'>$</span><span class='fu'>optimize</span><span class='op'>(</span><span class='va'>instance</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>          x1       x2 fidelity  x_domain         y</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 1: 9.922486 2.039868        1 &lt;list[3]&gt; -47.26291</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1: 9.633218 4.350752        1 &lt;list[3]&gt; -44.68965</span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># best scoring evaluation</span></span>
 <span class='r-in'><span class='va'>instance</span><span class='op'>$</span><span class='va'>result</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>          x1       x2 fidelity  x_domain         y</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 1: 9.922486 2.039868        1 &lt;list[3]&gt; -47.26291</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1: 9.633218 4.350752        1 &lt;list[3]&gt; -44.68965</span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># all evaluations</span></span>
 <span class='r-in'><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/as.data.table.html'>as.data.table</a></span><span class='op'>(</span><span class='va'>instance</span><span class='op'>$</span><span class='va'>archive</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>             x1         x2 fidelity bracket stage          y           timestamp</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   1:  7.541130  3.0604597 0.015625       6     0  15.310758 2021-11-24 12:33:25</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   2:  6.442292  0.4653903 0.015625       6     0  19.390904 2021-11-24 12:33:25</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   3:  1.259049 14.5456059 0.015625       6     0 119.858822 2021-11-24 12:33:25</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   4: -2.928877  2.6791964 0.015625       6     0  83.479282 2021-11-24 12:33:25</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   5: -3.787326 11.6743918 0.015625       6     0   7.494944 2021-11-24 12:33:25</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  ---                                                                           </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 297:  9.896771  6.6224878 1.000000       2     2 -34.193455 2021-11-24 12:33:26</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 298:  5.731346  1.5197064 1.000000       2     2 -10.321589 2021-11-24 12:33:26</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 299:  8.918052  3.9278542 1.000000       1     1 -39.573905 2021-11-24 12:33:26</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 300:  7.812605  2.7356688 1.000000       1     1 -27.015102 2021-11-24 12:33:26</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 301:  3.392368  6.5872500 1.000000       1     1   3.983656 2021-11-24 12:33:26</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>      batch_nr    status</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   1:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   2:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   3:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   4:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   5:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  ---                   </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 297:        7 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 298:        7 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 299:        7 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 300:        7 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 301:        7 evaluated</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>             x1         x2 fidelity bracket stage           y</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   1: -3.788748  8.9439418 0.015625       6     0  27.0432697</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   2:  7.514996  2.8727705 0.015625       6     0  14.9699262</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   3:  4.011413 14.2164591 0.015625       6     0 160.2955132</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   4: -2.641873  8.1372061 0.015625       6     0  10.5940635</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   5: -4.889008  8.1690509 0.015625       6     0  87.7567694</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  ---                                                        </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 297:  8.285662  1.8973893 1.000000       2     2 -35.3993144</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 298:  3.287085  0.5386471 1.000000       2     2 -13.2934351</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 299:  9.059953  3.9177918 1.000000       1     1 -41.2654783</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 300:  4.991380  0.2215352 1.000000       1     1 -11.2039660</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 301:  3.228872  6.2107174 1.000000       1     1   0.3124757</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                timestamp batch_nr</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   1: 2021-11-25 04:32:57        1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   2: 2021-11-25 04:32:57        1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   3: 2021-11-25 04:32:57        1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   4: 2021-11-25 04:32:57        1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   5: 2021-11-25 04:32:57        1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  ---                             </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 297: 2021-11-25 04:32:57        7</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 298: 2021-11-25 04:32:57        7</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 299: 2021-11-25 04:32:57        7</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 300: 2021-11-25 04:32:57        7</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 301: 2021-11-25 04:32:57        7</span>
 </pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
