@@ -156,7 +156,7 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
         assert_set_equal(sampler$param_set$ids(), search_space_sampler$ids())
       }
 
-      # r_min is the budget of a single configuration in the first stage
+      # r_min is the budget of a single configuration in the base stage of the first bracket
       # r_max is the maximum budget of a single configuration in the last stage
       # the internal budget is rescaled to a minimum budget of 1
       # for this, the budget is divided by r_min

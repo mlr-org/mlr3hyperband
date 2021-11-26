@@ -17,10 +17,10 @@
 #' The minimum budget (`r_min`) which is allocated in the base stage, is set by
 #' the lower bound of the budget parameter. The upper bound  defines the maximum
 #' budget (`r_max`) which is allocated to the candidates in the last stage. The
-#' number of stages is computed that each candidate in base stage is allocated
-#' the minimum budget and the candidates in the last stage are not evaluated on
-#' more than the maximum budget. The following table is the stage layout for
-#' `eta = 2`, `r_min = 1` and `r_max = 8`.
+#' number of stages is computed so that each candidate in base stage is
+#' allocated the minimum budget and the candidates in the last stage are not
+#' evaluated on more than the maximum budget. The following table is the stage
+#' layout for `eta = 2`, `r_min = 1` and `r_max = 8`.
 #'
 #' |   i |  ni |  ri |
 #' | ---:| ---:| ---:|

@@ -15,10 +15,10 @@
 #' The minimum budget (`r_min`) which is allocated in the base stage, is set by
 #' the lower bound of the budget parameter. The upper bound  defines the maximum
 #' budget (`r_max`) which is allocated to the candidates in the last stage. The
-#' number of stages is computed that each candidate in base stage is allocated
-#' the minimum budget and the candidates in the last stage are not evaluated on
-#' more than the maximum budget. The following table is the stage layout for
-#' `eta = 2`, `r_min = 1` and `r_max = 8`.
+#' number of stages is computed so that each candidate in base stage is
+#' allocated the minimum budget and the candidates in the last stage are not
+#' evaluated on more than the maximum budget. The following table is the stage
+#' layout for `eta = 2`, `r_min = 1` and `r_max = 8`.
 #'
 #' |   i |  ni |  ri |
 #' | ---:| ---:| ---:|
@@ -154,7 +154,7 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
         assert_set_equal(sampler$param_set$ids(), search_space_sampler$ids())
       }
 
-      # r_min is the budget of a single configuration in the first stage
+      # r_min is the budget of a single configuration in the base stage
       # r_max is the maximum budget of a single configuration in the last stage
       # the internal budget is rescaled to a minimum budget of 1
       # for this, the budget is divided by r_min

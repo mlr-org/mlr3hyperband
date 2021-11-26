@@ -144,18 +144,11 @@ OptimizerAsha = R6Class("OptimizerAsha",
 
       # r_min is the budget of a single configuration in the base stage
       # r_max is the maximum budget of a single configuration in the top stage
-      # the internal budget is rescaled to a minimum budget of 1
-      # for this, the budget is divided by r_min
-      # the budget is transformed to the original scale before passing it to the objective function
       r_max = search_space$upper[[budget_id]]
       r_min = search_space$lower[[budget_id]]
 
-      # maximum budget of a single configuration in the top stage (scaled)
-      # R in the original paper
-      r = r_max / r_min
-
       # s_max + 1 is the number of stages
-      s_max = floor(log(r, eta))
+      s_max = floor(log(r_max / r_min, eta))
 
       repeat({
         replicate(n_workers - inst$archive$n_in_progress, {
