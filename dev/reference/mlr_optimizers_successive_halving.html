@@ -52,10 +52,10 @@ The budget hyperparameter must be tagged with &quot;budget&quot; in the search s
 The minimum budget (r_min) which is allocated in the base stage, is set by
 the lower bound of the budget parameter. The upper bound  defines the maximum
 budget (r_max) which is allocated to the candidates in the last stage. The
-number of stages is computed that each candidate in base stage is allocated
-the minimum budget and the candidates in the last stage are not evaluated on
-more than the maximum budget. The following table is the stage layout for
-eta = 2, r_min = 1 and r_max = 8.
+number of stages is computed so that each candidate in base stage is
+allocated the minimum budget and the candidates in the last stage are not
+evaluated on more than the maximum budget. The following table is the stage
+layout for eta = 2, r_min = 1 and r_max = 8.
 iniri
 081
 142
@@ -173,10 +173,10 @@ overall and lower performing ones are discarded early on.</p>
 The minimum budget (<code>r_min</code>) which is allocated in the base stage, is set by
 the lower bound of the budget parameter. The upper bound  defines the maximum
 budget (<code>r_max</code>) which is allocated to the candidates in the last stage. The
-number of stages is computed that each candidate in base stage is allocated
-the minimum budget and the candidates in the last stage are not evaluated on
-more than the maximum budget. The following table is the stage layout for
-<code>eta = 2</code>, <code>r_min = 1</code> and <code>r_max = 8</code>.</p><table class='table'>
+number of stages is computed so that each candidate in base stage is
+allocated the minimum budget and the candidates in the last stage are not
+evaluated on more than the maximum budget. The following table is the stage
+layout for <code>eta = 2</code>, <code>r_min = 1</code> and <code>r_max = 8</code>.</p><table class='table'>
 <tr><td>i</td><td>ni</td><td>ri</td></tr>
 <tr><td>0</td><td>8</td><td>1</td></tr>
 <tr><td>1</td><td>4</td><td>2</td></tr>
@@ -295,118 +295,107 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
     <pre class="examples"><span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://bbotk.mlr-org.com'>bbotk</a></span><span class='op'>)</span></span>
 <span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://r-datatable.com'>data.table</a></span><span class='op'>)</span></span>
 <span class='r-in'></span>
+<span class='r-in'><span class='co'># set search space</span></span>
 <span class='r-in'><span class='va'>search_space</span> <span class='op'>=</span> <span class='va'>domain</span> <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/ps.html'>ps</a></span><span class='op'>(</span></span>
 <span class='r-in'>  x1 <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/Domain.html'>p_dbl</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>5</span>, <span class='fl'>10</span><span class='op'>)</span>,</span>
 <span class='r-in'>  x2 <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/Domain.html'>p_dbl</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>15</span><span class='op'>)</span>,</span>
 <span class='r-in'>  fidelity <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/Domain.html'>p_dbl</a></span><span class='op'>(</span><span class='fl'>1e-2</span>, <span class='fl'>1</span>, tags <span class='op'>=</span> <span class='st'>"budget"</span><span class='op'>)</span></span>
 <span class='r-in'><span class='op'>)</span></span>
 <span class='r-in'></span>
-<span class='r-in'><span class='co'># modified branin function</span></span>
-<span class='r-in'><span class='va'>objective</span> <span class='op'>=</span> <span class='va'><a href='https://bbotk.mlr-org.com/reference/ObjectiveRFunDt.html'>ObjectiveRFunDt</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span></span>
-<span class='r-in'>  fun <span class='op'>=</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>xdt</span><span class='op'>)</span> <span class='op'>{</span></span>
-<span class='r-in'>    <span class='va'>a</span> <span class='op'>=</span> <span class='fl'>1</span></span>
-<span class='r-in'>    <span class='va'>b</span> <span class='op'>=</span> <span class='fl'>5.1</span> <span class='op'>/</span> <span class='op'>(</span><span class='fl'>4</span> <span class='op'>*</span> <span class='op'>(</span><span class='va'>pi</span> <span class='op'>^</span> <span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span></span>
-<span class='r-in'>    <span class='va'>c</span> <span class='op'>=</span> <span class='fl'>5</span> <span class='op'>/</span> <span class='va'>pi</span></span>
-<span class='r-in'>    <span class='va'>r</span> <span class='op'>=</span> <span class='fl'>6</span></span>
-<span class='r-in'>    <span class='va'>s</span> <span class='op'>=</span> <span class='fl'>10</span></span>
-<span class='r-in'>    <span class='va'>t</span> <span class='op'>=</span> <span class='fl'>1</span> <span class='op'>/</span> <span class='op'>(</span><span class='fl'>8</span> <span class='op'>*</span> <span class='va'>pi</span><span class='op'>)</span></span>
-<span class='r-in'>    <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span><span class='op'>(</span>y <span class='op'>=</span></span>
-<span class='r-in'>      <span class='op'>(</span><span class='va'>a</span> <span class='op'>*</span> <span class='op'>(</span><span class='op'>(</span><span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"x2"</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>-</span></span>
-<span class='r-in'>      <span class='va'>b</span> <span class='op'>*</span> <span class='op'>(</span><span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"x1"</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>^</span> <span class='fl'>2L</span><span class='op'>)</span> <span class='op'>+</span></span>
-<span class='r-in'>      <span class='va'>c</span> <span class='op'>*</span> <span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"x1"</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>-</span> <span class='va'>r</span><span class='op'>)</span> <span class='op'>^</span> <span class='fl'>2</span><span class='op'>)</span> <span class='op'>+</span></span>
-<span class='r-in'>      <span class='op'>(</span><span class='op'>(</span><span class='va'>s</span> <span class='op'>*</span> <span class='op'>(</span><span class='fl'>1</span> <span class='op'>-</span> <span class='va'>t</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>*</span> <span class='fu'><a href='https://rdrr.io/r/base/Trig.html'>cos</a></span><span class='op'>(</span><span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"x1"</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
-<span class='r-in'>      <span class='va'>s</span> <span class='op'>-</span> <span class='op'>(</span><span class='fl'>5</span> <span class='op'>*</span> <span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"fidelity"</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>*</span> <span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"x1"</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
-<span class='r-in'>  <span class='op'>}</span>,</span>
+<span class='r-in'><span class='co'># objective with modified branin function, see `bbotk::branin()`</span></span>
+<span class='r-in'><span class='va'>objective</span> <span class='op'>=</span> <span class='va'><a href='https://bbotk.mlr-org.com/reference/ObjectiveRFun.html'>ObjectiveRFun</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span></span>
+<span class='r-in'>  fun <span class='op'>=</span> <span class='va'>branin</span>,</span>
 <span class='r-in'>  domain <span class='op'>=</span> <span class='va'>domain</span>,</span>
 <span class='r-in'>  codomain <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/ps.html'>ps</a></span><span class='op'>(</span>y <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/Domain.html'>p_dbl</a></span><span class='op'>(</span>tags <span class='op'>=</span> <span class='st'>"minimize"</span><span class='op'>)</span><span class='op'>)</span></span>
 <span class='r-in'><span class='op'>)</span></span>
 <span class='r-in'></span>
+<span class='r-in'><span class='co'># initialize instance and optimizer</span></span>
 <span class='r-in'><span class='va'>instance</span> <span class='op'>=</span> <span class='va'><a href='https://bbotk.mlr-org.com/reference/OptimInstanceSingleCrit.html'>OptimInstanceSingleCrit</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span></span>
 <span class='r-in'>  objective <span class='op'>=</span> <span class='va'>objective</span>,</span>
 <span class='r-in'>  search_space <span class='op'>=</span> <span class='va'>search_space</span>,</span>
-<span class='r-in'>  terminator <span class='op'>=</span> <span class='fu'><a href='https://bbotk.mlr-org.com/reference/trm.html'>trm</a></span><span class='op'>(</span><span class='st'>"none"</span><span class='op'>)</span></span>
+<span class='r-in'>  terminator <span class='op'>=</span> <span class='fu'><a href='https://bbotk.mlr-org.com/reference/trm.html'>trm</a></span><span class='op'>(</span><span class='st'>"evals"</span>, n_evals <span class='op'>=</span> <span class='fl'>50</span><span class='op'>)</span></span>
 <span class='r-in'><span class='op'>)</span></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='va'>optimizer</span> <span class='op'>=</span> <span class='fu'><a href='https://bbotk.mlr-org.com/reference/opt.html'>opt</a></span><span class='op'>(</span><span class='st'>"successive_halving"</span><span class='op'>)</span></span>
 <span class='r-in'></span>
-<span class='r-in'><span class='co'># modifies the instance by reference</span></span>
+<span class='r-in'><span class='co'># optimize branin function</span></span>
 <span class='r-in'><span class='va'>optimizer</span><span class='op'>$</span><span class='fu'>optimize</span><span class='op'>(</span><span class='va'>instance</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>          x1       x2 fidelity  x_domain         y</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 1: 3.170577 2.685514     0.16 &lt;list[3]&gt; -1.947044</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>           x1       x2 fidelity  x_domain        y</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1: -3.070961 11.68456     0.16 &lt;list[3]&gt; 0.559356</span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># best scoring evaluation</span></span>
 <span class='r-in'><span class='va'>instance</span><span class='op'>$</span><span class='va'>result</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>          x1       x2 fidelity  x_domain         y</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 1: 3.170577 2.685514     0.16 &lt;list[3]&gt; -1.947044</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>           x1       x2 fidelity  x_domain        y</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1: -3.070961 11.68456     0.16 &lt;list[3]&gt; 0.559356</span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># all evaluations</span></span>
 <span class='r-in'><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/as.data.table.html'>as.data.table</a></span><span class='op'>(</span><span class='va'>instance</span><span class='op'>$</span><span class='va'>archive</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>             x1         x2 fidelity stage            y           timestamp</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  1:  1.7963385 12.6634712     0.01     0  90.67433172 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  2:  9.7229777  6.8512377     0.01     0  17.25402523 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  3:  3.1705775  2.6855144     0.01     0   0.43088926 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  4:  0.4006360 14.4931379     0.01     0 101.81445106 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  5:  2.5471916 10.7011793     0.01     0  64.59613571 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  6: -3.8804955  0.3732905     0.01     0 192.10362644 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  7:  9.5468784  9.3968474     0.01     0  46.46252751 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  8:  4.7275197 12.4188198     0.01     0 132.13739377 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  9:  9.7684820  9.6460355     0.01     0  47.61099918 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 10:  3.0419989 10.6272639     0.01     0  68.74108420 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 11:  6.4158911 13.0609073     0.01     0 162.10476461 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 12:  3.4657859  4.2271887     0.01     0   5.52718448 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 13:  6.6768146  2.5983726     0.01     0  20.68258062 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 14:  4.5859148  1.6450503     0.01     0   8.61101777 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 15:  0.6844110  8.7933329     0.01     0  32.01382108 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 16:  0.3929601 12.7608199     0.01     0  73.11277082 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 17:  3.1705775  2.6855144     0.02     1   0.27236038 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 18:  3.4657859  4.2271887     0.02     1   5.35389518 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 19:  4.5859148  1.6450503     0.02     1   8.38172203 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 20:  9.7229777  6.8512377     0.02     1  16.76787634 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 21:  6.6768146  2.5983726     0.02     1  20.34873989 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 22:  0.6844110  8.7933329     0.02     1  31.97960053 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 23:  9.5468784  9.3968474     0.02     1  45.98518359 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 24:  9.7684820  9.6460355     0.02     1  47.12257508 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 25:  3.1705775  2.6855144     0.04     2  -0.04469736 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 26:  3.4657859  4.2271887     0.04     2   5.00731659 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 27:  4.5859148  1.6450503     0.04     2   7.92313055 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 28:  9.7229777  6.8512377     0.04     2  15.79557857 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 29:  3.1705775  2.6855144     0.08     3  -0.67881286 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 30:  3.4657859  4.2271887     0.08     3   4.31415941 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 31:  3.1705775  2.6855144     0.16     4  -1.94704386 2021-11-26 09:42:11</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>             x1         x2 fidelity stage            y           timestamp</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>     batch_nr    status</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  1:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  2:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  3:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  4:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  5:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  6:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  7:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  8:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  9:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 10:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 11:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 12:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 13:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 14:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 15:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 16:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 17:        2 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 18:        2 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 19:        2 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 20:        2 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 21:        2 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 22:        2 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 23:        2 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 24:        2 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 25:        3 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 26:        3 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 27:        3 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 28:        3 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 29:        4 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 30:        4 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 31:        5 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>     batch_nr    status</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>             x1         x2 fidelity stage           y           timestamp</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  1: -4.4498089 13.4711606     0.01     0   7.5510670 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  2:  5.9936600  8.9170842     0.01     0 148.5235618 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  3: -1.7709101 12.4753488     0.01     0  20.7805203 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  4: -4.7599528  8.9011255     0.01     0  39.1697392 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  5: -3.0709613 11.6845595     0.01     0   0.6842889 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  6:  5.2909466  5.9665747     0.01     0  72.1382296 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  7:  4.6291190 12.7482416     0.01     0 190.6125474 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  8: -0.0899222 11.1276837     0.01     0  44.4068035 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  9:  0.8122297  4.7668533     0.01     0  16.6066898 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 10:  5.6125059  1.6752034     0.01     0  30.8956858 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 11:  5.4648314  1.5164305     0.01     0  27.5352210 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 12:  8.8848515 12.0014662     0.01     0 317.1588213 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 13:  1.8852659  5.6992011     0.01     0  13.7505524 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 14:  3.9393130  0.7905146     0.01     0   3.6445879 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 15: -2.5248352 14.7976305     0.01     0  23.2058289 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 16:  3.5036468  9.0626095     0.01     0  69.3852538 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 17: -3.0709613 11.6845595     0.02     1   0.6747149 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 18:  3.9393130  0.7905146     0.02     1   3.6264640 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 19: -4.4498089 13.4711606     0.02     1   7.5597203 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 20:  1.8852659  5.6992011     0.02     1  13.7321370 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 21:  0.8122297  4.7668533     0.02     1  16.6066379 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 22: -1.7709101 12.4753488     0.02     1  20.7581872 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 23: -2.5248352 14.7976305     0.02     1  23.1473896 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 24:  5.4648314  1.5164305     0.02     1  27.3382591 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 25: -3.0709613 11.6845595     0.04     2   0.6561005 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 26:  3.9393130  0.7905146     0.04     2   3.5916610 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 27: -4.4498089 13.4711606     0.04     2   7.5793793 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 28:  1.8852659  5.6992011     0.04     2  13.6953820 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 29: -3.0709613 11.6845595     0.08     3   0.6210062 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 30:  3.9393130  0.7905146     0.08     3   3.5278345 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 31: -3.0709613 11.6845595     0.16     4   0.5593560 2021-11-26 14:30:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>             x1         x2 fidelity stage           y           timestamp</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     batch_nr    status x_domain_x1 x_domain_x2 x_domain_fidelity</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  1:        1 evaluated  -4.4498089  13.4711606              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  2:        1 evaluated   5.9936600   8.9170842              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  3:        1 evaluated  -1.7709101  12.4753488              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  4:        1 evaluated  -4.7599528   8.9011255              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  5:        1 evaluated  -3.0709613  11.6845595              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  6:        1 evaluated   5.2909466   5.9665747              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  7:        1 evaluated   4.6291190  12.7482416              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  8:        1 evaluated  -0.0899222  11.1276837              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  9:        1 evaluated   0.8122297   4.7668533              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 10:        1 evaluated   5.6125059   1.6752034              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 11:        1 evaluated   5.4648314   1.5164305              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 12:        1 evaluated   8.8848515  12.0014662              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 13:        1 evaluated   1.8852659   5.6992011              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 14:        1 evaluated   3.9393130   0.7905146              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 15:        1 evaluated  -2.5248352  14.7976305              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 16:        1 evaluated   3.5036468   9.0626095              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 17:        2 evaluated  -3.0709613  11.6845595              0.02</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 18:        2 evaluated   3.9393130   0.7905146              0.02</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 19:        2 evaluated  -4.4498089  13.4711606              0.02</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 20:        2 evaluated   1.8852659   5.6992011              0.02</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 21:        2 evaluated   0.8122297   4.7668533              0.02</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 22:        2 evaluated  -1.7709101  12.4753488              0.02</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 23:        2 evaluated  -2.5248352  14.7976305              0.02</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 24:        2 evaluated   5.4648314   1.5164305              0.02</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 25:        3 evaluated  -3.0709613  11.6845595              0.04</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 26:        3 evaluated   3.9393130   0.7905146              0.04</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 27:        3 evaluated  -4.4498089  13.4711606              0.04</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 28:        3 evaluated   1.8852659   5.6992011              0.04</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 29:        4 evaluated  -3.0709613  11.6845595              0.08</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 30:        4 evaluated   3.9393130   0.7905146              0.08</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 31:        5 evaluated  -3.0709613  11.6845595              0.16</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     batch_nr    status x_domain_x1 x_domain_x2 x_domain_fidelity</span>
 </pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

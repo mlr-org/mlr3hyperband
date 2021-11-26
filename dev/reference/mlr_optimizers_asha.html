@@ -276,76 +276,147 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
     <pre class="examples"><span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://bbotk.mlr-org.com'>bbotk</a></span><span class='op'>)</span></span>
 <span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://r-datatable.com'>data.table</a></span><span class='op'>)</span></span>
 <span class='r-in'></span>
+<span class='r-in'><span class='co'># set search space</span></span>
 <span class='r-in'><span class='va'>search_space</span> <span class='op'>=</span> <span class='va'>domain</span> <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/ps.html'>ps</a></span><span class='op'>(</span></span>
 <span class='r-in'>  x1 <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/Domain.html'>p_dbl</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>5</span>, <span class='fl'>10</span><span class='op'>)</span>,</span>
 <span class='r-in'>  x2 <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/Domain.html'>p_dbl</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>15</span><span class='op'>)</span>,</span>
 <span class='r-in'>  fidelity <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/Domain.html'>p_dbl</a></span><span class='op'>(</span><span class='fl'>1e-2</span>, <span class='fl'>1</span>, tags <span class='op'>=</span> <span class='st'>"budget"</span><span class='op'>)</span></span>
 <span class='r-in'><span class='op'>)</span></span>
 <span class='r-in'></span>
-<span class='r-in'><span class='co'># modified branin function</span></span>
-<span class='r-in'><span class='va'>objective</span> <span class='op'>=</span> <span class='va'><a href='https://bbotk.mlr-org.com/reference/ObjectiveRFunDt.html'>ObjectiveRFunDt</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span></span>
-<span class='r-in'>  fun <span class='op'>=</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>xdt</span><span class='op'>)</span> <span class='op'>{</span></span>
-<span class='r-in'>    <span class='va'>a</span> <span class='op'>=</span> <span class='fl'>1</span></span>
-<span class='r-in'>    <span class='va'>b</span> <span class='op'>=</span> <span class='fl'>5.1</span> <span class='op'>/</span> <span class='op'>(</span><span class='fl'>4</span> <span class='op'>*</span> <span class='op'>(</span><span class='va'>pi</span> <span class='op'>^</span> <span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span></span>
-<span class='r-in'>    <span class='va'>c</span> <span class='op'>=</span> <span class='fl'>5</span> <span class='op'>/</span> <span class='va'>pi</span></span>
-<span class='r-in'>    <span class='va'>r</span> <span class='op'>=</span> <span class='fl'>6</span></span>
-<span class='r-in'>    <span class='va'>s</span> <span class='op'>=</span> <span class='fl'>10</span></span>
-<span class='r-in'>    <span class='va'>t</span> <span class='op'>=</span> <span class='fl'>1</span> <span class='op'>/</span> <span class='op'>(</span><span class='fl'>8</span> <span class='op'>*</span> <span class='va'>pi</span><span class='op'>)</span></span>
-<span class='r-in'>    <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span><span class='op'>(</span>y <span class='op'>=</span></span>
-<span class='r-in'>      <span class='op'>(</span><span class='va'>a</span> <span class='op'>*</span> <span class='op'>(</span><span class='op'>(</span><span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"x2"</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>-</span></span>
-<span class='r-in'>      <span class='va'>b</span> <span class='op'>*</span> <span class='op'>(</span><span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"x1"</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>^</span> <span class='fl'>2L</span><span class='op'>)</span> <span class='op'>+</span></span>
-<span class='r-in'>      <span class='va'>c</span> <span class='op'>*</span> <span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"x1"</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>-</span> <span class='va'>r</span><span class='op'>)</span> <span class='op'>^</span> <span class='fl'>2</span><span class='op'>)</span> <span class='op'>+</span></span>
-<span class='r-in'>      <span class='op'>(</span><span class='op'>(</span><span class='va'>s</span> <span class='op'>*</span> <span class='op'>(</span><span class='fl'>1</span> <span class='op'>-</span> <span class='va'>t</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>*</span> <span class='fu'><a href='https://rdrr.io/r/base/Trig.html'>cos</a></span><span class='op'>(</span><span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"x1"</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
-<span class='r-in'>      <span class='va'>s</span> <span class='op'>-</span> <span class='op'>(</span><span class='fl'>5</span> <span class='op'>*</span> <span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"fidelity"</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>*</span> <span class='va'>xdt</span><span class='op'>[[</span><span class='st'>"x1"</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
-<span class='r-in'>  <span class='op'>}</span>,</span>
+<span class='r-in'><span class='co'># objective with modified branin function, see `bbotk::branin()`</span></span>
+<span class='r-in'><span class='va'>objective</span> <span class='op'>=</span> <span class='va'><a href='https://bbotk.mlr-org.com/reference/ObjectiveRFun.html'>ObjectiveRFun</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span></span>
+<span class='r-in'>  fun <span class='op'>=</span> <span class='va'>branin</span>,</span>
 <span class='r-in'>  domain <span class='op'>=</span> <span class='va'>domain</span>,</span>
 <span class='r-in'>  codomain <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/ps.html'>ps</a></span><span class='op'>(</span>y <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/Domain.html'>p_dbl</a></span><span class='op'>(</span>tags <span class='op'>=</span> <span class='st'>"minimize"</span><span class='op'>)</span><span class='op'>)</span></span>
 <span class='r-in'><span class='op'>)</span></span>
 <span class='r-in'></span>
+<span class='r-in'><span class='co'># initialize instance and optimizer</span></span>
 <span class='r-in'><span class='va'>instance</span> <span class='op'>=</span> <span class='va'><a href='https://bbotk.mlr-org.com/reference/OptimInstanceSingleCrit.html'>OptimInstanceSingleCrit</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span></span>
 <span class='r-in'>  objective <span class='op'>=</span> <span class='va'>objective</span>,</span>
 <span class='r-in'>  search_space <span class='op'>=</span> <span class='va'>search_space</span>,</span>
-<span class='r-in'>  terminator <span class='op'>=</span> <span class='fu'><a href='https://bbotk.mlr-org.com/reference/trm.html'>trm</a></span><span class='op'>(</span><span class='st'>"evals"</span>, n_evals <span class='op'>=</span> <span class='fl'>100</span><span class='op'>)</span></span>
+<span class='r-in'>  terminator <span class='op'>=</span> <span class='fu'><a href='https://bbotk.mlr-org.com/reference/trm.html'>trm</a></span><span class='op'>(</span><span class='st'>"evals"</span>, n_evals <span class='op'>=</span> <span class='fl'>50</span><span class='op'>)</span></span>
 <span class='r-in'><span class='op'>)</span></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='va'>optimizer</span> <span class='op'>=</span> <span class='fu'><a href='https://bbotk.mlr-org.com/reference/opt.html'>opt</a></span><span class='op'>(</span><span class='st'>"asha"</span><span class='op'>)</span></span>
 <span class='r-in'></span>
-<span class='r-in'><span class='co'># modifies the instance by reference</span></span>
+<span class='r-in'><span class='co'># optimize branin function</span></span>
 <span class='r-in'><span class='va'>optimizer</span><span class='op'>$</span><span class='fu'>optimize</span><span class='op'>(</span><span class='va'>instance</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>          x1        x2 fidelity  x_domain         y</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 1: 8.641614 0.5617675     0.64 &lt;list[3]&gt; -22.68421</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          x1       x2 fidelity  x_domain       y</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1: 3.169051 4.178957     0.16 &lt;list[3]&gt; 8.06818</span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># best scoring evaluation</span></span>
 <span class='r-in'><span class='va'>instance</span><span class='op'>$</span><span class='va'>result</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>          x1        x2 fidelity  x_domain         y</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 1: 8.641614 0.5617675     0.64 &lt;list[3]&gt; -22.68421</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          x1       x2 fidelity  x_domain       y</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1: 3.169051 4.178957     0.16 &lt;list[3]&gt; 8.06818</span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># all evaluations</span></span>
 <span class='r-in'><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/as.data.table.html'>as.data.table</a></span><span class='op'>(</span><span class='va'>instance</span><span class='op'>$</span><span class='va'>archive</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>              x1        x2 fidelity asha_id stage           timestamp batch_nr</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   1:  1.0432182 11.544453     0.01       1     0 2021-11-26 09:42:06        1</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   2: -3.2077194  2.920424     0.01       2     0 2021-11-26 09:42:06        2</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   3:  1.0432182 11.544453     0.02       1     1 2021-11-26 09:42:06        3</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   4: -2.5314613  9.948099     0.01       3     0 2021-11-26 09:42:06        4</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   5: -2.5314613  9.948099     0.02       3     1 2021-11-26 09:42:06        5</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  ---                                                                         </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  97: -4.4071897 14.171622     0.04      42     2 2021-11-26 09:42:10       97</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  98: -1.3260802 11.716839     0.01      43     0 2021-11-26 09:42:10       98</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  99: -0.6764425 13.130369     0.01      44     0 2021-11-26 09:42:10       99</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 100: -0.5637486 14.752881     0.01      45     0 2021-11-26 09:42:10      100</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 101:  3.8475633 11.387376     0.01      46     0 2021-11-26 09:42:10      101</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>         status         y</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   1: evaluated 64.684784</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   2: evaluated 91.096575</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   3: evaluated 64.632623</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   4: evaluated  3.082678</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   5: evaluated  3.209251</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  ---                    </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  97: evaluated  9.823609</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  98: evaluated 23.811346</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  99: evaluated 53.457609</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 100: evaluated 79.212281</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 101:  proposed        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>             x1         x2 fidelity asha_id stage           timestamp batch_nr</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  1:  3.1690509  4.1789573     0.01       1     0 2021-11-26 14:30:22        1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  2:  1.7005370  5.5726678     0.01       2     0 2021-11-26 14:30:22        2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  3:  3.1690509  4.1789573     0.02       1     1 2021-11-26 14:30:22        3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  4: -4.5790854  6.9898079     0.01       3     0 2021-11-26 14:30:22        4</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  5:  0.8504708  0.3009783     0.01       4     0 2021-11-26 14:30:22        5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  6:  1.7005370  5.5726678     0.02       2     1 2021-11-26 14:30:22        6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  7:  3.1690509  4.1789573     0.04       1     2 2021-11-26 14:30:22        7</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  8:  0.6545639  8.3986926     0.01       5     0 2021-11-26 14:30:22        8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  9:  7.8562538  5.7721457     0.01       6     0 2021-11-26 14:30:22        9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 10:  0.6545639  8.3986926     0.02       5     1 2021-11-26 14:30:22       10</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 11:  2.9187555  9.0095629     0.01       7     0 2021-11-26 14:30:22       11</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 12: -1.0794296  4.3507524     0.01       8     0 2021-11-26 14:30:22       12</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 13: -1.0794296  4.3507524     0.02       8     1 2021-11-26 14:30:22       13</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 14:  1.7005370  5.5726678     0.04       2     2 2021-11-26 14:30:22       14</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 15:  3.1690509  4.1789573     0.08       1     3 2021-11-26 14:30:22       15</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 16:  2.2011276 13.8000832     0.01       9     0 2021-11-26 14:30:23       16</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 17:  1.0108028  3.1975907     0.01      10     0 2021-11-26 14:30:23       17</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 18:  1.0108028  3.1975907     0.02      10     1 2021-11-26 14:30:23       18</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 19:  5.0765022  0.8792117     0.01      11     0 2021-11-26 14:30:23       19</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 20:  5.0765022  0.8792117     0.02      11     1 2021-11-26 14:30:23       20</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 21:  1.0108028  3.1975907     0.04      10     2 2021-11-26 14:30:23       21</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 22:  9.9560370  2.2355320     0.01      12     0 2021-11-26 14:30:23       22</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 23:  2.7783495 12.6918008     0.01      13     0 2021-11-26 14:30:23       23</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 24:  5.7740459  3.6197103     0.01      14     0 2021-11-26 14:30:23       24</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 25:  0.8504708  0.3009783     0.02       4     1 2021-11-26 14:30:23       25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 26:  3.2056505 12.5220272     0.01      15     0 2021-11-26 14:30:23       26</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 27: -4.5806596  7.0407645     0.01      16     0 2021-11-26 14:30:23       27</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 28:  5.7740459  3.6197103     0.02      14     1 2021-11-26 14:30:23       28</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 29:  5.0765022  0.8792117     0.04      11     2 2021-11-26 14:30:23       29</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 30:  1.7005370  5.5726678     0.08       2     3 2021-11-26 14:30:23       30</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 31:  3.1690509  4.1789573     0.16       1     4 2021-11-26 14:30:23       31</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 32:  7.0852005 12.2107697     0.01      17     0 2021-11-26 14:30:23       32</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 33:  1.0586650  3.2764651     0.01      18     0 2021-11-26 14:30:23       33</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 34:  1.0586650  3.2764651     0.02      18     1 2021-11-26 14:30:23       34</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 35:  1.0586650  3.2764651     0.04      18     2 2021-11-26 14:30:23       35</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 36:  1.2754210 10.0330612     0.01      19     0 2021-11-26 14:30:23       36</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 37:  1.2754210 10.0330612     0.02      19     1 2021-11-26 14:30:23       37</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 38:  2.6147542  9.9053896     0.01      20     0 2021-11-26 14:30:23       38</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 39:  2.6768697 12.5332866     0.01      21     0 2021-11-26 14:30:23       39</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 40:  5.6317174 13.1130891     0.01      22     0 2021-11-26 14:30:23       40</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 41:  2.9187555  9.0095629     0.02       7     1 2021-11-26 14:30:24       41</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 42: -4.8278069 13.3237435     0.01      23     0 2021-11-26 14:30:24       42</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 43: -4.8278069 13.3237435     0.02      23     1 2021-11-26 14:30:24       43</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 44: -4.8278069 13.3237435     0.04      23     2 2021-11-26 14:30:24       44</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 45: -4.8278069 13.3237435     0.08      23     3 2021-11-26 14:30:24       45</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 46:  9.9452038  7.5028725     0.01      24     0 2021-11-26 14:30:24       46</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 47:  0.3845054 11.6236953     0.01      25     0 2021-11-26 14:30:24       47</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 48:  3.7671288  9.5096456     0.01      26     0 2021-11-26 14:30:24       48</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 49: -4.5806596  7.0407645     0.02      16     1 2021-11-26 14:30:24       49</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 50:  7.8799923  8.5034151     0.01      27     0 2021-11-26 14:30:24       50</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 51: -1.2050447 13.7820482     0.01      28     0 2021-11-26 14:30:24       51</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>             x1         x2 fidelity asha_id stage           timestamp batch_nr</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>        status          y x_domain_x1 x_domain_x2 x_domain_fidelity</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  1: evaluated   8.925098   3.1690509   4.1789573              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  2: evaluated  13.561993   1.7005370   5.5726678              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  3: evaluated   8.866558   3.1690509   4.1789573              0.02</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  4: evaluated  56.761753  -4.5790854   6.9898079              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  5: evaluated  35.407039   0.8504708   0.3009783              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  6: evaluated  13.549325   1.7005370   5.5726678              0.02</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  7: evaluated   8.750083   3.1690509   4.1789573              0.04</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  8: evaluated  29.365453   0.6545639   8.3986926              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  9: evaluated 118.403590   7.8562538   5.7721457              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 10: evaluated  29.362516   0.6545639   8.3986926              0.02</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 11: evaluated  55.362169   2.9187555   9.0095629              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 12: evaluated  26.106789  -1.0794296   4.3507524              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 13: evaluated  26.114719  -1.0794296   4.3507524              0.02</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 14: evaluated  13.524037   1.7005370   5.5726678              0.04</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 15: evaluated   8.519555   3.1690509   4.1789573              0.08</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 16: evaluated 128.820021   2.2011276  13.8000832              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 17: evaluated  16.599875   1.0108028   3.1975907              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 18: evaluated  16.602378   1.0108028   3.1975907              0.02</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 19: evaluated  18.175552   5.0765022   0.8792117              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 20: evaluated  18.063812   5.0765022   0.8792117              0.02</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 21: evaluated  16.607391   1.0108028   3.1975907              0.04</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 22: evaluated  84.332865   9.9560370   2.2355320              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 23: evaluated 119.413636   2.7783495  12.6918008              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 24: evaluated  52.059612   5.7740459   3.6197103              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 25: evaluated  35.413357   0.8504708   0.3009783              0.02</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 26: evaluated 128.419575   3.2056505  12.5220272              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 27: evaluated  56.113451  -4.5806596   7.0407645              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 28: evaluated  51.673781   5.7740459   3.6197103              0.02</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 29: evaluated  17.844317   5.0765022   0.8792117              0.04</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 30: evaluated  13.473664   1.7005370   5.5726678              0.08</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 31: evaluated   8.068180   3.1690509   4.1789573              0.16</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 32: evaluated 271.779215   7.0852005  12.2107697              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 33: evaluated  15.855526   1.0586650   3.2764651              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 34: evaluated  15.857931   1.0586650   3.2764651              0.02</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 35: evaluated  15.862749   1.0586650   3.2764651              0.04</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 36: evaluated  48.961625   1.2754210  10.0330612              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 37: evaluated  48.942062   1.2754210  10.0330612              0.02</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 38: evaluated  63.487864   2.6147542   9.9053896              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 39: evaluated 113.296902   2.6768697  12.5332866              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 40: evaluated 246.216885   5.6317174  13.1130891              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 41: evaluated  55.236196   2.9187555   9.0095629              0.02</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 42: evaluated  12.236791  -4.8278069  13.3237435              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 43: evaluated  12.286909  -4.8278069  13.3237435              0.02</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 44: evaluated  12.390404  -4.8278069  13.3237435              0.04</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 45: evaluated  12.610433  -4.8278069  13.3237435              0.08</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 46: evaluated 207.468081   9.9452038   7.5028725              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 47: evaluated  57.728760   0.3845054  11.6236953              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 48: evaluated  84.605460   3.7671288   9.5096456              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 49: evaluated  56.402733  -4.5806596   7.0407645              0.02</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 50: evaluated 183.213053   7.8799923   8.5034151              0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 51:  proposed         NA          NA          NA                NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>        status          y x_domain_x1 x_domain_x2 x_domain_fidelity</span>
 </pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
