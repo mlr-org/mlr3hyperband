@@ -52,7 +52,7 @@ of eta and the number of starting points is computed so that each bracket
 approximately spends the same budget. Use hyperband_schedule() to get a
 preview of the bracket layout.
 s3210
-iniriniriniriniri
+in_ir_in_ir_in_ir_in_ir_i
 081624484
 1423428
 22418
@@ -61,6 +61,8 @@ iniriniriniriniri
 
 
 
+s is the bracket number, i is stage number, n_i is the number of
+configurations and r_i is the budget allocated to a single configuration.
 The budget hyperparameter must be tagged with &quot;budget&quot; in the search space.
 The minimum budget (r_min) which is allocated in the base stage of the most
 explorative bracket, is set by the lower bound of the budget parameter. The
@@ -174,16 +176,18 @@ the base stage. The minimum budget is increased in each bracket by a factor
 of <code>eta</code> and the number of starting points is computed so that each bracket
 approximately spends the same budget. Use <code><a href='hyperband_schedule.html'>hyperband_schedule()</a></code> to get a
 preview of the bracket layout.</p><table class='table'>
-<tr><td>s</td><td></td><td>3</td><td></td><td></td><td>2</td><td></td><td></td><td>1</td><td></td><td></td><td>0</td></tr>
-<tr><td>i</td><td>ni</td><td>ri</td><td></td><td>ni</td><td>ri</td><td></td><td>ni</td><td>ri</td><td></td><td>ni</td><td>ri</td></tr>
-<tr><td>0</td><td>8</td><td>1</td><td></td><td>6</td><td>2</td><td></td><td>4</td><td>4</td><td></td><td>8</td><td>4</td></tr>
-<tr><td>1</td><td>4</td><td>2</td><td></td><td>3</td><td>4</td><td></td><td>2</td><td>8</td><td></td><td></td><td></td></tr>
-<tr><td>2</td><td>2</td><td>4</td><td></td><td>1</td><td>8</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr><td>3</td><td>1</td><td>8</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td><code>s</code></td><td></td><td></td><td>3</td><td></td><td></td><td>2</td><td></td><td></td><td>1</td><td></td><td></td><td>0</td></tr>
+<tr><td><code>i</code></td><td></td><td><code>n_i</code></td><td><code>r_i</code></td><td></td><td><code>n_i</code></td><td><code>r_i</code></td><td></td><td><code>n_i</code></td><td><code>r_i</code></td><td></td><td><code>n_i</code></td><td><code>r_i</code></td></tr>
+<tr><td>0</td><td></td><td>8</td><td>1</td><td></td><td>6</td><td>2</td><td></td><td>4</td><td>4</td><td></td><td>8</td><td>4</td></tr>
+<tr><td>1</td><td></td><td>4</td><td>2</td><td></td><td>3</td><td>4</td><td></td><td>2</td><td>8</td><td></td><td></td><td></td></tr>
+<tr><td>2</td><td></td><td>2</td><td>4</td><td></td><td>1</td><td>8</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>3</td><td></td><td>1</td><td>8</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 </table>
 
 
 
+<p><code>s</code> is the bracket number, <code>i</code> is stage number, <code>n_i</code> is the number of
+configurations and <code>r_i</code> is the budget allocated to a single configuration.</p>
 <p>The budget hyperparameter must be tagged with <code>"budget"</code> in the search space.
 The minimum budget (<code>r_min</code>) which is allocated in the base stage of the most
 explorative bracket, is set by the lower bound of the budget parameter. The
@@ -221,9 +225,11 @@ equal 1.</p></dd>
 <dt><code>sampler</code></dt><dd><p><a href='https://paradox.mlr-org.com/reference/Sampler.html'>paradox::Sampler</a><br />
 Object defining how the samples of the parameter space should be drawn in the
 base stage of each bracket. The default is uniform sampling.</p></dd>
-<dt><code>repeats</code></dt><dd><p><code>logical(1)</code><br />
-If <code>FALSE</code> (default), hyperband terminates once all brackets are evaluated.
-Otherwise, hyperband starts over again once the last bracket is evaluated.</p></dd>
+<dt><code>repeats</code></dt><dd><p><code>integer(1)</code><br />
+If <code>1</code> (default), optimization is stopped once all stages are evaluated.
+Otherwise, optimization is stopped after <code>repeats</code> runs of SHA. The
+<a href='https://bbotk.mlr-org.com/reference/Terminator.html'>bbotk::Terminator</a> might stop the optimization before all repeats are
+executed.</p></dd>
 </dl>
 
     <h2 class="hasAnchor" id="archive"><a class="anchor" href="#archive"></a>Archive</h2>
@@ -232,18 +238,21 @@ Otherwise, hyperband starts over again once the last bracket is evaluated.</p></
 
 <p>The <a href='https://bbotk.mlr-org.com/reference/Archive.html'>bbotk::Archive</a> holds the following additional columns that are specific
 to the hyperband algorithm:</p><ul>
-<li><p><code>bracket</code> (<code>integer(1)</code>)<br />
-The bracket index. Counts down to 0.</p></li>
 <li><p><code>stage</code> (<code>integer(1))</code><br />
 The stages of each bracket. Starts counting at 0.</p></li>
+<li><p><code>bracket</code> (<code>integer(1)</code>)<br />
+The bracket index. Counts down to 0.</p></li>
+<li><p><code>repetition</code> (<code>integer(1))</code><br />
+Repetition index. Start counting at 1.</p></li>
 </ul>
 
-    <h2 class="hasAnchor" id="custom-sampler"><a class="anchor" href="#custom-sampler"></a>Custom sampler</h2>
+    <h2 class="hasAnchor" id="custom-sampler"><a class="anchor" href="#custom-sampler"></a>Custom Sampler</h2>
 
     
 
-<p>All algorithms support custom <a href='https://paradox.mlr-org.com/reference/Sampler.html'>paradox::Sampler</a>s to draw candidates in the
-base stage.</p><pre><span class='co'># - beta distribution with alpha = 2 and beta = 5</span>
+
+<p><a href='https://CRAN.R-project.org/package=mlr3hyperband'><span class="pkg">mlr3hyperband</span></a> supports custom <a href='https://paradox.mlr-org.com/reference/Sampler.html'>paradox::Sampler</a> to draw candidates
+in the base stage.</p><pre><span class='co'># - beta distribution with alpha = 2 and beta = 5</span>
 <span class='co'># - categorical distribution with custom probabilities</span>
 <span class='va'>sampler</span> <span class='op'>=</span> <span class='va'><a href='https://paradox.mlr-org.com/reference/SamplerJointIndep.html'>SamplerJointIndep</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
   <span class='va'><a href='https://paradox.mlr-org.com/reference/Sampler1DRfun.html'>Sampler1DRfun</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='va'>params</span><span class='op'>[[</span><span class='fl'>2</span><span class='op'>]</span><span class='op'>]</span>, <span class='kw'>function</span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/stats/Beta.html'>rbeta</a></span><span class='op'>(</span><span class='va'>n</span>, <span class='fl'>2</span>, <span class='fl'>5</span><span class='op'>)</span><span class='op'>)</span>,
@@ -255,17 +264,28 @@ base stage.</p><pre><span class='co'># - beta distribution with alpha = 2 and be
 
     
 
-<p><code>$optimize()</code> supports progress bars via the package <a href='https://CRAN.R-project.org/package=progressr'><span class="pkg">progressr</span></a>
-combined with a <a href='https://bbotk.mlr-org.com/reference/Terminator.html'>Terminator</a>. Simply wrap the function in
-<code>progressr::with_progress()</code> to enable them. We recommend to use package
-<a href='https://CRAN.R-project.org/package=progress'><span class="pkg">progress</span></a> as backend; enable with <code>progressr::handlers("progress")</code>.</p>
+
+<p>The  <code>$optimize()</code> method supports progress bars via the package
+<a href='https://CRAN.R-project.org/package=progressr'><span class="pkg">progressr</span></a>. Simply wrap the method call in <code>progressr::with_progress()</code>
+to enable them.
+Alternatively, call <code>progressr::handlers()</code> with <code>global = TRUE</code> to enable progress bars
+globally.
+We recommend the <a href='https://CRAN.R-project.org/package=progress'><span class="pkg">progress</span></a> package as backend which can be enabled with
+<code>progressr::handlers("progress")</code>.</p>
     <h2 class="hasAnchor" id="logging"><a class="anchor" href="#logging"></a>Logging</h2>
 
     
 
-<p>Hyperband uses a logger (as implemented in <a href='https://CRAN.R-project.org/package=lgr'><span class="pkg">lgr</span></a>) from package
-<a href='https://CRAN.R-project.org/package=bbotk'><span class="pkg">bbotk</span></a>.
-Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
+
+<p><a href='https://CRAN.R-project.org/package=mlr3hyperband'><span class="pkg">mlr3hyperband</span></a> uses the <a href='https://CRAN.R-project.org/package=lgr'><span class="pkg">lgr</span></a> package for logging.
+<a href='https://CRAN.R-project.org/package=lgr'><span class="pkg">lgr</span></a> supports multiple log levels which can be queried with
+<code>getOption("lgr.log_levels")</code>. Use <code>lgr::get_logger("bbotk")</code> to access and
+control the logger.</p>
+<p>To suppress output and reduce verbosity, you can lower the log from the
+default level <code>"info"</code> to <code>"warn"</code>:</p><pre><span class='fu'>lgr</span><span class='fu'>::</span><span class='fu'><a href='https://s-fleck.github.io/lgr/reference/get_logger.html'>get_logger</a></span><span class='op'>(</span><span class='st'>"bbotk"</span><span class='op'>)</span><span class='op'>$</span><span class='fu'>set_threshold</span><span class='op'>(</span><span class='st'>"warn"</span><span class='op'>)</span>
+</pre>
+
+<p>To log to a file or a data base, see the documentation of <a href='https://s-fleck.github.io/lgr/reference/lgr-package.html'>lgr::lgr-package</a>.</p>
     <h2 class="hasAnchor" id="super-class"><a class="anchor" href="#super-class"></a>Super class</h2>
 
     <p><code><a href='https://bbotk.mlr-org.com/reference/Optimizer.html'>bbotk::Optimizer</a></code> -&gt; <code>OptimizerHyperband</code></p>
@@ -343,137 +363,137 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># all evaluations</span></span>
 <span class='r-in'><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/as.data.table.html'>as.data.table</a></span><span class='op'>(</span><span class='va'>instance</span><span class='op'>$</span><span class='va'>archive</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>               x1         x2 fidelity bracket stage          y</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  1:  8.010253073 10.2985382 0.015625       6     0 235.742980</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  2: -1.271919546  2.4543480 0.015625       6     0  44.408529</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  3:  1.043218178 14.2923720 0.015625       6     0 113.225495</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  4:  6.544452640  4.8278183 0.015625       6     0  82.109584</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  5: -3.207719382  5.4230118 0.015625       6     0  36.402105</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  6: -2.079575575 13.3158513 0.015625       6     0  20.323870</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  7: -2.531461277 12.4202163 0.015625       6     0   6.945035</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  8:  4.948098719  1.5098469 0.015625       6     0  19.170839</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  9:  7.848625068 13.5907737 0.015625       6     0 340.862218</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 10:  8.898196726 11.5909555 0.015625       6     0 301.625371</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 11:  3.285663920  5.7505601 0.015625       6     0  22.100571</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 12:  3.655985416 14.9947869 0.015625       6     0 209.072395</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 13:  5.311716184  5.2394857 0.015625       6     0  62.008497</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 14: -1.329226556 14.2097740 0.015625       6     0  48.777708</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 15: -4.330742625  3.2414996 0.015625       6     0 111.030813</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 16:  8.647818350  0.4813906 0.015625       6     0  38.501167</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 17: -3.939781712  2.1797377 0.015625       6     0 114.977580</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 18:  9.953372101 12.8157583 0.015625       6     0 386.297680</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 19:  4.177786262  3.1972397 0.015625       6     0  16.062096</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 20: -2.411617314  3.1546611 0.015625       6     0  49.936696</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 21:  8.641614477  0.5928103 0.015625       6     0  39.800737</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 22: -4.438232497 14.1716220 0.015625       6     0   7.652681</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 23:  3.903306855  3.6739198 0.015625       6     0  14.732546</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 24: -1.445336677 11.7168385 0.015625       6     0  22.439323</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 25:  8.594459001  4.3235575 0.015625       6     0  98.213307</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 26:  7.283094760 13.1303687 0.015625       6     0 307.285790</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 27:  5.497440358  4.4362514 0.015625       6     0  55.930755</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 28: -1.699995062 14.7528811 0.015625       6     0  44.265358</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 29:  5.919864075  8.8475633 0.015625       6     0 144.231626</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 30: -1.743733066 11.3873757 0.015625       6     0  14.691299</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 31:  1.843452974 12.5411296 0.015625       6     0  95.222158</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 32: -0.008003626 11.4422920 0.015625       6     0  49.081839</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 33:  3.525290028  6.2590489 0.015625       6     0  31.209935</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 34: -1.216914128  2.0711226 0.015625       6     0  48.269691</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 35:  1.960203501  1.2126744 0.015625       6     0   9.543403</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 36:  8.764907604  9.8397394 0.015625       6     0 240.419146</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 37:  9.592663269  9.0300579 0.015625       6     0 239.790083</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 38:  7.286236699  9.8549374 0.015625       6     0 206.128341</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 39:  8.543856973  4.9397575 0.015625       6     0 109.840303</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 40:  3.720490660 14.6921133 0.015625       6     0 203.257668</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 41:  6.595127217 10.7277920 0.015625       6     0 211.984706</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 42:  9.926845396 13.0894546 0.015625       6     0 395.948470</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 43:  5.664568746 14.7492562 0.015625       6     0 299.327560</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 44: -1.775861065  3.2784449 0.015625       6     0  39.909523</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 45: -0.623635551  9.9679510 0.015625       6     0  26.576630</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 46:  5.826395940  5.8434606 0.015625       6     0  83.786001</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 47:  7.999235550  0.6909546 0.015625       6     0  38.363916</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 48: -1.423203403  9.2537184 0.015625       6     0  12.270173</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 49: -4.932555379  8.9771249 0.015625       6     0  43.696698</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 50:  9.152746963  6.1028044 0.015625       6     0 147.018029</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 51:  1.572058006 12.8749222 0.015625       6     0  96.495429</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 52:  6.259049923  7.7652178 0.015625       6     0 130.317468</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 53:  5.017236467 14.6894012 0.015625       6     0 265.711035</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 54:  1.119598022  0.2552353 0.015625       6     0  30.198231</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 55:  0.268732224 10.1017174 0.015625       6     0  39.752994</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 56:  6.071373422  5.5690482 0.015625       6     0  84.974129</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 57:  4.964282393 13.7701596 0.015625       6     0 234.800565</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 58: -3.721629498 10.1696714 0.015625       6     0   6.717944</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 59:  7.841982350  9.9772869 0.015625       6     0 222.322909</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 60: -3.845250175 11.3406163 0.015625       6     0   4.201115</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 61:  7.792672050  8.1425573 0.015625       6     0 171.316094</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 62: -3.404795587  3.5893215 0.015625       6     0  67.739456</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 63:  2.272042353  7.6334036 0.015625       6     0  29.720737</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 64: -1.291713344  6.2589656 0.015625       6     0  16.060838</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>               x1         x2 fidelity bracket stage          y</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>               x1         x2 fidelity stage bracket repetition          y</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  1:  8.010253073 10.2985382 0.015625     0       6          1 235.742980</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  2: -1.271919546  2.4543480 0.015625     0       6          1  44.408529</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  3:  1.043218178 14.2923720 0.015625     0       6          1 113.225495</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  4:  6.544452640  4.8278183 0.015625     0       6          1  82.109584</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  5: -3.207719382  5.4230118 0.015625     0       6          1  36.402105</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  6: -2.079575575 13.3158513 0.015625     0       6          1  20.323870</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  7: -2.531461277 12.4202163 0.015625     0       6          1   6.945035</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  8:  4.948098719  1.5098469 0.015625     0       6          1  19.170839</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  9:  7.848625068 13.5907737 0.015625     0       6          1 340.862218</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 10:  8.898196726 11.5909555 0.015625     0       6          1 301.625371</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 11:  3.285663920  5.7505601 0.015625     0       6          1  22.100571</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 12:  3.655985416 14.9947869 0.015625     0       6          1 209.072395</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 13:  5.311716184  5.2394857 0.015625     0       6          1  62.008497</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 14: -1.329226556 14.2097740 0.015625     0       6          1  48.777708</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 15: -4.330742625  3.2414996 0.015625     0       6          1 111.030813</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 16:  8.647818350  0.4813906 0.015625     0       6          1  38.501167</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 17: -3.939781712  2.1797377 0.015625     0       6          1 114.977580</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 18:  9.953372101 12.8157583 0.015625     0       6          1 386.297680</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 19:  4.177786262  3.1972397 0.015625     0       6          1  16.062096</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 20: -2.411617314  3.1546611 0.015625     0       6          1  49.936696</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 21:  8.641614477  0.5928103 0.015625     0       6          1  39.800737</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 22: -4.438232497 14.1716220 0.015625     0       6          1   7.652681</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 23:  3.903306855  3.6739198 0.015625     0       6          1  14.732546</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 24: -1.445336677 11.7168385 0.015625     0       6          1  22.439323</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 25:  8.594459001  4.3235575 0.015625     0       6          1  98.213307</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 26:  7.283094760 13.1303687 0.015625     0       6          1 307.285790</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 27:  5.497440358  4.4362514 0.015625     0       6          1  55.930755</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 28: -1.699995062 14.7528811 0.015625     0       6          1  44.265358</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 29:  5.919864075  8.8475633 0.015625     0       6          1 144.231626</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 30: -1.743733066 11.3873757 0.015625     0       6          1  14.691299</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 31:  1.843452974 12.5411296 0.015625     0       6          1  95.222158</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 32: -0.008003626 11.4422920 0.015625     0       6          1  49.081839</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 33:  3.525290028  6.2590489 0.015625     0       6          1  31.209935</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 34: -1.216914128  2.0711226 0.015625     0       6          1  48.269691</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 35:  1.960203501  1.2126744 0.015625     0       6          1   9.543403</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 36:  8.764907604  9.8397394 0.015625     0       6          1 240.419146</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 37:  9.592663269  9.0300579 0.015625     0       6          1 239.790083</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 38:  7.286236699  9.8549374 0.015625     0       6          1 206.128341</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 39:  8.543856973  4.9397575 0.015625     0       6          1 109.840303</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 40:  3.720490660 14.6921133 0.015625     0       6          1 203.257668</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 41:  6.595127217 10.7277920 0.015625     0       6          1 211.984706</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 42:  9.926845396 13.0894546 0.015625     0       6          1 395.948470</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 43:  5.664568746 14.7492562 0.015625     0       6          1 299.327560</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 44: -1.775861065  3.2784449 0.015625     0       6          1  39.909523</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 45: -0.623635551  9.9679510 0.015625     0       6          1  26.576630</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 46:  5.826395940  5.8434606 0.015625     0       6          1  83.786001</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 47:  7.999235550  0.6909546 0.015625     0       6          1  38.363916</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 48: -1.423203403  9.2537184 0.015625     0       6          1  12.270173</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 49: -4.932555379  8.9771249 0.015625     0       6          1  43.696698</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 50:  9.152746963  6.1028044 0.015625     0       6          1 147.018029</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 51:  1.572058006 12.8749222 0.015625     0       6          1  96.495429</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 52:  6.259049923  7.7652178 0.015625     0       6          1 130.317468</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 53:  5.017236467 14.6894012 0.015625     0       6          1 265.711035</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 54:  1.119598022  0.2552353 0.015625     0       6          1  30.198231</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 55:  0.268732224 10.1017174 0.015625     0       6          1  39.752994</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 56:  6.071373422  5.5690482 0.015625     0       6          1  84.974129</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 57:  4.964282393 13.7701596 0.015625     0       6          1 234.800565</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 58: -3.721629498 10.1696714 0.015625     0       6          1   6.717944</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 59:  7.841982350  9.9772869 0.015625     0       6          1 222.322909</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 60: -3.845250175 11.3406163 0.015625     0       6          1   4.201115</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 61:  7.792672050  8.1425573 0.015625     0       6          1 171.316094</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 62: -3.404795587  3.5893215 0.015625     0       6          1  67.739456</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 63:  2.272042353  7.6334036 0.015625     0       6          1  29.720737</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 64: -1.291713344  6.2589656 0.015625     0       6          1  16.060838</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>               x1         x2 fidelity stage bracket repetition          y</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>               timestamp batch_nr    status  x_domain_x1 x_domain_x2</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  1: 2021-11-26 14:30:24        1 evaluated  8.010253073  10.2985382</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  2: 2021-11-26 14:30:24        1 evaluated -1.271919546   2.4543480</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  3: 2021-11-26 14:30:24        1 evaluated  1.043218178  14.2923720</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  4: 2021-11-26 14:30:24        1 evaluated  6.544452640   4.8278183</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  5: 2021-11-26 14:30:24        1 evaluated -3.207719382   5.4230118</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  6: 2021-11-26 14:30:24        1 evaluated -2.079575575  13.3158513</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  7: 2021-11-26 14:30:24        1 evaluated -2.531461277  12.4202163</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  8: 2021-11-26 14:30:24        1 evaluated  4.948098719   1.5098469</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  9: 2021-11-26 14:30:24        1 evaluated  7.848625068  13.5907737</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 10: 2021-11-26 14:30:24        1 evaluated  8.898196726  11.5909555</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 11: 2021-11-26 14:30:24        1 evaluated  3.285663920   5.7505601</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 12: 2021-11-26 14:30:24        1 evaluated  3.655985416  14.9947869</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 13: 2021-11-26 14:30:24        1 evaluated  5.311716184   5.2394857</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 14: 2021-11-26 14:30:24        1 evaluated -1.329226556  14.2097740</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 15: 2021-11-26 14:30:24        1 evaluated -4.330742625   3.2414996</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 16: 2021-11-26 14:30:24        1 evaluated  8.647818350   0.4813906</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 17: 2021-11-26 14:30:24        1 evaluated -3.939781712   2.1797377</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 18: 2021-11-26 14:30:24        1 evaluated  9.953372101  12.8157583</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 19: 2021-11-26 14:30:24        1 evaluated  4.177786262   3.1972397</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 20: 2021-11-26 14:30:24        1 evaluated -2.411617314   3.1546611</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 21: 2021-11-26 14:30:24        1 evaluated  8.641614477   0.5928103</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 22: 2021-11-26 14:30:24        1 evaluated -4.438232497  14.1716220</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 23: 2021-11-26 14:30:24        1 evaluated  3.903306855   3.6739198</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 24: 2021-11-26 14:30:24        1 evaluated -1.445336677  11.7168385</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 25: 2021-11-26 14:30:24        1 evaluated  8.594459001   4.3235575</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 26: 2021-11-26 14:30:24        1 evaluated  7.283094760  13.1303687</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 27: 2021-11-26 14:30:24        1 evaluated  5.497440358   4.4362514</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 28: 2021-11-26 14:30:24        1 evaluated -1.699995062  14.7528811</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 29: 2021-11-26 14:30:24        1 evaluated  5.919864075   8.8475633</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 30: 2021-11-26 14:30:24        1 evaluated -1.743733066  11.3873757</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 31: 2021-11-26 14:30:24        1 evaluated  1.843452974  12.5411296</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 32: 2021-11-26 14:30:24        1 evaluated -0.008003626  11.4422920</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 33: 2021-11-26 14:30:24        1 evaluated  3.525290028   6.2590489</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 34: 2021-11-26 14:30:24        1 evaluated -1.216914128   2.0711226</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 35: 2021-11-26 14:30:24        1 evaluated  1.960203501   1.2126744</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 36: 2021-11-26 14:30:24        1 evaluated  8.764907604   9.8397394</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 37: 2021-11-26 14:30:24        1 evaluated  9.592663269   9.0300579</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 38: 2021-11-26 14:30:24        1 evaluated  7.286236699   9.8549374</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 39: 2021-11-26 14:30:24        1 evaluated  8.543856973   4.9397575</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 40: 2021-11-26 14:30:24        1 evaluated  3.720490660  14.6921133</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 41: 2021-11-26 14:30:24        1 evaluated  6.595127217  10.7277920</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 42: 2021-11-26 14:30:24        1 evaluated  9.926845396  13.0894546</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 43: 2021-11-26 14:30:24        1 evaluated  5.664568746  14.7492562</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 44: 2021-11-26 14:30:24        1 evaluated -1.775861065   3.2784449</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 45: 2021-11-26 14:30:24        1 evaluated -0.623635551   9.9679510</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 46: 2021-11-26 14:30:24        1 evaluated  5.826395940   5.8434606</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 47: 2021-11-26 14:30:24        1 evaluated  7.999235550   0.6909546</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 48: 2021-11-26 14:30:24        1 evaluated -1.423203403   9.2537184</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 49: 2021-11-26 14:30:24        1 evaluated -4.932555379   8.9771249</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 50: 2021-11-26 14:30:24        1 evaluated  9.152746963   6.1028044</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 51: 2021-11-26 14:30:24        1 evaluated  1.572058006  12.8749222</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 52: 2021-11-26 14:30:24        1 evaluated  6.259049923   7.7652178</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 53: 2021-11-26 14:30:24        1 evaluated  5.017236467  14.6894012</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 54: 2021-11-26 14:30:24        1 evaluated  1.119598022   0.2552353</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 55: 2021-11-26 14:30:24        1 evaluated  0.268732224  10.1017174</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 56: 2021-11-26 14:30:24        1 evaluated  6.071373422   5.5690482</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 57: 2021-11-26 14:30:24        1 evaluated  4.964282393  13.7701596</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 58: 2021-11-26 14:30:24        1 evaluated -3.721629498  10.1696714</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 59: 2021-11-26 14:30:24        1 evaluated  7.841982350   9.9772869</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 60: 2021-11-26 14:30:24        1 evaluated -3.845250175  11.3406163</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 61: 2021-11-26 14:30:24        1 evaluated  7.792672050   8.1425573</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 62: 2021-11-26 14:30:24        1 evaluated -3.404795587   3.5893215</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 63: 2021-11-26 14:30:24        1 evaluated  2.272042353   7.6334036</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 64: 2021-11-26 14:30:24        1 evaluated -1.291713344   6.2589656</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  1: 2021-11-26 17:23:28        1 evaluated  8.010253073  10.2985382</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  2: 2021-11-26 17:23:28        1 evaluated -1.271919546   2.4543480</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  3: 2021-11-26 17:23:28        1 evaluated  1.043218178  14.2923720</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  4: 2021-11-26 17:23:28        1 evaluated  6.544452640   4.8278183</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  5: 2021-11-26 17:23:28        1 evaluated -3.207719382   5.4230118</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  6: 2021-11-26 17:23:28        1 evaluated -2.079575575  13.3158513</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  7: 2021-11-26 17:23:28        1 evaluated -2.531461277  12.4202163</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  8: 2021-11-26 17:23:28        1 evaluated  4.948098719   1.5098469</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  9: 2021-11-26 17:23:28        1 evaluated  7.848625068  13.5907737</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 10: 2021-11-26 17:23:28        1 evaluated  8.898196726  11.5909555</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 11: 2021-11-26 17:23:28        1 evaluated  3.285663920   5.7505601</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 12: 2021-11-26 17:23:28        1 evaluated  3.655985416  14.9947869</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 13: 2021-11-26 17:23:28        1 evaluated  5.311716184   5.2394857</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 14: 2021-11-26 17:23:28        1 evaluated -1.329226556  14.2097740</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 15: 2021-11-26 17:23:28        1 evaluated -4.330742625   3.2414996</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 16: 2021-11-26 17:23:28        1 evaluated  8.647818350   0.4813906</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 17: 2021-11-26 17:23:28        1 evaluated -3.939781712   2.1797377</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 18: 2021-11-26 17:23:28        1 evaluated  9.953372101  12.8157583</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 19: 2021-11-26 17:23:28        1 evaluated  4.177786262   3.1972397</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 20: 2021-11-26 17:23:28        1 evaluated -2.411617314   3.1546611</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 21: 2021-11-26 17:23:28        1 evaluated  8.641614477   0.5928103</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 22: 2021-11-26 17:23:28        1 evaluated -4.438232497  14.1716220</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 23: 2021-11-26 17:23:28        1 evaluated  3.903306855   3.6739198</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 24: 2021-11-26 17:23:28        1 evaluated -1.445336677  11.7168385</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 25: 2021-11-26 17:23:28        1 evaluated  8.594459001   4.3235575</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 26: 2021-11-26 17:23:28        1 evaluated  7.283094760  13.1303687</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 27: 2021-11-26 17:23:28        1 evaluated  5.497440358   4.4362514</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 28: 2021-11-26 17:23:28        1 evaluated -1.699995062  14.7528811</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 29: 2021-11-26 17:23:28        1 evaluated  5.919864075   8.8475633</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 30: 2021-11-26 17:23:28        1 evaluated -1.743733066  11.3873757</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 31: 2021-11-26 17:23:28        1 evaluated  1.843452974  12.5411296</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 32: 2021-11-26 17:23:28        1 evaluated -0.008003626  11.4422920</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 33: 2021-11-26 17:23:28        1 evaluated  3.525290028   6.2590489</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 34: 2021-11-26 17:23:28        1 evaluated -1.216914128   2.0711226</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 35: 2021-11-26 17:23:28        1 evaluated  1.960203501   1.2126744</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 36: 2021-11-26 17:23:28        1 evaluated  8.764907604   9.8397394</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 37: 2021-11-26 17:23:28        1 evaluated  9.592663269   9.0300579</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 38: 2021-11-26 17:23:28        1 evaluated  7.286236699   9.8549374</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 39: 2021-11-26 17:23:28        1 evaluated  8.543856973   4.9397575</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 40: 2021-11-26 17:23:28        1 evaluated  3.720490660  14.6921133</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 41: 2021-11-26 17:23:28        1 evaluated  6.595127217  10.7277920</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 42: 2021-11-26 17:23:28        1 evaluated  9.926845396  13.0894546</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 43: 2021-11-26 17:23:28        1 evaluated  5.664568746  14.7492562</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 44: 2021-11-26 17:23:28        1 evaluated -1.775861065   3.2784449</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 45: 2021-11-26 17:23:28        1 evaluated -0.623635551   9.9679510</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 46: 2021-11-26 17:23:28        1 evaluated  5.826395940   5.8434606</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 47: 2021-11-26 17:23:28        1 evaluated  7.999235550   0.6909546</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 48: 2021-11-26 17:23:28        1 evaluated -1.423203403   9.2537184</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 49: 2021-11-26 17:23:28        1 evaluated -4.932555379   8.9771249</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 50: 2021-11-26 17:23:28        1 evaluated  9.152746963   6.1028044</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 51: 2021-11-26 17:23:28        1 evaluated  1.572058006  12.8749222</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 52: 2021-11-26 17:23:28        1 evaluated  6.259049923   7.7652178</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 53: 2021-11-26 17:23:28        1 evaluated  5.017236467  14.6894012</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 54: 2021-11-26 17:23:28        1 evaluated  1.119598022   0.2552353</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 55: 2021-11-26 17:23:28        1 evaluated  0.268732224  10.1017174</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 56: 2021-11-26 17:23:28        1 evaluated  6.071373422   5.5690482</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 57: 2021-11-26 17:23:28        1 evaluated  4.964282393  13.7701596</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 58: 2021-11-26 17:23:28        1 evaluated -3.721629498  10.1696714</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 59: 2021-11-26 17:23:28        1 evaluated  7.841982350   9.9772869</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 60: 2021-11-26 17:23:28        1 evaluated -3.845250175  11.3406163</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 61: 2021-11-26 17:23:28        1 evaluated  7.792672050   8.1425573</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 62: 2021-11-26 17:23:28        1 evaluated -3.404795587   3.5893215</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 63: 2021-11-26 17:23:28        1 evaluated  2.272042353   7.6334036</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 64: 2021-11-26 17:23:28        1 evaluated -1.291713344   6.2589656</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>               timestamp batch_nr    status  x_domain_x1 x_domain_x2</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>     x_domain_fidelity</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  1:          0.015625</span>
