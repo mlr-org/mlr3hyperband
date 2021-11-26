@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Hyperparameter Optimization with Successive Halving — mlr_optimizers_successive_halving • mlr3hyperband</title>
+<title>Optimizer Asynchronous Hyperband — mlr_optimizers_ahb • mlr3hyperband</title>
 
 
 <!-- jquery -->
@@ -40,30 +40,22 @@
 
 
 
-<meta property="og:title" content="Hyperparameter Optimization with Successive Halving — mlr_optimizers_successive_halving" />
-<meta property="og:description" content="OptimizerSuccessiveHalving class that implements the successive halving
-algorithm. Successive halving (SHA) randomly samples n candidate points and
-allocates a minimum budget (r_min) to all candidates. The candidates are
-raced down in stages to a single best candidate by repeatedly increasing the
-budget by a factor of eta and promoting only the best 1 / eta  fraction
-to the next stage. This means promising points are allocated a higher budget
-overall and lower performing ones are discarded early on.
+<meta property="og:title" content="Optimizer Asynchronous Hyperband — mlr_optimizers_ahb" />
+<meta property="og:description" content="OptimizerAhb class that implements the asynchronous hyperband algorithm.
+Asynchronous hyperband (AHB) repeatedly runs ASHA (OptimizerAsha) with
+different minimum budgets in the base stage. Each run of ASHA within AHB is
+called a bracket. AHB considers s_max + 1 brackets with
+s_max = floor(log(r_max / r_min, eta). The most explorative bracket
+s = s_max constructs s_max + 1 stages and allocates the minimum budget
+(r_min) in the base stage.  The minimum budget (r_min) is increased in
+each bracket by a factor of eta until the maximum budget is allocated in
+the base stage. The bracket s = 0 is a random search with full budget. Each
+ASHA run uses 1 / s_max + 1 of the bbotk::Terminator.
 The budget hyperparameter must be tagged with &quot;budget&quot; in the search space.
-The minimum budget (r_min) which is allocated in the base stage, is set by
-the lower bound of the budget parameter. The upper bound  defines the maximum
-budget (r_max) which is allocated to the candidates in the last stage. The
-number of stages is computed that each candidate in base stage is allocated
-the minimum budget and the candidates in the last stage are not evaluated on
-more than the maximum budget. The following table is the stage layout for
-eta = 2, r_min = 1 and r_max = 8.
-iniri
-081
-142
-224
-318
-
-
-" />
+The minimum budget (r_min) which is allocated in the base stage of the most
+explorative bracket, is set by the lower bound of the budget parameter. The
+upper bound defines the maximum budget (r_max) which which is allocated to
+the candidates in the last stages." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -156,73 +148,62 @@ iniri
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Hyperparameter Optimization with Successive Halving</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mlr-org/mlr3hyperband/blob/master/R/OptimizerSuccessiveHalving.R'><code>R/OptimizerSuccessiveHalving.R</code></a></small>
-    <div class="hidden name"><code>mlr_optimizers_successive_halving.Rd</code></div>
+    <h1>Optimizer Asynchronous Hyperband</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mlr-org/mlr3hyperband/blob/master/R/OptimizerAhb.R'><code>R/OptimizerAhb.R</code></a></small>
+    <div class="hidden name"><code>mlr_optimizers_ahb.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><code>OptimizerSuccessiveHalving</code> class that implements the successive halving
-algorithm. Successive halving (SHA) randomly samples <code>n</code> candidate points and
-allocates a minimum budget (<code>r_min</code>) to all candidates. The candidates are
-raced down in stages to a single best candidate by repeatedly increasing the
-budget by a factor of <code>eta</code> and promoting only the best <code>1 / eta </code> fraction
-to the next stage. This means promising points are allocated a higher budget
-overall and lower performing ones are discarded early on.</p>
+    <p><code>OptimizerAhb</code> class that implements the asynchronous hyperband algorithm.
+Asynchronous hyperband (AHB) repeatedly runs ASHA (<a href='mlr_optimizers_asha.html'>OptimizerAsha</a>) with
+different minimum budgets in the base stage. Each run of ASHA within AHB is
+called a bracket. AHB considers <code>s_max + 1</code> brackets with
+<code>s_max = floor(log(r_max / r_min, eta)</code>. The most explorative bracket
+<code>s = s_max</code> constructs <code>s_max + 1</code> stages and allocates the minimum budget
+(<code>r_min</code>) in the base stage.  The minimum budget (<code>r_min</code>) is increased in
+each bracket by a factor of <code>eta</code> until the maximum budget is allocated in
+the base stage. The bracket <code>s = 0</code> is a random search with full budget. Each
+ASHA run uses <code>1 / s_max + 1</code> of the <a href='https://bbotk.mlr-org.com/reference/Terminator.html'>bbotk::Terminator</a>.</p>
 <p>The budget hyperparameter must be tagged with <code>"budget"</code> in the search space.
-The minimum budget (<code>r_min</code>) which is allocated in the base stage, is set by
-the lower bound of the budget parameter. The upper bound  defines the maximum
-budget (<code>r_max</code>) which is allocated to the candidates in the last stage. The
-number of stages is computed that each candidate in base stage is allocated
-the minimum budget and the candidates in the last stage are not evaluated on
-more than the maximum budget. The following table is the stage layout for
-<code>eta = 2</code>, <code>r_min = 1</code> and <code>r_max = 8</code>.</p><table class='table'>
-<tr><td>i</td><td>ni</td><td>ri</td></tr>
-<tr><td>0</td><td>8</td><td>1</td></tr>
-<tr><td>1</td><td>4</td><td>2</td></tr>
-<tr><td>2</td><td>2</td><td>4</td></tr>
-<tr><td>3</td><td>1</td><td>8</td></tr>
-</table>
-
-
+The minimum budget (<code>r_min</code>) which is allocated in the base stage of the most
+explorative bracket, is set by the lower bound of the budget parameter. The
+upper bound defines the maximum budget (<code>r_max</code>) which which is allocated to
+the candidates in the last stages.</p>
     </div>
 
 
 
     <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
 
-    <p>Jamieson K, Talwalkar A (2016).
-&#8220;Non-stochastic Best Arm Identification and Hyperparameter Optimization.&#8221;
-In Gretton A, Robert CC (eds.), <em>Proceedings of the 19th International Conference on Artificial Intelligence and Statistics</em>, volume 51 series Proceedings of Machine Learning Research, 240-248.
-<a href='http://proceedings.mlr.press/v51/jamieson16.html'>http://proceedings.mlr.press/v51/jamieson16.html</a>.</p>
+    <p>Li L, Jamieson K, Rostamizadeh A, Gonina E, Ben-tzur J, Hardt M, Recht B, Talwalkar A (2020).
+&#8220;A System for Massively Parallel Hyperparameter Tuning.&#8221;
+<em>Proceedings of Machine Learning and Systems</em>, <b>2</b>, 230-246.
+<a href='https://proceedings.mlsys.org/paper/2020/hash/f4b9ec30ad9f68f89b29639786cb62ef-Abstract.html'>https://proceedings.mlsys.org/paper/2020/hash/f4b9ec30ad9f68f89b29639786cb62ef-Abstract.html</a>.</p>
     <h2 class="hasAnchor" id="parameters"><a class="anchor" href="#parameters"></a>Parameters</h2>
 
     
 
 <dl>
-<dt><code>n</code></dt><dd><p><code>integer(1)</code><br />
-Number of points in base stage.</p></dd>
 <dt><code>eta</code></dt><dd><p><code>numeric(1)</code><br />
 With every stage, the budget is increased by a factor of <code>eta</code>
 and only the best <code>1 / eta</code> points are promoted to the next stage.
 Non-integer values are supported, but <code>eta</code> is not allowed to be less or
 equal 1.</p></dd>
 <dt><code>sampler</code></dt><dd><p><a href='https://paradox.mlr-org.com/reference/Sampler.html'>paradox::Sampler</a><br />
-Object defining how the samples of the parameter space should be drawn. The
-default is uniform sampling.</p></dd>
-<dt><code>repeats</code></dt><dd><p><code>logical(1)</code><br />
-If <code>FALSE</code> (default), SHA terminates once all stages are evaluated.
-Otherwise, SHA starts over again once the last stage is evaluated.</p></dd>
+Object defining how the samples of the parameter space should be drawn in the
+base stage of each bracket. The default is uniform sampling.</p></dd>
 </dl>
 
     <h2 class="hasAnchor" id="archive"><a class="anchor" href="#archive"></a>Archive</h2>
 
     
 
-<p>The <a href='https://bbotk.mlr-org.com/reference/Archive.html'>bbotk::Archive</a> holds the following additional column that is specific
-to the successive halving algorithm:</p><ul>
+<p>The <a href='https://bbotk.mlr-org.com/reference/Archive.html'>bbotk::Archive</a> holds the following additional columns that are specific
+to the hyperband algorithm:</p><ul>
+<li><p><code>bracket</code> (<code>integer(1)</code>)<br />
+The bracket index. Counts down to 0.</p></li>
 <li><p><code>stage</code> (<code>integer(1))</code><br />
-Stage index. Starts counting at 0.</p></li>
+The stages of each bracket. Starts counting at 0.</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="custom-sampler"><a class="anchor" href="#custom-sampler"></a>Custom sampler</h2>
@@ -255,15 +236,15 @@ combined with a <a href='https://bbotk.mlr-org.com/reference/Terminator.html'>Te
 Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
     <h2 class="hasAnchor" id="super-class"><a class="anchor" href="#super-class"></a>Super class</h2>
 
-    <p><code><a href='https://bbotk.mlr-org.com/reference/Optimizer.html'>bbotk::Optimizer</a></code> -&gt; <code>OptimizerSuccessiveHalving</code></p>
+    <p><code><a href='https://bbotk.mlr-org.com/reference/Optimizer.html'>bbotk::Optimizer</a></code> -&gt; <code>OptimizerAhb</code></p>
     <h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
 
     
 <h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Public methods</h3>
 
 <ul>
-<li><p><a href='#method-new'><code>OptimizerSuccessiveHalving$new()</code></a></p></li>
-<li><p><a href='#method-clone'><code>OptimizerSuccessiveHalving$clone()</code></a></p></li>
+<li><p><a href='#method-new'><code>OptimizerAhb$new()</code></a></p></li>
+<li><p><a href='#method-clone'><code>OptimizerAhb$clone()</code></a></p></li>
 </ul>
 <p><details open ><summary>Inherited methods</summary>
 <ul>
@@ -276,12 +257,12 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
 <hr>
 <a id="method-new"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>new()</code></h3>
 <p>Creates a new instance of this <a href='https://r6.r-lib.org/reference/R6Class.html'>R6</a> class.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
-<p><div class="r"></p><pre><span class='va'>OptimizerSuccessiveHalving</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='op'>)</span></pre><p></div></p>
+<p><div class="r"></p><pre><span class='va'>OptimizerAhb</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='op'>)</span></pre><p></div></p>
 
 <p><hr>
 <a id="method-clone"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>clone()</code></h3>
 <p>The objects of this class are cloneable with this method.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
-<p><div class="r"></p><pre><span class='va'>OptimizerSuccessiveHalving</span><span class='op'>$</span><span class='fu'>clone</span><span class='op'>(</span>deep <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre><p></div></p>
+<p><div class="r"></p><pre><span class='va'>OptimizerAhb</span><span class='op'>$</span><span class='fu'>clone</span><span class='op'>(</span>deep <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre><p></div></p>
 
 <h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Arguments</h4>
 <p><div class="arguments"></p><dl>
@@ -324,89 +305,47 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
 <span class='r-in'><span class='va'>instance</span> <span class='op'>=</span> <span class='va'><a href='https://bbotk.mlr-org.com/reference/OptimInstanceSingleCrit.html'>OptimInstanceSingleCrit</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span></span>
 <span class='r-in'>  objective <span class='op'>=</span> <span class='va'>objective</span>,</span>
 <span class='r-in'>  search_space <span class='op'>=</span> <span class='va'>search_space</span>,</span>
-<span class='r-in'>  terminator <span class='op'>=</span> <span class='fu'><a href='https://bbotk.mlr-org.com/reference/trm.html'>trm</a></span><span class='op'>(</span><span class='st'>"none"</span><span class='op'>)</span></span>
+<span class='r-in'>  terminator <span class='op'>=</span> <span class='fu'><a href='https://bbotk.mlr-org.com/reference/trm.html'>trm</a></span><span class='op'>(</span><span class='st'>"evals"</span>, n_evals <span class='op'>=</span> <span class='fl'>100</span><span class='op'>)</span></span>
 <span class='r-in'><span class='op'>)</span></span>
 <span class='r-in'></span>
-<span class='r-in'><span class='va'>optimizer</span> <span class='op'>=</span> <span class='fu'><a href='https://bbotk.mlr-org.com/reference/opt.html'>opt</a></span><span class='op'>(</span><span class='st'>"successive_halving"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>optimizer</span> <span class='op'>=</span> <span class='fu'><a href='https://bbotk.mlr-org.com/reference/opt.html'>opt</a></span><span class='op'>(</span><span class='st'>"ahb"</span><span class='op'>)</span></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># modifies the instance by reference</span></span>
 <span class='r-in'><span class='va'>optimizer</span><span class='op'>$</span><span class='fu'>optimize</span><span class='op'>(</span><span class='va'>instance</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>          x1       x2 fidelity  x_domain         y</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 1: 3.170577 2.685514     0.16 &lt;list[3]&gt; -1.947044</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1: 9.956037 2.235532     0.64 &lt;list[3]&gt; -29.61371</span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># best scoring evaluation</span></span>
 <span class='r-in'><span class='va'>instance</span><span class='op'>$</span><span class='va'>result</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>          x1       x2 fidelity  x_domain         y</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 1: 3.170577 2.685514     0.16 &lt;list[3]&gt; -1.947044</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1: 9.956037 2.235532     0.64 &lt;list[3]&gt; -29.61371</span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># all evaluations</span></span>
 <span class='r-in'><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/as.data.table.html'>as.data.table</a></span><span class='op'>(</span><span class='va'>instance</span><span class='op'>$</span><span class='va'>archive</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>             x1         x2 fidelity stage            y           timestamp</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  1:  1.7963385 12.6634712     0.01     0  90.67433172 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  2:  9.7229777  6.8512377     0.01     0  17.25402523 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  3:  3.1705775  2.6855144     0.01     0   0.43088926 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  4:  0.4006360 14.4931379     0.01     0 101.81445106 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  5:  2.5471916 10.7011793     0.01     0  64.59613571 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  6: -3.8804955  0.3732905     0.01     0 192.10362644 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  7:  9.5468784  9.3968474     0.01     0  46.46252751 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  8:  4.7275197 12.4188198     0.01     0 132.13739377 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  9:  9.7684820  9.6460355     0.01     0  47.61099918 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 10:  3.0419989 10.6272639     0.01     0  68.74108420 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 11:  6.4158911 13.0609073     0.01     0 162.10476461 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 12:  3.4657859  4.2271887     0.01     0   5.52718448 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 13:  6.6768146  2.5983726     0.01     0  20.68258062 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 14:  4.5859148  1.6450503     0.01     0   8.61101777 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 15:  0.6844110  8.7933329     0.01     0  32.01382108 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 16:  0.3929601 12.7608199     0.01     0  73.11277082 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 17:  3.1705775  2.6855144     0.02     1   0.27236038 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 18:  3.4657859  4.2271887     0.02     1   5.35389518 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 19:  4.5859148  1.6450503     0.02     1   8.38172203 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 20:  9.7229777  6.8512377     0.02     1  16.76787634 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 21:  6.6768146  2.5983726     0.02     1  20.34873989 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 22:  0.6844110  8.7933329     0.02     1  31.97960053 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 23:  9.5468784  9.3968474     0.02     1  45.98518359 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 24:  9.7684820  9.6460355     0.02     1  47.12257508 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 25:  3.1705775  2.6855144     0.04     2  -0.04469736 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 26:  3.4657859  4.2271887     0.04     2   5.00731659 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 27:  4.5859148  1.6450503     0.04     2   7.92313055 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 28:  9.7229777  6.8512377     0.04     2  15.79557857 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 29:  3.1705775  2.6855144     0.08     3  -0.67881286 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 30:  3.4657859  4.2271887     0.08     3   4.31415941 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 31:  3.1705775  2.6855144     0.16     4  -1.94704386 2021-11-26 08:40:36</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>             x1         x2 fidelity stage            y           timestamp</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>     batch_nr    status</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  1:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  2:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  3:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  4:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  5:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  6:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  7:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  8:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  9:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 10:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 11:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 12:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 13:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 14:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 15:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 16:        1 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 17:        2 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 18:        2 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 19:        2 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 20:        2 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 21:        2 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 22:        2 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 23:        2 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 24:        2 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 25:        3 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 26:        3 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 27:        3 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 28:        3 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 29:        4 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 30:        4 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 31:        5 evaluated</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>     batch_nr    status</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>              x1        x2 fidelity asha_id stage bracket           timestamp</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   1: -3.7887479 12.514996     0.01       1     0       6 2021-11-26 08:40:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   2:  4.0114133  2.358127     0.01       2     0       6 2021-11-26 08:40:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   3:  4.0114133  2.358127     0.02       2     1       6 2021-11-26 08:40:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   4: -4.8890084  6.995902     0.01       3     0       6 2021-11-26 08:40:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   5:  2.4666608  4.346509     0.01       4     0       6 2021-11-26 08:40:25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  ---                                                                        </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  97:  0.3845054 11.623695     0.64      59     0       0 2021-11-26 08:40:29</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  98:  3.7671288  9.509646     0.64      60     0       0 2021-11-26 08:40:29</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  99:  7.8799923  8.503415     0.64      61     0       0 2021-11-26 08:40:29</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 100: -1.2050447 13.782048     0.64      62     0       0 2021-11-26 08:40:29</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 101:  8.0102531  3.728080     0.64      63     0       0 2021-11-26 08:40:29</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>      batch_nr    status          y</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   1:        1 evaluated   4.404046</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   2:        2 evaluated   4.046947</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   3:        3 evaluated   3.846376</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   4:        4 evaluated 109.408016</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   5:        5 evaluated   4.588936</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  ---                              </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  97:       97 evaluated  56.316150</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  98:       98 evaluated  49.019696</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  99:       99 evaluated  33.859541</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 100:      100 evaluated  49.513763</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 101:      101  proposed         NA</span>
 </pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

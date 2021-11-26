@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tuner using the Hyperband algorithm — mlr_tuners_hyperband • mlr3hyperband</title>
+<title>Tuner Asynchronous Successive Halving — mlr_tuners_asha • mlr3hyperband</title>
 
 
 <!-- jquery -->
@@ -40,33 +40,23 @@
 
 
 
-<meta property="og:title" content="Tuner using the Hyperband algorithm — mlr_tuners_hyperband" />
-<meta property="og:description" content="TunerHyperband class that implements hyperband tuning. Hyperband (HBX)
-repeatedly calls SH (TunerSuccessiveHalving) with different numbers of
-starting configurations. A larger number of starting configurations
-corresponds to a smaller budget allocated in the base stage. Each run of SH
-within HBX is called a bracket. HBX considers s_max + 1 brackets with
-s_max = floor(log(r_max / r_min, eta). The most explorative bracket
-s = s_max constructs s_max + 1 stages and allocates the minimum budget
-(r_min) in the base stage. The minimum budget is increased in each bracket
-by a factor of eta and the number of starting configurations is computed so
-that each bracket approximately spends the same budget.Use
-hyperband_schedule() to get a preview of the bracket layout.
-s3210
-iniriniriniriniri
-081624484
-1423428
-22418
-318
-
-
-
-
+<meta property="og:title" content="Tuner Asynchronous Successive Halving — mlr_tuners_asha" />
+<meta property="og:description" content="TunerAsha class that implements the asynchronous successive halving
+algorithm. Asynchronous successive halving (ASHA) parallelizes SHA
+(TunerSuccessiveHalving) by promoting candidates to the next stage as soon
+as possible instead of waiting for all candidates in the stage to finish.
+ASHA starts with sampling a candidate hyperparameter configuration for each
+available worker. When an evaluation finishes and the worker is available
+again, ASHA checks the stages from top to bottom for promotable candidates.
+Promotions are possible when the evaluated candidates belong to the top
+1 / eta of each stage. If no promotions are possible, a new candidate is
+sampled and added to the base stage, which increases the number of possible
+promotions for all stages.
 The budget hyperparameter must be tagged with &quot;budget&quot; in the search space.
-The minimum budget (r_min) which is allocated in the base stage of the most
-explorative bracket, is set by the lower bound of the budget parameter. The
-upper bound defines the maximum budget (r_max) which which is allocated to
-the candidates in the last stages." />
+The minimum budget (r_min) which is allocated in the base stage, is set by
+the lower bound of the budget parameter. The upper bound defines the maximum
+budget (r_max) which which is allocated to the candidates in the last
+stage." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -159,56 +149,31 @@ the candidates in the last stages." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Tuner using the Hyperband algorithm</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mlr-org/mlr3hyperband/blob/master/R/TunerHyperband.R'><code>R/TunerHyperband.R</code></a></small>
-    <div class="hidden name"><code>mlr_tuners_hyperband.Rd</code></div>
+    <h1>Tuner Asynchronous Successive Halving</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mlr-org/mlr3hyperband/blob/master/R/TunerAsha.R'><code>R/TunerAsha.R</code></a></small>
+    <div class="hidden name"><code>mlr_tuners_asha.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><code>TunerHyperband</code> class that implements hyperband tuning. Hyperband (HBX)
-repeatedly calls SH (<a href='mlr_tuners_successive_halving.html'>TunerSuccessiveHalving</a>) with different numbers of
-starting configurations. A larger number of starting configurations
-corresponds to a smaller budget allocated in the base stage. Each run of SH
-within HBX is called a bracket. HBX considers <code>s_max + 1</code> brackets with
-<code>s_max = floor(log(r_max / r_min, eta)</code>. The most explorative bracket
-<code>s = s_max</code> constructs <code>s_max + 1</code> stages and allocates the minimum budget
-(<code>r_min</code>) in the base stage. The minimum budget is increased in each bracket
-by a factor of <code>eta</code> and the number of starting configurations is computed so
-that each bracket approximately spends the same budget.Use
-<code><a href='hyperband_schedule.html'>hyperband_schedule()</a></code> to get a preview of the bracket layout.</p><table class='table'>
-<tr><td>s</td><td></td><td>3</td><td></td><td></td><td>2</td><td></td><td></td><td>1</td><td></td><td></td><td>0</td></tr>
-<tr><td>i</td><td>ni</td><td>ri</td><td></td><td>ni</td><td>ri</td><td></td><td>ni</td><td>ri</td><td></td><td>ni</td><td>ri</td></tr>
-<tr><td>0</td><td>8</td><td>1</td><td></td><td>6</td><td>2</td><td></td><td>4</td><td>4</td><td></td><td>8</td><td>4</td></tr>
-<tr><td>1</td><td>4</td><td>2</td><td></td><td>3</td><td>4</td><td></td><td>2</td><td>8</td><td></td><td></td><td></td></tr>
-<tr><td>2</td><td>2</td><td>4</td><td></td><td>1</td><td>8</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr><td>3</td><td>1</td><td>8</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-</table>
-
-
-
+    <p><code>TunerAsha</code> class that implements the asynchronous successive halving
+algorithm. Asynchronous successive halving (ASHA) parallelizes SHA
+(<a href='mlr_tuners_successive_halving.html'>TunerSuccessiveHalving</a>) by promoting candidates to the next stage as soon
+as possible instead of waiting for all candidates in the stage to finish.
+ASHA starts with sampling a candidate hyperparameter configuration for each
+available worker. When an evaluation finishes and the worker is available
+again, ASHA checks the stages from top to bottom for promotable candidates.
+Promotions are possible when the evaluated candidates belong to the top
+<code>1 / eta</code> of each stage. If no promotions are possible, a new candidate is
+sampled and added to the base stage, which increases the number of possible
+promotions for all stages.</p>
 <p>The budget hyperparameter must be tagged with <code>"budget"</code> in the search space.
-The minimum budget (<code>r_min</code>) which is allocated in the base stage of the most
-explorative bracket, is set by the lower bound of the budget parameter. The
-upper bound defines the maximum budget (<code>r_max</code>) which which is allocated to
-the candidates in the last stages.</p>
+The minimum budget (<code>r_min</code>) which is allocated in the base stage, is set by
+the lower bound of the budget parameter. The upper bound defines the maximum
+budget (<code>r_max</code>) which which is allocated to the candidates in the last
+stage.</p>
     </div>
 
 
-
-    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
-
-    <p>Li L, Jamieson K, DeSalvo G, Rostamizadeh A, Talwalkar A (2018).
-&#8220;Hyperband: A Novel Bandit-Based Approach to Hyperparameter Optimization.&#8221;
-<em>Journal of Machine Learning Research</em>, <b>18</b>(185), 1-52.
-<a href='https://jmlr.org/papers/v18/16-558.html'>https://jmlr.org/papers/v18/16-558.html</a>.</p>
-    <h2 class="hasAnchor" id="dictionary"><a class="anchor" href="#dictionary"></a>Dictionary</h2>
-
-    
-
-<p>This <a href='https://bbotk.mlr-org.com/reference/Optimizer.html'>Optimizer</a> can be instantiated via the <a href='https://mlr3misc.mlr-org.com/reference/Dictionary.html'>dictionary</a>
-<a href='https://bbotk.mlr-org.com/reference/mlr_optimizers.html'>mlr_optimizers</a> or with the associated sugar function <code><a href='https://bbotk.mlr-org.com/reference/opt.html'>opt()</a></code>:</p><pre><span class='va'>mlr_optimizers</span><span class='op'>$</span><span class='fu'>get</span><span class='op'>(</span><span class='st'>"hyperband"</span><span class='op'>)</span>
-<span class='fu'><a href='https://bbotk.mlr-org.com/reference/opt.html'>opt</a></span><span class='op'>(</span><span class='st'>"hyperband"</span><span class='op'>)</span>
-</pre>
 
     <h2 class="hasAnchor" id="parameters"><a class="anchor" href="#parameters"></a>Parameters</h2>
 
@@ -221,20 +186,18 @@ and only the best <code>1 / eta</code> candidates are promoted to the next stage
 Non-integer values are supported, but <code>eta</code> is not allowed to be less or
 equal 1.</p></dd>
 <dt><code>sampler</code></dt><dd><p><a href='https://paradox.mlr-org.com/reference/Sampler.html'>paradox::Sampler</a><br />
-Object defining how the samples of the parameter space should be drawn in the
-base stage of each bracket. The default is uniform sampling.</p></dd>
+Object defining how the samples of the parameter space should be drawn. The
+default is uniform sampling.</p></dd>
 </dl>
 
     <h2 class="hasAnchor" id="archive"><a class="anchor" href="#archive"></a>Archive</h2>
 
     
 
-<p>The <a href='https://mlr3tuning.mlr-org.com/reference/ArchiveTuning.html'>mlr3tuning::ArchiveTuning</a> holds the following additional columns that
-are specific to the hyperband algorithm:</p><ul>
-<li><p><code>bracket</code> (<code>integer(1)</code>)<br />
-The bracket index. Counts down to 0.</p></li>
+<p>The <a href='https://bbotk.mlr-org.com/reference/Archive.html'>bbotk::Archive</a> holds the following additional column that is specific
+to the successive halving algorithm:</p><ul>
 <li><p><code>stage</code> (<code>integer(1))</code><br />
-The stages of each bracket. Starts counting at 0.</p></li>
+Stage index. Starts counting at 0.</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="custom-sampler"><a class="anchor" href="#custom-sampler"></a>Custom sampler</h2>
@@ -262,10 +225,9 @@ combined with a <a href='https://bbotk.mlr-org.com/reference/Terminator.html'>Te
 
     
 
-<p>HBX parallelizes the original hyperband algorithm by evaluating
-hyperparameter configurations of equal budget across brackets in one batch.
-For example, all configurations in stage 1 of bracket 3 and stage 0 of
-bracket 2 in one batch. To select a parallel backend, use <code><a href='https://future.futureverse.org/reference/plan.html'>future::plan()</a></code>.</p>
+<p>The hyperparameter configurations are asynchronously evaluated with the
+<a href='https://CRAN.R-project.org/package=future'><span class="pkg">future</span></a> package. The resampling of each candidate is send to an
+available worker. To select a parallel backend, use <code><a href='https://future.futureverse.org/reference/plan.html'>future::plan()</a></code>.</p>
     <h2 class="hasAnchor" id="logging"><a class="anchor" href="#logging"></a>Logging</h2>
 
     
@@ -275,33 +237,49 @@ bracket 2 in one batch. To select a parallel backend, use <code><a href='https:/
 Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
     <h2 class="hasAnchor" id="super-classes"><a class="anchor" href="#super-classes"></a>Super classes</h2>
 
-    <p><code><a href='https://mlr3tuning.mlr-org.com/reference/Tuner.html'>mlr3tuning::Tuner</a></code> -&gt; <code><a href='https://mlr3tuning.mlr-org.com/reference/TunerFromOptimizer.html'>mlr3tuning::TunerFromOptimizer</a></code> -&gt; <code>TunerHyperband</code></p>
+    <p><code><a href='https://mlr3tuning.mlr-org.com/reference/Tuner.html'>mlr3tuning::Tuner</a></code> -&gt; <code><a href='https://mlr3tuning.mlr-org.com/reference/TunerFromOptimizer.html'>mlr3tuning::TunerFromOptimizer</a></code> -&gt; <code>TunerAsha</code></p>
     <h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
 
     
 <h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Public methods</h3>
 
 <ul>
-<li><p><a href='#method-new'><code>TunerHyperband$new()</code></a></p></li>
-<li><p><a href='#method-clone'><code>TunerHyperband$clone()</code></a></p></li>
+<li><p><a href='#method-new'><code>TunerAsha$new()</code></a></p></li>
+<li><p><a href='#method-optimize'><code>TunerAsha$optimize()</code></a></p></li>
+<li><p><a href='#method-clone'><code>TunerAsha$clone()</code></a></p></li>
 </ul>
 <p><details open ><summary>Inherited methods</summary>
 <ul>
 <li><p><span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="format"><a href='../../mlr3tuning/html/Tuner.html#method-format'><code>mlr3tuning::Tuner$format()</code></a></span></p></li>
 <li><p><span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="print"><a href='../../mlr3tuning/html/Tuner.html#method-print'><code>mlr3tuning::Tuner$print()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="mlr3tuning" data-topic="TunerFromOptimizer" data-id="optimize"><a href='../../mlr3tuning/html/TunerFromOptimizer.html#method-optimize'><code>mlr3tuning::TunerFromOptimizer$optimize()</code></a></span></p></li>
 </ul>
 </details>
 
 <hr>
 <a id="method-new"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>new()</code></h3>
 <p>Creates a new instance of this <a href='https://r6.r-lib.org/reference/R6Class.html'>R6</a> class.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
-<p><div class="r"></p><pre><span class='va'>TunerHyperband</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='op'>)</span></pre><p></div></p>
+<p><div class="r"></p><pre><span class='va'>TunerAsha</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='op'>)</span></pre><p></div></p>
 
+<p><hr>
+<a id="method-optimize"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code><a href='https://rdrr.io/r/stats/optimize.html'>optimize()</a></code></h3>
+<p>Performs the tuning on a <a href='https://mlr3tuning.mlr-org.com/reference/TuningInstanceSingleCrit.html'>TuningInstanceSingleCrit</a> /
+<a href='https://mlr3tuning.mlr-org.com/reference/TuningInstanceMultiCrit.html'>TuningInstanceMultiCrit</a> until termination. The single evaluations and
+the final results will be written into the <a href='https://mlr3tuning.mlr-org.com/reference/ArchiveTuning.html'>ArchiveTuning</a> that
+resides in the <a href='https://mlr3tuning.mlr-org.com/reference/TuningInstanceSingleCrit.html'>TuningInstanceSingleCrit</a>/<a href='https://mlr3tuning.mlr-org.com/reference/TuningInstanceMultiCrit.html'>TuningInstanceMultiCrit</a>.
+The final result is returned.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>TunerAsha</span><span class='op'>$</span><span class='fu'>optimize</span><span class='op'>(</span><span class='va'>inst</span><span class='op'>)</span></pre><p></div></p>
+
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Arguments</h4>
+<p><div class="arguments"></p><dl>
+<dt><code>inst</code></dt><dd><p>(<a href='https://mlr3tuning.mlr-org.com/reference/TuningInstanceSingleCrit.html'>TuningInstanceSingleCrit</a> | <a href='https://mlr3tuning.mlr-org.com/reference/TuningInstanceMultiCrit.html'>TuningInstanceMultiCrit</a>).</p></dd>
+
+</dl><p></div></p>
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Returns</h4>
+<p><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table::data.table</a>.</p>
 <p><hr>
 <a id="method-clone"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>clone()</code></h3>
 <p>The objects of this class are cloneable with this method.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
-<p><div class="r"></p><pre><span class='va'>TunerHyperband</span><span class='op'>$</span><span class='fu'>clone</span><span class='op'>(</span>deep <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre><p></div></p>
+<p><div class="r"></p><pre><span class='va'>TunerAsha</span><span class='op'>$</span><span class='fu'>clone</span><span class='op'>(</span>deep <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre><p></div></p>
 
 <h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Arguments</h4>
 <p><div class="arguments"></p><dl>
@@ -325,12 +303,13 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
 <span class='r-in'><span class='co'># \donttest{</span></span>
 <span class='r-in'><span class='co'># hyperparameter tuning on the pima indians diabetes data set</span></span>
 <span class='r-in'><span class='va'>instance</span> <span class='op'>=</span> <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/tune.html'>tune</a></span><span class='op'>(</span></span>
-<span class='r-in'>  method <span class='op'>=</span> <span class='st'>"hyperband"</span>,</span>
+<span class='r-in'>  method <span class='op'>=</span> <span class='st'>"asha"</span>,</span>
 <span class='r-in'>  task <span class='op'>=</span> <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>tsk</a></span><span class='op'>(</span><span class='st'>"pima"</span><span class='op'>)</span>,</span>
 <span class='r-in'>  learner <span class='op'>=</span> <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>lrn</a></span><span class='op'>(</span><span class='st'>"classif.xgboost"</span>, eval_metric <span class='op'>=</span> <span class='st'>"logloss"</span><span class='op'>)</span>,</span>
 <span class='r-in'>  resampling <span class='op'>=</span> <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>rsmp</a></span><span class='op'>(</span><span class='st'>"cv"</span>, folds <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>,</span>
 <span class='r-in'>  measures <span class='op'>=</span> <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>msr</a></span><span class='op'>(</span><span class='st'>"classif.ce"</span><span class='op'>)</span>,</span>
-<span class='r-in'>  search_space <span class='op'>=</span> <span class='va'>search_space</span></span>
+<span class='r-in'>  search_space <span class='op'>=</span> <span class='va'>search_space</span>,</span>
+<span class='r-in'>  term_evals <span class='op'>=</span> <span class='fl'>100</span></span>
 <span class='r-in'><span class='op'>)</span></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># best performing hyperparameter configuration</span></span>
@@ -338,7 +317,7 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
 <span class='r-in'><span class='co'># }</span></span>
 <span class='r-in'><span class='op'>}</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    nrounds       eta booster learner_param_vals  x_domain classif.ce</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 1:       8 0.4096565  gbtree          &lt;list[6]&gt; &lt;list[3]&gt;  0.2382812</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1:      16 0.1608058  gbtree          &lt;list[6]&gt; &lt;list[3]&gt;  0.2434896</span>
 </pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
