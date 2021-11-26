@@ -203,6 +203,11 @@ test_that("TunerSuccessiveHalving works with repetitions", {
 })
 
 test_that("TunerSuccessiveHalving terminates itself", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 16, tags = "budget"))
+  )
+
   instance = tune(
     method = "successive_halving",
     task = tsk("pima"),

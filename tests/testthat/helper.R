@@ -17,7 +17,7 @@ lapply(list.files(system.file("testthat", package = "mlr3tuning"), pattern = "^h
 #' @description
 #' Tests bracket and stages constructed by the tuner against the ones based on
 #' the original hyperband paper.
-test_tuner_hyperband = function(eta, learner, measures = msr("classif.ce")) {
+test_tuner_hyperband = function(eta, learner, measures = msr("classif.ce"), sampler = NULL) {
   search_space = learner$param_set$search_space()
   budget_id = search_space$ids(tags = "budget")
   r_min = search_space$lower[[budget_id]]
@@ -29,7 +29,8 @@ test_tuner_hyperband = function(eta, learner, measures = msr("classif.ce")) {
     learner = learner,
     measures = measures,
     resampling = rsmp("holdout"),
-    eta = eta
+    eta = eta,
+    sampler = sampler
   )
 
   # compare brackets and stages of tuner to theoretical hyperband
@@ -88,7 +89,7 @@ test_tuner_successive_halving = function(n, eta, learner, measures = msr("classi
 #' Tests budget and number of configs constructed by the tuner against supplied
 #' bounds
 test_tuner_asha = function(eta, learner, measures = msr("classif.ce"), term_evals = 15, allow_hotstart = FALSE,
-  keep_hotstart_stack = TRUE) {
+  keep_hotstart_stack = TRUE, sampler = NULL) {
 
   search_space = learner$param_set$search_space()
   budget_id = search_space$ids(tags = "budget")
@@ -104,7 +105,8 @@ test_tuner_asha = function(eta, learner, measures = msr("classif.ce"), term_eval
     term_evals = term_evals,
     eta = eta,
     allow_hotstart = allow_hotstart,
-    keep_hotstart_stack = keep_hotstart_stack
+    keep_hotstart_stack = keep_hotstart_stack,
+    sampler = sampler
   )
 
   expect_null(instance$archive$data$resample_result)
@@ -125,10 +127,9 @@ test_tuner_asha = function(eta, learner, measures = msr("classif.ce"), term_eval
 #' @noRd
 #'
 #' @description
-#' Tests budget and number of configs constructed by the tuner against supplied
-#' bounds
+#' Tests budget allocated by the tuner against supplied bounds
 test_tuner_ahb = function(eta, learner, measures = msr("classif.ce"), term_evals = 100, allow_hotstart = FALSE,
-  keep_hotstart_stack = TRUE) {
+  keep_hotstart_stack = TRUE, sampler = NULL) {
 
   search_space = learner$param_set$search_space()
   budget_id = search_space$ids(tags = "budget")
@@ -145,7 +146,8 @@ test_tuner_ahb = function(eta, learner, measures = msr("classif.ce"), term_evals
     term_evals = term_evals,
     eta = eta,
     allow_hotstart = allow_hotstart,
-    keep_hotstart_stack = keep_hotstart_stack
+    keep_hotstart_stack = keep_hotstart_stack,
+    sampler = sampler
   )
 
   archive = as.data.table(instance$archive)

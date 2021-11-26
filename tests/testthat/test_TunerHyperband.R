@@ -74,7 +74,7 @@ test_that("TunerHyperband works with custom sampler", {
 
   sampler = Sampler1DRfun$new(learner$param_set$search_space()$params[["x"]], function(n) rbeta(n, 2, 5))
 
-  test_tuner_hyperband(n = 16, eta = 2, learner, sampler = sampler)
+  test_tuner_hyperband(eta = 2, learner, sampler = sampler)
 })
 
 test_that("TunerHyperband errors if not enough parameters are sampled", {
@@ -204,6 +204,11 @@ test_that("TunerHyperband works with repetitions", {
 })
 
 test_that("TunerHyperband terminates itself", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 16, tags = "budget"))
+  )
+
   instance = tune(
     method = "hyperband",
     task = tsk("pima"),

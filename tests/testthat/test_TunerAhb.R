@@ -7,7 +7,7 @@ test_that("TunerAhb works", {
   test_tuner_ahb(eta = 2, learner)
 })
 
-test_that("TunerAhb works with minimum budget greater than 1", {
+test_that("TunerAhb works with minimum budget > 1", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(2, 8, tags = "budget"))
@@ -34,7 +34,20 @@ test_that("TunerAhb works with eta = 2.5", {
   instance = test_tuner_ahb(eta = 2.5, learner)
 })
 
-test_that("TunerAsha works with subsampling", {
+test_that("TunerAhb works with xgboost", {
+  skip_if_not_installed("mlr3learners")
+  skip_if_not_installed("xgboost")
+  library(mlr3learners) # nolint
+
+  learner = lrn("classif.xgboost",
+    nrounds   = to_tune(p_int(1, 16, tags = "budget")),
+    eta       = to_tune(1e-4, 1, logscale = TRUE),
+    max_depth = to_tune(1, 2))
+
+  test_tuner_ahb(eta = 2, learner)
+})
+
+test_that("TunerAhb works with subsampling", {
   skip_if_not_installed("mlr3pipelines")
   library(mlr3pipelines)
 
@@ -45,7 +58,7 @@ test_that("TunerAsha works with subsampling", {
   test_tuner_ahb(eta = 3, graph_learner)
 })
 
-test_that("TunerAsha works with multi-crit", {
+test_that("TunerAhb works with multi-crit", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 4, tags = "budget"))
@@ -54,45 +67,122 @@ test_that("TunerAsha works with multi-crit", {
   test_tuner_ahb(eta = 2, learner, measures = msrs(c("classif.ce", "classif.acc")))
 })
 
-test_that("TunerAhb throws an error if budget parameter is invalid", {
-  skip_if_not_installed("mlr3learners")
-  skip_if_not_installed("xgboost")
-  library(mlr3learners) # nolint
+test_that("TunerAhb works with custom sampler", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 4, tags = "budget"))
+  )
 
-  # non-numeric budget parameter
-  learner = lrn("classif.xgboost")
-  search_space = ps(
-    nrounds = p_int(lower = 1, upper = 8),
-    eta     = p_dbl(lower = 0, upper = 1),
-    booster = p_fct(levels = c("gbtree", "gblinear", "dart"), tags = "budget")
+  sampler = Sampler1DRfun$new(learner$param_set$search_space()$params[["x"]], function(n) rbeta(n, 2, 5))
+
+  test_tuner_ahb(eta = 2, learner, sampler = sampler)
+})
+
+test_that("TunerAhb errors if not enough parameters are sampled", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    message_train = to_tune(),
+    iter = to_tune(p_int(1, 4, tags = "budget"))
+  )
+
+  sampler = Sampler1DRfun$new(learner$param_set$search_space()$params[["x"]], function(n) rbeta(n, 2, 5))
+
+  expect_error(tune(
+    method = "ahb",
+    task = tsk("pima"),
+    learner = learner,
+    resampling = rsmp("cv", folds = 3),
+    measures = msr("classif.ce"),
+    sampler = sampler),
+    regexp = "Must be equal to set",
+    fixed = TRUE
+  )
+})
+
+test_that("TunerAhb errors if budget parameter is sampled", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 4, tags = "budget"))
+  )
+
+  sampler = SamplerJointIndep$new(list(
+    Sampler1DRfun$new(learner$param_set$search_space()$params[["x"]], function(n) rbeta(n, 2, 5)),
+    Sampler1D$new(learner$param_set$search_space()$params[["iter"]])
+  ))
+
+  expect_error(tune(
+    method = "ahb",
+    task = tsk("pima"),
+    learner = learner,
+    resampling = rsmp("cv", folds = 3),
+    measures = msr("classif.ce"),
+    sampler = sampler),
+    regexp = "Must be equal to set",
+    fixed = TRUE
+  )
+})
+
+test_that("TunerAhb errors if budget parameter is not numeric", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    predict_missing_type = to_tune(p_fct(levels = c("na", "omit"), tags = "budget"))
   )
 
   expect_error(tune(
     method = "ahb",
     task = tsk("pima"),
     learner = learner,
-    measures = msr("classif.ce"),
-    resampling = rsmp("holdout"),
-    search_space = search_space),
-    regexp = "but is 'ParamFct'.",
-    fixed = TRUE)
+    resampling = rsmp("cv", folds = 3),
+    measures = msr("classif.ce")),
+    regexp = "Must be element of set",
+    fixed = TRUE
+  )
+})
 
-  # two budget parameters
-  search_space = ps(
-    nrounds = p_int(lower = 1, upper = 8, tags = "budget"),
-    eta     = p_dbl(lower = 0, upper = 1, tags = "budget"),
-    booster = p_fct(levels = c("gbtree", "gblinear", "dart"))
+test_that("TunerAhb errors if multiple budget parameters are set", {
+  learner = lrn("classif.debug",
+    x  = to_tune(p_dbl(0, 1, tags = "budget")),
+    iter = to_tune(p_int(1, 16, tags = "budget"))
   )
 
   expect_error(tune(
     method = "ahb",
     task = tsk("pima"),
     learner = learner,
-    measures = msr("classif.ce"),
-    resampling = rsmp("holdout"),
-    search_space = search_space),
-    regexp = "Exactly one parameter must be tagged with 'budget'",
-    fixed = TRUE)
+    resampling = rsmp("cv", folds = 3),
+    measures = msr("classif.ce")),
+    regexp = "Exactly one parameter must be tagged ",
+    fixed = TRUE
+  )
+})
+
+test_that("TunerAhb minimizes measure", {
+  learner = lrn("classif.debug",
+    x = to_tune(),
+    iter = to_tune(p_int(1, 16, tags = "budget"))
+  )
+
+  instance = test_tuner_ahb(eta = 2, learner, measures = msr("dummy", parameter_id = "x", minimize = TRUE))
+  expect_equal(min(instance$archive$data[c(1, 2), dummy]), instance$archive$data[3, dummy])
+})
+
+test_that("TunerAhb maximizes measure", {
+  learner = lrn("classif.debug",
+    x = to_tune(),
+    iter = to_tune(p_int(1, 16, tags = "budget"))
+  )
+
+  instance = test_tuner_ahb(eta = 2, learner, measures = msr("dummy", parameter_id = "x", minimize = FALSE))
+  expect_equal(max(instance$archive$data[c(1, 2), dummy]), instance$archive$data[3, dummy])
+})
+
+test_that("TunerAhb works with single budget value", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 1, tags = "budget"))
+  )
+
+  test_tuner_ahb(eta = 2, learner)
 })
 
 test_that("TunerAhb works with hotstarting", {
@@ -109,27 +199,7 @@ test_that("TunerAhb works with hotstarting", {
   expect_null(instance$archive$data$expect_resample_result)
 })
 
-test_that("minimize works", {
-  learner = lrn("classif.debug",
-    x = to_tune(),
-    iter = to_tune(p_int(1, 16, tags = "budget"))
-  )
-
-  instance = test_tuner_ahb(eta = 2, learner, measures = msr("dummy", parameter_id = "x", minimize = TRUE))
-  expect_equal(min(instance$archive$data[c(1, 2), dummy]), instance$archive$data[3, dummy])
-})
-
-test_that("maximize works", {
-  learner = lrn("classif.debug",
-    x = to_tune(),
-    iter = to_tune(p_int(1, 16, tags = "budget"))
-  )
-
-  instance = test_tuner_ahb(eta = 2, learner, measures = msr("dummy", parameter_id = "x", minimize = FALSE))
-  expect_equal(max(instance$archive$data[c(1, 2), dummy]), instance$archive$data[3, dummy])
-})
-
-test_that("only supported terminators are used", {
+test_that("TunerAhb errors if non-supported terminators are used", {
   learner = lrn("classif.debug",
     x = to_tune(),
     iter = to_tune(p_int(1, 16, tags = "budget"))
