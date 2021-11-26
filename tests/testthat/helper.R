@@ -52,7 +52,7 @@ test_tuner_hyperband = function(eta, learner, measures = msr("classif.ce")) {
 #' @description
 #' Tests budget and number of configs constructed by the tuner against supplied
 #' bounds
-test_tuner_successive_halving = function(n, eta, learner, measures = msr("classif.ce")) {
+test_tuner_successive_halving = function(n, eta, learner, measures = msr("classif.ce"), sampler = NULL) {
   search_space = learner$param_set$search_space()
   budget_id = search_space$ids(tags = "budget")
   r_min = search_space$lower[[budget_id]]
@@ -65,7 +65,8 @@ test_tuner_successive_halving = function(n, eta, learner, measures = msr("classi
     measures = measures,
     resampling = rsmp("holdout"),
     n = n,
-    eta = eta)
+    eta = eta,
+    sampler = sampler)
 
     budget = as.data.table(instance$archive)[, budget_id, with = FALSE]
     n_configs = as.data.table(instance$archive)[, .N, by = "stage"]

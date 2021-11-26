@@ -36,10 +36,10 @@
 #' @section Archive:
 #' The [bbotk::Archive] holds the following additional columns that are specific
 #' to the hyperband algorithm:
-#'   * `bracket` (`integer(1)`)\cr
-#'     The bracket index. Counts down to 0.
 #'   * `stage` (`integer(1))`\cr
 #'     The stages of each bracket. Starts counting at 0.
+#'   * `bracket` (`integer(1)`)\cr
+#'     The bracket index. Counts down to 0.
 #'
 #' @template section_custom_sampler
 #' @template section_progress_bars

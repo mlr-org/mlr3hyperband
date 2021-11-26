@@ -57,9 +57,11 @@ equal 1.
 Object defining how the samples of the parameter space should be drawn in the
 base stage of each bracket. The default is uniform sampling.
 }
-\item{\code{repeats}}{\code{logical(1)}\cr
-If \code{FALSE} (default), hyperband terminates once all brackets are evaluated.
-Otherwise, hyperband starts over again once the last bracket is evaluated.
+\item{\code{repeats}}{\code{integer(1)}\cr
+If \code{1} (default), optimization is stopped once all stages are evaluated.
+Otherwise, optimization is stopped after \code{repeats} runs of SHA. The
+\link[bbotk:Terminator]{bbotk::Terminator} might stop the optimization before all repeats are
+executed.
 }}
 }
 
@@ -68,10 +70,12 @@ Otherwise, hyperband starts over again once the last bracket is evaluated.
 The \link[bbotk:Archive]{bbotk::Archive} holds the following additional columns that are specific
 to the hyperband algorithm:
 \itemize{
-\item \code{bracket} (\code{integer(1)})\cr
-The bracket index. Counts down to 0.
 \item \code{stage} (\verb{integer(1))}\cr
 The stages of each bracket. Starts counting at 0.
+\item \code{bracket} (\code{integer(1)})\cr
+The bracket index. Counts down to 0.
+\item \code{repetition} (\verb{integer(1))}\cr
+Repetition index. Start counting at 1.
 }
 }
 

@@ -119,7 +119,7 @@ OptimizerAsha = R6Class("OptimizerAsha",
 )
 
 #' @description
-#' Returns promoted or newly sampled configuration.
+#' Returns promoted or sampled configuration.
 #'
 #' @param s_max (`integer(1)`)\cr
 #'   Number of stages + 1
