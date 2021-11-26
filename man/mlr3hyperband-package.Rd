@@ -6,7 +6,7 @@
 \alias{mlr3hyperband-package}
 \title{mlr3hyperband: Successive Halving and Hyperband Algorithms for 'mlr3'}
 \description{
-Multifidelity optimization algorithms based on the successive halving algorithm. Implements the successive halving, asynchronous successive halving, hyperband and asynchronous hyperband algorithm as general purpose optimizers for 'bbotk' and tuners for `mlr3tuning`. Various termination criteria can be set and combined. If possible learners are hotstarted to accelerate tuning. The class 'AutoTuner' provides a convenient way to perform nested resampling in combination with 'mlr3'.
+Multifidelity optimization methods based on the successive halving algorithm. Implements the successive halving, asynchronous successive halving, hyperband and asynchronous hyperband algorithm as general purpose optimizers for 'bbotk' and tuners for `mlr3tuning`. Various termination criteria can be set and combined. If possible learners are hotstarted to accelerate tuning. The class 'AutoTuner' provides a convenient way to perform nested resampling in combination with 'mlr3'.
 }
 \seealso{
 Useful links:

@@ -86,41 +86,30 @@ Use \code{lgr::get_logger("bbotk")} to access and control the logger.
 library(bbotk)
 library(data.table)
 
+# set search space
 search_space = domain = ps(
   x1 = p_dbl(-5, 10),
   x2 = p_dbl(0, 15),
   fidelity = p_dbl(1e-2, 1, tags = "budget")
 )
 
-# modified branin function
-objective = ObjectiveRFunDt$new(
-  fun = function(xdt) {
-    a = 1
-    b = 5.1 / (4 * (pi ^ 2))
-    c = 5 / pi
-    r = 6
-    s = 10
-    t = 1 / (8 * pi)
-    data.table(y =
-      (a * ((xdt[["x2"]] -
-      b * (xdt[["x1"]] ^ 2L) +
-      c * xdt[["x1"]] - r) ^ 2) +
-      ((s * (1 - t)) * cos(xdt[["x1"]])) +
-      s - (5 * xdt[["fidelity"]] * xdt[["x1"]])))
-  },
+# objective with modified branin function, see `bbotk::branin()`
+objective = ObjectiveRFun$new(
+  fun = branin,
   domain = domain,
   codomain = ps(y = p_dbl(tags = "minimize"))
 )
 
+# initialize instance and optimizer
 instance = OptimInstanceSingleCrit$new(
   objective = objective,
   search_space = search_space,
-  terminator = trm("evals", n_evals = 100)
+  terminator = trm("evals", n_evals = 50)
 )
 
 optimizer = opt("ahb")
 
-# modifies the instance by reference
+# optimize branin function
 optimizer$optimize(instance)
 
 # best scoring evaluation

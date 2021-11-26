@@ -24,10 +24,10 @@ The budget hyperparameter must be tagged with \code{"budget"} in the search spac
 The minimum budget (\code{r_min}) which is allocated in the base stage, is set by
 the lower bound of the budget parameter. The upper bound  defines the maximum
 budget (\code{r_max}) which is allocated to the candidates in the last stage. The
-number of stages is computed that each candidate in base stage is allocated
-the minimum budget and the candidates in the last stage are not evaluated on
-more than the maximum budget. The following table is the stage layout for
-\code{eta = 2}, \code{r_min = 1} and \code{r_max = 8}.\tabular{rrr}{
+number of stages is computed so that each candidate in base stage is
+allocated the minimum budget and the candidates in the last stage are not
+evaluated on more than the maximum budget. The following table is the stage
+layout for \code{eta = 2}, \code{r_min = 1} and \code{r_max = 8}.\tabular{rrr}{
    i \tab ni \tab ri \cr
    0 \tab 8 \tab 1 \cr
    1 \tab 4 \tab 2 \cr
@@ -103,29 +103,30 @@ Use \code{lgr::get_logger("bbotk")} to access and control the logger.
 
 \examples{
 if(requireNamespace("xgboost")) {
-library(mlr3learners)
+  library(mlr3learners)
 
-# define hyperparameter and budget parameter
-search_space = ps(
-  nrounds = p_int(lower = 1, upper = 16, tags = "budget"),
-  eta = p_dbl(lower = 0, upper = 1),
-  booster = p_fct(levels = c("gbtree", "gblinear", "dart"))
-)
+  # define hyperparameter and budget parameter
+  search_space = ps(
+    nrounds = p_int(lower = 1, upper = 16, tags = "budget"),
+    eta = p_dbl(lower = 0, upper = 1),
+    booster = p_fct(levels = c("gbtree", "gblinear", "dart"))
+  )
 
-\donttest{
-# hyperparameter tuning on the pima indians diabetes data set
-instance = tune(
-  method = "successive_halving",
-  task = tsk("pima"),
-  learner = lrn("classif.xgboost", eval_metric = "logloss"),
-  resampling = rsmp("cv", folds = 3),
-  measures = msr("classif.ce"),
-  search_space = search_space
-)
+  \donttest{
+  # hyperparameter tuning on the pima indians diabetes data set
+  instance = tune(
+    method = "successive_halving",
+    task = tsk("pima"),
+    learner = lrn("classif.xgboost", eval_metric = "logloss"),
+    resampling = rsmp("cv", folds = 3),
+    measures = msr("classif.ce"),
+    search_space = search_space,
+    term_evals = 100
+  )
 
-# best performing hyperparameter configuration
-instance$result
-}
+  # best performing hyperparameter configuration
+  instance$result
+  }
 }
 }
 \section{Super classes}{
