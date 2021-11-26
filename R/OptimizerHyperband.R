@@ -1,6 +1,7 @@
 #' @title Optimizer using the Hyperband algorithm
 #'
 #' @name mlr_optimizers_hyperband
+#' @templateVar id hyperband
 #'
 #' @description
 #' `OptimizerHyperband` class that implements hyperband optimization. HyperbandX
@@ -15,13 +16,16 @@
 #' approximately spends the same budget. Use [hyperband_schedule()] to get a
 #' preview of the bracket layout.
 #'
-#' |   s |     |   3 |     |     |   2 |     |     |   1 |     |     |   0 |
-#' | ---:| ---:| ---:| --- | ---:| ---:| --- | ---:| ---:| --- | ---:| ---:|
-#' |   i |  ni |  ri |     |  ni |  ri |     |  ni |  ri |     |  ni |  ri |
-#' |   0 |   8 |   1 |     |   6 |   2 |     |   4 |   4 |     |   8 |   4 |
-#' |   1 |   4 |   2 |     |   3 |   4 |     |   2 |   8 |     |     |     |
-#' |   2 |   2 |   4 |     |   1 |   8 |     |     |     |     |     |     |
-#' |   3 |   1 |   8 |     |     |     |     |     |     |     |     |     |
+#' | `s` |     |       |     3 |     |       |     2 |     |       |     1 |     |       |     0 |
+#' | --: | --- | ----: | ----: | --- | ----: | ----: | --- | ----: | ----: | --- | ----: | ----: |
+#' | `i` |     | `n_i` | `r_i` |     | `n_i` | `r_i` |     | `n_i` | `r_i` |     | `n_i` | `r_i` |
+#' |   0 |     |     8 |     1 |     |     6 |     2 |     |     4 |     4 |     |     8 |     4 |
+#' |   1 |     |     4 |     2 |     |     3 |     4 |     |     2 |     8 |     |       |       |
+#' |   2 |     |     2 |     4 |     |     1 |     8 |     |       |       |     |       |       |
+#' |   3 |     |     1 |     8 |     |       |       |     |       |       |     |       |       |
+#'
+#' `s` is the bracket number, `i` is stage number, `n_i` is the number of
+#' configurations and `r_i` is the budget allocated to a single configuration.
 #'
 #' The budget hyperparameter must be tagged with `"budget"` in the search space.
 #' The minimum budget (`r_min`) which is allocated in the base stage of the most
@@ -69,7 +73,6 @@
 #' `r format_bib("li_2018")`
 #'
 #' @export
-#' @templateVar id hyperband
 #' @template example_optimizer
 OptimizerHyperband = R6Class("OptimizerHyperband",
   inherit = Optimizer,

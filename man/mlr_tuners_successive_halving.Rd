@@ -28,12 +28,16 @@ number of stages is computed so that each candidate in base stage is
 allocated the minimum budget and the candidates in the last stage are not
 evaluated on more than the maximum budget. The following table is the stage
 layout for \code{eta = 2}, \code{r_min = 1} and \code{r_max = 8}.\tabular{rrr}{
-   i \tab ni \tab ri \cr
+   \code{i} \tab \code{n_i} \tab \code{r_i} \cr
    0 \tab 8 \tab 1 \cr
    1 \tab 4 \tab 2 \cr
    2 \tab 2 \tab 4 \cr
    3 \tab 1 \tab 8 \cr
 }
+
+
+\code{i} is stage number, \code{n_i} is the number of configurations and \code{r_i} is the
+budget allocated to a single configuration.
 }
 \section{Parameters}{
 
@@ -67,10 +71,11 @@ Stage index. Starts counting at 0.
 }
 }
 
-\section{Custom sampler}{
+\section{Custom Sampler}{
 
-All algorithms support custom \link[paradox:Sampler]{paradox::Sampler}s to draw candidates in the
-base stage.\preformatted{# - beta distribution with alpha = 2 and beta = 5
+
+\CRANpkg{mlr3hyperband} supports custom \link[paradox:Sampler]{paradox::Sampler} to draw candidates
+in the base stage.\preformatted{# - beta distribution with alpha = 2 and beta = 5
 # - categorical distribution with custom probabilities
 sampler = SamplerJointIndep$new(list(
   Sampler1DRfun$new(params[[2]], function(n) rbeta(n, 2, 5)),
@@ -81,10 +86,14 @@ sampler = SamplerJointIndep$new(list(
 
 \section{Progress Bars}{
 
-\verb{$optimize()} supports progress bars via the package \CRANpkg{progressr}
-combined with a \link{Terminator}. Simply wrap the function in
-\code{progressr::with_progress()} to enable them. We recommend to use package
-\CRANpkg{progress} as backend; enable with \code{progressr::handlers("progress")}.
+
+The  \verb{$optimize()} method supports progress bars via the package
+\CRANpkg{progressr}. Simply wrap the method call in \code{progressr::with_progress()}
+to enable them.
+Alternatively, call \code{\link[progressr:handlers]{progressr::handlers()}} with \code{global = TRUE} to enable progress bars
+globally.
+We recommend the \CRANpkg{progress} package as backend which can be enabled with
+\code{progressr::handlers("progress")}.
 }
 
 \section{Parallelization}{
@@ -96,9 +105,17 @@ the \CRANpkg{future} package. To select a parallel backend, use
 
 \section{Logging}{
 
-Hyperband uses a logger (as implemented in \CRANpkg{lgr}) from package
-\CRANpkg{bbotk}.
-Use \code{lgr::get_logger("bbotk")} to access and control the logger.
+
+\CRANpkg{mlr3hyperband} uses the \CRANpkg{lgr} package for logging.
+\CRANpkg{lgr} supports multiple log levels which can be queried with
+\code{getOption("lgr.log_levels")}. Use \code{lgr::get_logger("bbotk")} to access and
+control the logger.
+
+To suppress output and reduce verbosity, you can lower the log from the
+default level \code{"info"} to \code{"warn"}:\preformatted{lgr::get_logger("bbotk")$set_threshold("warn")
+}
+
+To log to a file or a data base, see the documentation of \link[lgr:lgr-package]{lgr::lgr-package}.
 }
 
 \examples{

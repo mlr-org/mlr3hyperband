@@ -1,6 +1,7 @@
 #' @title Tuner Asynchronous Hyperband
 #'
 #' @name mlr_tuners_ahb
+#' @templateVar id ahb
 #'
 #' @description
 #' `TunerAhb` class that implements the asynchronous hyperband algorithm.
@@ -52,7 +53,6 @@
 #' @template section_logging
 #'
 #' @export
-#' @templateVar id ahb
 #' @template example_tuner
 TunerAhb = R6Class("TunerAhb",
   inherit = TunerFromOptimizer,

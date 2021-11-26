@@ -1,6 +1,7 @@
-#' @section Custom sampler:
-#' All algorithms support custom [paradox::Sampler]s to draw candidates in the
-#' base stage.
+#' @section Custom Sampler:
+#'
+#' \CRANpkg{mlr3hyperband} supports custom [paradox::Sampler] to draw candidates
+#' in the base stage.
 #'
 #' ```
 #' # - beta distribution with alpha = 2 and beta = 5

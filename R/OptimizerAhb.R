@@ -1,6 +1,7 @@
 #' @title Optimizer Asynchronous Hyperband
 #'
 #' @name mlr_optimizers_ahb
+#' @templateVar id ahb
 #'
 #' @description
 #' `OptimizerAhb` class that implements the asynchronous hyperband algorithm.
@@ -49,7 +50,6 @@
 #' `r format_bib("li_2020")`
 #'
 #' @export
-#' @templateVar id ahb
 #' @template example_optimizer
 OptimizerAhb = R6Class("OptimizerAhb",
   inherit = Optimizer,

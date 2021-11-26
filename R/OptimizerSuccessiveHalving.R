@@ -1,6 +1,7 @@
 #' @title Hyperparameter Optimization with Successive Halving
 #'
 #' @name mlr_optimizers_successive_halving
+#' @templateVar id successive_halving
 #'
 #' @description
 #' `OptimizerSuccessiveHalving` class that implements the successive halving
@@ -20,12 +21,15 @@
 #' evaluated on more than the maximum budget. The following table is the stage
 #' layout for `eta = 2`, `r_min = 1` and `r_max = 8`.
 #'
-#' |   i |  ni |  ri |
-#' | ---:| ---:| ---:|
-#' |   0 |   8 |   1 |
-#' |   1 |   4 |   2 |
-#' |   2 |   2 |   4 |
-#' |   3 |   1 |   8 |
+#' | `i` | `n_i` | `r_i` |
+#' | --: | ----: | ----: |
+#' |   0 |     8 |     1 |
+#' |   1 |     4 |     2 |
+#' |   2 |     2 |     4 |
+#' |   3 |     1 |     8 |
+#'
+#' `i` is stage number, `n_i` is the number of configurations and `r_i` is the
+#' budget allocated to a single configuration.
 #'
 #' @section Parameters:
 #' \describe{
@@ -64,7 +68,6 @@
 #' `r format_bib("jamieson_2016")`
 #'
 #' @export
-#' @templateVar id successive_halving
 #' @template example_optimizer
 OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
   inherit = Optimizer,

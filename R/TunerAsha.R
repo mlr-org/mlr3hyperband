@@ -1,6 +1,7 @@
 #' @title Tuner Asynchronous Successive Halving
 #'
 #' @name mlr_tuners_asha
+#' @templateVar id asha
 #'
 #' @description
 #' `TunerAsha` class that implements the asynchronous successive halving
@@ -51,7 +52,6 @@
 #' @template section_logging
 #'
 #' @export
-#' @templateVar id asha
 #' @template example_tuner
 TunerAsha = R6Class("TunerAsha",
   inherit = TunerFromOptimizer,

@@ -1,6 +1,7 @@
 #' @title Optimizer Asynchronous Successive Halving
 #'
 #' @name mlr_optimizers_asha
+#' @templateVar id asha
 #'
 #' @description
 #' `OptimizerAsha` class that implements the asynchronous successive halving
@@ -48,7 +49,6 @@
 #' `r format_bib("li_2020")`
 #'
 #' @export
-#' @templateVar id asha
 #' @template example_optimizer
 OptimizerAsha = R6Class("OptimizerAsha",
   inherit = Optimizer,
