@@ -145,6 +145,11 @@ OptimizerAhb = R6Class("OptimizerAhb",
         assert_set_equal(sampler$param_set$ids(), search_space_sampler$ids())
       }
 
+      # check terminator
+      if (!inherits(terminator, c("TerminatorClockTime", "TerminatorEvals", "TerminatorRunTime"))) {
+        stopf("%s does not support %s. Use <TerminatorClockTime>, <TerminatorRunTime> or <TerminatorEvals>.", format(self), format(terminator))
+      }
+
       # r_min is the budget of a single configuration in the base stage
       # r_max is the maximum budget of a single configuration in the last stage
       # the internal budget is rescaled to a minimum budget of 1

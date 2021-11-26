@@ -128,3 +128,19 @@ test_that("maximize works", {
   instance = test_tuner_ahb(eta = 2, learner, measures = msr("dummy", parameter_id = "x", minimize = FALSE))
   expect_equal(max(instance$archive$data[c(1, 2), dummy]), instance$archive$data[3, dummy])
 })
+
+test_that("only supported terminators are used", {
+  learner = lrn("classif.debug",
+    x = to_tune(),
+    iter = to_tune(p_int(1, 16, tags = "budget"))
+  )
+
+  expect_error(tune(
+    method = "ahb",
+    task = tsk("pima"),
+    learner = learner,
+    measures = msr("classif.ce"),
+    resampling = rsmp("holdout")),
+    regexp = "does not support",
+    fixed = TRUE)
+})
