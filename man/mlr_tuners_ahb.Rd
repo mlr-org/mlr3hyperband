@@ -5,16 +5,15 @@
 \alias{TunerAhb}
 \title{Tuner Asynchronous Hyperband}
 \description{
-\code{TunerAhb} class that implements the asynchronous hyperband algorithm.
-Asynchronous hyperband (AHB) repeatedly runs ASHA (\link{TunerAsha}) with
-different minimum budgets in the base stage. Each run of ASHA within AHB is
-called a bracket. AHB considers \code{s_max + 1} brackets with
-\verb{s_max = floor(log(r_max / r_min, eta)}. The most explorative bracket
-\code{s = s_max} constructs \code{s_max + 1} stages and allocates the minimum budget
-(\code{r_min}) in the base stage.  The minimum budget (\code{r_min}) is increased in
-each bracket by a factor of \code{eta} until the maximum budget is allocated in
-the base stage. The bracket \code{s = 0} is a random search with full budget. Each
-ASHA run uses \code{1 / s_max + 1} of the \link[bbotk:Terminator]{bbotk::Terminator}.
+\code{TunerAhb} class that implements the asynchronous hyperband algorithm (AHB).
+AHB repeatedly runs ASHA (\link{TunerAsha}) with different minimum budgets in the
+base stage. Each run of ASHA within AHB is called a bracket. AHB considers
+\code{s_max + 1} brackets with \verb{s_max = floor(log(r_max / r_min, eta)}. The most
+explorative bracket \code{s = s_max} constructs \code{s_max + 1} stages and allocates
+the minimum budget (\code{r_min}) in the base stage.  The minimum budget (\code{r_min})
+is increased in each bracket by a factor of \code{eta} until the maximum budget is
+allocated in the base stage. The bracket \code{s = 0} is a random search with full
+budget. Each ASHA run uses \code{1 / s_max + 1} of the \link[bbotk:Terminator]{bbotk::Terminator}.
 
 The budget hyperparameter must be tagged with \code{"budget"} in the search space.
 The minimum budget (\code{r_min}) which is allocated in the base stage of the most

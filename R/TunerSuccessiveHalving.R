@@ -5,7 +5,7 @@
 #'
 #' @description
 #' `TunerSuccessiveHalving` class that implements the successive halving
-#' algorithm. Successive halving (SHA) randomly samples `n` candidate
+#' algorithm (SHA). SHA randomly samples `n` candidate
 #' hyperparameter configurations and allocates a minimum budget (`r_min`) to all
 #' candidates. The candidates are raced down in stages to a single best
 #' candidate by repeatedly increasing the budget by a factor of `eta` and
@@ -53,10 +53,12 @@
 #' }}
 #'
 #' @section Archive:
-#' The [mlr3tuning::ArchiveTuning] holds the following additional column that is
-#' specific to the successive halving algorithm:
+#' The [mlr3tuning::ArchiveTuning] holds the following additional columns that
+#' are specific to the successive halving algorithm:
 #'   * `stage` (`integer(1))`\cr
 #'     Stage index. Starts counting at 0.
+#'   * `repetition` (`integer(1))`\cr
+#'     Repetition index. Start counting at 1.
 #'
 #' @template section_custom_sampler
 #' @template section_progress_bars

@@ -4,10 +4,10 @@
 #' @templateVar id hyperband
 #'
 #' @description
-#' `OptimizerHyperband` class that implements hyperband optimization. HyperbandX
-#' (HBX) repeatedly calls SH ([OptimizerSuccessiveHalving]) with different
+#' `OptimizerHyperband` class that implements hyperband optimization (HBX).
+#' HBX repeatedly calls SHA ([OptimizerSuccessiveHalving]) with different
 #' numbers of starting points. A larger number of starting points corresponds to
-#' a smaller budget allocated in the base stage. Each run of SH within HBX is
+#' a smaller budget allocated in the base stage. Each run of SHA within HBX is
 #' called a bracket. HBX considers `s_max + 1` brackets with `s_max =
 #' floor(log(r_max / r_min, eta)`. The most explorative bracket `s = s_max`
 #' constructs `s_max + 1` stages and allocates the minimum budget (`r_min`) in

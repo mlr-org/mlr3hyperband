@@ -4,10 +4,10 @@
 #' @templateVar id hyperband
 #'
 #' @description
-#' `TunerHyperband` class that implements hyperband tuning. Hyperband (HBX)
-#' repeatedly calls SH ([TunerSuccessiveHalving]) with different numbers of
+#' `TunerHyperband` class that implements hyperband tuning (HBX). HBX
+#' repeatedly calls SHA ([TunerSuccessiveHalving]) with different numbers of
 #' starting configurations. A larger number of starting configurations
-#' corresponds to a smaller budget allocated in the base stage. Each run of SH
+#' corresponds to a smaller budget allocated in the base stage. Each run of SHA
 #' within HBX is called a bracket. HBX considers `s_max + 1` brackets with
 #' `s_max = floor(log(r_max / r_min, eta)`. The most explorative bracket
 #' `s = s_max` constructs `s_max + 1` stages and allocates the minimum budget
@@ -52,10 +52,12 @@
 #' @section Archive:
 #' The [mlr3tuning::ArchiveTuning] holds the following additional columns that
 #' are specific to the hyperband algorithm:
-#'   * `bracket` (`integer(1)`)\cr
-#'     The bracket index. Counts down to 0.
 #'   * `stage` (`integer(1))`\cr
 #'     The stages of each bracket. Starts counting at 0.
+#'   * `bracket` (`integer(1)`)\cr
+#'     The bracket index. Counts down to 0.
+#'   * `repetition` (`integer(1))`\cr
+#'     Repetition index. Start counting at 1.
 #'
 #' @template section_custom_sampler
 #' @template section_progress_bars

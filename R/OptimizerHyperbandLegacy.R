@@ -3,7 +3,7 @@
 #' @name mlr_optimizers_hyperband_legacy
 #'
 #' @description
-#' `OptimizerHyperband` class that implements hyperband optimization. HyperbandX
+#' `OptimizerHyperband` class that implements hyperband optimization. Hyperband
 #' (HB) repeatedly calls SH ([OptimizerSuccessiveHalving]) with different
 #' numbers of starting points. A larger number of starting points corresponds to
 #' a smaller budget allocated in the base stage. Each run of SH within HBX is

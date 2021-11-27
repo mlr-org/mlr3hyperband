@@ -11,10 +11,10 @@ Li L, Jamieson K, DeSalvo G, Rostamizadeh A, Talwalkar A (2018).
 \url{https://jmlr.org/papers/v18/16-558.html}.
 }
 \description{
-\code{TunerHyperband} class that implements hyperband tuning. Hyperband (HBX)
-repeatedly calls SH (\link{TunerSuccessiveHalving}) with different numbers of
+\code{TunerHyperband} class that implements hyperband tuning (HBX). HBX
+repeatedly calls SHA (\link{TunerSuccessiveHalving}) with different numbers of
 starting configurations. A larger number of starting configurations
-corresponds to a smaller budget allocated in the base stage. Each run of SH
+corresponds to a smaller budget allocated in the base stage. Each run of SHA
 within HBX is called a bracket. HBX considers \code{s_max + 1} brackets with
 \verb{s_max = floor(log(r_max / r_min, eta)}. The most explorative bracket
 \code{s = s_max} constructs \code{s_max + 1} stages and allocates the minimum budget
@@ -68,10 +68,12 @@ base stage of each bracket. The default is uniform sampling.
 The \link[mlr3tuning:ArchiveTuning]{mlr3tuning::ArchiveTuning} holds the following additional columns that
 are specific to the hyperband algorithm:
 \itemize{
-\item \code{bracket} (\code{integer(1)})\cr
-The bracket index. Counts down to 0.
 \item \code{stage} (\verb{integer(1))}\cr
 The stages of each bracket. Starts counting at 0.
+\item \code{bracket} (\code{integer(1)})\cr
+The bracket index. Counts down to 0.
+\item \code{repetition} (\verb{integer(1))}\cr
+Repetition index. Start counting at 1.
 }
 }
 

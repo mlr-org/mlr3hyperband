@@ -4,10 +4,10 @@
 #' @templateVar id ahb
 #'
 #' @description
-#' `OptimizerAhb` class that implements the asynchronous hyperband algorithm.
-#' Asynchronous hyperband (AHB) repeatedly runs ASHA ([OptimizerAsha]) with
-#' different minimum budgets in the base stage. Each run of ASHA within AHB is
-#' called a bracket. AHB considers `s_max + 1` brackets with
+#' `OptimizerAhb` class that implements the asynchronous hyperband algorithm
+#' (AHB). AHB repeatedly runs ASHA ([OptimizerAsha]) with different minimum
+#' budgets in the base stage. Each run of ASHA within AHB is called a bracket.
+#' AHB considers `s_max + 1` brackets with
 #' `s_max = floor(log(r_max / r_min, eta)`. The most explorative bracket
 #' `s = s_max` constructs `s_max + 1` stages and allocates the minimum budget
 #' (`r_min`) in the base stage.  The minimum budget (`r_min`) is increased in
@@ -44,6 +44,11 @@
 #'
 #' @template section_custom_sampler
 #' @template section_progress_bars
+#'
+#' @section Parallelization:
+#' The points are asynchronously evaluated with the \CRANpkg{future} package. To
+#' select a parallel backend, use [future::plan()].
+#'
 #' @template section_logging
 #'
 #' @source

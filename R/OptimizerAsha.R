@@ -5,16 +5,15 @@
 #'
 #' @description
 #' `OptimizerAsha` class that implements the asynchronous successive halving
-#' algorithm. Asynchronous successive halving (ASHA) parallelizes SHA
-#' ([OptimizerSuccessiveHalving]) by promoting candidates to the next stage as
-#' soon as possible instead of waiting for all candidates in the stage to
-#' finish. ASHA starts with sampling a candidate points for each available
-#' worker. When an evaluation finishes and the worker is available again, ASHA
-#' checks the stages from top to bottom for promotable candidates. Promotions
-#' are possible when the evaluated candidates belong to the top `1 / eta` of
-#' each stage. If no promotions are possible, a new candidate is sampled and
-#' added to the base stage, which increases the number of possible promotions
-#' for all stages.
+#' algorithm (ASHA). ASHA parallelizes SHA ([OptimizerSuccessiveHalving]) by
+#' promoting candidates to the next stage as soon as possible instead of waiting
+#' for all candidates in the stage to finish. ASHA starts with sampling a
+#' candidate point for each available worker. When an evaluation finishes and
+#' the worker is available again, ASHA checks the stages from top to bottom for
+#' promotable candidates. Promotions are possible when the evaluated candidates
+#' belong to the top `1 / eta` of each stage. If no promotions are possible, a
+#' new candidate is sampled and added to the base stage, which increases the
+#' number of possible promotions for all stages.
 #'
 #' The budget hyperparameter must be tagged with `"budget"` in the search space.
 #' The minimum budget (`r_min`) which is allocated in the base stage, is set by
@@ -43,6 +42,11 @@
 #'
 #' @template section_custom_sampler
 #' @template section_progress_bars
+#'
+#' @section Parallelization:
+#' The points are asynchronously evaluated with the \CRANpkg{future} package.
+#' To select a parallel backend, use [future::plan()].
+#'
 #' @template section_logging
 #'
 #' @source

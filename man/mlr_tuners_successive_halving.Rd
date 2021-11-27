@@ -12,7 +12,7 @@ In Gretton A, Robert CC (eds.), \emph{Proceedings of the 19th International Conf
 }
 \description{
 \code{TunerSuccessiveHalving} class that implements the successive halving
-algorithm. Successive halving (SHA) randomly samples \code{n} candidate
+algorithm (SHA). SHA randomly samples \code{n} candidate
 hyperparameter configurations and allocates a minimum budget (\code{r_min}) to all
 candidates. The candidates are raced down in stages to a single best
 candidate by repeatedly increasing the budget by a factor of \code{eta} and
@@ -63,11 +63,13 @@ Otherwise, SHA starts over again once the last stage is evaluated.
 
 \section{Archive}{
 
-The \link[mlr3tuning:ArchiveTuning]{mlr3tuning::ArchiveTuning} holds the following additional column that is
-specific to the successive halving algorithm:
+The \link[mlr3tuning:ArchiveTuning]{mlr3tuning::ArchiveTuning} holds the following additional columns that
+are specific to the successive halving algorithm:
 \itemize{
 \item \code{stage} (\verb{integer(1))}\cr
 Stage index. Starts counting at 0.
+\item \code{repetition} (\verb{integer(1))}\cr
+Repetition index. Start counting at 1.
 }
 }
 

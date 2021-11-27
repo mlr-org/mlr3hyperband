@@ -11,10 +11,10 @@ Li L, Jamieson K, DeSalvo G, Rostamizadeh A, Talwalkar A (2018).
 \url{https://jmlr.org/papers/v18/16-558.html}.
 }
 \description{
-\code{OptimizerHyperband} class that implements hyperband optimization. HyperbandX
-(HBX) repeatedly calls SH (\link{OptimizerSuccessiveHalving}) with different
+\code{OptimizerHyperband} class that implements hyperband optimization (HBX).
+HBX repeatedly calls SHA (\link{OptimizerSuccessiveHalving}) with different
 numbers of starting points. A larger number of starting points corresponds to
-a smaller budget allocated in the base stage. Each run of SH within HBX is
+a smaller budget allocated in the base stage. Each run of SHA within HBX is
 called a bracket. HBX considers \code{s_max + 1} brackets with \verb{s_max = floor(log(r_max / r_min, eta)}. The most explorative bracket \code{s = s_max}
 constructs \code{s_max + 1} stages and allocates the minimum budget (\code{r_min}) in
 the base stage. The minimum budget is increased in each bracket by a factor

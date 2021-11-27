@@ -12,7 +12,7 @@ In Gretton A, Robert CC (eds.), \emph{Proceedings of the 19th International Conf
 }
 \description{
 \code{OptimizerSuccessiveHalving} class that implements the successive halving
-algorithm. Successive halving (SHA) randomly samples \code{n} candidate points and
+algorithm (SHA). SHA randomly samples \code{n} candidate points and
 allocates a minimum budget (\code{r_min}) to all candidates. The candidates are
 raced down in stages to a single best candidate by repeatedly increasing the
 budget by a factor of \code{eta} and promoting only the best \code{1 / eta } fraction
@@ -63,7 +63,7 @@ executed.
 
 \section{Archive}{
 
-The \link[bbotk:Archive]{bbotk::Archive} holds the following additional column that is specific
+The \link[bbotk:Archive]{bbotk::Archive} holds the following additional columns that are specific
 to the successive halving algorithm:
 \itemize{
 \item \code{stage} (\verb{integer(1))}\cr

@@ -11,10 +11,10 @@ Li L, Jamieson K, Rostamizadeh A, Gonina E, Ben-tzur J, Hardt M, Recht B, Talwal
 \url{https://proceedings.mlsys.org/paper/2020/hash/f4b9ec30ad9f68f89b29639786cb62ef-Abstract.html}.
 }
 \description{
-\code{OptimizerAhb} class that implements the asynchronous hyperband algorithm.
-Asynchronous hyperband (AHB) repeatedly runs ASHA (\link{OptimizerAsha}) with
-different minimum budgets in the base stage. Each run of ASHA within AHB is
-called a bracket. AHB considers \code{s_max + 1} brackets with
+\code{OptimizerAhb} class that implements the asynchronous hyperband algorithm
+(AHB). AHB repeatedly runs ASHA (\link{OptimizerAsha}) with different minimum
+budgets in the base stage. Each run of ASHA within AHB is called a bracket.
+AHB considers \code{s_max + 1} brackets with
 \verb{s_max = floor(log(r_max / r_min, eta)}. The most explorative bracket
 \code{s = s_max} constructs \code{s_max + 1} stages and allocates the minimum budget
 (\code{r_min}) in the base stage.  The minimum budget (\code{r_min}) is increased in
@@ -78,6 +78,12 @@ Alternatively, call \code{\link[progressr:handlers]{progressr::handlers()}} with
 globally.
 We recommend the \CRANpkg{progress} package as backend which can be enabled with
 \code{progressr::handlers("progress")}.
+}
+
+\section{Parallelization}{
+
+The points are asynchronously evaluated with the \CRANpkg{future} package. To
+select a parallel backend, use \code{\link[future:plan]{future::plan()}}.
 }
 
 \section{Logging}{

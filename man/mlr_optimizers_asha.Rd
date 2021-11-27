@@ -12,16 +12,15 @@ Li L, Jamieson K, Rostamizadeh A, Gonina E, Ben-tzur J, Hardt M, Recht B, Talwal
 }
 \description{
 \code{OptimizerAsha} class that implements the asynchronous successive halving
-algorithm. Asynchronous successive halving (ASHA) parallelizes SHA
-(\link{OptimizerSuccessiveHalving}) by promoting candidates to the next stage as
-soon as possible instead of waiting for all candidates in the stage to
-finish. ASHA starts with sampling a candidate points for each available
-worker. When an evaluation finishes and the worker is available again, ASHA
-checks the stages from top to bottom for promotable candidates. Promotions
-are possible when the evaluated candidates belong to the top \code{1 / eta} of
-each stage. If no promotions are possible, a new candidate is sampled and
-added to the base stage, which increases the number of possible promotions
-for all stages.
+algorithm (ASHA). ASHA parallelizes SHA (\link{OptimizerSuccessiveHalving}) by
+promoting candidates to the next stage as soon as possible instead of waiting
+for all candidates in the stage to finish. ASHA starts with sampling a
+candidate point for each available worker. When an evaluation finishes and
+the worker is available again, ASHA checks the stages from top to bottom for
+promotable candidates. Promotions are possible when the evaluated candidates
+belong to the top \code{1 / eta} of each stage. If no promotions are possible, a
+new candidate is sampled and added to the base stage, which increases the
+number of possible promotions for all stages.
 
 The budget hyperparameter must be tagged with \code{"budget"} in the search space.
 The minimum budget (\code{r_min}) which is allocated in the base stage, is set by
@@ -77,6 +76,12 @@ Alternatively, call \code{\link[progressr:handlers]{progressr::handlers()}} with
 globally.
 We recommend the \CRANpkg{progress} package as backend which can be enabled with
 \code{progressr::handlers("progress")}.
+}
+
+\section{Parallelization}{
+
+The points are asynchronously evaluated with the \CRANpkg{future} package.
+To select a parallel backend, use \code{\link[future:plan]{future::plan()}}.
 }
 
 \section{Logging}{
