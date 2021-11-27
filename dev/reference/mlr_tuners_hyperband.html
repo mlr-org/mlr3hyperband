@@ -41,34 +41,25 @@
 
 
 <meta property="og:title" content="Tuner using the Hyperband algorithm — mlr_tuners_hyperband" />
-<meta property="og:description" content="TunerHyperband class that implements hyperband tuning. Hyperband (HBX)
-repeatedly calls SH (TunerSuccessiveHalving) with different numbers of
-starting configurations. A larger number of starting configurations
-corresponds to a smaller budget allocated in the base stage. Each run of SH
-within HBX is called a bracket. HBX considers s_max + 1 brackets with
-s_max = floor(log(r_max / r_min, eta). The most explorative bracket
-s = s_max constructs s_max + 1 stages and allocates the minimum budget
-(r_min) in the base stage. The minimum budget is increased in each bracket
-by a factor of eta and the number of starting configurations is computed so
-that each bracket approximately spends the same budget.Use
-hyperband_schedule() to get a preview of the bracket layout.
-s3210
-in_ir_in_ir_in_ir_in_ir_i
-081624484
-1423428
-22418
-318
-
-
-
-
-s is the bracket number, i is stage number, n_i is the number of
-configurations and r_i is the budget allocated to a single configuration.
-The budget hyperparameter must be tagged with &quot;budget&quot; in the search space.
-The minimum budget (r_min) which is allocated in the base stage of the most
-explorative bracket, is set by the lower bound of the budget parameter. The
-upper bound defines the maximum budget (r_max) which which is allocated to
-the candidates in the last stages." />
+<meta property="og:description" content="TunerHyperband class that implements hyperband tuning. Hyperband is a
+budget oriented-procedure, weeding out suboptimal performing configurations
+early in a sequential training process, increasing tuning efficiency as a
+consequence.
+For this, several brackets are constructed with an associated set of
+configurations for each bracket. Each bracket has several stages. Different
+brackets are initialized with different amounts of configurations and
+different budget sizes.
+Within the context of hyperband each evaluation of a learner consumes a
+certain budget. This budget is not fixed but controlled by a certain
+hyperparameter, e.g. the number of boosting iterations or the number of trees
+in a random forest. The user has to specify explicitly which hyperparameter
+of the learner controls the consumption of the budget by
+tagging a single hyperparameter in the paradox::ParamSet with &quot;budget&quot;.
+An alternative approach using subsampling and pipelines is described below.
+Naturally, hyperband terminates once all of its brackets are evaluated, so a
+bbotk::Terminator in the tuning instance acts as an upper bound and should
+be only set to a low value if one is unsure of how long hyperband will take
+to finish under the given settings." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -167,34 +158,25 @@ the candidates in the last stages." />
     </div>
 
     <div class="ref-description">
-    <p><code>TunerHyperband</code> class that implements hyperband tuning. Hyperband (HBX)
-repeatedly calls SH (<a href='mlr_tuners_successive_halving.html'>TunerSuccessiveHalving</a>) with different numbers of
-starting configurations. A larger number of starting configurations
-corresponds to a smaller budget allocated in the base stage. Each run of SH
-within HBX is called a bracket. HBX considers <code>s_max + 1</code> brackets with
-<code>s_max = floor(log(r_max / r_min, eta)</code>. The most explorative bracket
-<code>s = s_max</code> constructs <code>s_max + 1</code> stages and allocates the minimum budget
-(<code>r_min</code>) in the base stage. The minimum budget is increased in each bracket
-by a factor of <code>eta</code> and the number of starting configurations is computed so
-that each bracket approximately spends the same budget.Use
-<code><a href='hyperband_schedule.html'>hyperband_schedule()</a></code> to get a preview of the bracket layout.</p><table class='table'>
-<tr><td><code>s</code></td><td></td><td></td><td>3</td><td></td><td></td><td>2</td><td></td><td></td><td>1</td><td></td><td></td><td>0</td></tr>
-<tr><td><code>i</code></td><td></td><td><code>n_i</code></td><td><code>r_i</code></td><td></td><td><code>n_i</code></td><td><code>r_i</code></td><td></td><td><code>n_i</code></td><td><code>r_i</code></td><td></td><td><code>n_i</code></td><td><code>r_i</code></td></tr>
-<tr><td>0</td><td></td><td>8</td><td>1</td><td></td><td>6</td><td>2</td><td></td><td>4</td><td>4</td><td></td><td>8</td><td>4</td></tr>
-<tr><td>1</td><td></td><td>4</td><td>2</td><td></td><td>3</td><td>4</td><td></td><td>2</td><td>8</td><td></td><td></td><td></td></tr>
-<tr><td>2</td><td></td><td>2</td><td>4</td><td></td><td>1</td><td>8</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr><td>3</td><td></td><td>1</td><td>8</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-</table>
-
-
-
-<p><code>s</code> is the bracket number, <code>i</code> is stage number, <code>n_i</code> is the number of
-configurations and <code>r_i</code> is the budget allocated to a single configuration.</p>
-<p>The budget hyperparameter must be tagged with <code>"budget"</code> in the search space.
-The minimum budget (<code>r_min</code>) which is allocated in the base stage of the most
-explorative bracket, is set by the lower bound of the budget parameter. The
-upper bound defines the maximum budget (<code>r_max</code>) which which is allocated to
-the candidates in the last stages.</p>
+    <p><code>TunerHyperband</code> class that implements hyperband tuning. Hyperband is a
+budget oriented-procedure, weeding out suboptimal performing configurations
+early in a sequential training process, increasing tuning efficiency as a
+consequence.</p>
+<p>For this, several brackets are constructed with an associated set of
+configurations for each bracket. Each bracket has several stages. Different
+brackets are initialized with different amounts of configurations and
+different budget sizes.</p>
+<p>Within the context of hyperband each evaluation of a learner consumes a
+certain budget. This budget is not fixed but controlled by a certain
+hyperparameter, e.g. the number of boosting iterations or the number of trees
+in a random forest. The user has to specify explicitly which hyperparameter
+of the learner controls the consumption of the budget by
+tagging a single hyperparameter in the <a href='https://paradox.mlr-org.com/reference/ParamSet.html'>paradox::ParamSet</a> with <code>"budget"</code>.
+An alternative approach using subsampling and pipelines is described below.</p>
+<p>Naturally, hyperband terminates once all of its brackets are evaluated, so a
+<a href='https://bbotk.mlr-org.com/reference/Terminator.html'>bbotk::Terminator</a> in the tuning instance acts as an upper bound and should
+be only set to a low value if one is unsure of how long hyperband will take
+to finish under the given settings.</p>
     </div>
 
 
@@ -220,34 +202,48 @@ the candidates in the last stages.</p>
 
 <dl>
 <dt><code>eta</code></dt><dd><p><code>numeric(1)</code><br />
-With every stage, the budget is increased by a factor of <code>eta</code>
-and only the best <code>1 / eta</code> candidates are promoted to the next stage.
-Non-integer values are supported, but <code>eta</code> is not allowed to be less or
-equal 1.</p></dd>
+Fraction parameter of the successive halving algorithm: With every step the
+configuration budget is increased by a factor of <code>eta</code> and only the best
+<code>1/eta</code> configurations are used for the next stage. Non-integer values are
+supported, but <code>eta</code> is not allowed to be less or equal 1.</p></dd>
 <dt><code>sampler</code></dt><dd><p><a href='https://paradox.mlr-org.com/reference/Sampler.html'>paradox::Sampler</a><br />
-Object defining how the samples of the parameter space should be drawn in the
-base stage of each bracket. The default is uniform sampling.</p></dd>
+Object defining how the samples of the parameter space should be drawn during
+the initialization of each bracket. The default is uniform sampling.</p></dd>
+
 </dl>
 
     <h2 class="hasAnchor" id="archive"><a class="anchor" href="#archive"></a>Archive</h2>
 
     
 
-<p>The <a href='https://mlr3tuning.mlr-org.com/reference/ArchiveTuning.html'>mlr3tuning::ArchiveTuning</a> holds the following additional columns that
-are specific to the hyperband algorithm:</p><ul>
+<p>The <a href='https://mlr3tuning.mlr-org.com/reference/ArchiveTuning.html'>mlr3tuning::ArchiveTuning</a> holds the following additional columns that are specific
+to the hyperband algorithm:</p><ul>
 <li><p><code>bracket</code> (<code>integer(1)</code>)<br />
 The bracket index. Counts down to 0.</p></li>
 <li><p><code>stage</code> (<code>integer(1))</code><br />
 The stages of each bracket. Starts counting at 0.</p></li>
 </ul>
 
-    <h2 class="hasAnchor" id="custom-sampler"><a class="anchor" href="#custom-sampler"></a>Custom Sampler</h2>
+    <h2 class="hasAnchor" id="hyperband-without-learner-budget"><a class="anchor" href="#hyperband-without-learner-budget"></a>Hyperband without learner budget</h2>
 
     
 
+<p>Thanks to <a href='https://CRAN.R-project.org/package=mlr3pipelines'><span class="pkg">mlr3pipelines</span></a>, it is possible to use hyperband in
+combination with learners lacking a natural budget parameter. For example,
+any <a href='https://mlr3.mlr-org.com/reference/Learner.html'>mlr3::Learner</a> can be augmented with a <a href='https://mlr3pipelines.mlr-org.com//reference/PipeOp.html'>mlr3pipelines::PipeOp</a>
+operator such as <a href='https://mlr3pipelines.mlr-org.com//reference/mlr_pipeops_subsample.html'>mlr3pipelines::PipeOpSubsample</a>. With the
+subsampling rate as budget parameter, the resulting
+<a href='https://mlr3pipelines.mlr-org.com//reference/mlr_learners_graph.html'>mlr3pipelines::GraphLearner</a> is fitted on small proportions of
+the <a href='https://mlr3.mlr-org.com/reference/Task.html'>mlr3::Task</a> in the first brackets, and on the complete Task in
+last brackets. See examples for some code.</p>
+    <h2 class="hasAnchor" id="custom-sampler"><a class="anchor" href="#custom-sampler"></a>Custom sampler</h2>
 
-<p><a href='https://CRAN.R-project.org/package=mlr3hyperband'><span class="pkg">mlr3hyperband</span></a> supports custom <a href='https://paradox.mlr-org.com/reference/Sampler.html'>paradox::Sampler</a> to draw candidates
-in the base stage.</p><pre><span class='co'># - beta distribution with alpha = 2 and beta = 5</span>
+    
+
+<p>Hyperband supports custom <a href='https://paradox.mlr-org.com/reference/Sampler.html'>paradox::Sampler</a> object for initial
+configurations in each bracket.
+A custom sampler may look like this (the full example is given in the
+<em>examples</em> section):</p><pre><span class='co'># - beta distribution with alpha = 2 and beta = 5</span>
 <span class='co'># - categorical distribution with custom probabilities</span>
 <span class='va'>sampler</span> <span class='op'>=</span> <span class='va'><a href='https://paradox.mlr-org.com/reference/SamplerJointIndep.html'>SamplerJointIndep</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
   <span class='va'><a href='https://paradox.mlr-org.com/reference/Sampler1DRfun.html'>Sampler1DRfun</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='va'>params</span><span class='op'>[[</span><span class='fl'>2</span><span class='op'>]</span><span class='op'>]</span>, <span class='kw'>function</span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/stats/Beta.html'>rbeta</a></span><span class='op'>(</span><span class='va'>n</span>, <span class='fl'>2</span>, <span class='fl'>5</span><span class='op'>)</span><span class='op'>)</span>,
@@ -255,40 +251,42 @@ in the base stage.</p><pre><span class='co'># - beta distribution with alpha = 2
 <span class='op'>)</span><span class='op'>)</span>
 </pre>
 
+    <h2 class="hasAnchor" id="runtime"><a class="anchor" href="#runtime"></a>Runtime</h2>
+
+    
+
+<p>The calculation of each bracket currently assumes a linear runtime in the
+chosen budget parameter is always given. Hyperband is designed so each
+bracket requires approximately the same runtime as the sum of the budget
+over all configurations in each bracket is roughly the same. This will not
+hold true once the scaling in the budget parameter is not linear
+anymore, even though the sum of the budgets in each bracket remains the
+same. A possible adaption would be to introduce a trafo, like it is shown in
+the <em>examples</em> section.</p>
     <h2 class="hasAnchor" id="progress-bars"><a class="anchor" href="#progress-bars"></a>Progress Bars</h2>
 
     
 
-
-<p>The  <code>$optimize()</code> method supports progress bars via the package
-<a href='https://CRAN.R-project.org/package=progressr'><span class="pkg">progressr</span></a>. Simply wrap the method call in <code>progressr::with_progress()</code>
-to enable them.
-Alternatively, call <code>progressr::handlers()</code> with <code>global = TRUE</code> to enable progress bars
-globally.
-We recommend the <a href='https://CRAN.R-project.org/package=progress'><span class="pkg">progress</span></a> package as backend which can be enabled with
-<code>progressr::handlers("progress")</code>.</p>
+<p><code>$optimize()</code> supports progress bars via the package <a href='https://CRAN.R-project.org/package=progressr'><span class="pkg">progressr</span></a>
+combined with a <a href='https://bbotk.mlr-org.com/reference/Terminator.html'>Terminator</a>. Simply wrap the function in
+<code>progressr::with_progress()</code> to enable them. We recommend to use package
+<a href='https://CRAN.R-project.org/package=progress'><span class="pkg">progress</span></a> as backend; enable with <code>progressr::handlers("progress")</code>.</p>
     <h2 class="hasAnchor" id="parallelization"><a class="anchor" href="#parallelization"></a>Parallelization</h2>
 
     
 
-<p>HBX parallelizes the original hyperband algorithm by evaluating
-hyperparameter configurations of equal budget across brackets in one batch.
-For example, all configurations in stage 1 of bracket 3 and stage 0 of
-bracket 2 in one batch. To select a parallel backend, use <code><a href='https://future.futureverse.org/reference/plan.html'>future::plan()</a></code>.</p>
+<p>In order to support general termination criteria and parallelization, we
+evaluate points in a batch-fashion of size <code>batch_size</code>. The points of one
+stage in a bracket are evaluated in one batch. Parallelization is supported
+via package <a href='https://CRAN.R-project.org/package=future'><span class="pkg">future</span></a> (see <code><a href='https://mlr3.mlr-org.com/reference/benchmark.html'>mlr3::benchmark()</a></code>'s section on
+parallelization for more details).</p>
     <h2 class="hasAnchor" id="logging"><a class="anchor" href="#logging"></a>Logging</h2>
 
     
 
-
-<p><a href='https://CRAN.R-project.org/package=mlr3hyperband'><span class="pkg">mlr3hyperband</span></a> uses the <a href='https://CRAN.R-project.org/package=lgr'><span class="pkg">lgr</span></a> package for logging.
-<a href='https://CRAN.R-project.org/package=lgr'><span class="pkg">lgr</span></a> supports multiple log levels which can be queried with
-<code>getOption("lgr.log_levels")</code>. Use <code>lgr::get_logger("bbotk")</code> to access and
-control the logger.</p>
-<p>To suppress output and reduce verbosity, you can lower the log from the
-default level <code>"info"</code> to <code>"warn"</code>:</p><pre><span class='fu'>lgr</span><span class='fu'>::</span><span class='fu'><a href='https://s-fleck.github.io/lgr/reference/get_logger.html'>get_logger</a></span><span class='op'>(</span><span class='st'>"bbotk"</span><span class='op'>)</span><span class='op'>$</span><span class='fu'>set_threshold</span><span class='op'>(</span><span class='st'>"warn"</span><span class='op'>)</span>
-</pre>
-
-<p>To log to a file or a data base, see the documentation of <a href='https://s-fleck.github.io/lgr/reference/lgr-package.html'>lgr::lgr-package</a>.</p>
+<p>Hyperband uses a logger (as implemented in <a href='https://CRAN.R-project.org/package=lgr'><span class="pkg">lgr</span></a>) from package
+<a href='https://CRAN.R-project.org/package=bbotk'><span class="pkg">bbotk</span></a>.
+Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
     <h2 class="hasAnchor" id="super-classes"><a class="anchor" href="#super-classes"></a>Super classes</h2>
 
     <p><code><a href='https://mlr3tuning.mlr-org.com/reference/Tuner.html'>mlr3tuning::Tuner</a></code> -&gt; <code><a href='https://mlr3tuning.mlr-org.com/reference/TunerFromOptimizer.html'>mlr3tuning::TunerFromOptimizer</a></code> -&gt; <code>TunerHyperband</code></p>
@@ -329,33 +327,33 @@ default level <code>"info"</code> to <code>"warn"</code>:</p><pre><span class='f
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='r-in'><span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/ns-load.html'>requireNamespace</a></span><span class='op'>(</span><span class='st'>"xgboost"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span></span>
-<span class='r-in'>  <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://mlr3learners.mlr-org.com'>mlr3learners</a></span><span class='op'>)</span></span>
+<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://mlr3learners.mlr-org.com'>mlr3learners</a></span><span class='op'>)</span></span>
 <span class='r-in'></span>
-<span class='r-in'>  <span class='co'># define hyperparameter and budget parameter</span></span>
-<span class='r-in'>  <span class='va'>search_space</span> <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/ps.html'>ps</a></span><span class='op'>(</span></span>
-<span class='r-in'>    nrounds <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/Domain.html'>p_int</a></span><span class='op'>(</span>lower <span class='op'>=</span> <span class='fl'>1</span>, upper <span class='op'>=</span> <span class='fl'>16</span>, tags <span class='op'>=</span> <span class='st'>"budget"</span><span class='op'>)</span>,</span>
-<span class='r-in'>    eta <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/Domain.html'>p_dbl</a></span><span class='op'>(</span>lower <span class='op'>=</span> <span class='fl'>0</span>, upper <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>,</span>
-<span class='r-in'>    booster <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/Domain.html'>p_fct</a></span><span class='op'>(</span>levels <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"gbtree"</span>, <span class='st'>"gblinear"</span>, <span class='st'>"dart"</span><span class='op'>)</span><span class='op'>)</span></span>
-<span class='r-in'>  <span class='op'>)</span></span>
+<span class='r-in'><span class='co'># define hyperparameter and budget parameter</span></span>
+<span class='r-in'><span class='va'>search_space</span> <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/ps.html'>ps</a></span><span class='op'>(</span></span>
+<span class='r-in'>  nrounds <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/Domain.html'>p_int</a></span><span class='op'>(</span>lower <span class='op'>=</span> <span class='fl'>1</span>, upper <span class='op'>=</span> <span class='fl'>16</span>, tags <span class='op'>=</span> <span class='st'>"budget"</span><span class='op'>)</span>,</span>
+<span class='r-in'>  eta <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/Domain.html'>p_dbl</a></span><span class='op'>(</span>lower <span class='op'>=</span> <span class='fl'>0</span>, upper <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>,</span>
+<span class='r-in'>  booster <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/Domain.html'>p_fct</a></span><span class='op'>(</span>levels <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"gbtree"</span>, <span class='st'>"gblinear"</span>, <span class='st'>"dart"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>)</span></span>
 <span class='r-in'></span>
-<span class='r-in'>  <span class='co'># \donttest{</span></span>
-<span class='r-in'>  <span class='co'># hyperparameter tuning on the pima indians diabetes data set</span></span>
-<span class='r-in'>  <span class='va'>instance</span> <span class='op'>=</span> <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/tune.html'>tune</a></span><span class='op'>(</span></span>
-<span class='r-in'>    method <span class='op'>=</span> <span class='st'>"hyperband"</span>,</span>
-<span class='r-in'>    task <span class='op'>=</span> <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>tsk</a></span><span class='op'>(</span><span class='st'>"pima"</span><span class='op'>)</span>,</span>
-<span class='r-in'>    learner <span class='op'>=</span> <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>lrn</a></span><span class='op'>(</span><span class='st'>"classif.xgboost"</span>, eval_metric <span class='op'>=</span> <span class='st'>"logloss"</span><span class='op'>)</span>,</span>
-<span class='r-in'>    resampling <span class='op'>=</span> <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>rsmp</a></span><span class='op'>(</span><span class='st'>"cv"</span>, folds <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>,</span>
-<span class='r-in'>    measures <span class='op'>=</span> <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>msr</a></span><span class='op'>(</span><span class='st'>"classif.ce"</span><span class='op'>)</span>,</span>
-<span class='r-in'>    search_space <span class='op'>=</span> <span class='va'>search_space</span>,</span>
-<span class='r-in'>    term_evals <span class='op'>=</span> <span class='fl'>100</span></span>
-<span class='r-in'>  <span class='op'>)</span></span>
+<span class='r-in'><span class='co'># \donttest{</span></span>
+<span class='r-in'><span class='co'># hyperparameter tuning on the pima indians diabetes data set</span></span>
+<span class='r-in'><span class='va'>instance</span> <span class='op'>=</span> <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/tune.html'>tune</a></span><span class='op'>(</span></span>
+<span class='r-in'>  method <span class='op'>=</span> <span class='st'>"hyperband"</span>,</span>
+<span class='r-in'>  task <span class='op'>=</span> <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>tsk</a></span><span class='op'>(</span><span class='st'>"pima"</span><span class='op'>)</span>,</span>
+<span class='r-in'>  learner <span class='op'>=</span> <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>lrn</a></span><span class='op'>(</span><span class='st'>"classif.xgboost"</span>, eval_metric <span class='op'>=</span> <span class='st'>"logloss"</span><span class='op'>)</span>,</span>
+<span class='r-in'>  resampling <span class='op'>=</span> <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>rsmp</a></span><span class='op'>(</span><span class='st'>"cv"</span>, folds <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>,</span>
+<span class='r-in'>  measures <span class='op'>=</span> <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>msr</a></span><span class='op'>(</span><span class='st'>"classif.ce"</span><span class='op'>)</span>,</span>
+<span class='r-in'>  search_space <span class='op'>=</span> <span class='va'>search_space</span></span>
+<span class='r-in'><span class='op'>)</span></span>
 <span class='r-in'></span>
-<span class='r-in'>  <span class='co'># best performing hyperparameter configuration</span></span>
-<span class='r-in'>  <span class='va'>instance</span><span class='op'>$</span><span class='va'>result</span></span>
-<span class='r-in'>  <span class='co'># }</span></span>
+<span class='r-in'><span class='co'># best performing hyperparameter configuration</span></span>
+<span class='r-in'><span class='va'>instance</span><span class='op'>$</span><span class='va'>result</span></span>
+<span class='r-in'><span class='co'># }</span></span>
 <span class='r-in'><span class='op'>}</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Loading required namespace: xgboost</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    nrounds       eta booster learner_param_vals  x_domain classif.ce</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 1:       2 0.1085627    dart          &lt;list[6]&gt; &lt;list[3]&gt;  0.2304688</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1:      16 0.2202471    dart          &lt;list[6]&gt; &lt;list[3]&gt;  0.2265625</span>
 </pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

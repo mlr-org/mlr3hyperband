@@ -42,32 +42,14 @@
 
 <meta property="og:title" content="Hyperparameter Tuning with Successive Halving — mlr_tuners_successive_halving" />
 <meta property="og:description" content="TunerSuccessiveHalving class that implements the successive halving
-algorithm. Successive halving (SHA) randomly samples n candidate
-hyperparameter configurations and allocates a minimum budget (r_min) to all
-candidates. The candidates are raced down in stages to a single best
-candidate by repeatedly increasing the budget by a factor of eta and
-promoting only the best 1 / eta  fraction to the next stage. This means
-promising hyperparameter configurations are allocated a higher budget overall
-and lower performing ones are discarded early on.
-The budget hyperparameter must be tagged with &quot;budget&quot; in the search space.
-The minimum budget (r_min) which is allocated in the base stage, is set by
-the lower bound of the budget parameter. The upper bound  defines the maximum
-budget (r_max) which is allocated to the candidates in the last stage. The
-number of stages is computed so that each candidate in base stage is
-allocated the minimum budget and the candidates in the last stage are not
-evaluated on more than the maximum budget. The following table is the stage
-layout for eta = 2, r_min = 1 and r_max = 8.
-in_ir_i
-081
-142
-224
-318
-
-
-
-
-i is stage number, n_i is the number of configurations and r_i is the
-budget allocated to a single configuration." />
+algorithm. The algorithm samples n configurations and evaluates them with
+the smallest budget (lower bound of the budget parameter). With every stage
+the budget is increased by a factor of eta and only the best 1/eta
+configurations are promoted to the next stage. The optimization terminates
+when the maximum budget is reached (upper bound of the budget parameter)
+To identify the budget, the user has to specify explicitly which parameter of
+the objective function influences the budget by tagging a single parameter in
+in the search_space (paradox::ParamSet) with &quot;budget&quot;." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -167,32 +149,14 @@ budget allocated to a single configuration." />
 
     <div class="ref-description">
     <p><code>TunerSuccessiveHalving</code> class that implements the successive halving
-algorithm. Successive halving (SHA) randomly samples <code>n</code> candidate
-hyperparameter configurations and allocates a minimum budget (<code>r_min</code>) to all
-candidates. The candidates are raced down in stages to a single best
-candidate by repeatedly increasing the budget by a factor of <code>eta</code> and
-promoting only the best <code>1 / eta </code> fraction to the next stage. This means
-promising hyperparameter configurations are allocated a higher budget overall
-and lower performing ones are discarded early on.</p>
-<p>The budget hyperparameter must be tagged with <code>"budget"</code> in the search space.
-The minimum budget (<code>r_min</code>) which is allocated in the base stage, is set by
-the lower bound of the budget parameter. The upper bound  defines the maximum
-budget (<code>r_max</code>) which is allocated to the candidates in the last stage. The
-number of stages is computed so that each candidate in base stage is
-allocated the minimum budget and the candidates in the last stage are not
-evaluated on more than the maximum budget. The following table is the stage
-layout for <code>eta = 2</code>, <code>r_min = 1</code> and <code>r_max = 8</code>.</p><table class='table'>
-<tr><td><code>i</code></td><td><code>n_i</code></td><td><code>r_i</code></td></tr>
-<tr><td>0</td><td>8</td><td>1</td></tr>
-<tr><td>1</td><td>4</td><td>2</td></tr>
-<tr><td>2</td><td>2</td><td>4</td></tr>
-<tr><td>3</td><td>1</td><td>8</td></tr>
-</table>
-
-
-
-<p><code>i</code> is stage number, <code>n_i</code> is the number of configurations and <code>r_i</code> is the
-budget allocated to a single configuration.</p>
+algorithm. The algorithm samples <code>n</code> configurations and evaluates them with
+the smallest budget (lower bound of the <code>budget</code> parameter). With every stage
+the budget is increased by a factor of <code>eta</code> and only the best <code>1/eta</code>
+configurations are promoted to the next stage. The optimization terminates
+when the maximum budget is reached (upper bound of the <code>budget</code> parameter)</p>
+<p>To identify the budget, the user has to specify explicitly which parameter of
+the objective function influences the budget by tagging a single parameter in
+in the search_space (<a href='https://paradox.mlr-org.com/reference/ParamSet.html'>paradox::ParamSet</a>) with <code>"budget"</code>.</p>
     </div>
 
 
@@ -209,77 +173,28 @@ In Gretton A, Robert CC (eds.), <em>Proceedings of the 19th International Confer
 
 <dl>
 <dt><code>n</code></dt><dd><p><code>integer(1)</code><br />
-Number of candidates in base stage.</p></dd>
+Number of configurations in first stage.</p></dd>
 <dt><code>eta</code></dt><dd><p><code>numeric(1)</code><br />
-With every stage, the budget is increased by a factor of <code>eta</code>
-and only the best <code>1 / eta</code> candidates are promoted to the next stage.
+With every stage, the configuration budget is increased by a factor of <code>eta</code>
+and only the best <code>1/eta</code> configurations are used for the next stage.
 Non-integer values are supported, but <code>eta</code> is not allowed to be less or
 equal 1.</p></dd>
 <dt><code>sampler</code></dt><dd><p><a href='https://paradox.mlr-org.com/reference/Sampler.html'>paradox::Sampler</a><br />
-Object defining how the samples of the parameter space should be drawn. The
-default is uniform sampling.</p></dd>
-<dt><code>repeats</code></dt><dd><p><code>logical(1)</code><br />
-If <code>FALSE</code> (default), SHA terminates once all stages are evaluated.
-Otherwise, SHA starts over again once the last stage is evaluated.</p></dd>
+Object defining how the samples of the parameter space should be drawn during
+the initialization of each bracket. The default is uniform sampling.</p></dd>
+
 </dl>
 
     <h2 class="hasAnchor" id="archive"><a class="anchor" href="#archive"></a>Archive</h2>
 
     
 
-<p>The <a href='https://mlr3tuning.mlr-org.com/reference/ArchiveTuning.html'>mlr3tuning::ArchiveTuning</a> holds the following additional column that is
-specific to the successive halving algorithm:</p><ul>
+<p>The <a href='https://mlr3tuning.mlr-org.com/reference/ArchiveTuning.html'>mlr3tuning::ArchiveTuning</a> holds the following additional column that is specific
+to the successive halving algorithm:</p><ul>
 <li><p><code>stage</code> (<code>integer(1))</code><br />
 Stage index. Starts counting at 0.</p></li>
 </ul>
 
-    <h2 class="hasAnchor" id="custom-sampler"><a class="anchor" href="#custom-sampler"></a>Custom Sampler</h2>
-
-    
-
-
-<p><a href='https://CRAN.R-project.org/package=mlr3hyperband'><span class="pkg">mlr3hyperband</span></a> supports custom <a href='https://paradox.mlr-org.com/reference/Sampler.html'>paradox::Sampler</a> to draw candidates
-in the base stage.</p><pre><span class='co'># - beta distribution with alpha = 2 and beta = 5</span>
-<span class='co'># - categorical distribution with custom probabilities</span>
-<span class='va'>sampler</span> <span class='op'>=</span> <span class='va'><a href='https://paradox.mlr-org.com/reference/SamplerJointIndep.html'>SamplerJointIndep</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
-  <span class='va'><a href='https://paradox.mlr-org.com/reference/Sampler1DRfun.html'>Sampler1DRfun</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='va'>params</span><span class='op'>[[</span><span class='fl'>2</span><span class='op'>]</span><span class='op'>]</span>, <span class='kw'>function</span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/stats/Beta.html'>rbeta</a></span><span class='op'>(</span><span class='va'>n</span>, <span class='fl'>2</span>, <span class='fl'>5</span><span class='op'>)</span><span class='op'>)</span>,
-  <span class='va'><a href='https://paradox.mlr-org.com/reference/Sampler1DCateg.html'>Sampler1DCateg</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='va'>params</span><span class='op'>[[</span><span class='fl'>3</span><span class='op'>]</span><span class='op'>]</span>, prob <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.2</span>, <span class='fl'>0.3</span>, <span class='fl'>0.5</span><span class='op'>)</span><span class='op'>)</span>
-<span class='op'>)</span><span class='op'>)</span>
-</pre>
-
-    <h2 class="hasAnchor" id="progress-bars"><a class="anchor" href="#progress-bars"></a>Progress Bars</h2>
-
-    
-
-
-<p>The  <code>$optimize()</code> method supports progress bars via the package
-<a href='https://CRAN.R-project.org/package=progressr'><span class="pkg">progressr</span></a>. Simply wrap the method call in <code>progressr::with_progress()</code>
-to enable them.
-Alternatively, call <code>progressr::handlers()</code> with <code>global = TRUE</code> to enable progress bars
-globally.
-We recommend the <a href='https://CRAN.R-project.org/package=progress'><span class="pkg">progress</span></a> package as backend which can be enabled with
-<code>progressr::handlers("progress")</code>.</p>
-    <h2 class="hasAnchor" id="parallelization"><a class="anchor" href="#parallelization"></a>Parallelization</h2>
-
-    
-
-<p>The hyperparameter configurations of one stage are evaluated in parallel with
-the <a href='https://CRAN.R-project.org/package=future'><span class="pkg">future</span></a> package. To select a parallel backend, use
-<code><a href='https://future.futureverse.org/reference/plan.html'>future::plan()</a></code>.</p>
-    <h2 class="hasAnchor" id="logging"><a class="anchor" href="#logging"></a>Logging</h2>
-
-    
-
-
-<p><a href='https://CRAN.R-project.org/package=mlr3hyperband'><span class="pkg">mlr3hyperband</span></a> uses the <a href='https://CRAN.R-project.org/package=lgr'><span class="pkg">lgr</span></a> package for logging.
-<a href='https://CRAN.R-project.org/package=lgr'><span class="pkg">lgr</span></a> supports multiple log levels which can be queried with
-<code>getOption("lgr.log_levels")</code>. Use <code>lgr::get_logger("bbotk")</code> to access and
-control the logger.</p>
-<p>To suppress output and reduce verbosity, you can lower the log from the
-default level <code>"info"</code> to <code>"warn"</code>:</p><pre><span class='fu'>lgr</span><span class='fu'>::</span><span class='fu'><a href='https://s-fleck.github.io/lgr/reference/get_logger.html'>get_logger</a></span><span class='op'>(</span><span class='st'>"bbotk"</span><span class='op'>)</span><span class='op'>$</span><span class='fu'>set_threshold</span><span class='op'>(</span><span class='st'>"warn"</span><span class='op'>)</span>
-</pre>
-
-<p>To log to a file or a data base, see the documentation of <a href='https://s-fleck.github.io/lgr/reference/lgr-package.html'>lgr::lgr-package</a>.</p>
     <h2 class="hasAnchor" id="super-classes"><a class="anchor" href="#super-classes"></a>Super classes</h2>
 
     <p><code><a href='https://mlr3tuning.mlr-org.com/reference/Tuner.html'>mlr3tuning::Tuner</a></code> -&gt; <code><a href='https://mlr3tuning.mlr-org.com/reference/TunerFromOptimizer.html'>mlr3tuning::TunerFromOptimizer</a></code> -&gt; <code>TunerSuccessiveHalving</code></p>
@@ -320,33 +235,32 @@ default level <code>"info"</code> to <code>"warn"</code>:</p><pre><span class='f
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='r-in'><span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/ns-load.html'>requireNamespace</a></span><span class='op'>(</span><span class='st'>"xgboost"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span></span>
-<span class='r-in'>  <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://mlr3learners.mlr-org.com'>mlr3learners</a></span><span class='op'>)</span></span>
+<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://mlr3learners.mlr-org.com'>mlr3learners</a></span><span class='op'>)</span></span>
 <span class='r-in'></span>
-<span class='r-in'>  <span class='co'># define hyperparameter and budget parameter</span></span>
-<span class='r-in'>  <span class='va'>search_space</span> <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/ps.html'>ps</a></span><span class='op'>(</span></span>
-<span class='r-in'>    nrounds <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/Domain.html'>p_int</a></span><span class='op'>(</span>lower <span class='op'>=</span> <span class='fl'>1</span>, upper <span class='op'>=</span> <span class='fl'>16</span>, tags <span class='op'>=</span> <span class='st'>"budget"</span><span class='op'>)</span>,</span>
-<span class='r-in'>    eta <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/Domain.html'>p_dbl</a></span><span class='op'>(</span>lower <span class='op'>=</span> <span class='fl'>0</span>, upper <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>,</span>
-<span class='r-in'>    booster <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/Domain.html'>p_fct</a></span><span class='op'>(</span>levels <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"gbtree"</span>, <span class='st'>"gblinear"</span>, <span class='st'>"dart"</span><span class='op'>)</span><span class='op'>)</span></span>
-<span class='r-in'>  <span class='op'>)</span></span>
+<span class='r-in'><span class='co'># define hyperparameter and budget parameter</span></span>
+<span class='r-in'><span class='va'>search_space</span> <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/ps.html'>ps</a></span><span class='op'>(</span></span>
+<span class='r-in'>  nrounds <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/Domain.html'>p_int</a></span><span class='op'>(</span>lower <span class='op'>=</span> <span class='fl'>1</span>, upper <span class='op'>=</span> <span class='fl'>16</span>, tags <span class='op'>=</span> <span class='st'>"budget"</span><span class='op'>)</span>,</span>
+<span class='r-in'>  eta <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/Domain.html'>p_dbl</a></span><span class='op'>(</span>lower <span class='op'>=</span> <span class='fl'>0</span>, upper <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>,</span>
+<span class='r-in'>  booster <span class='op'>=</span> <span class='fu'><a href='https://paradox.mlr-org.com/reference/Domain.html'>p_fct</a></span><span class='op'>(</span>levels <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"gbtree"</span>, <span class='st'>"gblinear"</span>, <span class='st'>"dart"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>)</span></span>
 <span class='r-in'></span>
-<span class='r-in'>  <span class='co'># \donttest{</span></span>
-<span class='r-in'>  <span class='co'># hyperparameter tuning on the pima indians diabetes data set</span></span>
-<span class='r-in'>  <span class='va'>instance</span> <span class='op'>=</span> <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/tune.html'>tune</a></span><span class='op'>(</span></span>
-<span class='r-in'>    method <span class='op'>=</span> <span class='st'>"successive_halving"</span>,</span>
-<span class='r-in'>    task <span class='op'>=</span> <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>tsk</a></span><span class='op'>(</span><span class='st'>"pima"</span><span class='op'>)</span>,</span>
-<span class='r-in'>    learner <span class='op'>=</span> <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>lrn</a></span><span class='op'>(</span><span class='st'>"classif.xgboost"</span>, eval_metric <span class='op'>=</span> <span class='st'>"logloss"</span><span class='op'>)</span>,</span>
-<span class='r-in'>    resampling <span class='op'>=</span> <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>rsmp</a></span><span class='op'>(</span><span class='st'>"cv"</span>, folds <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>,</span>
-<span class='r-in'>    measures <span class='op'>=</span> <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>msr</a></span><span class='op'>(</span><span class='st'>"classif.ce"</span><span class='op'>)</span>,</span>
-<span class='r-in'>    search_space <span class='op'>=</span> <span class='va'>search_space</span>,</span>
-<span class='r-in'>    term_evals <span class='op'>=</span> <span class='fl'>100</span></span>
-<span class='r-in'>  <span class='op'>)</span></span>
+<span class='r-in'><span class='co'># \donttest{</span></span>
+<span class='r-in'><span class='co'># hyperparameter tuning on the pima indians diabetes data set</span></span>
+<span class='r-in'><span class='va'>instance</span> <span class='op'>=</span> <span class='fu'><a href='https://mlr3tuning.mlr-org.com/reference/tune.html'>tune</a></span><span class='op'>(</span></span>
+<span class='r-in'>  method <span class='op'>=</span> <span class='st'>"successive_halving"</span>,</span>
+<span class='r-in'>  task <span class='op'>=</span> <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>tsk</a></span><span class='op'>(</span><span class='st'>"pima"</span><span class='op'>)</span>,</span>
+<span class='r-in'>  learner <span class='op'>=</span> <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>lrn</a></span><span class='op'>(</span><span class='st'>"classif.xgboost"</span>, eval_metric <span class='op'>=</span> <span class='st'>"logloss"</span><span class='op'>)</span>,</span>
+<span class='r-in'>  resampling <span class='op'>=</span> <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>rsmp</a></span><span class='op'>(</span><span class='st'>"cv"</span>, folds <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>,</span>
+<span class='r-in'>  measures <span class='op'>=</span> <span class='fu'><a href='https://mlr3.mlr-org.com/reference/mlr_sugar.html'>msr</a></span><span class='op'>(</span><span class='st'>"classif.ce"</span><span class='op'>)</span>,</span>
+<span class='r-in'>  search_space <span class='op'>=</span> <span class='va'>search_space</span></span>
+<span class='r-in'><span class='op'>)</span></span>
 <span class='r-in'></span>
-<span class='r-in'>  <span class='co'># best performing hyperparameter configuration</span></span>
-<span class='r-in'>  <span class='va'>instance</span><span class='op'>$</span><span class='va'>result</span></span>
-<span class='r-in'>  <span class='co'># }</span></span>
+<span class='r-in'><span class='co'># best performing hyperparameter configuration</span></span>
+<span class='r-in'><span class='va'>instance</span><span class='op'>$</span><span class='va'>result</span></span>
+<span class='r-in'><span class='co'># }</span></span>
 <span class='r-in'><span class='op'>}</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    nrounds       eta booster learner_param_vals  x_domain classif.ce</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 1:      16 0.6735291    dart          &lt;list[6]&gt; &lt;list[3]&gt;  0.2434896</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1:       4 0.2602081    dart          &lt;list[6]&gt; &lt;list[3]&gt;  0.2330729</span>
 </pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
