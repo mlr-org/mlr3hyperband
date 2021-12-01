@@ -73,7 +73,6 @@ OptimizerAsha = R6Class("OptimizerAsha",
         properties = c("dependencies", "single-crit", "multi-crit"),
         packages = character(0)
       )
-
     }
   ),
 

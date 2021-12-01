@@ -3,8 +3,8 @@ output: github_document
 ---
 
 ```{r, include = FALSE}
-lgr::get_logger("mlr3")$set_threshold("warn")
-lgr::get_logger("bbotk")$set_threshold("warn")
+lgr::get_logger("mlr3")$set_threshold("error")
+lgr::get_logger("bbotk")$set_threshold("error")
 set.seed(1)
 options(datatable.print.class = FALSE, datatable.print.keys = FALSE, width = 200)
 ```
@@ -36,7 +36,6 @@ and [hyperparameter tuning](https://mlr3book.mlr-org.com/optimization.html#tunin
 [hyperband](https://arxiv.org/abs/1603.06560) and [asha](https://arxiv.org/abs/1810.05934) algorithm.
 * Ask questions on [Stackoverflow (tag #mlr3)](https://stackoverflow.com/questions/tagged/mlr3)
 
-
 ## Installation
 
 Install the last release from CRAN:
@@ -60,152 +59,27 @@ library(mlr3hyperband)
 library(mlr3learners)
 ```
 
-### Successive Halving
-
-Successive halving starts with minimum budget and a given, fixed number of `n` candidates and races them down in stages to a single best candidate by repeatedly evaluating all candidates with increased budgets in a certain schedule.
-The budget is increased by a factor of `eta` and only the best `1 / eta ` fraction of candidates is promoted to the next stage.
-The budget hyperparameter must be tagged with `"budget"` in the search space.
-The minimum and maximum budget is set by the lower and upper bound of the budget parameter.
-
-```{r, message = FALSE}
-library(mlr3hyperband)
-library(mlr3learners)
-
-# define hyperparameter and budget parameter
-search_space = ps(
-  nrounds = p_int(lower = 1, upper = 16, tags = "budget"),
-  eta = p_dbl(lower = 0, upper = 1),
-  booster = p_fct(levels = c("gbtree", "gblinear", "dart"))
-)
-
-# hyperparameter tuning on the pima indians diabetes data set
-instance = tune(
-  method = "successive_halving",
-  task = tsk("pima"),
-  learner = lrn("classif.xgboost", eval_metric = "logloss"),
-  resampling = rsmp("cv", folds = 3),
-  measures = msr("classif.ce"),
-  search_space = search_space
-)
-
-# best performing hyperparameter configuration
-instance$result
-```
-
-
-### Hyperband
-
-Hyperband repeatedly calls successive halving with different numbers of starting configurations.
-Each run of SH within hyperband is called a bracket.
-All brackets spend approximately the same budget i.e. a larger number of starting configurations corresponds to a smaller budget allocated in the base stage.
-Use `hyperband_schedule()` to get a preview of the bracket layout.
-
-|   s |     |   3 |     |     |   2 |     |     |   1 |     |     |   0 |
-| ---:| ---:| ---:| --- | ---:| ---:| --- | ---:| ---:| --- | ---:| ---:|
-|   i |  ni |  ri |     |  ni |  ri |     |  ni |  ri |     |  ni |  ri |
-|   0 |   8 |   1 |     |   6 |   2 |     |   4 |   4 |     |   8 |   4 |
-|   1 |   4 |   2 |     |   3 |   4 |     |   2 |   8 |     |     |     |
-|   2 |   2 |   4 |     |   1 |   8 |     |     |     |     |     |     |
-|   3 |   1 |   8 |     |     |     |     |     |     |     |     |     |
-
-
-The budget hyperparameter must be tagged with `"budget"` in the search space.
-The minimum and maximum budget is set by the lower and upper bound of the budget parameter.
-An alternative approach using subsampling is described further below.
-
-If you are already familiar with `mlr3tuning`, then the only change compared to other tuners is to give a numeric hyperparameter a `"budget"` tag.
-Afterwards, you can handle hyperband like all other tuners.
-Originally, hyperband was created with a “natural” learning parameter as the budget parameter in mind, like `nrounds` of the XGBoost learner.
-
 ```{r}
-library(mlr3verse)
 library(mlr3hyperband)
 library(mlr3learners)
 
-# define hyperparameter and budget parameter
-search_space = ps(
-  nrounds = p_int(lower = 1, upper = 16, tags = "budget"),
-  eta = p_dbl(lower = 0, upper = 1),
-  booster = p_fct(levels = c("gbtree", "gblinear", "dart"))
+# load learner and define search space
+learner = lrn("classif.xgboost",
+  nrounds = to_tune(p_int(lower = 1, upper = 16, tags = "budget")),
+  eta = to_tune(0, 1),
+  booster = to_tune()
 )
 
-# hyperparameter tuning on the pima indians diabetes data set
-instance = tune(
-  method = "hyperband",
-  task = tsk("pima"),
-  learner = lrn("classif.xgboost", eval_metric = "logloss"),
-  resampling = rsmp("cv", folds = 3),
-  measures = msr("classif.ce"),
-  search_space = search_space
-)
-
-# best performing hyperparameter configuration
-instance$result
-```
-
-### Hyperband and Subsampling
-
-It is also possible to tune learners that do not have a natural fidelity parameter.
-In such a case `mlr3pipelines` can be used to define data subsampling as a preprocessing step.
-Then, the `frac` parameter of subsampling, defining the fraction of the training data to be used, can act as the budget parameter.
-
-```{r}
-learner = po("subsample") %>>% lrn("classif.rpart")
-
-# define subsampling parameter as budget
-search_space = ps(
-  classif.rpart.cp = p_dbl(lower = 0.001, upper = 0.1),
-  classif.rpart.minsplit = p_int(lower = 1, upper = 10),
-  subsample.frac = p_dbl(lower = 0.1, upper = 1, tags = "budget")
-)
-
-# hyperparameter tuning on the pima indians diabetes data set
-instance = tune(
-  method = "hyperband",
-  task = tsk("pima"),
-  learner = learner,
-  resampling = rsmp("cv", folds = 3),
-  measures = msr("classif.ce"),
-  search_space = search_space
-)
-
-# best performing hyperparameter configuration
-instance$result
-```
-
-### Asynchronous Successive Halving
-
-Asynchronous successive halving (ASHA) parallelizes SHA by promoting candidates to the next stage as soon as possible instead of waiting for all candidates in the stage to finish.
-ASHA starts with sampling a candidate points for each available worker.
-When an evaluation finishes and the worker is available again, ASHA checks the stages from top to bottom for promotable candidates.
-Promotions are possible when the evaluated candidates belong to the top `1 / eta` of each stage.
-If no promotions are possible, a new candidate is sampled and added to the base stage, which increases the number of possible promotions for all stages.
-Asha needs a parallel backend which is supplied with `future::plan()`.
-
-```{r, message = FALSE}
-library(mlr3hyperband)
-library(mlr3learners)
-
+# set parallel backend
 future::plan("multisession")
-
-# define hyperparameter and budget parameter
-search_space = ps(
-  nrounds = p_int(lower = 1, upper = 16, tags = "budget"),
-  eta = p_dbl(lower = 0, upper = 1),
-  booster = p_fct(levels = c("gbtree", "gblinear", "dart"))
-)
 
 # hyperparameter tuning on the pima indians diabetes data set
 instance = tune(
   method = "asha",
   task = tsk("pima"),
-  learner = lrn("classif.xgboost", eval_metric = "logloss"),
+  learner = learner,
   resampling = rsmp("cv", folds = 3),
   measures = msr("classif.ce"),
-  search_space = search_space,
   term_evals = 100
 )
-
-# best performing hyperparameter configuration
-instance$result
 ```
