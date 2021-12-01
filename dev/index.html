@@ -5,20 +5,21 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hyperband for mlr3 • mlr3hyperband</title>
+<title>Successive Halving and Hyperband Algorithms for mlr3 • mlr3hyperband</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/journal/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.1/css/all.min.css" integrity="sha256-PbSmjxuVAzJ6FPvNYsrXygfGhNJYyZ2GktDbkMBqQZg=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.1/css/v4-shims.min.css" integrity="sha256-A6jcAdwFD48VMjlI3GDxUd+eCQa7/KWy6G9oe/ovaPA=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <link href="extra.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="Hyperband for mlr3">
-<meta property="og:description" content="Implements hyperband method for hyperparameter
-    tuning.  Various termination criteria can be set and combined. The
-    class AutoTuner provides a convenient way to perform nested
-    resampling in combination with mlr3. The hyperband algorithm was
-    proposed by Lisha Li, Kevin Jamieson, Giulia DeSalvo, Afshin
-    Rostamizadeh and Ameet Talwalkar (2018) &lt;arXiv:1603.06560&gt;.">
+<script src="pkgdown.js"></script><meta property="og:title" content="Successive Halving and Hyperband Algorithms for mlr3">
+<meta property="og:description" content="Multifidelity optimization methods based on the successive
+    halving algorithm. Implements the successive halving, asynchronous
+    successive halving, hyperband and asynchronous hyperband algorithm as
+    general purpose optimizers for bbotk and tuners for `mlr3tuning`. Various
+    termination criteria can be set and combined. If possible learners are
+    hotstarted to accelerate tuning. The class AutoTuner provides a convenient
+    way to perform nested resampling in combination with mlr3.">
 <meta name="twitter:card" content="summary">
 <meta name="robots" content="noindex">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -106,7 +107,23 @@
 <p>Package website: <a href="https://mlr3hyperband.mlr-org.com/">release</a> | <a href="https://mlr3hyperband.mlr-org.com/dev/">dev</a></p>
 <!-- badges: start -->
 
-<p>This package provides hyperband tuning for <a href="https://mlr3.mlr-org.com" class="external-link"><code>mlr3</code></a>.</p>
+<p><code>mlr3hyperband</code> extends the <a href="https://mlr3tuning.mlr-org.com/" class="external-link">mlr3tuning</a> package with various multifidelity optimization methods based on successive halving algorithm. It currently provides the following optimizers for <a href="https://bbotk.mlr-org.com/" class="external-link">bbotk</a> and tuner for <a href="https://mlr3tuning.mlr-org.com/" class="external-link">mlr3tuning</a>:</p>
+<ul>
+<li>Successive Halving (<code>OptimizerSuccessiveHalving</code> &amp; <code>TunerSuccessiveHalving</code>)</li>
+<li>Asynchronous Successive Halving (<code>OptimizerAsha</code> &amp; <code>TunerAsha</code>)</li>
+<li>Hyperband (<code>OptimizerSuccessiveHalving</code> &amp; <code>TunerSuccessiveHalving</code>)</li>
+<li>Asynchronous Hyperband (<code>OptimizerAhb</code> &amp; <code>TunerAhb</code>)</li>
+</ul>
+<div class="section level2">
+<h2 id="resources">Resources<a class="anchor" aria-label="anchor" href="#resources"></a>
+</h2>
+<ul>
+<li>mlr3book chapter on <a href="https://mlr3book.mlr-org.com/optimization.html#hyperband" class="external-link">hyperband</a> and <a href="https://mlr3book.mlr-org.com/optimization.html#tuning" class="external-link">hyperparameter tuning</a>.</li>
+<li>The original publications introducing the <a href="https://arxiv.org/abs/1502.07943" class="external-link">successive halving</a>, <a href="https://arxiv.org/abs/1603.06560" class="external-link">hyperband</a> and <a href="https://arxiv.org/abs/1810.05934" class="external-link">asha</a> algorithm.</li>
+<li>Ask questions on <a href="https://stackoverflow.com/questions/tagged/mlr3" class="external-link">Stackoverflow (tag #mlr3)</a>
+</li>
+</ul>
+</div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -118,111 +135,31 @@
 <code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"mlr-org/mlr3hyperband"</span><span class="op">)</span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="resources">Resources<a class="anchor" aria-label="anchor" href="#resources"></a>
-</h2>
-<ul>
-<li>mlr3book chapter on <a href="https://mlr3book.mlr-org.com/optimization.html#hyperband" class="external-link">hyperband</a> and <a href="https://mlr3book.mlr-org.com/optimization.html#tuning" class="external-link">hyperparameter tuning</a>.</li>
-<li>The original <a href="https://arxiv.org/abs/1603.06560" class="external-link">paper</a> introducing the hyperband algorithm.</li>
-</ul>
-</div>
-<div class="section level2">
-<h2 id="hyperband">Hyperband<a class="anchor" aria-label="anchor" href="#hyperband"></a>
-</h2>
-<p>Hyperband is a budget oriented-procedure, weeding out suboptimally performing configurations early on during their training process aiming at increasing the efficiency of the tuning procedure. For this, several brackets are constructed with an associated set of configurations for each bracket. These configuration are initialized by stochastic, often uniform, sampling. Each bracket is divided into multiple stages, and configurations are evaluated for a increasing budget in each stage. Note that currently all configurations are trained completely from the beginning, so no online updates to the models are performed.</p>
-<p>Different brackets are initialized with different number of configurations, and different budget sizes. To identify the budget for evaluating hyperband, the user has to specify explicitly which hyperparameter of the learner influences the budget by tagging a single hyperparameter in the parameter set with <code>"budget"</code>. An alternative approach using subsampling and pipelines is described further below.</p>
-</div>
-<div class="section level2">
 <h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
 </h2>
-<div class="section level3">
-<h3 id="basic">Basic<a class="anchor" aria-label="anchor" href="#basic"></a>
-</h3>
-<p>If you are already familiar with <code>mlr3tuning</code>, then the only change compared to other tuners is to give a numeric hyperparameter a <code>budget</code> tag. Afterwards, you can handle hyperband like all other tuners. Originally, hyperband was created with a “natural” learning parameter as the budget parameter in mind, like <code>nrounds</code> of the XGBoost learner.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mlr3verse.mlr-org.com" class="external-link">mlr3verse</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mlr3hyperband.mlr-org.com">mlr3hyperband</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mlr3hyperband.mlr-org.com">mlr3hyperband</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mlr3learners.mlr-org.com" class="external-link">mlr3learners</a></span><span class="op">)</span>
 
-<span class="co"># define hyperparameter and budget parameter</span>
-<span class="va">search_space</span> <span class="op">=</span> <span class="fu">ps</span><span class="op">(</span>
-  nrounds <span class="op">=</span> <span class="fu">p_int</span><span class="op">(</span>lower <span class="op">=</span> <span class="fl">1</span>, upper <span class="op">=</span> <span class="fl">16</span>, tags <span class="op">=</span> <span class="st">"budget"</span><span class="op">)</span>,
-  eta <span class="op">=</span> <span class="fu">p_dbl</span><span class="op">(</span>lower <span class="op">=</span> <span class="fl">0</span>, upper <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,
-  booster <span class="op">=</span> <span class="fu">p_fct</span><span class="op">(</span>levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gbtree"</span>, <span class="st">"gblinear"</span>, <span class="st">"dart"</span><span class="op">)</span><span class="op">)</span>
+<span class="co"># load learner and define search space</span>
+<span class="va">learner</span> <span class="op">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html" class="external-link">lrn</a></span><span class="op">(</span><span class="st">"classif.xgboost"</span>,
+  nrounds <span class="op">=</span> <span class="fu">to_tune</span><span class="op">(</span><span class="fu">p_int</span><span class="op">(</span>lower <span class="op">=</span> <span class="fl">1</span>, upper <span class="op">=</span> <span class="fl">16</span>, tags <span class="op">=</span> <span class="st">"budget"</span><span class="op">)</span><span class="op">)</span>,
+  eta <span class="op">=</span> <span class="fu">to_tune</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,
+  booster <span class="op">=</span> <span class="fu">to_tune</span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span>
+
+<span class="co"># set parallel backend</span>
+<span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="st">"multisession"</span><span class="op">)</span>
 
 <span class="co"># hyperparameter tuning on the pima indians diabetes data set</span>
 <span class="va">instance</span> <span class="op">=</span> <span class="fu"><a href="https://mlr3tuning.mlr-org.com/reference/tune.html" class="external-link">tune</a></span><span class="op">(</span>
-  method <span class="op">=</span> <span class="st">"hyperband"</span>,
-  task <span class="op">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html" class="external-link">tsk</a></span><span class="op">(</span><span class="st">"pima"</span><span class="op">)</span>,
-  learner <span class="op">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html" class="external-link">lrn</a></span><span class="op">(</span><span class="st">"classif.xgboost"</span>, eval_metric <span class="op">=</span> <span class="st">"logloss"</span><span class="op">)</span>,
-  resampling <span class="op">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html" class="external-link">rsmp</a></span><span class="op">(</span><span class="st">"cv"</span>, folds <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,
-  measures <span class="op">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html" class="external-link">msr</a></span><span class="op">(</span><span class="st">"classif.ce"</span><span class="op">)</span>,
-  search_space <span class="op">=</span> <span class="va">search_space</span>
-<span class="op">)</span>
-
-<span class="co"># best performing hyperparameter configuration</span>
-<span class="va">instance</span><span class="op">$</span><span class="va">result</span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co">##    nrounds     eta booster learner_param_vals  x_domain classif.ce</span></span>
-<span id="cb4-2"><a href="#cb4-2"></a><span class="co">## 1:       4 0.27844  gbtree          &lt;list[6]&gt; &lt;list[3]&gt;  0.2682292</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="subsampling">Subsampling<a class="anchor" aria-label="anchor" href="#subsampling"></a>
-</h3>
-<p>Additionally, it is also possible to use <code>mlr3hyperband</code> to tune learners that do not have a natural fidelity parameter. In such a case <code>mlr3pipelines</code> can be used to define data subsampling as a preprocessing step. Then, the <code>frac</code> parameter of subsampling, defining the fraction of the training data to be used, can act as the budget parameter.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">learner</span> <span class="op">=</span> <span class="fu">po</span><span class="op">(</span><span class="st">"subsample"</span><span class="op">)</span> <span class="op">%&gt;&gt;%</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html" class="external-link">lrn</a></span><span class="op">(</span><span class="st">"classif.rpart"</span><span class="op">)</span>
-
-<span class="co"># define subsampling parameter as budget</span>
-<span class="va">search_space</span> <span class="op">=</span> <span class="fu">ps</span><span class="op">(</span>
-  classif.rpart.cp <span class="op">=</span> <span class="fu">p_dbl</span><span class="op">(</span>lower <span class="op">=</span> <span class="fl">0.001</span>, upper <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>,
-  classif.rpart.minsplit <span class="op">=</span> <span class="fu">p_int</span><span class="op">(</span>lower <span class="op">=</span> <span class="fl">1</span>, upper <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>,
-  subsample.frac <span class="op">=</span> <span class="fu">p_dbl</span><span class="op">(</span>lower <span class="op">=</span> <span class="fl">0.1</span>, upper <span class="op">=</span> <span class="fl">1</span>, tags <span class="op">=</span> <span class="st">"budget"</span><span class="op">)</span>
-<span class="op">)</span>
-
-<span class="co"># hyperparameter tuning on the pima indians diabetes data set</span>
-<span class="va">instance</span> <span class="op">=</span> <span class="fu"><a href="https://mlr3tuning.mlr-org.com/reference/tune.html" class="external-link">tune</a></span><span class="op">(</span>
-  method <span class="op">=</span> <span class="st">"hyperband"</span>,
+  method <span class="op">=</span> <span class="st">"asha"</span>,
   task <span class="op">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html" class="external-link">tsk</a></span><span class="op">(</span><span class="st">"pima"</span><span class="op">)</span>,
   learner <span class="op">=</span> <span class="va">learner</span>,
   resampling <span class="op">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html" class="external-link">rsmp</a></span><span class="op">(</span><span class="st">"cv"</span>, folds <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,
   measures <span class="op">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html" class="external-link">msr</a></span><span class="op">(</span><span class="st">"classif.ce"</span><span class="op">)</span>,
-  search_space <span class="op">=</span> <span class="va">search_space</span>
-<span class="op">)</span>
-
-<span class="co"># best performing hyperparameter configuration</span>
-<span class="va">instance</span><span class="op">$</span><span class="va">result</span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co">##    classif.rpart.cp classif.rpart.minsplit subsample.frac learner_param_vals  x_domain classif.ce</span></span>
-<span id="cb6-2"><a href="#cb6-2"></a><span class="co">## 1:        0.0246659                      5            0.5          &lt;list[6]&gt; &lt;list[3]&gt;  0.2395833</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="successive-halving">Successive Halving<a class="anchor" aria-label="anchor" href="#successive-halving"></a>
-</h3>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mlr3hyperband.mlr-org.com">mlr3hyperband</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mlr3learners.mlr-org.com" class="external-link">mlr3learners</a></span><span class="op">)</span>
-
-<span class="co"># define hyperparameter and budget parameter</span>
-<span class="va">search_space</span> <span class="op">=</span> <span class="fu">ps</span><span class="op">(</span>
-  nrounds <span class="op">=</span> <span class="fu">p_int</span><span class="op">(</span>lower <span class="op">=</span> <span class="fl">1</span>, upper <span class="op">=</span> <span class="fl">16</span>, tags <span class="op">=</span> <span class="st">"budget"</span><span class="op">)</span>,
-  eta <span class="op">=</span> <span class="fu">p_dbl</span><span class="op">(</span>lower <span class="op">=</span> <span class="fl">0</span>, upper <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,
-  booster <span class="op">=</span> <span class="fu">p_fct</span><span class="op">(</span>levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gbtree"</span>, <span class="st">"gblinear"</span>, <span class="st">"dart"</span><span class="op">)</span><span class="op">)</span>
-<span class="op">)</span>
-
-<span class="co"># hyperparameter tuning on the pima indians diabetes data set</span>
-<span class="va">instance</span> <span class="op">=</span> <span class="fu"><a href="https://mlr3tuning.mlr-org.com/reference/tune.html" class="external-link">tune</a></span><span class="op">(</span>
-  method <span class="op">=</span> <span class="st">"successive_halving"</span>,
-  task <span class="op">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html" class="external-link">tsk</a></span><span class="op">(</span><span class="st">"pima"</span><span class="op">)</span>,
-  learner <span class="op">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html" class="external-link">lrn</a></span><span class="op">(</span><span class="st">"classif.xgboost"</span>, eval_metric <span class="op">=</span> <span class="st">"logloss"</span><span class="op">)</span>,
-  resampling <span class="op">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html" class="external-link">rsmp</a></span><span class="op">(</span><span class="st">"cv"</span>, folds <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,
-  measures <span class="op">=</span> <span class="fu"><a href="https://mlr3.mlr-org.com/reference/mlr_sugar.html" class="external-link">msr</a></span><span class="op">(</span><span class="st">"classif.ce"</span><span class="op">)</span>,
-  search_space <span class="op">=</span> <span class="va">search_space</span>
-<span class="op">)</span>
-
-<span class="co"># best performing hyperparameter configuration</span>
-<span class="va">instance</span><span class="op">$</span><span class="va">result</span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co">##    nrounds       eta booster learner_param_vals  x_domain classif.ce</span></span>
-<span id="cb8-2"><a href="#cb8-2"></a><span class="co">## 1:       2 0.8726027    dart          &lt;list[6]&gt; &lt;list[3]&gt;  0.2265625</span></span></code></pre></div>
-</div>
+  term_evals <span class="op">=</span> <span class="fl">100</span>
+<span class="op">)</span></code></pre></div>
 </div>
 </div>
   </div>
