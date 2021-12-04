@@ -33,7 +33,7 @@ the given settings.'><meta name="twitter:card" content="summary"><meta name="rob
       </button>
 
       <div class="navbar-brand-container">
-        <a href="https://mlr-org.com" class="external-link"><img src="https://raw.githubusercontent.com/mlr-org/mlr3/master/reference/figures/logo.png" id="hexlogo" alt="mlr-org"></a>
+        <a href="https://mlr-org.com" class="external-link"><img src="reference/figures/logo.png" id="hexlogo" alt="mlr-org"></a>
         <a class="navbar-brand" href="../index.html">mlr3hyperband <small>v0.2.0.9000</small></a>
       </div>
     </div>
@@ -113,7 +113,6 @@ low value if one is unsure of how long hyperband will take to finish under
 the given settings.</p>
     </div>
 
-    <div id="ref-usage">Usage,NULL</div>
 
     <div id="source">
     <h2>Source</h2>
@@ -302,40 +301,40 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># modifies the instance by reference</span></span>
 <span class="r-in"><span class="va">optimizer</span><span class="op">$</span><span class="fu">optimize</span><span class="op">(</span><span class="va">instance</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          x1      x2 fidelity  x_domain         y</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1: 9.585806 2.32804        1 &lt;list[3]&gt; -47.32504</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          x1       x2 fidelity  x_domain         y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1: 9.936838 2.994875        1 &lt;list[3]&gt; -48.05178</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># best scoring evaluation</span></span>
 <span class="r-in"><span class="va">instance</span><span class="op">$</span><span class="va">result</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          x1      x2 fidelity  x_domain         y</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1: 9.585806 2.32804        1 &lt;list[3]&gt; -47.32504</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          x1       x2 fidelity  x_domain         y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1: 9.936838 2.994875        1 &lt;list[3]&gt; -48.05178</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># all evaluations</span></span>
 <span class="r-in"><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/as.data.table.html" class="external-link">as.data.table</a></span><span class="op">(</span><span class="va">instance</span><span class="op">$</span><span class="va">archive</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              x1        x2 fidelity bracket stage           y</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1: -4.7350290  2.751008 0.015625       6     0 197.7681651</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2:  2.7548872  7.030921 0.015625       6     0  20.5611791</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   3:  9.7151535  8.940394 0.015625       6     0  38.5995428</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   4:  0.7324791  4.849365 0.015625       6     0  17.0850616</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   5:  9.8650470 10.392857 0.015625       6     0  57.1149277</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  ---                                                        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 297:  2.8230116  3.237431 1.000000       2     2 -12.7427799</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 298:  1.7558701  3.665314 1.000000       2     2  -0.5425305</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 299:  6.3076628  2.189981 1.000000       1     1 -10.7528847</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 300: -2.5708176 13.092507 1.000000       1     1  19.3842443</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 301:  1.0504677  1.382518 1.000000       1     1  19.0582520</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                timestamp batch_nr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1: 2021-12-03 04:31:43        1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2: 2021-12-03 04:31:43        1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   3: 2021-12-03 04:31:43        1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   4: 2021-12-03 04:31:43        1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   5: 2021-12-03 04:31:43        1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  ---                             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 297: 2021-12-03 04:31:43        7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 298: 2021-12-03 04:31:43        7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 299: 2021-12-03 04:31:43        7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 300: 2021-12-03 04:31:43        7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 301: 2021-12-03 04:31:43        7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             x1        x2 fidelity bracket stage          y           timestamp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   1:  2.133294  6.843004 0.015625       6     0  18.037475 2021-12-04 04:28:53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2:  5.469942 13.922418 0.015625       6     0 179.061467 2021-12-04 04:28:53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   3:  4.572434  3.046051 0.015625       6     0  10.935559 2021-12-04 04:28:53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   4: -3.504631 10.262416 0.015625       6     0   9.719592 2021-12-04 04:28:53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   5:  1.601957  8.117005 0.015625       6     0  28.368576 2021-12-04 04:28:53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  ---                                                                          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 297:  9.942693  5.830478 1.000000       2     2 -39.739108 2021-12-04 04:28:53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 298:  3.664089  2.158477 1.000000       2     2 -16.576033 2021-12-04 04:28:53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 299:  9.851230  5.182084 1.000000       1     1 -42.597922 2021-12-04 04:28:53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 300:  3.803067  1.963172 1.000000       1     1 -16.570483 2021-12-04 04:28:53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 301:  3.681135  0.404976 1.000000       1     1 -14.432986 2021-12-04 04:28:53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      batch_nr</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   1:        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2:        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   3:        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   4:        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   5:        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  ---         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 297:        7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 298:        7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 299:        7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 300:        7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 301:        7</span>
 </code></pre></div>
     </div>
   </div>
@@ -350,7 +349,7 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer></div>
