@@ -107,7 +107,7 @@ OptimizerAhb = R6Class("OptimizerAhb",
       }
 
       # check terminator
-      if (!inherits(terminator, c("TerminatorClockTime", "TerminatorEvals", "TerminatorRunTime"))) {
+      if (!inherits(terminator, c("TerminatorClockTime", "TerminatorEvals", "TerminatorRunTime", "TerminatorBudget"))) {
         stopf("%s does not support %s. Use <TerminatorClockTime>, <TerminatorRunTime> or <TerminatorEvals>.", format(self), format(terminator))
       }
 
