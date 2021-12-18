@@ -43,6 +43,12 @@
 #' \item{`sampler`}{[paradox::Sampler]\cr
 #' Object defining how the samples of the parameter space should be drawn in the
 #' base stage of each bracket. The default is uniform sampling.
+#' }
+#' \item{`repeats`}{`integer(1)`\cr
+#' If `1` (default), optimization is stopped once all stages are evaluated.
+#' Otherwise, optimization is stopped after `repeats` runs of SHA. The
+#' [bbotk::Terminator] might stop the optimization before all repeats are
+#' executed.
 #' }}
 #'
 #' @section Archive:

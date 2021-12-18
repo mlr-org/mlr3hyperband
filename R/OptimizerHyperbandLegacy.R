@@ -47,6 +47,12 @@
 #' \item{`repeats`}{`logical(1)`\cr
 #' If `FALSE` (default), hyperband terminates once all brackets are evaluated.
 #' Otherwise, hyperband starts over again once the last bracket is evaluated.
+#' }
+#' \item{`repeats`}{`integer(1)`\cr
+#' If `1` (default), optimization is stopped once all stages are evaluated.
+#' Otherwise, optimization is stopped after `repeats` runs of SHA. The
+#' [bbotk::Terminator] might stop the optimization before all repeats are
+#' executed.
 #' }}
 #'
 #' @section Archive:
@@ -74,9 +80,10 @@ OptimizerHyperbandLegacy = R6Class("OptimizerHyperbandLegacy",
     initialize = function() {
       param_set = ps(
         eta = p_dbl(lower = 1.0001, tags = "required", default = 2),
-        sampler = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE))
+        sampler = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)),
+        repetitions = p_int(lower = 1L, default = 1)
       )
-      param_set$values = list(eta = 2, sampler = NULL)
+      param_set$values = list(eta = 2, sampler = NULL, repetitions = 1)
 
       super$initialize(
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
@@ -89,8 +96,9 @@ OptimizerHyperbandLegacy = R6Class("OptimizerHyperbandLegacy",
 
   private = list(
     .optimize = function(inst) {
-      eta = self$param_set$values$eta
-      sampler = self$param_set$values$sampler
+      pars = self$param_set$values
+      eta = pars$eta
+      sampler = pars$sampler
       search_space = inst$search_space
       archive = inst$archive
 
@@ -136,70 +144,73 @@ OptimizerHyperbandLegacy = R6Class("OptimizerHyperbandLegacy",
       # the claim. (smax is 'bracket_max' here)
       B = (bracket_max + 1L) * config_max_b
 
-      # outer loop - iterating over brackets
-      for (bracket in seq(bracket_max, 0)) {
+      for (repetition in seq(pars$repetitions)) {
+        # outer loop - iterating over brackets
+        for (bracket in seq(bracket_max, 0)) {
 
-        # for less confusion of the user we start the print with bracket 1
-        lg$info("Start evaluation of bracket %i", bracket_max - bracket + 1)
+          # for less confusion of the user we start the print with bracket 1
+          lg$info("Start evaluation of bracket %i", bracket_max - bracket + 1)
 
-        # amount of active configs and budget in bracket
-        mu_start = mu_current = ceiling((B * eta^bracket) / (config_max_b * (bracket + 1)))
+          # amount of active configs and budget in bracket
+          mu_start = mu_current = ceiling((B * eta^bracket) / (config_max_b * (bracket + 1)))
 
-        budget_start = budget_current = config_max_b / eta^bracket
+          budget_start = budget_current = config_max_b / eta^bracket
 
-        # generate design based on given parameter set and sampler
-        active_configs = sampler$sample(mu_current)$data
+          # generate design based on given parameter set and sampler
+          active_configs = sampler$sample(mu_current)$data
 
-        # inner loop - iterating over bracket stages
-        for (stage in seq(0, bracket)) {
+          # inner loop - iterating over bracket stages
+          for (stage in seq(0, bracket)) {
 
-          # amount of configs of the previous stage
-          mu_previous = mu_current
+            # amount of configs of the previous stage
+            mu_previous = mu_current
 
-          # make configs smaller, increase budget and increment stage counter
-          mu_current = floor(mu_start / eta^stage)
-          budget_current = budget_start * eta^stage
+            # make configs smaller, increase budget and increment stage counter
+            mu_current = floor(mu_start / eta^stage)
+            budget_current = budget_start * eta^stage
 
-          # rescale budget back to real world scale
-          budget_current_real = budget_current * budget_lower
-          # round if the budget is an integer parameter
-          if (search_space$class[[budget_id]] == "ParamInt") {
-            budget_current_real = round(budget_current_real)
-          }
-
-          lg$info("Training %i configs with budget of %g for each",
-            mu_current, budget_current_real)
-
-          # only rank and pick configurations if we are not in the first stage
-          if (stage > 0) {
-
-            # get performance of each active configuration
-            data = archive$data[batch_nr %in% archive$n_batch]
-            y = data[, archive$cols_y, with = FALSE]
-
-            active_configs = if (archive$codomain$length == 1) {
-              # single-crit
-              archive$best(batch = archive$n_batch, n_select = mu_current)
-            } else {
-              # multi-crit
-              archive$nds_selection(batch = archive$n_batch, n_select = mu_current)
+            # rescale budget back to real world scale
+            budget_current_real = budget_current * budget_lower
+            # round if the budget is an integer parameter
+            if (search_space$class[[budget_id]] == "ParamInt") {
+              budget_current_real = round(budget_current_real)
             }
-            active_configs = active_configs[, archive$cols_x, with = FALSE]
+
+            lg$info("Training %i configs with budget of %g for each",
+              mu_current, budget_current_real)
+
+            # only rank and pick configurations if we are not in the first stage
+            if (stage > 0) {
+
+              # get performance of each active configuration
+              data = archive$data[batch_nr %in% archive$n_batch]
+              y = data[, archive$cols_y, with = FALSE]
+
+              active_configs = if (archive$codomain$length == 1) {
+                # single-crit
+                archive$best(batch = archive$n_batch, n_select = mu_current)
+              } else {
+                # multi-crit
+                archive$nds_selection(batch = archive$n_batch, n_select = mu_current)
+              }
+              active_configs = active_configs[, archive$cols_x, with = FALSE]
+            }
+
+            # overwrite active configurations with the current budget
+            active_configs[[budget_id]] = budget_current_real
+
+            # extend active_configs with extras
+            xdt = cbind(active_configs,
+              repetition = repetition,
+              bracket = bracket,
+              bracket_stage = stage,
+              budget_scaled = budget_current,
+              budget_real = budget_current_real,
+              n_configs = mu_current
+            )
+
+            inst$eval_batch(xdt)
           }
-
-          # overwrite active configurations with the current budget
-          active_configs[[budget_id]] = budget_current_real
-
-          # extend active_configs with extras
-          xdt = cbind(active_configs,
-            bracket = bracket,
-            bracket_stage = stage,
-            budget_scaled = budget_current,
-            budget_real = budget_current_real,
-            n_configs = mu_current
-          )
-
-          inst$eval_batch(xdt)
         }
       }
     }
