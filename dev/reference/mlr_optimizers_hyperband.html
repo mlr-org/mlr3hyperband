@@ -314,40 +314,40 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># modifies the instance by reference</span></span>
 <span class="r-in"><span class="va">optimizer</span><span class="op">$</span><span class="fu">optimize</span><span class="op">(</span><span class="va">instance</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          x1       x2 fidelity  x_domain         y</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1: 9.421484 1.492313        1 &lt;list[3]&gt; -45.74926</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          x1        x2 fidelity  x_domain         y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1: 9.671781 0.5215521        1 &lt;list[3]&gt; -42.96207</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># best scoring evaluation</span></span>
 <span class="r-in"><span class="va">instance</span><span class="op">$</span><span class="va">result</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          x1       x2 fidelity  x_domain         y</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1: 9.421484 1.492313        1 &lt;list[3]&gt; -45.74926</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          x1        x2 fidelity  x_domain         y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1: 9.671781 0.5215521        1 &lt;list[3]&gt; -42.96207</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># all evaluations</span></span>
 <span class="r-in"><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/as.data.table.html" class="external-link">as.data.table</a></span><span class="op">(</span><span class="va">instance</span><span class="op">$</span><span class="va">archive</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              x1         x2 fidelity bracket stage          y</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1:  5.0088549  6.9576841 0.015625       6     0  44.772468</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2:  6.3001805 12.7601903 0.015625       6     0 155.055076</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   3: -1.0778890 13.0782527 0.015625       6     0  41.799511</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   4: -0.2349493  6.0615369 0.015625       6     0  19.458759</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   5:  5.3007796 13.7464685 0.015625       6     0 172.494604</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  ---                                                        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 297:  3.9401436  0.3904204 1.000000       2     2 -14.593672</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 298:  7.5506613  3.0175705 1.000000       2     2 -22.097377</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 299:  8.2738360  0.9881133 1.000000       1     1 -34.811064</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 300:  9.7651271  7.1470226 1.000000       1     1 -28.780346</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 301:  6.4963829  4.2382747 1.000000       1     1  -3.327721</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                timestamp batch_nr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1: 2021-12-24 04:34:16        1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2: 2021-12-24 04:34:16        1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   3: 2021-12-24 04:34:16        1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   4: 2021-12-24 04:34:16        1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   5: 2021-12-24 04:34:16        1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  ---                             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 297: 2021-12-24 04:34:16        7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 298: 2021-12-24 04:34:16        7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 299: 2021-12-24 04:34:16        7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 300: 2021-12-24 04:34:16        7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 301: 2021-12-24 04:34:16        7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              x1        x2 fidelity bracket stage          y           timestamp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   1: -4.1273325 14.614589 0.015625       6     0   5.043711 2021-12-25 04:30:58</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2:  6.2893392  7.376129 0.015625       6     0  58.497855 2021-12-25 04:30:58</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   3: -0.4966847  1.874946 0.015625       6     0  42.957643 2021-12-25 04:30:58</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   4:  8.7054319 10.543990 0.015625       6     0  76.210442 2021-12-25 04:30:58</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   5: -4.1329864  6.462255 0.015625       6     0  74.325716 2021-12-25 04:30:58</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  ---                                                                           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 297:  2.4457104  1.615046 1.000000       2     2  -7.997326 2021-12-25 04:30:59</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 298:  5.0608006  1.530647 1.000000       2     2 -11.949324 2021-12-25 04:30:59</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 299:  2.6015463  1.113502 1.000000       1     1  -8.617834 2021-12-25 04:30:59</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 300:  7.1093986  2.973743 1.000000       1     1 -15.944984 2021-12-25 04:30:59</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 301:  5.5448391  3.569802 1.000000       1     1  -4.752297 2021-12-25 04:30:59</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      batch_nr</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   1:        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2:        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   3:        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   4:        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   5:        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  ---         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 297:        7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 298:        7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 299:        7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 300:        7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 301:        7</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
