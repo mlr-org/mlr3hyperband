@@ -85,9 +85,10 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
         eta                   = p_dbl(lower = 1.0001, default = 2),
         sampler               = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)),
         repetitions           = p_int(lower = 1L, default = 1),
-        adjust_minimum_budget = p_lgl(default = FALSE)
+        adjust_minimum_budget = p_lgl(default = FALSE),
+        async                 = p_lgl(default = FALSE)
       )
-      param_set$values = list(n = 16L, eta = 2L, sampler = NULL, repetitions = 1, adjust_minimum_budget = FALSE)
+      param_set$values = list(n = 16L, eta = 2L, sampler = NULL, repetitions = 1, adjust_minimum_budget = FALSE, async = FALSE)
 
       super$initialize(
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
@@ -175,7 +176,14 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
           set(xdt, j = "stage", value = i)
           set(xdt, j = "repetition", value = repetition)
 
-          inst$eval_batch(xdt)
+          if (pars$async) {
+            inst$archive$add_evals(xdt, status = "proposed")
+            res = inst$eval_proposed(async = TRUE, single_worker = FALSE)
+            future::resolve(res$promise, result = FALSE)
+            inst$resolve_promise()
+          } else {
+            inst$eval_batch(xdt)
+          }
         }
       }
     }

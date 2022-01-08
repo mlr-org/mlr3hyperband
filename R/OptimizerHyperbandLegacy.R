@@ -79,11 +79,12 @@ OptimizerHyperbandLegacy = R6Class("OptimizerHyperbandLegacy",
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
       param_set = ps(
-        eta = p_dbl(lower = 1.0001, tags = "required", default = 2),
-        sampler = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)),
-        repetitions = p_int(lower = 1L, default = 1)
+        eta         = p_dbl(lower = 1.0001, tags = "required", default = 2),
+        sampler     = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)),
+        repetitions = p_int(lower = 1L, default = 1),
+        async       = p_lgl(default = FALSE)
       )
-      param_set$values = list(eta = 2, sampler = NULL, repetitions = 1)
+      param_set$values = list(eta = 2, sampler = NULL, repetitions = 1, async = FALSE)
 
       super$initialize(
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
@@ -209,7 +210,14 @@ OptimizerHyperbandLegacy = R6Class("OptimizerHyperbandLegacy",
               n_configs = mu_current
             )
 
-            inst$eval_batch(xdt)
+            if (pars$async) {
+              inst$archive$add_evals(xdt, status = "proposed")
+              res = inst$eval_proposed(async = TRUE, single_worker = FALSE)
+              future::resolve(res$promise, result = FALSE)
+              inst$resolve_promise()
+            } else {
+              inst$eval_batch(xdt)
+            }
           }
         }
       }
