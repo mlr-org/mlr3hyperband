@@ -146,7 +146,7 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
       s_max = min(sr, sn)
 
       # increase r_min so that the last stage uses the maximum budget
-      if (pars$adjust_minimum_budget) r_min = r * eta^-s_max
+      if (pars$adjust_minimum_budget) r_min = r_max / eta^s_max
 
       for (repetition in seq(pars$repetitions)) {
         # iterate stages

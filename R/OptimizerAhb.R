@@ -124,7 +124,7 @@ OptimizerAhb = R6Class("OptimizerAhb",
       # s_max + 1 is the number of brackets
       s_max = floor(log(r_max / r_min, eta))
 
-      if (pars$adjust_minimum_budget) r_min = r_max/r_min * eta^-s_max
+      if (pars$adjust_minimum_budget) r_min = r_max / eta^s_max
 
       for (s in s_max:0) {
         # rs_min is the budget of a single configuration in the base stage

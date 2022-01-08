@@ -115,7 +115,7 @@ OptimizerAsha = R6Class("OptimizerAsha",
       s_max = floor(log(r_max / r_min, eta))
 
       # increase r_min so that the last stage uses the maximum budget
-      if (pars$adjust_minimum_budget) r_min = r_max/r_min * eta^-s_max
+      if (pars$adjust_minimum_budget) r_min = r_max / eta^s_max
 
       repeat({
         replicate(n_workers - inst$archive$n_in_progress, {
