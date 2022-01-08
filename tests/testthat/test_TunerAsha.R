@@ -34,6 +34,25 @@ test_that("TunerAsha works with eta = 2.5", {
   test_tuner_asha(eta = 2.5, learner)
 })
 
+test_that("TunerAsha adjusts minimum budget", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 10, tags = "budget"))
+  )
+
+  instance = test_tuner_asha(eta = 3, learner, adjust_minimum_budget = TRUE)
+  expect_equal(max(instance$archive$data$iter), 10)
+
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 10, tags = "budget"))
+  )
+
+  instance = test_tuner_asha(eta = 3, learner, adjust_minimum_budget = FALSE)
+  expect_equal(max(instance$archive$data$iter), 9)
+})
+
+
 test_that("TunerAsha works with xgboost", {
   skip_if_not_installed("mlr3learners")
   skip_if_not_installed("xgboost")

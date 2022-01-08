@@ -53,7 +53,7 @@ test_tuner_hyperband = function(eta, learner, measures = msr("classif.ce"), samp
 #' @description
 #' Tests budget and number of configs constructed by the tuner against supplied
 #' bounds
-test_tuner_successive_halving = function(n, eta, learner, measures = msr("classif.ce"), sampler = NULL) {
+test_tuner_successive_halving = function(n, eta, learner, measures = msr("classif.ce"), sampler = NULL, adjust_minimum_budget = FALSE) {
   search_space = learner$param_set$search_space()
   budget_id = search_space$ids(tags = "budget")
   r_min = search_space$lower[[budget_id]]
@@ -67,7 +67,8 @@ test_tuner_successive_halving = function(n, eta, learner, measures = msr("classi
     resampling = rsmp("holdout"),
     n = n,
     eta = eta,
-    sampler = sampler)
+    sampler = sampler,
+    adjust_minimum_budget = adjust_minimum_budget)
 
     budget = as.data.table(instance$archive)[, budget_id, with = FALSE]
     n_configs = as.data.table(instance$archive)[, .N, by = "stage"]
@@ -89,7 +90,7 @@ test_tuner_successive_halving = function(n, eta, learner, measures = msr("classi
 #' Tests budget and number of configs constructed by the tuner against supplied
 #' bounds
 test_tuner_asha = function(eta, learner, measures = msr("classif.ce"), term_evals = 15, allow_hotstart = FALSE,
-  keep_hotstart_stack = TRUE, sampler = NULL) {
+  keep_hotstart_stack = TRUE, sampler = NULL, adjust_minimum_budget = FALSE) {
 
   search_space = learner$param_set$search_space()
   budget_id = search_space$ids(tags = "budget")
@@ -106,7 +107,8 @@ test_tuner_asha = function(eta, learner, measures = msr("classif.ce"), term_eval
     eta = eta,
     allow_hotstart = allow_hotstart,
     keep_hotstart_stack = keep_hotstart_stack,
-    sampler = sampler
+    sampler = sampler,
+    adjust_minimum_budget = adjust_minimum_budget
   )
 
   expect_null(instance$archive$data$resample_result)
@@ -129,7 +131,7 @@ test_tuner_asha = function(eta, learner, measures = msr("classif.ce"), term_eval
 #' @description
 #' Tests budget allocated by the tuner against supplied bounds
 test_tuner_ahb = function(eta, learner, measures = msr("classif.ce"), term_evals = 100, allow_hotstart = FALSE,
-  keep_hotstart_stack = TRUE, sampler = NULL) {
+  keep_hotstart_stack = TRUE, sampler = NULL, adjust_minimum_budget = FALSE) {
 
   search_space = learner$param_set$search_space()
   budget_id = search_space$ids(tags = "budget")
@@ -147,7 +149,8 @@ test_tuner_ahb = function(eta, learner, measures = msr("classif.ce"), term_evals
     eta = eta,
     allow_hotstart = allow_hotstart,
     keep_hotstart_stack = keep_hotstart_stack,
-    sampler = sampler
+    sampler = sampler,
+    adjust_minimum_budget = adjust_minimum_budget
   )
 
   archive = as.data.table(instance$archive)

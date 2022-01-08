@@ -31,6 +31,10 @@
 #' \item{`sampler`}{[paradox::Sampler]\cr
 #' Object defining how the samples of the parameter space should be drawn in the
 #' base stage of each bracket. The default is uniform sampling.
+#' }
+#' \item{`adjust_minimum_budget`}{`logical(1)`\cr
+#' If `TRUE`, minimum budget is increased so that the last stage uses the
+#' maximum budget defined in the search space.
 #' }}
 #'
 #' @section Archive:

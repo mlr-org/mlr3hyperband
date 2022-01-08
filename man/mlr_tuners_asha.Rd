@@ -34,6 +34,10 @@ equal 1.
 \item{\code{sampler}}{\link[paradox:Sampler]{paradox::Sampler}\cr
 Object defining how the samples of the parameter space should be drawn. The
 default is uniform sampling.
+}
+\item{\code{adjust_minimum_budget}}{\code{logical(1)}\cr
+If \code{TRUE}, minimum budget is increased so that the last stage uses the
+maximum budget defined in the search space.
 }}
 }
 

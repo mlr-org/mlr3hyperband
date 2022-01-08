@@ -32,6 +32,10 @@
 #' \item{`sampler`}{[paradox::Sampler]\cr
 #' Object defining how the samples of the parameter space should be drawn in the
 #' base stage of each bracket. The default is uniform sampling.
+#' }
+#' \item{`adjust_minimum_budget`}{`logical(1)`\cr
+#' If `TRUE`, minimum budget is increased so that the last stage uses the
+#' maximum budget defined in the search space.
 #' }}
 #'
 #' @section Archive:
@@ -65,9 +69,10 @@ OptimizerAhb = R6Class("OptimizerAhb",
     initialize = function() {
       param_set = ps(
         eta     = p_dbl(lower = 1.0001, tags = "required", default = 2),
-        sampler = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE))
+        sampler = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)),
+        adjust_minimum_budget = p_lgl(default = FALSE)
       )
-      param_set$values = list(eta = 2, sampler = NULL)
+      param_set$values = list(eta = 2, sampler = NULL, adjust_minimum_budget = FALSE)
 
       super$initialize(
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
@@ -118,6 +123,8 @@ OptimizerAhb = R6Class("OptimizerAhb",
 
       # s_max + 1 is the number of brackets
       s_max = floor(log(r_max / r_min, eta))
+
+      if (pars$adjust_minimum_budget) r_min = r_max/r_min * eta^-s_max
 
       for (s in s_max:0) {
         # rs_min is the budget of a single configuration in the base stage

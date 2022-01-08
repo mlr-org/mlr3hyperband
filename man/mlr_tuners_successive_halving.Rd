@@ -58,6 +58,10 @@ default is uniform sampling.
 \item{\code{repeats}}{\code{logical(1)}\cr
 If \code{FALSE} (default), SHA terminates once all stages are evaluated.
 Otherwise, SHA starts over again once the last stage is evaluated.
+}
+\item{\code{adjust_minimum_budget}}{\code{logical(1)}\cr
+If \code{TRUE}, minimum budget is increased so that the last stage uses the
+maximum budget defined in the search space.
 }}
 }
 

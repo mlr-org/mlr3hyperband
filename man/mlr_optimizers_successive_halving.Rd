@@ -58,6 +58,10 @@ If \code{1} (default), optimization is stopped once all stages are evaluated.
 Otherwise, optimization is stopped after \code{repetitions} runs of SHA. The
 \link[bbotk:Terminator]{bbotk::Terminator} might stop the optimization before all repetition are
 executed.
+}
+\item{\code{adjust_minimum_budget}}{\code{logical(1)}\cr
+If \code{TRUE}, minimum budget is increased so that the last stage uses the
+maximum budget defined in the search space.
 }}
 }
 
