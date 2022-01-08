@@ -77,7 +77,7 @@ test_tuner_successive_halving = function(n, eta, learner, measures = msr("classi
     expect_lte(max(budget), r_max)
     expect_gte(min(budget), r_min)
     # check number of configs
-    expect_lte(max(n_configs$N), n)
+    if (!is.null(n)) expect_lte(max(n_configs$N), n)
 
     instance
 }

@@ -81,14 +81,14 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
       param_set = ps(
-        n                     = p_int(lower = 1L, default = 16L),
+        n                     = p_int(lower = 1L, special_vals = list(NULL)),
         eta                   = p_dbl(lower = 1.0001, default = 2),
         sampler               = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)),
         repetitions           = p_int(lower = 1L, default = 1),
         adjust_minimum_budget = p_lgl(default = FALSE),
         async                 = p_lgl(default = FALSE)
       )
-      param_set$values = list(n = 16L, eta = 2L, sampler = NULL, repetitions = 1, adjust_minimum_budget = FALSE, async = FALSE)
+      param_set$values = list(eta = 2L, sampler = NULL, repetitions = 1, adjust_minimum_budget = FALSE, async = FALSE)
 
       super$initialize(
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
@@ -140,13 +140,16 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
 
       # reduce number of stages if n < r_max so that
       # the last stages evaluates at least one configuration
-      sn = floor(log(n, eta))
+      sn = if(!is.null(n)) floor(log(n, eta)) else Inf
 
       # s_max + 1 is the number of stages
       s_max = min(sr, sn)
 
       # increase r_min so that the last stage uses the maximum budget
       if (pars$adjust_minimum_budget) r_min = r_max / eta^s_max
+
+      # set n
+      if (is.null(n)) n = r_max / r_min
 
       for (repetition in seq(pars$repetitions)) {
         # iterate stages

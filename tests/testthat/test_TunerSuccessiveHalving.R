@@ -52,6 +52,16 @@ test_that("TunerSuccessiveHalving adjusts minimum budget", {
   expect_equal(max(instance$archive$data$iter), 27)
 })
 
+test_that("TunerSuccessiveHalving works without n", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 16, tags = "budget"))
+  )
+
+  instance = test_tuner_successive_halving(n = NULL, eta = 2, learner, adjust_minimum_budget = TRUE)
+  expect_equal(nrow(instance$archive$data[stage == 0]), 16)
+})
+
 test_that("TunerSuccessiveHalving works with xgboost", {
   skip_if_not_installed("mlr3learners")
   skip_if_not_installed("xgboost")
