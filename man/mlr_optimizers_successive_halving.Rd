@@ -115,21 +115,8 @@ search_space = domain = ps(
 )
 
 # modified branin function
-objective = ObjectiveRFunDt$new(
-  fun = function(xdt) {
-    a = 1
-    b = 5.1 / (4 * (pi ^ 2))
-    c = 5 / pi
-    r = 6
-    s = 10
-    t = 1 / (8 * pi)
-    data.table(y =
-      (a * ((xdt[["x2"]] -
-      b * (xdt[["x1"]] ^ 2L) +
-      c * xdt[["x1"]] - r) ^ 2) +
-      ((s * (1 - t)) * cos(xdt[["x1"]])) +
-      s - (5 * xdt[["fidelity"]] * xdt[["x1"]])))
-  },
+objective = ObjectiveRFun$new(
+  fun = branin,
   domain = domain,
   codomain = ps(y = p_dbl(tags = "minimize"))
 )
