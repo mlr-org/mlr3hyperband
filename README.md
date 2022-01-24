@@ -162,3 +162,41 @@ instance$result
 
     ##    nrounds       eta booster learner_param_vals  x_domain classif.ce
     ## 1:       2 0.8726027    dart          <list[6]> <list[3]>  0.2265625
+
+### Quick general-purpose optimization
+
+``` r
+library(bbotk)
+library(mlr3hyperband)
+
+# define hyperparameter and budget parameter
+search_space = domain = ps(
+  x1 = p_dbl(-5, 10),
+  x2 = p_dbl(0, 15),
+  fidelity = p_dbl(1e-2, 1, tags = "budget")
+)
+
+# modified branin function
+objective = ObjectiveRFun$new(
+  fun = branin,
+  domain = domain,
+  codomain = ps(y = p_dbl(tags = "minimize"))
+)
+
+# optimize branin function with hyperband
+result = bb_optimize(objective, method = "hyperband", search_space = search_space, term_evals = NULL)
+
+# optimized parameters
+result$par
+```
+
+    ##          x1       x2 fidelity
+    ## 1: 9.739074 2.508206        1
+
+``` r
+# optimal outcome
+result$value
+```
+
+    ##         y 
+    ## 0.9281165
