@@ -84,7 +84,7 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
       param_set = ps(
         eta     = p_dbl(lower = 1.0001, tags = "required", default = 2),
         sampler = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)),
-        repetitions = p_int(lower = 1L, default = 1)
+        repetitions = p_int(lower = 1L, default = 1, special_vals = list(Inf))
       )
       param_set$values = list(eta = 2, sampler = NULL, repetitions = 1)
 
@@ -141,7 +141,8 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
       # number of configurations in first stages
       n = ceiling((budget / r) * (eta^(0:s_max)) / ((0:s_max) + 1))
 
-      for (repetition in seq(pars$repetitions)) {
+      repetition = 1
+      while (repetition <= pars$repetitions) {
         # original hyperband algorithm iterates over brackets
         # this implementation iterates over stages with same budget
         # the number of iterations (s_max + 1) remains the same in both implementations
@@ -191,6 +192,7 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
           if (search_space$class[[budget_id]] == "ParamInt") set(xdt, j = budget_id, value = round(xdt[[budget_id]]))
           inst$eval_batch(xdt)
         }
+        repetition = repetition + 1
       }
     }
   )

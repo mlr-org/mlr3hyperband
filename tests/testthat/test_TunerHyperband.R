@@ -218,3 +218,21 @@ test_that("TunerHyperband terminates itself", {
 
   expect_equal(nrow(instance$archive$data), 72)
 })
+
+test_that("TunerHyperband works with infinite repetitions", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 16, tags = "budget"))
+  )
+
+  instance = tune(
+    method = "hyperband",
+    task = tsk("pima"),
+    learner = learner,
+    resampling = rsmp("cv", folds = 3),
+    measures = msr("classif.ce"),
+    term_evals = 160,
+    repetitions = Inf)
+
+  expect_equal(nrow(instance$archive$data), 160)
+})
