@@ -145,7 +145,8 @@ OptimizerHyperbandLegacy = R6Class("OptimizerHyperbandLegacy",
       # the claim. (smax is 'bracket_max' here)
       B = (bracket_max + 1L) * config_max_b
 
-      for (repetition in seq(pars$repetitions)) {
+      repetition = 1
+      while (repetition <= pars$repetitions) {
         # outer loop - iterating over brackets
         for (bracket in seq(bracket_max, 0)) {
 
@@ -220,6 +221,7 @@ OptimizerHyperbandLegacy = R6Class("OptimizerHyperbandLegacy",
             }
           }
         }
+        repetition = repetition + 1
       }
     }
   )
