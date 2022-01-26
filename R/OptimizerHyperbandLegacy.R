@@ -81,7 +81,7 @@ OptimizerHyperbandLegacy = R6Class("OptimizerHyperbandLegacy",
       param_set = ps(
         eta         = p_dbl(lower = 1.0001, tags = "required", default = 2),
         sampler     = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)),
-        repetitions = p_int(lower = 1L, default = 1),
+        repetitions = p_int(lower = 1L, default = 1, special_vals = list(Inf)),
         async       = p_lgl(default = FALSE)
       )
       param_set$values = list(eta = 2, sampler = NULL, repetitions = 1, async = FALSE)
