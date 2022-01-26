@@ -246,6 +246,24 @@ test_that("TunerSuccessiveHalving terminates itself", {
   expect_equal(nrow(instance$archive$data), 31)
 })
 
+test_that("TunerSuccessiveHalving works with infinite repetitions", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 16, tags = "budget"))
+  )
+
+  instance = tune(
+    method = "successive_halving",
+    task = tsk("pima"),
+    learner = learner,
+    resampling = rsmp("cv", folds = 3),
+    measures = msr("classif.ce"),
+    term_evals = 70,
+    repetitions = Inf)
+
+  expect_equal(nrow(instance$archive$data), 78)
+})
+
 test_that("TunerSuccessiveHalving works with r_max > n", {
   learner = lrn("classif.debug",
     x  = to_tune(),

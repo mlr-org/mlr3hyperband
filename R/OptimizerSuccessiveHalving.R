@@ -84,7 +84,7 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
         n                     = p_int(lower = 1L, special_vals = list(NULL)),
         eta                   = p_dbl(lower = 1.0001, default = 2),
         sampler               = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)),
-        repetitions           = p_int(lower = 1L, default = 1),
+        repetitions           = p_int(lower = 1L, default = 1, special_vals = list(Inf)),
         adjust_minimum_budget = p_lgl(default = FALSE),
         async                 = p_lgl(default = FALSE)
       )
@@ -151,7 +151,8 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
       # set n
       if (is.null(n)) n = r_max / r_min
 
-      for (repetition in seq(pars$repetitions)) {
+      repetition = 1
+      while (repetition <= pars$repetitions) {
         # iterate stages
         for (i in 0:s_max) {
           # number of configurations in stage
@@ -188,6 +189,7 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
             inst$eval_batch(xdt)
           }
         }
+        repetition = repetition + 1
       }
     }
   )
