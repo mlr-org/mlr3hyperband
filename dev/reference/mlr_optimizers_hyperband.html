@@ -301,40 +301,40 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># modifies the instance by reference</span></span>
 <span class="r-in"><span class="va">optimizer</span><span class="op">$</span><span class="fu">optimize</span><span class="op">(</span><span class="va">instance</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           x1       x2 fidelity  x_domain         y</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1: -3.054235 11.75116      0.5 &lt;list[3]&gt; 0.4574663</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           x1     x2 fidelity  x_domain         y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1: -2.975843 11.264     0.25 &lt;list[3]&gt; 0.5317851</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># best scoring evaluation</span></span>
 <span class="r-in"><span class="va">instance</span><span class="op">$</span><span class="va">result</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           x1       x2 fidelity  x_domain         y</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1: -3.054235 11.75116      0.5 &lt;list[3]&gt; 0.4574663</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           x1     x2 fidelity  x_domain         y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1: -2.975843 11.264     0.25 &lt;list[3]&gt; 0.5317851</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># all evaluations</span></span>
 <span class="r-in"><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/as.data.table.html" class="external-link">as.data.table</a></span><span class="op">(</span><span class="va">instance</span><span class="op">$</span><span class="va">archive</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              x1        x2 fidelity bracket stage          y           timestamp</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1: -3.9059241  1.353607 0.015625       6     0 131.481813 2022-01-25 04:24:21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2: -3.4384896  7.729320 0.015625       6     0  17.683260 2022-01-25 04:24:21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   3:  4.3043982 11.241115 0.015625       6     0 138.949045 2022-01-25 04:24:21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   4:  2.6977400 13.361729 0.015625       6     0 132.008511 2022-01-25 04:24:21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   5: -4.1009620  6.198779 0.015625       6     0  51.344861 2022-01-25 04:24:21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  ---                                                                           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 297: -2.1402118  7.968857 1.000000       2     2   8.940473 2022-01-25 04:24:21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 298: -0.9548014  3.312700 1.000000       2     2  34.250710 2022-01-25 04:24:21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 299:  4.0862876  3.218596 1.000000       1     1   6.822590 2022-01-25 04:24:21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 300:  4.1245367  6.728382 1.000000       1     1  30.635203 2022-01-25 04:24:21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 301:  0.4026096 12.665594 1.000000       1     1  71.911793 2022-01-25 04:24:21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      batch_nr x_domain_x1 x_domain_x2 x_domain_fidelity</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1:        1  -3.9059241    1.353607          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2:        1  -3.4384896    7.729320          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   3:        1   4.3043982   11.241115          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   4:        1   2.6977400   13.361729          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   5:        1  -4.1009620    6.198779          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  ---                                                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 297:        7  -2.1402118    7.968857          1.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 298:        7  -0.9548014    3.312700          1.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 299:        7   4.0862876    3.218596          1.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 300:        7   4.1245367    6.728382          1.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 301:        7   0.4026096   12.665594          1.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               x1         x2 fidelity bracket stage          y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   1:  6.28734935 13.7182248 0.015625       6     0 292.162297</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2: -0.09965374  1.2080783 0.015625       6     0  44.065200</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   3:  1.51225157  1.0597193 0.015625       6     0  17.341466</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   4:  9.36749079  6.3371799 0.015625       6     0 157.864891</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   5:  1.33698415  4.6840260 0.015625       6     0  12.797651</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  ---                                                         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 297:  0.66295230  7.8107681 1.000000       2     2  25.459291</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 298: -1.90206042 14.4395139 1.000000       2     2  31.329282</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 299:  4.30313366  0.9160783 1.000000       1     1   6.572668</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 300: -4.18636455 12.1303294 1.000000       1     1  12.999305</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 301:  7.63349153  0.8460224 1.000000       1     1  12.383619</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                timestamp batch_nr x_domain_x1 x_domain_x2 x_domain_fidelity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   1: 2022-01-26 04:25:49        1  6.28734935  13.7182248          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2: 2022-01-26 04:25:49        1 -0.09965374   1.2080783          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   3: 2022-01-26 04:25:49        1  1.51225157   1.0597193          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   4: 2022-01-26 04:25:49        1  9.36749079   6.3371799          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   5: 2022-01-26 04:25:49        1  1.33698415   4.6840260          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  ---                                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 297: 2022-01-26 04:25:49        7  0.66295230   7.8107681          1.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 298: 2022-01-26 04:25:49        7 -1.90206042  14.4395139          1.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 299: 2022-01-26 04:25:49        7  4.30313366   0.9160783          1.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 300: 2022-01-26 04:25:49        7 -4.18636455  12.1303294          1.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 301: 2022-01-26 04:25:49        7  7.63349153   0.8460224          1.000000</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
