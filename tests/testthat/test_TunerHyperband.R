@@ -58,6 +58,7 @@ test_that("TunerHyperband works with subsampling", {
 })
 
 test_that("TunerHyperbandworks with multi-crit", {
+  skip_if_not_installed("emoa")
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 4, tags = "budget"))
