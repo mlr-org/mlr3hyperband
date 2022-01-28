@@ -117,15 +117,15 @@ OptimizerAsha = R6Class("OptimizerAsha",
       # increase r_min so that the last stage uses the maximum budget
       if (pars$adjust_minimum_budget) r_min = r_max / eta^s_max
 
-      repeat({
-        replicate(n_workers - inst$archive$n_in_progress, {
+      repeat {
+        while (inst$archive$n_in_progress < n_workers)  {
           xdt = get_job(s_max, eta, r_min, inst$archive, sampler, budget_id, integer_budget, minimize)
           inst$archive$add_evals(xdt, status = "proposed")
           inst$eval_proposed(async = TRUE, single_worker = FALSE)
-        })
+        }
       inst$resolve_promise()
-      })
-     }
+      }
+    }
   )
 )
 

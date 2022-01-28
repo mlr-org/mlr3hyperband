@@ -129,18 +129,18 @@ OptimizerAhb = R6Class("OptimizerAhb",
       for (s in s_max:0) {
         # rs_min is the budget of a single configuration in the base stage
         rs_min = r_min * eta^(s_max - s)
-        repeat({
-          replicate(n_workers - archive$n_in_progress, {
+        repeat {
+          while (inst$archive$n_in_progress < n_workers) {
             xdt = get_job(s, eta, rs_min, archive, sampler, budget_id, integer_budget, minimize,
               brackets = TRUE)
             set(xdt, j = "bracket", value = s)
             archive$add_evals(xdt, status = "proposed")
             inst$eval_proposed(async = TRUE, single_worker = FALSE)
-          })
+          }
         inst$resolve_promise()
         status = terminator$status(archive)
         if (status["current_steps"] / status["max_steps"] > 1 - s / (s_max + 1)) break
-        })
+        }
       }
     }
   )
