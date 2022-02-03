@@ -37,20 +37,23 @@ equal 1.
 Object defining how the samples of the parameter space should be drawn during
 the initialization of each bracket. The default is uniform sampling.
 }
-\item{\code{repeats}}{\code{logical(1)}\cr
-If \code{FALSE} (default), successive halving terminates once all stages are
-evaluated. Otherwise, successive halving starts over again once the last
-stage is evaluated.
+\item{\code{repetitions}}{\code{integer(1)}\cr
+If \code{1} (default), optimization is stopped once all stages are evaluated.
+Otherwise, optimization is stopped after \code{repetitions} runs of SHA. The
+\link[bbotk:Terminator]{bbotk::Terminator} might stop the optimization before all repetitions are
+executed.
 }}
 }
 
 \section{Archive}{
 
-The \link[bbotk:Archive]{bbotk::Archive} holds the following additional column that is specific
+The \link[bbotk:Archive]{bbotk::Archive} holds the following additional columns that are specific
 to the successive halving algorithm:
 \itemize{
 \item \code{stage} (\verb{integer(1))}\cr
 Stage index. Starts counting at 0.
+\item \code{repetition} (\verb{integer(1))}\cr
+Repetition index. Start counting at 1.
 }
 }
 
