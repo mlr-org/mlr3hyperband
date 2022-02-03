@@ -33,6 +33,9 @@
 #' Otherwise, optimization is stopped after `repetitions` runs of SHA. The
 #' [bbotk::Terminator] might stop the optimization before all repetitions are
 #' executed.
+#' \item{`adjust_minimum_budget`}{`logical(1)`\cr
+#' If `TRUE`, minimum budget is increased so that the last stage uses the
+#' maximum budget defined in the search space.
 #' }}
 #'
 #' @section Archive:
@@ -97,9 +100,10 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
         n           = p_int(lower = 1, default = 16),
         eta         = p_dbl(lower = 1.0001, default = 2),
         sampler     = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)),
-        repetitions = p_int(lower = 1L, default = 1, special_vals = list(Inf))
+        repetitions = p_int(lower = 1L, default = 1, special_vals = list(Inf)),
+        adjust_minimum_budget = p_lgl(default = FALSE)
       )
-      param_set$values = list(n = 16L, eta = 2L, sampler = NULL, repetitions = 1)
+      param_set$values = list(n = 16L, eta = 2L, sampler = NULL, repetitions = 1, adjust_minimum_budget = FALSE)
 
       super$initialize(
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
@@ -155,6 +159,9 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
 
       # s_max + 1 is the number of stages
       s_max = min(sr, sn)
+
+      # increase r_min so that the last stage uses the maximum budget
+      if (pars$adjust_minimum_budget) r_min = r * eta^-s_max
 
       repetition = 1
       while (repetition <= pars$repetitions) {
