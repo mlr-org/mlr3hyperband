@@ -7,7 +7,7 @@ test_that("TunerHyperband works", {
   test_tuner_hyperband(eta = 2, learner)
 })
 
-test_that("TunerHyperband works with minimum budget greater than 1", {
+test_that("TunerHyperband works with minimum budget > 1", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(2, 8, tags = "budget"))
@@ -43,6 +43,7 @@ test_that("TunerHyperband works with xgboost", {
     nrounds   = to_tune(p_int(1, 16, tags = "budget")),
     eta       = to_tune(1e-4, 1, logscale = TRUE),
     max_depth = to_tune(1, 2))
+
   test_tuner_hyperband(eta = 2, learner)
 })
 
@@ -57,7 +58,7 @@ test_that("TunerHyperband works with subsampling", {
   test_tuner_hyperband(eta = 3, graph_learner)
 })
 
-test_that("TunerHyperbandworks with multi-crit", {
+test_that("TunerHyperband works works with multi-crit", {
   skip_if_not_installed("emoa")
   learner = lrn("classif.debug",
     x  = to_tune(),
@@ -68,141 +69,95 @@ test_that("TunerHyperbandworks with multi-crit", {
 })
 
 test_that("TunerHyperband works with custom sampler", {
-  skip_if_not_installed("mlr3learners")
-  skip_if_not_installed("xgboost")
-  library(mlr3learners) # nolint
-
-  # default
-  learner = lrn("classif.xgboost")
-
-  search_space = ps(
-    nrounds = p_int(lower = 1, upper = 8, tags = "budget"),
-    eta     = p_dbl(lower = 0, upper = 1),
-    booster = p_fct(levels = c("gbtree", "gblinear", "dart")))
-
-  # create custom sampler
-  # beta distribution with alpha = 2 and beta = 5
-  # categorical distribution with custom probabilities
-  sampler = SamplerJointIndep$new(list(
-    Sampler1DRfun$new(search_space$params[[2]], function(n) rbeta(n, 2, 5)),
-    Sampler1DCateg$new(search_space$params[[3]], prob = c(0.2, 0.3, 0.5))
-  ))
-
-  instance = tune(
-    method = "hyperband",
-    task = tsk("pima"),
-    learner = learner,
-    measures = msr("classif.ce"),
-    resampling = rsmp("holdout"),
-    search_space = search_space,
-    sampler = sampler
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 4, tags = "budget"))
   )
 
-  # not enough parameters defined
-  sampler = SamplerJointIndep$new(list(
-    Sampler1DCateg$new(search_space$params[[3]], prob = c(0.2, 0.3, 0.5))
-  ))
+  sampler = Sampler1DRfun$new(learner$param_set$search_space()$params[["x"]], function(n) rbeta(n, 2, 5))
+
+  test_tuner_hyperband(eta = 2, learner, sampler = sampler)
+})
+
+test_that("TunerHyperband errors if not enough parameters are sampled", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    message_train = to_tune(),
+    iter = to_tune(p_int(1, 4, tags = "budget"))
+  )
+
+  sampler = Sampler1DRfun$new(learner$param_set$search_space()$params[["x"]], function(n) rbeta(n, 2, 5))
 
   expect_error(tune(
     method = "hyperband",
     task = tsk("pima"),
     learner = learner,
+    resampling = rsmp("cv", folds = 3),
     measures = msr("classif.ce"),
-    resampling = rsmp("holdout"),
-    search_space = search_space,
     sampler = sampler),
     regexp = "Must be equal to set",
-    fixed = TRUE)
+    fixed = TRUE
+  )
+})
 
-  # budget parameter defined
+test_that("TunerHyperband errors if budget parameter is sampled", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 4, tags = "budget"))
+  )
+
   sampler = SamplerJointIndep$new(list(
-    Sampler1D$new(search_space$params[[1]]),
-    Sampler1DRfun$new(search_space$params[[2]], function(n) rbeta(n, 2, 5)),
-    Sampler1DCateg$new(search_space$params[[3]], prob = c(0.2, 0.3, 0.5))
+    Sampler1DRfun$new(learner$param_set$search_space()$params[["x"]], function(n) rbeta(n, 2, 5)),
+    Sampler1D$new(learner$param_set$search_space()$params[["iter"]])
   ))
 
   expect_error(tune(
     method = "hyperband",
     task = tsk("pima"),
     learner = learner,
+    resampling = rsmp("cv", folds = 3),
     measures = msr("classif.ce"),
-    resampling = rsmp("holdout"),
-    search_space = search_space,
     sampler = sampler),
-    regexp = "Assertion on 'sampler$param_set$ids()' failed: Must be equal to set {'eta','booster'}, but is {'nrounds','eta','booster'}.",
-    fixed = TRUE)
+    regexp = "Must be equal to set",
+    fixed = TRUE
+  )
 })
 
-test_that("TunerHyperband throws an error if budget parameter is invalid", {
-  skip_if_not_installed("mlr3learners")
-  skip_if_not_installed("xgboost")
-  library(mlr3learners) # nolint
-
-  # non-numeric budget parameter
-  learner = lrn("classif.xgboost")
-  search_space = ps(
-    nrounds = p_int(lower = 1, upper = 8),
-    eta     = p_dbl(lower = 0, upper = 1),
-    booster = p_fct(levels = c("gbtree", "gblinear", "dart"), tags = "budget")
+test_that("TunerHyperband errors if budget parameter is not numeric", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    predict_missing_type = to_tune(p_fct(levels = c("na", "omit"), tags = "budget"))
   )
 
   expect_error(tune(
     method = "hyperband",
     task = tsk("pima"),
     learner = learner,
-    measures = msr("classif.ce"),
-    resampling = rsmp("holdout"),
-    search_space = search_space),
-    regexp = "but is 'ParamFct'.",
-    fixed = TRUE)
+    resampling = rsmp("cv", folds = 3),
+    measures = msr("classif.ce")),
+    regexp = "Must be element of set",
+    fixed = TRUE
+  )
+})
 
-  # two budget parameters
-  search_space = ps(
-    nrounds = p_int(lower = 1, upper = 8, tags = "budget"),
-    eta     = p_dbl(lower = 0, upper = 1, tags = "budget"),
-    booster = p_fct(levels = c("gbtree", "gblinear", "dart"))
+test_that("TunerHyperband errors if multiple budget parameters are set", {
+  learner = lrn("classif.debug",
+    x  = to_tune(p_dbl(0, 1, tags = "budget")),
+    iter = to_tune(p_int(1, 16, tags = "budget"))
   )
 
   expect_error(tune(
     method = "hyperband",
     task = tsk("pima"),
     learner = learner,
-    measures = msr("classif.ce"),
-    resampling = rsmp("holdout"),
-    search_space = search_space),
-    regexp = "Exactly one parameter must be tagged with 'budget'",
-    fixed = TRUE)
+    resampling = rsmp("cv", folds = 3),
+    measures = msr("classif.ce")),
+    regexp = "Exactly one parameter must be tagged ",
+    fixed = TRUE
+  )
 })
 
-test_that("repeating hyperband works", {
-  learner = lrn("classif.rpart",
-    minsplit  = to_tune(p_int(1, 16, tags = "budget")),
-    cp        = to_tune(1e-04, 1e-1, logscale = TRUE),
-    minbucket = to_tune(1, 64, logscale = TRUE))
-
-  instance = tune(
-    method = "hyperband",
-    task = tsk("pima"),
-    learner = learner,
-    resampling = rsmp("cv", folds = 3),
-    measures = msr("classif.ce"),
-    repeats = TRUE,
-    term_evals = 144)
-
-  expect_equal(nrow(instance$archive$data), 144)
-
-  instance = tune(
-    method = "hyperband",
-    task = tsk("pima"),
-    learner = learner,
-    resampling = rsmp("cv", folds = 3),
-    measures = msr("classif.ce"),
-    repeats = FALSE)
-
-  expect_equal(nrow(instance$archive$data), 72)
-})
-
-test_that("minimize works", {
+test_that("TunerHyperband minimizes measure", {
   learner = lrn("classif.debug",
     x = to_tune(),
     iter = to_tune(p_int(1, 16, tags = "budget"))
@@ -213,7 +168,7 @@ test_that("minimize works", {
     instance$archive$data[bracket == 4 & stage == 4, dummy])
 })
 
-test_that("maximize works", {
+test_that("TunerHyperband maximizes measure", {
   learner = lrn("classif.debug",
     x = to_tune(),
     iter = to_tune(p_int(1, 16, tags = "budget"))
@@ -222,4 +177,64 @@ test_that("maximize works", {
   instance = test_tuner_hyperband(eta = 2, learner, measures = msr("dummy", parameter_id = "x", minimize = FALSE))
   expect_equal(max(instance$archive$data[bracket == 4 & stage == 0, dummy]),
     instance$archive$data[bracket == 4 & stage == 4, dummy])
+})
+
+test_that("TunerHyperband works with single budget value", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 1, tags = "budget"))
+  )
+
+  test_tuner_hyperband(eta = 2, learner)
+})
+
+test_that("TunerHyperband works with repetitions", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 16, tags = "budget"))
+  )
+
+  instance = tune(
+    method = "hyperband",
+    task = tsk("pima"),
+    learner = learner,
+    resampling = rsmp("cv", folds = 3),
+    measures = msr("classif.ce"),
+    repetitions = 2)
+
+  expect_equal(nrow(instance$archive$data), 144)
+})
+
+test_that("TunerHyperband terminates itself", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 16, tags = "budget"))
+  )
+
+  instance = tune(
+    method = "hyperband",
+    task = tsk("pima"),
+    learner = learner,
+    resampling = rsmp("cv", folds = 3),
+    measures = msr("classif.ce"))
+
+  expect_equal(nrow(instance$archive$data), 72)
+})
+
+test_that("TunerHyperband works with infinite repetitions", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 16, tags = "budget"))
+  )
+
+  instance = tune(
+    method = "hyperband",
+    task = tsk("pima"),
+    learner = learner,
+    resampling = rsmp("cv", folds = 3),
+    measures = msr("classif.ce"),
+    term_evals = 160,
+    repetitions = Inf)
+
+  expect_equal(nrow(instance$archive$data), 160)
 })

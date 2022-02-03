@@ -17,7 +17,7 @@ lapply(list.files(system.file("testthat", package = "mlr3tuning"), pattern = "^h
 #' @description
 #' Tests bracket and stages constructed by the tuner against the ones based on
 #' the original hyperband paper.
-test_tuner_hyperband = function(eta, learner, measures = msr("classif.ce")) {
+test_tuner_hyperband = function(eta, learner, measures = msr("classif.ce"), sampler = NULL) {
   search_space = learner$param_set$search_space()
   budget_id = search_space$ids(tags = "budget")
   r_min = search_space$lower[[budget_id]]
@@ -29,7 +29,8 @@ test_tuner_hyperband = function(eta, learner, measures = msr("classif.ce")) {
     learner = learner,
     measures = measures,
     resampling = rsmp("holdout"),
-    eta = eta
+    eta = eta,
+    sampler = sampler
   )
 
   # compare brackets and stages of tuner to theoretical hyperband
@@ -52,7 +53,8 @@ test_tuner_hyperband = function(eta, learner, measures = msr("classif.ce")) {
 #' @description
 #' Tests budget and number of configs constructed by the tuner against supplied
 #' bounds
-test_tuner_successive_halving = function(n, eta, learner, measures = msr("classif.ce")) {
+test_tuner_successive_halving = function(n, eta, learner, measures = msr("classif.ce"), sampler = NULL,
+  adjust_minimum_budget = FALSE) {
   search_space = learner$param_set$search_space()
   budget_id = search_space$ids(tags = "budget")
   r_min = search_space$lower[[budget_id]]
@@ -65,7 +67,9 @@ test_tuner_successive_halving = function(n, eta, learner, measures = msr("classi
     measures = measures,
     resampling = rsmp("holdout"),
     n = n,
-    eta = eta)
+    eta = eta,
+    sampler = sampler,
+    adjust_minimum_budget = adjust_minimum_budget)
 
     budget = as.data.table(instance$archive)[, budget_id, with = FALSE]
     n_configs = as.data.table(instance$archive)[, .N, by = "stage"]
@@ -75,6 +79,8 @@ test_tuner_successive_halving = function(n, eta, learner, measures = msr("classi
     expect_gte(min(budget), r_min)
     # check number of configs
     expect_lte(max(n_configs$N), n)
+
+    instance
 }
 
 #' @title MeasureClassifBudget

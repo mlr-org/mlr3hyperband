@@ -1,3 +1,10 @@
+# mlr3hyperband 0.3.0.9000
+
+* feat: `adjust_minimum_budget` flag in `OptimizerSuccessiveHalving` to use
+  maximum budget in last stage.
+* feat: `repeats` parameter is replaced by `repetitions` which allows to specify
+  the exact number of repetitions.
+
 # mlr3hyperband 0.3.0
 
 * Implements parallel evaluation of stages.

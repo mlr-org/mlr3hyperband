@@ -1,88 +1,75 @@
 #' @title Hyperparameter Optimization with Successive Halving
 #'
 #' @name mlr_optimizers_successive_halving
+#' @templateVar id successive_halving
 #'
 #' @description
 #' `OptimizerSuccessiveHalving` class that implements the successive halving
-#' algorithm. The algorithm samples `n` points and evaluates them with the
-#' smallest budget (lower bound of the `budget` parameter). With every stage the
-#' budget is increased by a factor of `eta` and only the best `1/eta` points are
-#' promoted to the next stage. The optimization terminates when the maximum
-#' budget is reached (upper bound of the `budget` parameter).
+#' algorithm (SHA). SHA randomly samples `n` candidate points and
+#' allocates a minimum budget (`r_min`) to all candidates. The candidates are
+#' raced down in stages to a single best candidate by repeatedly increasing the
+#' budget by a factor of `eta` and promoting only the best `1 / eta ` fraction
+#' to the next stage. This means promising points are allocated a higher budget
+#' overall and lower performing ones are discarded early on.
 #'
-#' To identify the budget, the user has to specify explicitly which parameter of
-#' the objective function influences the budget by tagging a single parameter in
-#' the search space ([paradox::ParamSet]) with `"budget"`.
+#' #' The budget hyperparameter must be tagged with `"budget"` in the search space.
+#' The minimum budget (`r_min`) which is allocated in the base stage, is set by
+#' the lower bound of the budget parameter. The upper bound  defines the maximum
+#' budget (`r_max`) which is allocated to the candidates in the last stage. The
+#' number of stages is computed so that each candidate in base stage is
+#' allocated the minimum budget and the candidates in the last stage are not
+#' evaluated on more than the maximum budget. The following table is the stage
+#' layout for `eta = 2`, `r_min = 1` and `r_max = 8`.
+#'
+#' | `i` | `n_i` | `r_i` |
+#' | --: | ----: | ----: |
+#' |   0 |     8 |     1 |
+#' |   1 |     4 |     2 |
+#' |   2 |     2 |     4 |
+#' |   3 |     1 |     8 |
+#'
+#' `i` is stage number, `n_i` is the number of configurations and `r_i` is the
+#' budget allocated to a single configuration.
 #'
 #' @section Parameters:
 #' \describe{
 #' \item{`n`}{`integer(1)`\cr
-#' Number of points in first stage.}
+#' Number of points in base stage.}
 #' \item{`eta`}{`numeric(1)`\cr
-#' With every stage, the point budget is increased by a factor of `eta`
-#' and only the best `1/eta` points are used for the next stage.
-#' Non-integer values are supported, but `eta` is not allowed to be less or
-#' equal 1.
+#' With every stage, the budget is increased by a factor of `eta`
+#' and only the best `1 / eta` points are promoted to the next stage.
 #' }
 #' \item{`sampler`}{[paradox::Sampler]\cr
-#' Object defining how the samples of the parameter space should be drawn during
-#' the initialization of each bracket. The default is uniform sampling.
+#' Object defining how the samples of the parameter space should be drawn. The
+#' default is uniform sampling.
 #' }
-#' \item{`repeats`}{`logical(1)`\cr
-#' If `FALSE` (default), successive halving terminates once all stages are
-#' evaluated. Otherwise, successive halving starts over again once the last
-#' stage is evaluated.
+#' \item{`repetitions`}{`integer(1)`\cr
+#' If `1` (default), optimization is stopped once all stages are evaluated.
+#' Otherwise, optimization is stopped after `repetitions` runs of SHA. The
+#' [bbotk::Terminator] might stop the optimization before all repetitions are
+#' executed.
+#' \item{`adjust_minimum_budget`}{`logical(1)`\cr
+#' If `TRUE`, minimum budget is increased so that the last stage uses the
+#' maximum budget defined in the search space.
 #' }}
 #'
 #' @section Archive:
-#' The [bbotk::Archive] holds the following additional column that is specific
+#' The [bbotk::Archive] holds the following additional columns that are specific
 #' to the successive halving algorithm:
 #'   * `stage` (`integer(1))`\cr
 #'     Stage index. Starts counting at 0.
+#'   * `repetition` (`integer(1))`\cr
+#'     Repetition index. Start counting at 1.
 #'
 #' @template section_custom_sampler
-#' @template section_runtime
 #' @template section_progress_bars
-#' @template section_parallelization
 #' @template section_logging
 #'
 #' @source
 #' `r format_bib("jamieson_2016")`
 #'
 #' @export
-#' @examples
-#' library(bbotk)
-#' library(data.table)
-#'
-#' search_space = domain = ps(
-#'   x1 = p_dbl(-5, 10),
-#'   x2 = p_dbl(0, 15),
-#'   fidelity = p_dbl(1e-2, 1, tags = "budget")
-#' )
-#'
-#' # modified branin function
-#' objective = ObjectiveRFun$new(
-#'   fun = branin,
-#'   domain = domain,
-#'   codomain = ps(y = p_dbl(tags = "minimize"))
-#' )
-#'
-#' instance = OptimInstanceSingleCrit$new(
-#'   objective = objective,
-#'   search_space = search_space,
-#'   terminator = trm("none")
-#' )
-#'
-#' optimizer = opt("successive_halving")
-#'
-#' # modifies the instance by reference
-#' optimizer$optimize(instance)
-#'
-#' # best scoring evaluation
-#' instance$result
-#'
-#' # all evaluations
-#' as.data.table(instance$archive)
+#' @template example_optimizer
 OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
   inherit = Optimizer,
   public = list(
@@ -91,12 +78,13 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
       param_set = ps(
-        n       = p_int(lower = 1, default = 16),
-        eta     = p_dbl(lower = 1.0001, default = 2),
-        sampler = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)),
-        repeats = p_lgl(default = FALSE)
+        n           = p_int(lower = 1, default = 16),
+        eta         = p_dbl(lower = 1.0001, default = 2),
+        sampler     = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)),
+        repetitions = p_int(lower = 1L, default = 1, special_vals = list(Inf)),
+        adjust_minimum_budget = p_lgl(default = FALSE)
       )
-      param_set$values = list(n = 16L, eta = 2L, sampler = NULL, repeats = FALSE)
+      param_set$values = list(n = 16L, eta = 2L, sampler = NULL, repetitions = 1, adjust_minimum_budget = FALSE)
 
       super$initialize(
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
@@ -153,7 +141,11 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
       # s_max + 1 is the number of stages
       s_max = min(sr, sn)
 
-      repeat({
+      # increase r_min so that the last stage uses the maximum budget
+      if (pars$adjust_minimum_budget) r_min = r * eta^-s_max
+
+      repetition = 1
+      while (repetition <= pars$repetitions) {
         # iterate stages
         for (i in 0:s_max) {
           # number of configurations in stage
@@ -179,11 +171,12 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
           # increase budget and stage
           set(xdt, j = budget_id, value = ri)
           set(xdt, j = "stage", value = i)
+          set(xdt, j = "repetition", value = repetition)
 
           inst$eval_batch(xdt)
         }
-        if (!pars$repeats) break
-      })
+        repetition = repetition + 1
+      }
     }
   )
 )
