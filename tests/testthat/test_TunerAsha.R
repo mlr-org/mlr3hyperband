@@ -257,13 +257,3 @@ test_that("TunerAsha works with hotstarting", {
   expect_equal(get_private(instance$objective$hotstart_stack)$.learner_count, 15)
   expect_null(instance$archive$data$expect_resample_result)
 })
-
-test_that("TunerAsha promotes in the right order", {
-  learner = lrn("classif.debug",
-    x  = to_tune(),
-    iter = to_tune(p_int(1, 16, tags = "budget"))
-  )
-
-  instance = test_tuner_asha(eta = 2, learner, term_evals = 7)
-  expect_equal(instance$archive$data$stage, c(0, 0, 1, 0, 0, 1, 2, 0))
-})
