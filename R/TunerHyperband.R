@@ -79,10 +79,10 @@
 #' @template section_progress_bars
 #'
 #' @section Parallelization:
-#' HBX parallelizes the original hyperband algorithm by evaluating
-#' hyperparameter configurations of equal budget across brackets in one batch.
-#' For example, all configurations in stage 1 of bracket 3 and stage 0 of
-#' bracket 2 in one batch. To select a parallel backend, use [future::plan()].
+#' This hyperband implementation evaluates hyperparameter configurations of
+#' equal budget across brackets in one batch. For example, all configurations
+#' in stage 1 of bracket 3 and stage 0 of bracket 2 in one batch. To select a
+#' parallel backend, use [future::plan()].
 #'
 #' @template section_logging
 #'

@@ -59,9 +59,7 @@
 #'     Repetition index. Start counting at 1.
 #'
 #' @template section_custom_sampler
-#' @template section_runtime
 #' @template section_progress_bars
-#' @template section_parallelization
 #' @template section_logging
 #'
 #' @source
