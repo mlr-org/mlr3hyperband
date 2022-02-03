@@ -1,30 +1,37 @@
 #' @title Tuner using the Hyperband algorithm
 #'
 #' @name mlr_tuners_hyperband
+#' @templateVar id hyperband
 #'
 #' @description
-#' `TunerHyperband` class that implements hyperband tuning. Hyperband is a
-#' budget oriented-procedure, weeding out suboptimal performing configurations
-#' early in a sequential training process, increasing tuning efficiency as a
-#' consequence.
+#' `TunerHyperband` class that implements hyperband tuning (HBX). HBX
+#' repeatedly calls SHA ([TunerSuccessiveHalving]) with different numbers of
+#' starting configurations. A larger number of starting configurations
+#' corresponds to a smaller budget allocated in the base stage. Each run of SHA
+#' within HBX is called a bracket. HBX considers `s_max + 1` brackets with
+#' `s_max = floor(log(r_max / r_min, eta)`. The most explorative bracket
+#' `s = s_max` constructs `s_max + 1` stages and allocates the minimum budget
+#' (`r_min`) in the base stage. The minimum budget is increased in each bracket
+#' by a factor of `eta` and the number of starting configurations is computed so
+#' that each bracket approximately spends the same budget. Use
+#' [hyperband_schedule()] to get a preview of the bracket layout.
 #'
-#' For this, several brackets are constructed with an associated set of
-#' configurations for each bracket. Each bracket has several stages. Different
-#' brackets are initialized with different amounts of configurations and
-#' different budget sizes.
+#' | `s` |     |       |     3 |     |       |     2 |     |       |     1 |     |       |     0 |
+#' | --: | --- | ----: | ----: | --- | ----: | ----: | --- | ----: | ----: | --- | ----: | ----: |
+#' | `i` |     | `n_i` | `r_i` |     | `n_i` | `r_i` |     | `n_i` | `r_i` |     | `n_i` | `r_i` |
+#' |   0 |     |     8 |     1 |     |     6 |     2 |     |     4 |     4 |     |     8 |     4 |
+#' |   1 |     |     4 |     2 |     |     3 |     4 |     |     2 |     8 |     |       |       |
+#' |   2 |     |     2 |     4 |     |     1 |     8 |     |       |       |     |       |       |
+#' |   3 |     |     1 |     8 |     |       |       |     |       |       |     |       |       |
 #'
-#' Within the context of hyperband each evaluation of a learner consumes a
-#' certain budget. This budget is not fixed but controlled by a certain
-#' hyperparameter, e.g. the number of boosting iterations or the number of trees
-#' in a random forest. The user has to specify explicitly which hyperparameter
-#' of the learner controls the consumption of the budget by
-#' tagging a single hyperparameter in the [paradox::ParamSet] with `"budget"`.
-#' An alternative approach using subsampling and pipelines is described below.
+#' `s` is the bracket number, `i` is stage number, `n_i` is the number of
+#' configurations and `r_i` is the budget allocated to a single configuration.
 #'
-#' Naturally, hyperband terminates once all of its brackets are evaluated, so a
-#' [bbotk::Terminator] in the tuning instance acts as an upper bound and should
-#' be only set to a low value if one is unsure of how long hyperband will take
-#' to finish under the given settings.
+#' The budget hyperparameter must be tagged with `"budget"` in the search space.
+#' The minimum budget (`r_min`) which is allocated in the base stage of the most
+#' explorative bracket, is set by the lower bound of the budget parameter. The
+#' upper bound defines the maximum budget (`r_max`) which which is allocated to
+#' the candidates in the last stages.
 #'
 #' @templateVar id hyperband
 #' @template section_dictionary_optimizers
@@ -32,22 +39,31 @@
 #' @section Parameters:
 #' \describe{
 #' \item{`eta`}{`numeric(1)`\cr
-#' Fraction parameter of the successive halving algorithm: With every step the
-#' configuration budget is increased by a factor of `eta` and only the best
-#' `1/eta` configurations are used for the next stage. Non-integer values are
-#' supported, but `eta` is not allowed to be less or equal 1.}
-#' \item{`sampler`}{[paradox::Sampler]\cr
-#' Object defining how the samples of the parameter space should be drawn during
-#' the initialization of each bracket. The default is uniform sampling.}
+#' With every stage, the budget is increased by a factor of `eta`
+#' and only the best `1 / eta` configurations are promoted to the next stage.
+#' Non-integer values are supported, but `eta` is not allowed to be less or
+#' equal 1.
 #' }
+#' \item{`sampler`}{[paradox::Sampler]\cr
+#' Object defining how the samples of the parameter space should be drawn in the
+#' base stage of each bracket. The default is uniform sampling.
+#' }
+#' \item{`repetitions`}{`integer(1)`\cr
+#' If `1` (default), optimization is stopped once all brackets are evaluated.
+#' Otherwise, optimization is stopped after `repetitions` runs of hyperband. The
+#' [bbotk::Terminator] might stop the optimization before all repetitions are
+#' executed.
+#' }}
 #'
 #' @section Archive:
-#' The [mlr3tuning::ArchiveTuning] holds the following additional columns that are specific
-#' to the hyperband algorithm:
+#' The [mlr3tuning::ArchiveTuning] holds the following additional columns that
+#' are specific to the hyperband algorithm:
 #'   * `bracket` (`integer(1)`)\cr
 #'     The bracket index. Counts down to 0.
 #'   * `stage` (`integer(1))`\cr
 #'     The stages of each bracket. Starts counting at 0.
+#'   * `repetition` (`integer(1))`\cr
+#'     Repetition index. Start counting at 1.
 #'
 #' @section Hyperband without learner budget:
 #' Thanks to \CRANpkg{mlr3pipelines}, it is possible to use hyperband in
@@ -60,41 +76,21 @@
 #' last brackets. See examples for some code.
 #'
 #' @template section_custom_sampler
-#' @template section_runtime
 #' @template section_progress_bars
-#' @template section_parallelization
+#'
+#' @section Parallelization:
+#' This hyperband implementation evaluates hyperparameter configurations of
+#' equal budget across brackets in one batch. For example, all configurations
+#' in stage 1 of bracket 3 and stage 0 of bracket 2 in one batch. To select a
+#' parallel backend, use [future::plan()].
+#'
 #' @template section_logging
 #'
 #' @source
 #' `r format_bib("li_2018")`
 #'
 #' @export
-#' @examples
-#' if(requireNamespace("xgboost")) {
-#' library(mlr3learners)
-#'
-#' # define hyperparameter and budget parameter
-#' search_space = ps(
-#'   nrounds = p_int(lower = 1, upper = 16, tags = "budget"),
-#'   eta = p_dbl(lower = 0, upper = 1),
-#'   booster = p_fct(levels = c("gbtree", "gblinear", "dart"))
-#' )
-#'
-#' \donttest{
-#' # hyperparameter tuning on the pima indians diabetes data set
-#' instance = tune(
-#'   method = "hyperband",
-#'   task = tsk("pima"),
-#'   learner = lrn("classif.xgboost", eval_metric = "logloss"),
-#'   resampling = rsmp("cv", folds = 3),
-#'   measures = msr("classif.ce"),
-#'   search_space = search_space
-#' )
-#'
-#' # best performing hyperparameter configuration
-#' instance$result
-#' }
-#' }
+#' @template example_tuner
 TunerHyperband = R6Class("TunerHyperband",
   inherit = TunerFromOptimizer,
   public = list(
