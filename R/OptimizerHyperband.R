@@ -39,9 +39,11 @@
 #' Object defining how the samples of the parameter space should be drawn during
 #' the initialization of each bracket. The default is uniform sampling.
 #' }
-#' \item{`repeats`}{`logical(1)`\cr
-#' If `FALSE` (default), hyperband terminates once all brackets are evaluated.
-#' Otherwise, hyperband starts over again once the last bracket is evaluated.
+#' \item{`repetitions`}{`integer(1)`\cr
+#' If `1` (default), optimization is stopped once all brackets are evaluated.
+#' Otherwise, optimization is stopped after `repetitions` runs of hyperband. The
+#' [bbotk::Terminator] might stop the optimization before all repetitions are
+#' executed.
 #' }}
 #'
 #' @section Archive:
@@ -51,6 +53,8 @@
 #'     The bracket index. Counts down to 0.
 #'   * `stage` (`integer(1))`\cr
 #'     The stages of each bracket. Starts counting at 0.
+#'   * `repetition` (`integer(1))`\cr
+#'     Repetition index. Start counting at 1.
 #'
 #' @template section_custom_sampler
 #' @template section_runtime
@@ -105,9 +109,9 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
       param_set = ps(
         eta     = p_dbl(lower = 1.0001, tags = "required", default = 2),
         sampler = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)),
-        repeats = p_lgl(default = FALSE)
+        repetitions = p_int(lower = 1L, default = 1, special_vals = list(Inf))
       )
-      param_set$values = list(eta = 2, sampler = NULL, repeats = FALSE)
+      param_set$values = list(eta = 2, sampler = NULL, repetitions = 1)
 
       super$initialize(
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
@@ -162,7 +166,8 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
       # number of configurations in first stages
       n = ceiling((budget / r) * (eta^(0:s_max)) / ((0:s_max) + 1))
 
-      repeat({
+      repetition = 1
+      while (repetition <= pars$repetitions) {
         # original hyperband algorithm iterates over brackets
         # this implementation iterates over stages with same budget
         # the number of iterations (s_max + 1) remains the same in both implementations
@@ -172,8 +177,9 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
           # sample initial configurations of bracket
           xdt = sampler$sample(n[s + 1])$data
           set(xdt, j = budget_id, value = rs)
-          set(xdt, j = "bracket", value = s)
           set(xdt, j = "stage", value = 0)
+          set(xdt, j = "bracket", value = s)
+          set(xdt, j = "repetition", value = repetition)
 
           # promote configurations of previous batch
           if (s != s_max) {
@@ -201,7 +207,7 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
             })
 
             # increase budget and stage
-            xdt_promoted = xdt_promoted[, c(inst$archive$cols_x, "stage", "bracket"), with = FALSE]
+            xdt_promoted = xdt_promoted[, c(inst$archive$cols_x, "stage", "bracket", "repetition"), with = FALSE]
             set(xdt_promoted, j = budget_id, value = rs)
             set(xdt_promoted, j = "stage", value = xdt_promoted[["stage"]] + 1)
 
@@ -211,8 +217,8 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
           if (search_space$class[[budget_id]] == "ParamInt") set(xdt, j = budget_id, value = round(xdt[[budget_id]]))
           inst$eval_batch(xdt)
         }
-        if (!pars$repeats) break
-      })
+        repetition = repetition + 1
+      }
     }
   )
 )

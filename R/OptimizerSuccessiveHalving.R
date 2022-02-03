@@ -28,17 +28,20 @@
 #' Object defining how the samples of the parameter space should be drawn during
 #' the initialization of each bracket. The default is uniform sampling.
 #' }
-#' \item{`repeats`}{`logical(1)`\cr
-#' If `FALSE` (default), successive halving terminates once all stages are
-#' evaluated. Otherwise, successive halving starts over again once the last
-#' stage is evaluated.
+#' \item{`repetitions`}{`integer(1)`\cr
+#' If `1` (default), optimization is stopped once all stages are evaluated.
+#' Otherwise, optimization is stopped after `repetitions` runs of SHA. The
+#' [bbotk::Terminator] might stop the optimization before all repetitions are
+#' executed.
 #' }}
 #'
 #' @section Archive:
-#' The [bbotk::Archive] holds the following additional column that is specific
+#' The [bbotk::Archive] holds the following additional columns that are specific
 #' to the successive halving algorithm:
 #'   * `stage` (`integer(1))`\cr
 #'     Stage index. Starts counting at 0.
+#'   * `repetition` (`integer(1))`\cr
+#'     Repetition index. Start counting at 1.
 #'
 #' @template section_custom_sampler
 #' @template section_runtime
@@ -91,12 +94,12 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
       param_set = ps(
-        n       = p_int(lower = 1, default = 16),
-        eta     = p_dbl(lower = 1.0001, default = 2),
-        sampler = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)),
-        repeats = p_lgl(default = FALSE)
+        n           = p_int(lower = 1, default = 16),
+        eta         = p_dbl(lower = 1.0001, default = 2),
+        sampler     = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)),
+        repetitions = p_int(lower = 1L, default = 1, special_vals = list(Inf))
       )
-      param_set$values = list(n = 16L, eta = 2L, sampler = NULL, repeats = FALSE)
+      param_set$values = list(n = 16L, eta = 2L, sampler = NULL, repetitions = 1)
 
       super$initialize(
         param_classes = c("ParamLgl", "ParamInt", "ParamDbl", "ParamFct"),
@@ -153,7 +156,8 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
       # s_max + 1 is the number of stages
       s_max = min(sr, sn)
 
-      repeat({
+      repetition = 1
+      while (repetition <= pars$repetitions) {
         # iterate stages
         for (i in 0:s_max) {
           # number of configurations in stage
@@ -179,11 +183,12 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
           # increase budget and stage
           set(xdt, j = budget_id, value = ri)
           set(xdt, j = "stage", value = i)
+          set(xdt, j = "repetition", value = repetition)
 
           inst$eval_batch(xdt)
         }
-        if (!pars$repeats) break
-      })
+        repetition = repetition + 1
+      }
     }
   )
 )
