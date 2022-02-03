@@ -11,26 +11,33 @@ Li L, Jamieson K, DeSalvo G, Rostamizadeh A, Talwalkar A (2018).
 \url{https://jmlr.org/papers/v18/16-558.html}.
 }
 \description{
-\code{OptimizerHyperband} class that implements hyperband optimization. Hyperband
-is a budget oriented-procedure, weeding out suboptimal performing
-points early in a sequential training process, increasing
-optimization efficiency as a consequence.
+\code{OptimizerHyperband} class that implements hyperband optimization (HB).
+HB repeatedly calls SHA (\link{OptimizerSuccessiveHalving}) with different
+numbers of starting points. A larger number of starting points corresponds to
+a smaller budget allocated in the base stage. Each run of SHA within HB is
+called a bracket. HB considers \code{s_max + 1} brackets with \verb{s_max = floor(log(r_max / r_min, eta)}. The most explorative bracket \code{s = s_max}
+constructs \code{s_max + 1} stages and allocates the minimum budget (\code{r_min}) in
+the base stage. The minimum budget is increased in each bracket by a factor
+of \code{eta} and the number of starting points is computed so that each bracket
+approximately spends the same budget. Use \code{\link[=hyperband_schedule]{hyperband_schedule()}} to get a
+preview of the bracket layout.\tabular{rlrrlrrlrrlrr}{
+   \code{s} \tab  \tab  \tab 3 \tab  \tab  \tab 2 \tab  \tab  \tab 1 \tab  \tab  \tab 0 \cr
+   \code{i} \tab  \tab \code{n_i} \tab \code{r_i} \tab  \tab \code{n_i} \tab \code{r_i} \tab  \tab \code{n_i} \tab \code{r_i} \tab  \tab \code{n_i} \tab \code{r_i} \cr
+   0 \tab  \tab 8 \tab 1 \tab  \tab 6 \tab 2 \tab  \tab 4 \tab 4 \tab  \tab 8 \tab 4 \cr
+   1 \tab  \tab 4 \tab 2 \tab  \tab 3 \tab 4 \tab  \tab 2 \tab 8 \tab  \tab  \tab  \cr
+   2 \tab  \tab 2 \tab 4 \tab  \tab 1 \tab 8 \tab  \tab  \tab  \tab  \tab  \tab  \cr
+   3 \tab  \tab 1 \tab 8 \tab  \tab  \tab  \tab  \tab  \tab  \tab  \tab  \tab  \cr
+}
 
-For this, several brackets are constructed with an associated set of
-points for each bracket. Each bracket as several stages. Different
-brackets are initialized with different amounts of points and
-different budget sizes. To get an idea of how the bracket layout looks like
-for a given argument set, use \code{\link[=hyperband_schedule]{hyperband_schedule()}}.
 
-To identify the budget for evaluating hyperband, the user has to specify
-explicitly which parameter of the objective function influences the budget by
-tagging a single parameter in the \link[paradox:ParamSet]{paradox::ParamSet} with \code{"budget"}.
+\code{s} is the bracket number, \code{i} is stage number, \code{n_i} is the number of
+configurations and \code{r_i} is the budget allocated to a single configuration.
 
-Naturally, hyperband terminates once all of its brackets are evaluated, so a
-\link[bbotk:Terminator]{bbotk::Terminator} in the \link[bbotk:OptimInstanceSingleCrit]{bbotk::OptimInstanceSingleCrit} |
-\link[bbotk:OptimInstanceMultiCrit]{bbotk::OptimInstanceMultiCrit} acts as an upper bound and should be only set to a
-low value if one is unsure of how long hyperband will take to finish under
-the given settings.
+The budget hyperparameter must be tagged with \code{"budget"} in the search space.
+The minimum budget (\code{r_min}) which is allocated in the base stage of the most
+explorative bracket, is set by the lower bound of the budget parameter. The
+upper bound defines the maximum budget (\code{r_max}) which which is allocated to
+the candidates in the last stages.
 }
 \section{Dictionary}{
 
@@ -44,14 +51,14 @@ opt("hyperband")
 
 \describe{
 \item{\code{eta}}{\code{numeric(1)}\cr
-Fraction parameter of the successive halving algorithm: With every stage the
-configuration budget is increased by a factor of \code{eta} and only the best
-\code{1/eta} points are used for the next stage. Non-integer values are supported,
-but \code{eta} is not allowed to be less or equal 1.
+With every stage, the budget is increased by a factor of \code{eta}
+and only the best \code{1 / eta} points are promoted to the next stage.
+Non-integer values are supported, but \code{eta} is not allowed to be less or
+equal 1.
 }
 \item{\code{sampler}}{\link[paradox:Sampler]{paradox::Sampler}\cr
-Object defining how the samples of the parameter space should be drawn during
-the initialization of each bracket. The default is uniform sampling.
+Object defining how the samples of the parameter space should be drawn in the
+base stage of each bracket. The default is uniform sampling.
 }
 \item{\code{repetitions}}{\code{integer(1)}\cr
 If \code{1} (default), optimization is stopped once all brackets are evaluated.
@@ -89,33 +96,12 @@ sampler = SamplerJointIndep$new(list(
 }
 }
 
-\section{Runtime}{
-
-The calculation of each bracket currently assumes a linear runtime in the
-chosen budget parameter is always given. Hyperband is designed so each
-bracket requires approximately the same runtime as the sum of the budget
-over all configurations in each bracket is roughly the same. This will not
-hold true once the scaling in the budget parameter is not linear
-anymore, even though the sum of the budgets in each bracket remains the
-same. A possible adaption would be to introduce a trafo, like it is shown in
-the \emph{examples} section.
-}
-
 \section{Progress Bars}{
 
 \verb{$optimize()} supports progress bars via the package \CRANpkg{progressr}
 combined with a \link{Terminator}. Simply wrap the function in
 \code{progressr::with_progress()} to enable them. We recommend to use package
 \CRANpkg{progress} as backend; enable with \code{progressr::handlers("progress")}.
-}
-
-\section{Parallelization}{
-
-In order to support general termination criteria and parallelization, we
-evaluate points in a batch-fashion of size \code{batch_size}. The points of one
-stage in a bracket are evaluated in one batch. Parallelization is supported
-via package \CRANpkg{future} (see \code{\link[mlr3:benchmark]{mlr3::benchmark()}}'s section on
-parallelization for more details).
 }
 
 \section{Logging}{
@@ -129,28 +115,30 @@ Use \code{lgr::get_logger("bbotk")} to access and control the logger.
 library(bbotk)
 library(data.table)
 
+# set search space
 search_space = domain = ps(
   x1 = p_dbl(-5, 10),
   x2 = p_dbl(0, 15),
   fidelity = p_dbl(1e-2, 1, tags = "budget")
 )
 
-# modified branin function
+# objective with modified branin function, see `bbotk::branin()`
 objective = ObjectiveRFun$new(
   fun = branin,
   domain = domain,
   codomain = ps(y = p_dbl(tags = "minimize"))
 )
 
+# initialize instance and optimizer
 instance = OptimInstanceSingleCrit$new(
   objective = objective,
   search_space = search_space,
-  terminator = trm("none")
+  terminator = trm("evals", n_evals = 50)
 )
 
 optimizer = opt("hyperband")
 
-# modifies the instance by reference
+# optimize branin function
 optimizer$optimize(instance)
 
 # best scoring evaluation
