@@ -1,32 +1,47 @@
 #' @title Hyperparameter Optimization with Successive Halving
 #'
 #' @name mlr_optimizers_successive_halving
+#' @templateVar id successive_halving
 #'
 #' @description
 #' `OptimizerSuccessiveHalving` class that implements the successive halving
-#' algorithm. The algorithm samples `n` points and evaluates them with the
-#' smallest budget (lower bound of the `budget` parameter). With every stage the
-#' budget is increased by a factor of `eta` and only the best `1/eta` points are
-#' promoted to the next stage. The optimization terminates when the maximum
-#' budget is reached (upper bound of the `budget` parameter).
+#' algorithm (SHA). SHA randomly samples `n` candidate points and
+#' allocates a minimum budget (`r_min`) to all candidates. The candidates are
+#' raced down in stages to a single best candidate by repeatedly increasing the
+#' budget by a factor of `eta` and promoting only the best `1 / eta ` fraction
+#' to the next stage. This means promising points are allocated a higher budget
+#' overall and lower performing ones are discarded early on.
 #'
-#' To identify the budget, the user has to specify explicitly which parameter of
-#' the objective function influences the budget by tagging a single parameter in
-#' the search space ([paradox::ParamSet]) with `"budget"`.
+#' #' The budget hyperparameter must be tagged with `"budget"` in the search space.
+#' The minimum budget (`r_min`) which is allocated in the base stage, is set by
+#' the lower bound of the budget parameter. The upper bound  defines the maximum
+#' budget (`r_max`) which is allocated to the candidates in the last stage. The
+#' number of stages is computed so that each candidate in base stage is
+#' allocated the minimum budget and the candidates in the last stage are not
+#' evaluated on more than the maximum budget. The following table is the stage
+#' layout for `eta = 2`, `r_min = 1` and `r_max = 8`.
+#'
+#' | `i` | `n_i` | `r_i` |
+#' | --: | ----: | ----: |
+#' |   0 |     8 |     1 |
+#' |   1 |     4 |     2 |
+#' |   2 |     2 |     4 |
+#' |   3 |     1 |     8 |
+#'
+#' `i` is stage number, `n_i` is the number of configurations and `r_i` is the
+#' budget allocated to a single configuration.
 #'
 #' @section Parameters:
 #' \describe{
 #' \item{`n`}{`integer(1)`\cr
-#' Number of points in first stage.}
+#' Number of points in base stage.}
 #' \item{`eta`}{`numeric(1)`\cr
-#' With every stage, the point budget is increased by a factor of `eta`
-#' and only the best `1/eta` points are used for the next stage.
-#' Non-integer values are supported, but `eta` is not allowed to be less or
-#' equal 1.
+#' With every stage, the budget is increased by a factor of `eta`
+#' and only the best `1 / eta` points are promoted to the next stage.
 #' }
 #' \item{`sampler`}{[paradox::Sampler]\cr
-#' Object defining how the samples of the parameter space should be drawn during
-#' the initialization of each bracket. The default is uniform sampling.
+#' Object defining how the samples of the parameter space should be drawn. The
+#' default is uniform sampling.
 #' }
 #' \item{`repetitions`}{`integer(1)`\cr
 #' If `1` (default), optimization is stopped once all stages are evaluated.
@@ -53,39 +68,7 @@
 #' `r format_bib("jamieson_2016")`
 #'
 #' @export
-#' @examples
-#' library(bbotk)
-#' library(data.table)
-#'
-#' search_space = domain = ps(
-#'   x1 = p_dbl(-5, 10),
-#'   x2 = p_dbl(0, 15),
-#'   fidelity = p_dbl(1e-2, 1, tags = "budget")
-#' )
-#'
-#' # modified branin function
-#' objective = ObjectiveRFun$new(
-#'   fun = branin,
-#'   domain = domain,
-#'   codomain = ps(y = p_dbl(tags = "minimize"))
-#' )
-#'
-#' instance = OptimInstanceSingleCrit$new(
-#'   objective = objective,
-#'   search_space = search_space,
-#'   terminator = trm("none")
-#' )
-#'
-#' optimizer = opt("successive_halving")
-#'
-#' # modifies the instance by reference
-#' optimizer$optimize(instance)
-#'
-#' # best scoring evaluation
-#' instance$result
-#'
-#' # all evaluations
-#' as.data.table(instance$archive)
+#' @template example_optimizer
 OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
   inherit = Optimizer,
   public = list(
