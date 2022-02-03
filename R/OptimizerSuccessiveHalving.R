@@ -48,6 +48,7 @@
 #' Otherwise, optimization is stopped after `repetitions` runs of SHA. The
 #' [bbotk::Terminator] might stop the optimization before all repetitions are
 #' executed.
+#' }
 #' \item{`adjust_minimum_budget`}{`logical(1)`\cr
 #' If `TRUE`, minimum budget is increased so that the last stage uses the
 #' maximum budget defined in the search space.
