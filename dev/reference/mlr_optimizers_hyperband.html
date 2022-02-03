@@ -159,10 +159,12 @@ but <code>eta</code> is not allowed to be less or equal 1.</p></dd>
 Object defining how the samples of the parameter space should be drawn during
 the initialization of each bracket. The default is uniform sampling.</p></dd>
 
-<dt><code>repeats</code></dt>
-<dd><p><code>logical(1)</code><br>
-If <code>FALSE</code> (default), hyperband terminates once all brackets are evaluated.
-Otherwise, hyperband starts over again once the last bracket is evaluated.</p></dd>
+<dt><code>repetitions</code></dt>
+<dd><p><code>integer(1)</code><br>
+If <code>1</code> (default), optimization is stopped once all brackets are evaluated.
+Otherwise, optimization is stopped after <code>repetitions</code> runs of hyperband. The
+<a href="https://bbotk.mlr-org.com/reference/Terminator.html" class="external-link">bbotk::Terminator</a> might stop the optimization before all repetitions are
+executed.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -174,6 +176,8 @@ to the hyperband algorithm:</p><ul><li><p><code>bracket</code> (<code>integer(1)
 The bracket index. Counts down to 0.</p></li>
 <li><p><code>stage</code> (<code>integer(1))</code><br>
 The stages of each bracket. Starts counting at 0.</p></li>
+<li><p><code>repetition</code> (<code>integer(1))</code><br>
+Repetition index. Start counting at 1.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="custom-sampler">Custom sampler<a class="anchor" aria-label="anchor" href="#custom-sampler"></a></h2>
@@ -301,40 +305,40 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># modifies the instance by reference</span></span>
 <span class="r-in"><span class="va">optimizer</span><span class="op">$</span><span class="fu">optimize</span><span class="op">(</span><span class="va">instance</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           x1       x2 fidelity  x_domain         y</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1: -3.053039 11.62235      0.5 &lt;list[3]&gt; 0.4361464</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          x1       x2 fidelity  x_domain       y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1: 3.182696 2.800867        1 &lt;list[3]&gt; 0.71703</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># best scoring evaluation</span></span>
 <span class="r-in"><span class="va">instance</span><span class="op">$</span><span class="va">result</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           x1       x2 fidelity  x_domain         y</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1: -3.053039 11.62235      0.5 &lt;list[3]&gt; 0.4361464</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          x1       x2 fidelity  x_domain       y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1: 3.182696 2.800867        1 &lt;list[3]&gt; 0.71703</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># all evaluations</span></span>
 <span class="r-in"><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/as.data.table.html" class="external-link">as.data.table</a></span><span class="op">(</span><span class="va">instance</span><span class="op">$</span><span class="va">archive</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              x1          x2 fidelity bracket stage         y</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1: -0.7212109 12.88585210 0.015625       6     0 49.952723</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2: -0.3703133 14.17841143 0.015625       6     0 76.480764</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   3: -1.7167037  0.08088893 0.015625       6     0 85.025524</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   4: -2.3400651 10.64125815 0.015625       6     0  3.881017</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   5: -2.6607915  7.67307090 0.015625       6     0  9.211557</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  ---                                                        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 297:  3.4441017  1.40993414 1.000000       2     2  1.244747</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 298: -2.1821865  8.21196082 1.000000       2     2  8.008698</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 299:  2.1748118  4.35381920 1.000000       1     1  5.996370</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 300: -1.0413732  6.46098166 1.000000       1     1 16.635668</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 301: -4.4210319  9.49094080 1.000000       1     1 44.090663</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             x1          x2 fidelity stage bracket repetition          y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   1: -1.783216  1.84534057 0.015625     0       6          1 58.2509131</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2:  9.644165  1.47517245 0.015625     0       6          1 64.0622646</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   3: -2.553392  1.59252343 0.015625     0       6          1 77.2115766</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   4: -4.756246 12.83764086 0.015625     0       6          1 12.4593508</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   5:  5.014051  4.55236531 0.015625     0       6          1 46.0243917</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  ---                                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 297:  9.136331  0.05543659 1.000000     2       2          1  5.5775528</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 298:  2.441689  5.57887331 1.000000     2       2          1  9.9170558</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 299:  3.408710  1.88071893 1.000000     1       1          1  0.7765154</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 300:  3.182696  2.80086668 1.000000     1       1          1  0.7170300</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 301:  2.598608  2.22358530 1.000000     1       1          1  2.0420758</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                timestamp batch_nr x_domain_x1 x_domain_x2 x_domain_fidelity</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1: 2022-02-03 04:19:55        1  -0.7212109 12.88585210          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2: 2022-02-03 04:19:55        1  -0.3703133 14.17841143          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   3: 2022-02-03 04:19:55        1  -1.7167037  0.08088893          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   4: 2022-02-03 04:19:55        1  -2.3400651 10.64125815          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   5: 2022-02-03 04:19:55        1  -2.6607915  7.67307090          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   1: 2022-02-03 17:28:57        1   -1.783216  1.84534057          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2: 2022-02-03 17:28:57        1    9.644165  1.47517245          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   3: 2022-02-03 17:28:57        1   -2.553392  1.59252343          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   4: 2022-02-03 17:28:57        1   -4.756246 12.83764086          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   5: 2022-02-03 17:28:57        1    5.014051  4.55236531          0.015625</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  ---                                                                       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 297: 2022-02-03 04:19:55        7   3.4441017  1.40993414          1.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 298: 2022-02-03 04:19:55        7  -2.1821865  8.21196082          1.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 299: 2022-02-03 04:19:55        7   2.1748118  4.35381920          1.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 300: 2022-02-03 04:19:55        7  -1.0413732  6.46098166          1.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 301: 2022-02-03 04:19:55        7  -4.4210319  9.49094080          1.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 297: 2022-02-03 17:28:57        7    9.136331  0.05543659          1.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 298: 2022-02-03 17:28:57        7    2.441689  5.57887331          1.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 299: 2022-02-03 17:28:57        7    3.408710  1.88071893          1.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 300: 2022-02-03 17:28:57        7    3.182696  2.80086668          1.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 301: 2022-02-03 17:28:57        7    2.598608  2.22358530          1.000000</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
