@@ -13,7 +13,7 @@
 #' `s = s_max` constructs `s_max + 1` stages and allocates the minimum budget
 #' (`r_min`) in the base stage. The minimum budget is increased in each bracket
 #' by a factor of `eta` and the number of starting configurations is computed so
-#' that each bracket approximately spends the same budget.Use
+#' that each bracket approximately spends the same budget. Use
 #' [hyperband_schedule()] to get a preview of the bracket layout.
 #'
 #' | `s` |     |       |     3 |     |       |     2 |     |       |     1 |     |       |     0 |
@@ -40,33 +40,49 @@
 #' \describe{
 #' \item{`eta`}{`numeric(1)`\cr
 #' With every stage, the budget is increased by a factor of `eta`
-#' and only the best `1 / eta` candidates are promoted to the next stage.
+#' and only the best `1 / eta` configurations are promoted to the next stage.
 #' Non-integer values are supported, but `eta` is not allowed to be less or
 #' equal 1.
 #' }
 #' \item{`sampler`}{[paradox::Sampler]\cr
 #' Object defining how the samples of the parameter space should be drawn in the
 #' base stage of each bracket. The default is uniform sampling.
+#' }
+#' \item{`repetitions`}{`integer(1)`\cr
+#' If `1` (default), optimization is stopped once all brackets are evaluated.
+#' Otherwise, optimization is stopped after `repetitions` runs of hyperband. The
+#' [bbotk::Terminator] might stop the optimization before all repetitions are
+#' executed.
 #' }}
 #'
 #' @section Archive:
 #' The [mlr3tuning::ArchiveTuning] holds the following additional columns that
 #' are specific to the hyperband algorithm:
-#'   * `stage` (`integer(1))`\cr
-#'     The stages of each bracket. Starts counting at 0.
 #'   * `bracket` (`integer(1)`)\cr
 #'     The bracket index. Counts down to 0.
+#'   * `stage` (`integer(1))`\cr
+#'     The stages of each bracket. Starts counting at 0.
 #'   * `repetition` (`integer(1))`\cr
 #'     Repetition index. Start counting at 1.
+#'
+#' @section Hyperband without learner budget:
+#' Thanks to \CRANpkg{mlr3pipelines}, it is possible to use hyperband in
+#' combination with learners lacking a natural budget parameter. For example,
+#' any [mlr3::Learner] can be augmented with a [mlr3pipelines::PipeOp]
+#' operator such as [mlr3pipelines::PipeOpSubsample]. With the
+#' subsampling rate as budget parameter, the resulting
+#' [mlr3pipelines::GraphLearner] is fitted on small proportions of
+#' the [mlr3::Task] in the first brackets, and on the complete Task in
+#' last brackets. See examples for some code.
 #'
 #' @template section_custom_sampler
 #' @template section_progress_bars
 #'
 #' @section Parallelization:
-#' HBX parallelizes the original hyperband algorithm by evaluating
-#' hyperparameter configurations of equal budget across brackets in one batch.
-#' For example, all configurations in stage 1 of bracket 3 and stage 0 of
-#' bracket 2 in one batch. To select a parallel backend, use [future::plan()].
+#' This hyperband implementation evaluates hyperparameter configurations of
+#' equal budget across brackets in one batch. For example, all configurations
+#' in stage 1 of bracket 3 and stage 0 of bracket 2 in one batch. To select a
+#' parallel backend, use [future::plan()].
 #'
 #' @template section_logging
 #'

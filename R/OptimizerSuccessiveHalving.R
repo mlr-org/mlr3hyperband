@@ -81,7 +81,7 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
       param_set = ps(
-        n                     = p_int(lower = 1L, default = 16L),
+        n                     = p_int(lower = 1, default = 16),
         eta                   = p_dbl(lower = 1.0001, default = 2),
         sampler               = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)),
         repetitions           = p_int(lower = 1L, default = 1, special_vals = list(Inf)),

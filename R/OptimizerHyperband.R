@@ -4,11 +4,11 @@
 #' @templateVar id hyperband
 #'
 #' @description
-#' `OptimizerHyperband` class that implements hyperband optimization (HBX).
-#' HBX repeatedly calls SHA ([OptimizerSuccessiveHalving]) with different
+#' `OptimizerHyperband` class that implements hyperband optimization (HB).
+#' HB repeatedly calls SHA ([OptimizerSuccessiveHalving]) with different
 #' numbers of starting points. A larger number of starting points corresponds to
-#' a smaller budget allocated in the base stage. Each run of SHA within HBX is
-#' called a bracket. HBX considers `s_max + 1` brackets with `s_max =
+#' a smaller budget allocated in the base stage. Each run of SHA within HB is
+#' called a bracket. HB considers `s_max + 1` brackets with `s_max =
 #' floor(log(r_max / r_min, eta)`. The most explorative bracket `s = s_max`
 #' constructs `s_max + 1` stages and allocates the minimum budget (`r_min`) in
 #' the base stage. The minimum budget is increased in each bracket by a factor
@@ -48,10 +48,10 @@
 #' Object defining how the samples of the parameter space should be drawn in the
 #' base stage of each bracket. The default is uniform sampling.
 #' }
-#' \item{`repeats`}{`integer(1)`\cr
-#' If `1` (default), optimization is stopped once all stages are evaluated.
-#' Otherwise, optimization is stopped after `repeats` runs of SHA. The
-#' [bbotk::Terminator] might stop the optimization before all repeats are
+#' \item{`repetitions`}{`integer(1)`\cr
+#' If `1` (default), optimization is stopped once all brackets are evaluated.
+#' Otherwise, optimization is stopped after `repetitions` runs of hyperband. The
+#' [bbotk::Terminator] might stop the optimization before all repetitions are
 #' executed.
 #' }}
 #'
@@ -119,7 +119,7 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
         assert_set_equal(sampler$param_set$ids(), search_space_sampler$ids())
       }
 
-      # r_min is the budget of a single configuration in the base stage of the first bracket
+      # r_min is the budget of a single configuration in the base stage
       # r_max is the maximum budget of a single configuration in the last stage
       # the internal budget is rescaled to a minimum budget of 1
       # for this, the budget is divided by r_min

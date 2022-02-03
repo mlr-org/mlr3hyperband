@@ -11,11 +11,11 @@ Li L, Jamieson K, DeSalvo G, Rostamizadeh A, Talwalkar A (2018).
 \url{https://jmlr.org/papers/v18/16-558.html}.
 }
 \description{
-\code{OptimizerHyperband} class that implements hyperband optimization (HBX).
-HBX repeatedly calls SHA (\link{OptimizerSuccessiveHalving}) with different
+\code{OptimizerHyperband} class that implements hyperband optimization (HB).
+HB repeatedly calls SHA (\link{OptimizerSuccessiveHalving}) with different
 numbers of starting points. A larger number of starting points corresponds to
-a smaller budget allocated in the base stage. Each run of SHA within HBX is
-called a bracket. HBX considers \code{s_max + 1} brackets with \verb{s_max = floor(log(r_max / r_min, eta)}. The most explorative bracket \code{s = s_max}
+a smaller budget allocated in the base stage. Each run of SHA within HB is
+called a bracket. HB considers \code{s_max + 1} brackets with \verb{s_max = floor(log(r_max / r_min, eta)}. The most explorative bracket \code{s = s_max}
 constructs \code{s_max + 1} stages and allocates the minimum budget (\code{r_min}) in
 the base stage. The minimum budget is increased in each bracket by a factor
 of \code{eta} and the number of starting points is computed so that each bracket
@@ -60,10 +60,10 @@ equal 1.
 Object defining how the samples of the parameter space should be drawn in the
 base stage of each bracket. The default is uniform sampling.
 }
-\item{\code{repeats}}{\code{integer(1)}\cr
-If \code{1} (default), optimization is stopped once all stages are evaluated.
-Otherwise, optimization is stopped after \code{repeats} runs of SHA. The
-\link[bbotk:Terminator]{bbotk::Terminator} might stop the optimization before all repeats are
+\item{\code{repetitions}}{\code{integer(1)}\cr
+If \code{1} (default), optimization is stopped once all brackets are evaluated.
+Otherwise, optimization is stopped after \code{repetitions} runs of hyperband. The
+\link[bbotk:Terminator]{bbotk::Terminator} might stop the optimization before all repetitions are
 executed.
 }}
 }

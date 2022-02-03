@@ -79,3 +79,77 @@ instance = tune(
   term_evals = 100
 )
 ```
+<<<<<<< HEAD
+=======
+
+    ##    classif.rpart.cp classif.rpart.minsplit subsample.frac learner_param_vals  x_domain classif.ce
+    ## 1:        0.0246659                      5            0.5          <list[6]> <list[3]>  0.2395833
+
+### Successive Halving
+
+``` r
+library(mlr3hyperband)
+library(mlr3learners)
+
+# define hyperparameter and budget parameter
+search_space = ps(
+  nrounds = p_int(lower = 1, upper = 16, tags = "budget"),
+  eta = p_dbl(lower = 0, upper = 1),
+  booster = p_fct(levels = c("gbtree", "gblinear", "dart"))
+)
+
+# hyperparameter tuning on the pima indians diabetes data set
+instance = tune(
+  method = "successive_halving",
+  task = tsk("pima"),
+  learner = lrn("classif.xgboost", eval_metric = "logloss"),
+  resampling = rsmp("cv", folds = 3),
+  measures = msr("classif.ce"),
+  search_space = search_space
+)
+
+# best performing hyperparameter configuration
+instance$result
+```
+
+    ##    nrounds       eta booster learner_param_vals  x_domain classif.ce
+    ## 1:       2 0.8726027    dart          <list[6]> <list[3]>  0.2265625
+
+### Quick general-purpose optimization
+
+``` r
+library(bbotk)
+library(mlr3hyperband)
+
+# define hyperparameter and budget parameter
+search_space = domain = ps(
+  x1 = p_dbl(-5, 10),
+  x2 = p_dbl(0, 15),
+  fidelity = p_dbl(1e-2, 1, tags = "budget")
+)
+
+# modified branin function
+objective = ObjectiveRFun$new(
+  fun = branin,
+  domain = domain,
+  codomain = ps(y = p_dbl(tags = "minimize"))
+)
+
+# optimize branin function with hyperband
+result = bb_optimize(objective, method = "hyperband", search_space = search_space, term_evals = NULL)
+
+# optimized parameters
+result$par
+```
+
+    ##          x1       x2 fidelity
+    ## 1: 9.739074 2.508206        1
+
+``` r
+# optimal outcome
+result$value
+```
+
+    ##         y 
+    ## 0.9281165
+>>>>>>> main

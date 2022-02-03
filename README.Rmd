@@ -54,6 +54,7 @@ remotes::install_github("mlr-org/mlr3hyperband")
 
 ```{r, include = FALSE}
 # mute load messages
+library(bbotk)
 library(mlr3verse)
 library(mlr3hyperband)
 library(mlr3learners)
@@ -82,4 +83,34 @@ instance = tune(
   measures = msr("classif.ce"),
   term_evals = 100
 )
+```
+
+### Quick general-purpose optimization
+
+```{r, message = FALSE}
+library(bbotk)
+library(mlr3hyperband)
+
+# define hyperparameter and budget parameter
+search_space = domain = ps(
+  x1 = p_dbl(-5, 10),
+  x2 = p_dbl(0, 15),
+  fidelity = p_dbl(1e-2, 1, tags = "budget")
+)
+
+# modified branin function
+objective = ObjectiveRFun$new(
+  fun = branin,
+  domain = domain,
+  codomain = ps(y = p_dbl(tags = "minimize"))
+)
+
+# optimize branin function with hyperband
+result = bb_optimize(objective, method = "hyperband", search_space = search_space, term_evals = NULL)
+
+# optimized parameters
+result$par
+
+# optimal outcome
+result$value
 ```

@@ -20,7 +20,7 @@ within HBX is called a bracket. HBX considers \code{s_max + 1} brackets with
 \code{s = s_max} constructs \code{s_max + 1} stages and allocates the minimum budget
 (\code{r_min}) in the base stage. The minimum budget is increased in each bracket
 by a factor of \code{eta} and the number of starting configurations is computed so
-that each bracket approximately spends the same budget.Use
+that each bracket approximately spends the same budget. Use
 \code{\link[=hyperband_schedule]{hyperband_schedule()}} to get a preview of the bracket layout.\tabular{rlrrlrrlrrlrr}{
    \code{s} \tab  \tab  \tab 3 \tab  \tab  \tab 2 \tab  \tab  \tab 1 \tab  \tab  \tab 0 \cr
    \code{i} \tab  \tab \code{n_i} \tab \code{r_i} \tab  \tab \code{n_i} \tab \code{r_i} \tab  \tab \code{n_i} \tab \code{r_i} \tab  \tab \code{n_i} \tab \code{r_i} \cr
@@ -53,13 +53,19 @@ opt("hyperband")
 \describe{
 \item{\code{eta}}{\code{numeric(1)}\cr
 With every stage, the budget is increased by a factor of \code{eta}
-and only the best \code{1 / eta} candidates are promoted to the next stage.
+and only the best \code{1 / eta} configurations are promoted to the next stage.
 Non-integer values are supported, but \code{eta} is not allowed to be less or
 equal 1.
 }
 \item{\code{sampler}}{\link[paradox:Sampler]{paradox::Sampler}\cr
 Object defining how the samples of the parameter space should be drawn in the
 base stage of each bracket. The default is uniform sampling.
+}
+\item{\code{repetitions}}{\code{integer(1)}\cr
+If \code{1} (default), optimization is stopped once all brackets are evaluated.
+Otherwise, optimization is stopped after \code{repetitions} runs of hyperband. The
+\link[bbotk:Terminator]{bbotk::Terminator} might stop the optimization before all repetitions are
+executed.
 }}
 }
 
@@ -68,13 +74,25 @@ base stage of each bracket. The default is uniform sampling.
 The \link[mlr3tuning:ArchiveTuning]{mlr3tuning::ArchiveTuning} holds the following additional columns that
 are specific to the hyperband algorithm:
 \itemize{
-\item \code{stage} (\verb{integer(1))}\cr
-The stages of each bracket. Starts counting at 0.
 \item \code{bracket} (\code{integer(1)})\cr
 The bracket index. Counts down to 0.
+\item \code{stage} (\verb{integer(1))}\cr
+The stages of each bracket. Starts counting at 0.
 \item \code{repetition} (\verb{integer(1))}\cr
 Repetition index. Start counting at 1.
 }
+}
+
+\section{Hyperband without learner budget}{
+
+Thanks to \CRANpkg{mlr3pipelines}, it is possible to use hyperband in
+combination with learners lacking a natural budget parameter. For example,
+any \link[mlr3:Learner]{mlr3::Learner} can be augmented with a \link[mlr3pipelines:PipeOp]{mlr3pipelines::PipeOp}
+operator such as \link[mlr3pipelines:mlr_pipeops_subsample]{mlr3pipelines::PipeOpSubsample}. With the
+subsampling rate as budget parameter, the resulting
+\link[mlr3pipelines:mlr_learners_graph]{mlr3pipelines::GraphLearner} is fitted on small proportions of
+the \link[mlr3:Task]{mlr3::Task} in the first brackets, and on the complete Task in
+last brackets. See examples for some code.
 }
 
 \section{Custom Sampler}{
@@ -104,10 +122,10 @@ We recommend the \CRANpkg{progress} package as backend which can be enabled with
 
 \section{Parallelization}{
 
-HBX parallelizes the original hyperband algorithm by evaluating
-hyperparameter configurations of equal budget across brackets in one batch.
-For example, all configurations in stage 1 of bracket 3 and stage 0 of
-bracket 2 in one batch. To select a parallel backend, use \code{\link[future:plan]{future::plan()}}.
+This hyperband implementation evaluates hyperparameter configurations of
+equal budget across brackets in one batch. For example, all configurations
+in stage 1 of bracket 3 and stage 0 of bracket 2 in one batch. To select a
+parallel backend, use \code{\link[future:plan]{future::plan()}}.
 }
 
 \section{Logging}{
