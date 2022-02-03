@@ -53,9 +53,11 @@ but \code{eta} is not allowed to be less or equal 1.
 Object defining how the samples of the parameter space should be drawn during
 the initialization of each bracket. The default is uniform sampling.
 }
-\item{\code{repeats}}{\code{logical(1)}\cr
-If \code{FALSE} (default), hyperband terminates once all brackets are evaluated.
-Otherwise, hyperband starts over again once the last bracket is evaluated.
+\item{\code{repetitions}}{\code{integer(1)}\cr
+If \code{1} (default), optimization is stopped once all brackets are evaluated.
+Otherwise, optimization is stopped after \code{repetitions} runs of hyperband. The
+\link[bbotk:Terminator]{bbotk::Terminator} might stop the optimization before all repetitions are
+executed.
 }}
 }
 
@@ -68,6 +70,8 @@ to the hyperband algorithm:
 The bracket index. Counts down to 0.
 \item \code{stage} (\verb{integer(1))}\cr
 The stages of each bracket. Starts counting at 0.
+\item \code{repetition} (\verb{integer(1))}\cr
+Repetition index. Start counting at 1.
 }
 }
 

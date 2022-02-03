@@ -1,3 +1,7 @@
+# mlr3hyperband 0.3.0.9000
+
+* `repeats` parameter is replaced by `repetitions` which allows to specify the exact number of repetitions.
+
 # mlr3hyperband 0.3.0
 
 * Implements parallel evaluation of stages.
