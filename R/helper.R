@@ -63,7 +63,3 @@ hyperband_budget = function(r_min, r_max, eta, integer_budget = FALSE) {
   schedule = hyperband_schedule(r_min, r_max, eta, integer_budget)
   sum(schedule[, get("budget") * get("n")])
 }
-
-get_private = function(x) {
-  x[[".__enclos_env__"]][["private"]]
-}
