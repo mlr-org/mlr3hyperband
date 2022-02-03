@@ -11,9 +11,33 @@ In Gretton A, Robert CC (eds.), \emph{Proceedings of the 19th International Conf
 \url{http://proceedings.mlr.press/v51/jamieson16.html}.
 }
 \description{
-Hyperparameter Tuning with Successive Halving
+\code{TunerSuccessiveHalving} class that implements the successive halving
+algorithm (SHA). SHA randomly samples \code{n} candidate
+hyperparameter configurations and allocates a minimum budget (\code{r_min}) to all
+candidates. The candidates are raced down in stages to a single best
+candidate by repeatedly increasing the budget by a factor of \code{eta} and
+promoting only the best \code{1 / eta } fraction to the next stage. This means
+promising hyperparameter configurations are allocated a higher budget overall
+and lower performing ones are discarded early on.
 
-Hyperparameter Tuning with Successive Halving
+The budget hyperparameter must be tagged with \code{"budget"} in the search space.
+The minimum budget (\code{r_min}) which is allocated in the base stage, is set by
+the lower bound of the budget parameter. The upper bound  defines the maximum
+budget (\code{r_max}) which is allocated to the candidates in the last stage. The
+number of stages is computed so that each candidate in base stage is
+allocated the minimum budget and the candidates in the last stage are not
+evaluated on more than the maximum budget. The following table is the stage
+layout for \code{eta = 2}, \code{r_min = 1} and \code{r_max = 8}.\tabular{rrr}{
+   \code{i} \tab \code{n_i} \tab \code{r_i} \cr
+   0 \tab 8 \tab 1 \cr
+   1 \tab 4 \tab 2 \cr
+   2 \tab 2 \tab 4 \cr
+   3 \tab 1 \tab 8 \cr
+}
+
+
+\code{i} is stage number, \code{n_i} is the number of configurations and \code{r_i} is the
+budget allocated to a single configuration.
 }
 \section{Parameters}{
 
@@ -89,6 +113,34 @@ Hyperband uses a logger (as implemented in \CRANpkg{lgr}) from package
 Use \code{lgr::get_logger("bbotk")} to access and control the logger.
 }
 
+\examples{
+if(requireNamespace("xgboost")) {
+  library(mlr3learners)
+
+  # define hyperparameter and budget parameter
+  search_space = ps(
+    nrounds = p_int(lower = 1, upper = 16, tags = "budget"),
+    eta = p_dbl(lower = 0, upper = 1),
+    booster = p_fct(levels = c("gbtree", "gblinear", "dart"))
+  )
+
+  \donttest{
+  # hyperparameter tuning on the pima indians diabetes data set
+  instance = tune(
+    method = "successive_halving",
+    task = tsk("pima"),
+    learner = lrn("classif.xgboost", eval_metric = "logloss"),
+    resampling = rsmp("cv", folds = 3),
+    measures = msr("classif.ce"),
+    search_space = search_space,
+    term_evals = 100
+  )
+
+  # best performing hyperparameter configuration
+  instance$result
+  }
+}
+}
 \section{Super classes}{
 \code{\link[mlr3tuning:Tuner]{mlr3tuning::Tuner}} -> \code{\link[mlr3tuning:TunerFromOptimizer]{mlr3tuning::TunerFromOptimizer}} -> \code{TunerSuccessiveHalving}
 }

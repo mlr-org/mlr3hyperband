@@ -3,6 +3,7 @@
 #' @name mlr_tuners_successive_halving
 #' @templateVar id successive_halving
 #'
+#' @description
 #' `TunerSuccessiveHalving` class that implements the successive halving
 #' algorithm (SHA). SHA randomly samples `n` candidate
 #' hyperparameter configurations and allocates a minimum budget (`r_min`) to all
