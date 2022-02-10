@@ -1,28 +1,30 @@
 # mlr3hyperband 0.3.0.9000
 
-* feat: `adjust_minimum_budget` flag in `OptimizerSuccessiveHalving` to use
-  maximum budget in last stage.
-* feat: `repeats` parameter is replaced by `repetitions` which allows to specify
-  the exact number of repetitions.
+* feat: New `adjust_minimum_budget` flag in  `OptimizerSuccessiveHalving`. The
+  minimum budget is adjusted in the base stage to use the maximum budget in last
+  stage.
+* feat: New `repetitions` parameter to specify the exact number of repetitions.
+  Replaced the `repeats` parameter.
 
 # mlr3hyperband 0.3.0
 
-* Implements parallel evaluation of stages.
-* Number of repetitions can be set with the `repeats` parameter.
-* Fixed maximization bug.
+* feat: `TunerHyperband` evaluates configurations of same budget across
+  brackets in parallel now.
+* feat: New `repeats` parameter to repeat runs of successive halving and
+  hyperband until termination.
+* fix: Bug where maximization measures were minimized.
 
 # mlr3hyperband 0.2.0
 
-* Adds `OptimizerHyperband`.
-* Adds `OptimizerSuccessiveHalving`.
+* feat: New `OptimizerHyperband` and `OptimizerSuccessiveHalving` optimizers.
 
 # mlr3hyperband 0.1.2
 
-* Internal changes only.
+* refactor: internal changes only.
 
 # mlr3hyperband 0.1.1
 
-* Fixed dependency on `emoa`.
+* fix: dependency on `emoa`.
 
 # mlr3hyperband 0.1.0
 
