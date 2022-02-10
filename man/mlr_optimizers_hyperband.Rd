@@ -3,7 +3,7 @@
 \name{mlr_optimizers_hyperband}
 \alias{mlr_optimizers_hyperband}
 \alias{OptimizerHyperband}
-\title{Optimizer using the Hyperband algorithm}
+\title{Optimizer Using the Hyperband Algorithm}
 \source{
 Li L, Jamieson K, DeSalvo G, Rostamizadeh A, Talwalkar A (2018).
 \dQuote{Hyperband: A Novel Bandit-Based Approach to Hyperparameter Optimization.}
@@ -82,7 +82,7 @@ Repetition index. Start counting at 1.
 }
 }
 
-\section{Custom sampler}{
+\section{Custom Sampler}{
 
 Hyperband supports custom \link[paradox:Sampler]{paradox::Sampler} object for initial
 configurations in each bracket.

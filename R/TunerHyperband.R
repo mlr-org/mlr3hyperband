@@ -1,14 +1,14 @@
-#' @title Tuner using the Hyperband algorithm
+#' @title Tuner Using the Hyperband Algorithm
 #'
 #' @name mlr_tuners_hyperband
 #' @templateVar id hyperband
 #'
 #' @description
-#' `TunerHyperband` class that implements hyperband tuning (HBX). HBX
+#' `TunerHyperband` class that implements hyperband tuning (HB). HB
 #' repeatedly calls SHA ([TunerSuccessiveHalving]) with different numbers of
 #' starting configurations. A larger number of starting configurations
 #' corresponds to a smaller budget allocated in the base stage. Each run of SHA
-#' within HBX is called a bracket. HBX considers `s_max + 1` brackets with
+#' within HB is called a bracket. HB considers `s_max + 1` brackets with
 #' `s_max = floor(log(r_max / r_min, eta)`. The most explorative bracket
 #' `s = s_max` constructs `s_max + 1` stages and allocates the minimum budget
 #' (`r_min`) in the base stage. The minimum budget is increased in each bracket
@@ -32,6 +32,8 @@
 #' explorative bracket, is set by the lower bound of the budget parameter. The
 #' upper bound defines the maximum budget (`r_max`) which which is allocated to
 #' the candidates in the last stages.
+#'
+#' @template section_subsample_budget
 #'
 #' @templateVar id hyperband
 #' @template section_dictionary_optimizers
@@ -64,16 +66,6 @@
 #'     The stages of each bracket. Starts counting at 0.
 #'   * `repetition` (`integer(1))`\cr
 #'     Repetition index. Start counting at 1.
-#'
-#' @section Hyperband without learner budget:
-#' Thanks to \CRANpkg{mlr3pipelines}, it is possible to use hyperband in
-#' combination with learners lacking a natural budget parameter. For example,
-#' any [mlr3::Learner] can be augmented with a [mlr3pipelines::PipeOp]
-#' operator such as [mlr3pipelines::PipeOpSubsample]. With the
-#' subsampling rate as budget parameter, the resulting
-#' [mlr3pipelines::GraphLearner] is fitted on small proportions of
-#' the [mlr3::Task] in the first brackets, and on the complete Task in
-#' last brackets. See examples for some code.
 #'
 #' @template section_custom_sampler
 #' @template section_progress_bars

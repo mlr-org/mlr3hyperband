@@ -1,4 +1,4 @@
-#' @section Custom sampler:
+#' @section Custom Sampler:
 #' Hyperband supports custom [paradox::Sampler] object for initial
 #' configurations in each bracket.
 #' A custom sampler may look like this (the full example is given in the

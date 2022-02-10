@@ -1,4 +1,4 @@
-#' @title Optimizer using the Hyperband algorithm
+#' @title Optimizer Using the Hyperband Algorithm
 #'
 #' @name mlr_optimizers_hyperband
 #' @templateVar id hyperband

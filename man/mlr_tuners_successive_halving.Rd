@@ -39,6 +39,15 @@ layout for \code{eta = 2}, \code{r_min = 1} and \code{r_max = 8}.\tabular{rrr}{
 \code{i} is stage number, \code{n_i} is the number of configurations and \code{r_i} is the
 budget allocated to a single configuration.
 }
+\section{Subsample Budget}{
+
+If the learner lacks a natural budget parameter,
+\link[mlr3pipelines:mlr_pipeops_subsample]{mlr3pipelines::PipeOpSubsample} can be applied to use the subsampling rate
+as budget parameter. The resulting \link[mlr3pipelines:mlr_learners_graph]{mlr3pipelines::GraphLearner} is fitted on
+small proportions of the \link[mlr3:Task]{mlr3::Task} in the first stage, and on the complete
+task in last stage.
+}
+
 \section{Parameters}{
 
 \describe{
@@ -77,7 +86,7 @@ Repetition index. Start counting at 1.
 }
 }
 
-\section{Custom sampler}{
+\section{Custom Sampler}{
 
 Hyperband supports custom \link[paradox:Sampler]{paradox::Sampler} object for initial
 configurations in each bracket.

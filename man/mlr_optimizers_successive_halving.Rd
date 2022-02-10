@@ -75,7 +75,7 @@ Repetition index. Start counting at 1.
 }
 }
 
-\section{Custom sampler}{
+\section{Custom Sampler}{
 
 Hyperband supports custom \link[paradox:Sampler]{paradox::Sampler} object for initial
 configurations in each bracket.

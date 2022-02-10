@@ -32,6 +32,8 @@
 #' `i` is stage number, `n_i` is the number of configurations and `r_i` is the
 #' budget allocated to a single configuration.
 #'
+#' @template section_subsample_budget
+#'
 #' @section Parameters:
 #' \describe{
 #' \item{`n`}{`integer(1)`\cr

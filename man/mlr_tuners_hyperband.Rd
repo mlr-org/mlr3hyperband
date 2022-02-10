@@ -3,7 +3,7 @@
 \name{mlr_tuners_hyperband}
 \alias{mlr_tuners_hyperband}
 \alias{TunerHyperband}
-\title{Tuner using the Hyperband algorithm}
+\title{Tuner Using the Hyperband Algorithm}
 \source{
 Li L, Jamieson K, DeSalvo G, Rostamizadeh A, Talwalkar A (2018).
 \dQuote{Hyperband: A Novel Bandit-Based Approach to Hyperparameter Optimization.}
@@ -11,11 +11,11 @@ Li L, Jamieson K, DeSalvo G, Rostamizadeh A, Talwalkar A (2018).
 \url{https://jmlr.org/papers/v18/16-558.html}.
 }
 \description{
-\code{TunerHyperband} class that implements hyperband tuning (HBX). HBX
+\code{TunerHyperband} class that implements hyperband tuning (HB). HB
 repeatedly calls SHA (\link{TunerSuccessiveHalving}) with different numbers of
 starting configurations. A larger number of starting configurations
 corresponds to a smaller budget allocated in the base stage. Each run of SHA
-within HBX is called a bracket. HBX considers \code{s_max + 1} brackets with
+within HB is called a bracket. HB considers \code{s_max + 1} brackets with
 \verb{s_max = floor(log(r_max / r_min, eta)}. The most explorative bracket
 \code{s = s_max} constructs \code{s_max + 1} stages and allocates the minimum budget
 (\code{r_min}) in the base stage. The minimum budget is increased in each bracket
@@ -40,6 +40,15 @@ explorative bracket, is set by the lower bound of the budget parameter. The
 upper bound defines the maximum budget (\code{r_max}) which which is allocated to
 the candidates in the last stages.
 }
+\section{Subsample Budget}{
+
+If the learner lacks a natural budget parameter,
+\link[mlr3pipelines:mlr_pipeops_subsample]{mlr3pipelines::PipeOpSubsample} can be applied to use the subsampling rate
+as budget parameter. The resulting \link[mlr3pipelines:mlr_learners_graph]{mlr3pipelines::GraphLearner} is fitted on
+small proportions of the \link[mlr3:Task]{mlr3::Task} in the first stage, and on the complete
+task in last stage.
+}
+
 \section{Dictionary}{
 
 This \link{Optimizer} can be instantiated via the \link[mlr3misc:Dictionary]{dictionary}
@@ -83,19 +92,7 @@ Repetition index. Start counting at 1.
 }
 }
 
-\section{Hyperband without learner budget}{
-
-Thanks to \CRANpkg{mlr3pipelines}, it is possible to use hyperband in
-combination with learners lacking a natural budget parameter. For example,
-any \link[mlr3:Learner]{mlr3::Learner} can be augmented with a \link[mlr3pipelines:PipeOp]{mlr3pipelines::PipeOp}
-operator such as \link[mlr3pipelines:mlr_pipeops_subsample]{mlr3pipelines::PipeOpSubsample}. With the
-subsampling rate as budget parameter, the resulting
-\link[mlr3pipelines:mlr_learners_graph]{mlr3pipelines::GraphLearner} is fitted on small proportions of
-the \link[mlr3:Task]{mlr3::Task} in the first brackets, and on the complete Task in
-last brackets. See examples for some code.
-}
-
-\section{Custom sampler}{
+\section{Custom Sampler}{
 
 Hyperband supports custom \link[paradox:Sampler]{paradox::Sampler} object for initial
 configurations in each bracket.
