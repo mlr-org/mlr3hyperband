@@ -107,7 +107,7 @@ learner = lrn("classif.rpart",
 # create graph learner with subsampling
 graph_learner = as_learner(po("subsample") %>>% learner)
 
-# tag budget parameter
+# increase subsample rate from ~ 3.4% to 100%
 graph_learner$param_set$values$subsample.frac = to_tune(p_dbl(3^-3, 1, tags = "budget"))
 
 # set parallel backend
@@ -145,7 +145,8 @@ objective = ObjectiveRFun$new(
 )
 
 # optimize branin function with hyperband
-result = bb_optimize(objective, method = "hyperband", search_space = search_space, term_evals = NULL, eta = 2)
+result = bb_optimize(objective, method = "hyperband", search_space = search_space,
+  term_evals = NULL, eta = 2)
 
 # optimized parameters
 result$par
