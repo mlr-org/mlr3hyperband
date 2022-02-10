@@ -1,5 +1,4 @@
-# mlr3hyperband 0.3.0.9000
-
+# mlr3hyperband 0.4.0
 * feat: New `adjust_minimum_budget` flag in  `OptimizerSuccessiveHalving`. The
   minimum budget is adjusted in the base stage to use the maximum budget in last
   stage.
@@ -20,11 +19,11 @@
 
 # mlr3hyperband 0.1.2
 
-* refactor: internal changes only.
+* refactor: Make xgboost conditionally in examples.
 
 # mlr3hyperband 0.1.1
 
-* fix: dependency on `emoa`.
+* fix: Dependency on `emoa`.
 
 # mlr3hyperband 0.1.0
 
