@@ -280,3 +280,7 @@ test_that("TunerSuccessiveHalving works with r_max < n and adjust minimum budget
 
   test_tuner_successive_halving(n = 16, eta = 2, learner, adjust_minimum_budget = TRUE)
 })
+
+test_that("TunerSuccessiveHalving man exists", {
+  expect_man_exists(tnr("successive_halving")$man)
+})

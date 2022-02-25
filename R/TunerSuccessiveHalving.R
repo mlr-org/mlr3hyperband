@@ -91,6 +91,7 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
       super$initialize(
         optimizer = OptimizerSuccessiveHalving$new()
       )
+      private$.man = "mlr3hyperband::mlr_tuners_hyperband"
     }
   )
 )

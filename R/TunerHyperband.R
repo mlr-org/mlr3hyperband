@@ -93,6 +93,7 @@ TunerHyperband = R6Class("TunerHyperband",
       super$initialize(
         optimizer = OptimizerHyperband$new()
       )
+      private$.man = "mlr3hyperband::mlr_tuners_hyperband"
     }
   )
 )

@@ -238,3 +238,7 @@ test_that("TunerHyperband works with infinite repetitions", {
 
   expect_equal(nrow(instance$archive$data), 160)
 })
+
+test_that("TunerHyperband man exists", {
+  expect_man_exists(tnr("hyperband")$man)
+})
