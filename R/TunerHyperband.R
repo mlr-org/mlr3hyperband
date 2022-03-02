@@ -91,7 +91,8 @@ TunerHyperband = R6Class("TunerHyperband",
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
       super$initialize(
-        optimizer = OptimizerHyperband$new()
+        optimizer = OptimizerHyperband$new(),
+        man = "mlr3hyperband::mlr_tuners_hyperband"
       )
     }
   )
