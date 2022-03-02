@@ -92,6 +92,7 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
         param_set = param_set,
         properties = c("dependencies", "single-crit", "multi-crit"),
         packages = c("mlr3hyperband", "emoa"),
+        label = "Successive Halving",
         man = "mlr3hyperband::mlr_optimizers_successive_halving"
       )
     }

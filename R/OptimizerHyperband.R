@@ -93,6 +93,7 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
         param_set = param_set,
         properties = c("dependencies", "single-crit", "multi-crit"),
         packages = "mlr3hyperband",
+        label = "Hyperband",
         man = "mlr3hyperband::mlr_optimizers_hyperband"
       )
     }

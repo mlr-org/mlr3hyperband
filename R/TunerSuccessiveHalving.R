@@ -89,9 +89,9 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
       super$initialize(
-        optimizer = OptimizerSuccessiveHalving$new()
+        optimizer = OptimizerSuccessiveHalving$new(),
+        man = "mlr3hyperband::mlr_tuners_hyperband"
       )
-      private$.man = "mlr3hyperband::mlr_tuners_hyperband"
     }
   )
 )
