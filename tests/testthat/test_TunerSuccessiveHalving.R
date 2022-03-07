@@ -112,7 +112,7 @@ test_that("TunerSuccessiveHalving errors if not enough parameters are sampled", 
     resampling = rsmp("cv", folds = 3),
     measures = msr("classif.ce"),
     sampler = sampler),
-    regexp = "Must be equal to set",
+    regexp = "set",
     fixed = TRUE
   )
 })
@@ -135,7 +135,7 @@ test_that("TunerSuccessiveHalving errors if budget parameter is sampled", {
     resampling = rsmp("cv", folds = 3),
     measures = msr("classif.ce"),
     sampler = sampler),
-    regexp = "Must be equal to set",
+    regexp = "set",
     fixed = TRUE
   )
 })
@@ -152,7 +152,7 @@ test_that("TunerSuccessiveHalving errors if budget parameter is not numeric", {
     learner = learner,
     resampling = rsmp("cv", folds = 3),
     measures = msr("classif.ce")),
-    regexp = "Must be element of set",
+    regexp = "set",
     fixed = TRUE
   )
 })
@@ -169,7 +169,7 @@ test_that("TunerSuccessiveHalving errors if multiple budget parameters are set",
     learner = learner,
     resampling = rsmp("cv", folds = 3),
     measures = msr("classif.ce")),
-    regexp = "Exactly one parameter must be tagged ",
+    regexp = "tagged ",
     fixed = TRUE
   )
 })
