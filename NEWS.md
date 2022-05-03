@@ -1,5 +1,11 @@
 # mlr3hyperband 0.4.0
 
+* feat: `Optimizer` and `Tuner` objects have the field `$id` now.
+* feat: `Optimizer` and `Tuner` objects have the optional field `$label` now.
+* feat: New `$help()` method which opens the manual page of `Optimizer` and `Tuner` objects.
+
+# mlr3hyperband 0.4.0
+
 * feat: New `adjust_minimum_budget` flag in  `OptimizerSuccessiveHalving`. The
   minimum budget is adjusted in the base stage to use the maximum budget in last
   stage.
