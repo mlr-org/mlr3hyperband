@@ -1,4 +1,4 @@
-# mlr3hyperband 0.4.0
+# mlr3hyperband 0.4.1
 
 * feat: `Optimizer` and `Tuner` objects have the field `$id` now.
 * feat: `Optimizer` and `Tuner` objects have the optional field `$label` now.
