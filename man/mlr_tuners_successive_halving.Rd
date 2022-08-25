@@ -91,13 +91,15 @@ Repetition index. Start counting at 1.
 Hyperband supports custom \link[paradox:Sampler]{paradox::Sampler} object for initial
 configurations in each bracket.
 A custom sampler may look like this (the full example is given in the
-\emph{examples} section):\preformatted{# - beta distribution with alpha = 2 and beta = 5
+\emph{examples} section):
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{# - beta distribution with alpha = 2 and beta = 5
 # - categorical distribution with custom probabilities
 sampler = SamplerJointIndep$new(list(
   Sampler1DRfun$new(params[[2]], function(n) rbeta(n, 2, 5)),
   Sampler1DCateg$new(params[[3]], prob = c(0.2, 0.3, 0.5))
 ))
-}
+}\if{html}{\out{</div>}}
 }
 
 \section{Progress Bars}{
@@ -156,22 +158,23 @@ if(requireNamespace("xgboost")) {
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{TunerSuccessiveHalving$new()}}
-\item \href{#method-clone}{\code{TunerSuccessiveHalving$clone()}}
+\item \href{#method-TunerSuccessiveHalving-new}{\code{TunerSuccessiveHalving$new()}}
+\item \href{#method-TunerSuccessiveHalving-clone}{\code{TunerSuccessiveHalving$clone()}}
 }
 }
-\if{html}{
-\out{<details open ><summary>Inherited methods</summary>}
-\itemize{
-\item \out{<span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="format">}\href{../../mlr3tuning/html/Tuner.html#method-format}{\code{mlr3tuning::Tuner$format()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="print">}\href{../../mlr3tuning/html/Tuner.html#method-print}{\code{mlr3tuning::Tuner$print()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="mlr3tuning" data-topic="TunerFromOptimizer" data-id="optimize">}\href{../../mlr3tuning/html/TunerFromOptimizer.html#method-optimize}{\code{mlr3tuning::TunerFromOptimizer$optimize()}}\out{</span>}
-}
-\out{</details>}
-}
+\if{html}{\out{
+<details open><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="format"><a href='../../mlr3tuning/html/Tuner.html#method-Tuner-format'><code>mlr3tuning::Tuner$format()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="help"><a href='../../mlr3tuning/html/Tuner.html#method-Tuner-help'><code>mlr3tuning::Tuner$help()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="print"><a href='../../mlr3tuning/html/Tuner.html#method-Tuner-print'><code>mlr3tuning::Tuner$print()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="mlr3tuning" data-topic="TunerFromOptimizer" data-id="optimize"><a href='../../mlr3tuning/html/TunerFromOptimizer.html#method-TunerFromOptimizer-optimize'><code>mlr3tuning::TunerFromOptimizer$optimize()</code></a></span></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-TunerSuccessiveHalving-new"></a>}}
+\if{latex}{\out{\hypertarget{method-TunerSuccessiveHalving-new}{}}}
 \subsection{Method \code{new()}}{
 Creates a new instance of this \link[R6:R6Class]{R6} class.
 \subsection{Usage}{
@@ -180,8 +183,8 @@ Creates a new instance of this \link[R6:R6Class]{R6} class.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-TunerSuccessiveHalving-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-TunerSuccessiveHalving-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{
