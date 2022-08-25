@@ -1,3 +1,5 @@
+# mlr3hyperband 0.4.2.9000
+
 # mlr3hyperband 0.4.2
 
 * docs: Re-generate rd files with valid html.
