@@ -1,3 +1,7 @@
+# mlr3hyperband 0.4.2
+
+* docs: Re-generate rd files with valid html.
+
 # mlr3hyperband 0.4.1
 
 * feat: `Optimizer` and `Tuner` objects have the field `$id` now.
