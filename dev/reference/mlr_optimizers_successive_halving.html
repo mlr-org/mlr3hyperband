@@ -298,81 +298,81 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># optimize branin function</span></span></span>
 <span class="r-in"><span><span class="va">optimizer</span><span class="op">$</span><span class="fu">optimize</span><span class="op">(</span><span class="va">instance</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          x1       x2 fidelity  x_domain      y</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1: 2.854345 2.292514     0.16 &lt;list[3]&gt; 1.0096</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           x1      x2 fidelity  x_domain        y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1: -4.343396 14.1528     0.16 &lt;list[3]&gt; 6.687028</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># best scoring evaluation</span></span></span>
 <span class="r-in"><span><span class="va">instance</span><span class="op">$</span><span class="va">result</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          x1       x2 fidelity  x_domain      y</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1: 2.854345 2.292514     0.16 &lt;list[3]&gt; 1.0096</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           x1      x2 fidelity  x_domain        y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1: -4.343396 14.1528     0.16 &lt;list[3]&gt; 6.687028</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># all evaluations</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/as.data.table.html" class="external-link">as.data.table</a></span><span class="op">(</span><span class="va">instance</span><span class="op">$</span><span class="va">archive</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             x1         x2 fidelity stage repetition          y</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1: -3.6589132  2.8721078     0.01     0          1  89.176605</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2: -3.3915162  0.5894397     0.01     0          1 125.141834</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3: -4.2677178 14.8120816     0.01     0          1   8.030547</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:  0.2004215  6.0896784     0.01     0          1  19.575918</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:  9.8963943  1.5668575     0.01     0          1  71.356253</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:  4.7153280  7.3550596     0.01     0          1  77.081476</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7:  2.8543453  2.2925137     0.01     0          1   1.138731</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:  2.6121435  4.6450859     0.01     0          1   8.454284</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:  7.3197795  9.6054251     0.01     0          1 200.882775</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10: -4.4580868  0.2961199     0.01     0          1 187.118906</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11: -2.0089612 10.4559530     0.01     0          1   7.218276</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:  8.4813810  8.1372189     0.01     0          1 185.655083</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13:  5.5531673 12.0802473     0.01     0          1 212.807185</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14: -2.3981240 13.1629243     0.01     0          1  12.997035</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15:  9.3605348 14.3857310     0.01     0          1 426.374865</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16:  6.4405468  7.2515614     0.01     0          1 124.544682</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17:  2.8543453  2.2925137     0.02     1          1   1.129193</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18: -2.0089612 10.4559530     0.02     1          1   7.209116</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19: -4.2677178 14.8120816     0.02     1          1   7.977330</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20:  2.6121435  4.6450859     0.02     1          1   8.418897</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21: -2.3981240 13.1629243     0.02     1          1  12.960577</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22:  0.2004215  6.0896784     0.02     1          1  19.575885</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23:  9.8963943  1.5668575     0.02     1          1  69.728070</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24:  4.7153280  7.3550596     0.02     1          1  76.717834</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25:  2.8543453  2.2925137     0.04     2          1   1.110515</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26: -2.0089612 10.4559530     0.04     2          1   7.190895</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27: -4.2677178 14.8120816     0.04     2          1   7.872886</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28:  2.6121435  4.6450859     0.04     2          1   8.348403</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29:  2.8543453  2.2925137     0.08     3          1   1.074753</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30: -2.0089612 10.4559530     0.08     3          1   7.154843</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31:  2.8543453  2.2925137     0.16     4          1   1.009600</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             x1         x2 fidelity stage repetition          y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             x1        x2 fidelity stage repetition          y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:  5.1957999 13.191319     0.01     0          1 228.963135</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:  3.6852832  9.902341     0.01     0          1  89.349132</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3: -0.7098374 13.855771     0.01     0          1  62.318012</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:  5.5662919  1.583997     0.01     0          1  29.543225</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:  0.3718465  5.991929     0.01     0          1  19.281784</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:  5.4044093 10.724439     0.01     0          1 170.985296</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7: -4.5528028  3.874719     0.01     0          1 108.413266</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:  2.1203646 10.271673     0.01     0          1  61.394193</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9: -3.8466625  7.978904     0.01     0          1  23.754390</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:  8.7421709 12.572392     0.01     0          1 333.029893</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11: -0.4679852 14.117254     0.01     0          1  72.825007</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:  3.1169441  6.152897     0.01     0          1  23.637203</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:  4.7964134  5.755525     0.01     0          1  55.626775</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14: -4.0547839  5.696948     0.01     0          1  56.732810</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15: -4.3433960 14.152803     0.01     0          1   6.986502</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:  2.1236298  4.252099     0.01     0          1   7.195445</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17: -4.3433960 14.152803     0.02     1          1   6.961555</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18:  2.1236298  4.252099     0.02     1          1   7.181973</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19:  0.3718465  5.991929     0.02     1          1  19.281623</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20:  3.1169441  6.152897     0.02     1          1  23.543634</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21: -3.8466625  7.978904     0.02     1          1  23.890440</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22:  5.5662919  1.583997     0.02     1          1  29.326816</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23:  4.7964134  5.755525     0.02     1          1  55.319266</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24: -4.0547839  5.696948     0.02     1          1  56.971568</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25: -4.3433960 14.152803     0.04     2          1   6.913795</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26:  2.1236298  4.252099     0.04     2          1   7.155152</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27:  0.3718465  5.991929     0.04     2          1  19.281303</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28:  3.1169441  6.152897     0.04     2          1  23.357061</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29: -4.3433960 14.152803     0.08     3          1   6.826818</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30:  2.1236298  4.252099     0.08     3          1   7.101998</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31: -4.3433960 14.152803     0.16     4          1   6.687028</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             x1        x2 fidelity stage repetition          y</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               timestamp batch_nr x_domain_x1 x_domain_x2 x_domain_fidelity</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1: 2022-10-23 04:40:25        1  -3.6589132   2.8721078              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2: 2022-10-23 04:40:25        1  -3.3915162   0.5894397              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3: 2022-10-23 04:40:25        1  -4.2677178  14.8120816              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4: 2022-10-23 04:40:25        1   0.2004215   6.0896784              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5: 2022-10-23 04:40:25        1   9.8963943   1.5668575              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6: 2022-10-23 04:40:25        1   4.7153280   7.3550596              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7: 2022-10-23 04:40:25        1   2.8543453   2.2925137              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8: 2022-10-23 04:40:25        1   2.6121435   4.6450859              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9: 2022-10-23 04:40:25        1   7.3197795   9.6054251              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10: 2022-10-23 04:40:25        1  -4.4580868   0.2961199              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11: 2022-10-23 04:40:25        1  -2.0089612  10.4559530              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12: 2022-10-23 04:40:25        1   8.4813810   8.1372189              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13: 2022-10-23 04:40:25        1   5.5531673  12.0802473              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14: 2022-10-23 04:40:25        1  -2.3981240  13.1629243              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15: 2022-10-23 04:40:25        1   9.3605348  14.3857310              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16: 2022-10-23 04:40:25        1   6.4405468   7.2515614              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17: 2022-10-23 04:40:25        2   2.8543453   2.2925137              0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18: 2022-10-23 04:40:25        2  -2.0089612  10.4559530              0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19: 2022-10-23 04:40:25        2  -4.2677178  14.8120816              0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20: 2022-10-23 04:40:25        2   2.6121435   4.6450859              0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21: 2022-10-23 04:40:25        2  -2.3981240  13.1629243              0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22: 2022-10-23 04:40:25        2   0.2004215   6.0896784              0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23: 2022-10-23 04:40:25        2   9.8963943   1.5668575              0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24: 2022-10-23 04:40:25        2   4.7153280   7.3550596              0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25: 2022-10-23 04:40:25        3   2.8543453   2.2925137              0.04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26: 2022-10-23 04:40:25        3  -2.0089612  10.4559530              0.04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27: 2022-10-23 04:40:25        3  -4.2677178  14.8120816              0.04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28: 2022-10-23 04:40:25        3   2.6121435   4.6450859              0.04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29: 2022-10-23 04:40:25        4   2.8543453   2.2925137              0.08</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30: 2022-10-23 04:40:25        4  -2.0089612  10.4559530              0.08</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31: 2022-10-23 04:40:25        5   2.8543453   2.2925137              0.16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1: 2022-10-24 04:56:10        1   5.1957999   13.191319              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2: 2022-10-24 04:56:10        1   3.6852832    9.902341              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3: 2022-10-24 04:56:10        1  -0.7098374   13.855771              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4: 2022-10-24 04:56:10        1   5.5662919    1.583997              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5: 2022-10-24 04:56:10        1   0.3718465    5.991929              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6: 2022-10-24 04:56:10        1   5.4044093   10.724439              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7: 2022-10-24 04:56:10        1  -4.5528028    3.874719              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8: 2022-10-24 04:56:10        1   2.1203646   10.271673              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9: 2022-10-24 04:56:10        1  -3.8466625    7.978904              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10: 2022-10-24 04:56:10        1   8.7421709   12.572392              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11: 2022-10-24 04:56:10        1  -0.4679852   14.117254              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12: 2022-10-24 04:56:10        1   3.1169441    6.152897              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13: 2022-10-24 04:56:10        1   4.7964134    5.755525              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14: 2022-10-24 04:56:10        1  -4.0547839    5.696948              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15: 2022-10-24 04:56:10        1  -4.3433960   14.152803              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16: 2022-10-24 04:56:10        1   2.1236298    4.252099              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17: 2022-10-24 04:56:10        2  -4.3433960   14.152803              0.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18: 2022-10-24 04:56:10        2   2.1236298    4.252099              0.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19: 2022-10-24 04:56:10        2   0.3718465    5.991929              0.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20: 2022-10-24 04:56:10        2   3.1169441    6.152897              0.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21: 2022-10-24 04:56:10        2  -3.8466625    7.978904              0.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22: 2022-10-24 04:56:10        2   5.5662919    1.583997              0.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23: 2022-10-24 04:56:10        2   4.7964134    5.755525              0.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24: 2022-10-24 04:56:10        2  -4.0547839    5.696948              0.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25: 2022-10-24 04:56:10        3  -4.3433960   14.152803              0.04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26: 2022-10-24 04:56:10        3   2.1236298    4.252099              0.04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27: 2022-10-24 04:56:10        3   0.3718465    5.991929              0.04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28: 2022-10-24 04:56:10        3   3.1169441    6.152897              0.04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29: 2022-10-24 04:56:10        4  -4.3433960   14.152803              0.08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30: 2022-10-24 04:56:10        4   2.1236298    4.252099              0.08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31: 2022-10-24 04:56:10        5  -4.3433960   14.152803              0.16</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               timestamp batch_nr x_domain_x1 x_domain_x2 x_domain_fidelity</span>
 </code></pre></div>
     </div>
