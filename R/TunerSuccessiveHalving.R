@@ -70,9 +70,8 @@
 #' @template section_progress_bars
 #'
 #' @section Parallelization:
-#' The hyperparameter configurations of one stage are evaluated in parallel with
-#' the \CRANpkg{future} package. To select a parallel backend, use
-#' [future::plan()].
+#' The hyperparameter configurations of one stage are evaluated in parallel with the \CRANpkg{future} package.
+#' To select a parallel backend, use the `plan()` function of the \CRANpkg{future} package.
 #'
 #' @template section_logging
 #'

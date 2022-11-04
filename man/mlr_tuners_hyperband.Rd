@@ -120,10 +120,9 @@ combined with a \link{Terminator}. Simply wrap the function in
 
 \section{Parallelization}{
 
-This hyperband implementation evaluates hyperparameter configurations of
-equal budget across brackets in one batch. For example, all configurations
-in stage 1 of bracket 3 and stage 0 of bracket 2 in one batch. To select a
-parallel backend, use \code{\link[future:plan]{future::plan()}}.
+This hyperband implementation evaluates hyperparameter configurations of equal budget across brackets in one batch.
+For example, all configurations in stage 1 of bracket 3 and stage 0 of bracket 2 in one batch.
+To select a parallel backend, use the \code{plan()} function of the \CRANpkg{future} package.
 }
 
 \section{Logging}{
