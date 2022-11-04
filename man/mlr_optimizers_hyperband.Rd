@@ -126,9 +126,12 @@ search_space = domain = ps(
   fidelity = p_dbl(1e-2, 1, tags = "budget")
 )
 
-# objective with modified branin function, see `bbotk::branin()`
+# Branin function with fidelity, see `bbotk::branin()`
+fun = function(xs) branin_wu(xs[["x1"]], xs[["x2"]], xs[["fidelity"]])
+
+# create objective
 objective = ObjectiveRFun$new(
-  fun = branin,
+  fun = fun,
   domain = domain,
   codomain = ps(y = p_dbl(tags = "minimize"))
 )
