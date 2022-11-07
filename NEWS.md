@@ -1,3 +1,5 @@
+# mlr3hyperband 0.4.3.9000
+
 # mlr3hyperband 0.4.3
 
 * docs: Examples use `branin_wu()` function now.
