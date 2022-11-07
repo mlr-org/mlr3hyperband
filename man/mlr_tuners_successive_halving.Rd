@@ -112,9 +112,8 @@ combined with a \link{Terminator}. Simply wrap the function in
 
 \section{Parallelization}{
 
-The hyperparameter configurations of one stage are evaluated in parallel with
-the \CRANpkg{future} package. To select a parallel backend, use
-\code{\link[future:plan]{future::plan()}}.
+The hyperparameter configurations of one stage are evaluated in parallel with the \CRANpkg{future} package.
+To select a parallel backend, use the \code{plan()} function of the \CRANpkg{future} package.
 }
 
 \section{Logging}{
