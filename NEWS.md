@@ -1,3 +1,5 @@
+# mlr3hyperband 0.4.4.9000
+
 # mlr3hyperband 0.4.4
 
 * fix: Remove `emoa` from required packages of `OptimizerSuccessiveHalving`.
