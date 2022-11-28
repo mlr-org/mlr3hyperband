@@ -1,5 +1,5 @@
 
-# mlr3hyperband
+# mlr3hyperband <img src="man/figures/logo.png" align="right" width = "120" />
 
 Package website: [release](https://mlr3hyperband.mlr-org.com/) |
 [dev](https://mlr3hyperband.mlr-org.com/dev/)
@@ -13,28 +13,14 @@ Status](https://www.r-pkg.org/badges/version-ago/mlr3hyperband)](https://cran.r-
 [![Mattermost](https://img.shields.io/badge/chat-mattermost-orange.svg)](https://lmmisld-lmu-stats-slds.srv.mwn.de/mlr_invite/)
 <!-- badges: end -->
 
-`mlr3hyperband` extends the
-[mlr3tuning](https://mlr3tuning.mlr-org.com/) package with multifidelity
-optimization methods based on the successive halving algorithm. It
-currently provides the following optimizers for
-[bbotk](https://bbotk.mlr-org.com/) and tuner for
-[mlr3tuning](https://mlr3tuning.mlr-org.com/):
-
-  - Successive Halving (`OptimizerSuccessiveHalving` &
-    `TunerSuccessiveHalving`)
-  - Hyperband (`OptimizerSuccessiveHalving` & `TunerSuccessiveHalving`)
-
-## Resources
-
-  - mlr3book chapter on
-    [hyperband](https://mlr3book.mlr-org.com/optimization.html#hyperband)
-    and [hyperparameter
-    tuning](https://mlr3book.mlr-org.com/optimization.html#tuning).
-  - The original publications introducing the [successive
-    halving](https://arxiv.org/abs/1502.07943) and
-    [hyperband](https://arxiv.org/abs/1603.06560).
-  - Ask questions on [Stackoverflow (tag
-    \#mlr3)](https://stackoverflow.com/questions/tagged/mlr3)
+*mlr3hyperband* adds the optimization algorithms Successive Halving
+(Jamieson and Talwalkar 2016) and Hyperband (Li et al. 2018) to the
+[mlr3](https://mlr-org.com/) ecosystem. The implementation in
+mlr3hyperband features improved scheduling and parallelizes the
+evaluation of configurations. The package includes tuners for
+hyperparameter optimization in
+[mlr3tuning](https://github.com/mlr-org/mlr3tuning) and optimizers for
+black-box optimization in [bbotk](https://github.com/mlr-org/bbotk).
 
 ## Installation
 
@@ -52,13 +38,15 @@ remotes::install_github("mlr-org/mlr3hyperband")
 
 ## Examples
 
-### Basic
+We optimize the hyperparameters of an XGBoost model on the
+[Sonar](https://mlr3.mlr-org.com/reference/mlr_tasks_sonar.html) data
+set. The number of boosting rounds `nrounds` is the fidelity parameter.
+We tag this parameter with `"budget"` in the search space.
 
 ``` r
 library(mlr3hyperband)
 library(mlr3learners)
 
-# load learner, define search space and tag budget hyperparameter
 learner = lrn("classif.xgboost",
   nrounds           = to_tune(p_int(27, 243, tags = "budget")),
   eta               = to_tune(1e-4, 1, logscale = TRUE),
@@ -69,11 +57,11 @@ learner = lrn("classif.xgboost",
   alpha             = to_tune(1e-3, 1e3, logscale = TRUE),
   subsample         = to_tune(1e-1, 1)
 )
+```
 
-# set parallel backend
-future::plan("multisession")
+We use the `tune()` function to run the optimization.
 
-# hyperparameter tuning on the pima indians diabetes data set
+``` r
 instance = tune(
   method = "hyperband",
   task = tsk("pima"),
@@ -84,75 +72,66 @@ instance = tune(
 )
 ```
 
-### Subsample
+The instance contains the best-performing hyperparameter configuration.
 
 ``` r
-library(mlr3hyperband)
-library(mlr3learners)
-library(mlr3pipelines)
-
-# load learner and define search space
-learner = lrn("classif.rpart",
-  minsplit  = to_tune(2, 128, logscale = TRUE),
-  minbucket = to_tune(1, 64, logscale = TRUE),
-  cp        = to_tune(1e-04, 1e-1, logscale = TRUE)
-)
-
-# create graph learner with subsampling
-graph_learner = as_learner(po("subsample") %>>% learner)
-
-# increase subsample rate from ~ 3.4% to 100%
-graph_learner$param_set$values$subsample.frac = to_tune(p_dbl(3^-3, 1, tags = "budget"))
-
-# set parallel backend
-future::plan("multisession")
-
-# hyperparameter tuning on the spam data set
-instance = tune(
-  method = "hyperband",
-  task = tsk("spam"),
-  learner = graph_learner,
-  resampling = rsmp("cv", folds = 3),
-  measures = msr("classif.ce"),
-  eta = 3
-)
+instance$result
 ```
 
-### Quick general-purpose optimization
+    ##    nrounds       eta max_depth colsample_bytree colsample_bylevel    lambda     alpha subsample
+    ## 1:      27 -2.102951         3        0.7175178         0.5419011 -5.390012 -4.696385  0.193622
+    ## 3 variables not shown: [learner_param_vals, x_domain, classif.ce]
+
+The archive contains all evaluated hyperparameter configurations.
+Hyperband adds the `"stage"` and `"braket"`.
 
 ``` r
-library(bbotk)
-library(mlr3hyperband)
-
-# define hyperparameter and budget parameter
-search_space = domain = ps(
-  x1        = p_dbl(-5, 10),
-  x2        = p_dbl(0, 15),
-  fidelity  = p_dbl(1e-2, 1, tags = "budget")
-)
-
-# modified branin function
-objective = ObjectiveRFun$new(
-  fun = branin,
-  domain = domain,
-  codomain = ps(y = p_dbl(tags = "minimize"))
-)
-
-# optimize branin function with hyperband
-result = bb_optimize(objective, method = "hyperband", search_space = search_space,
-  term_evals = NULL, eta = 2)
-
-# optimized parameters
-result$par
+as.data.table(instance$archive)[, .(stage, bracket, classif.ce, nrounds)]
 ```
 
-    ##           x1       x2 fidelity
-    ## 1: -3.323411 11.43229   0.0625
+    ##     stage bracket classif.ce nrounds
+    ##  1:     0       2  0.3489583      27
+    ##  2:     0       2  0.2434896      27
+    ##  3:     0       2  0.2591146      27
+    ##  4:     0       2  0.3489583      27
+    ##  5:     0       2  0.5052083      27
+    ## ---                                 
+    ## 18:     0       0  0.2434896     243
+    ## 19:     0       0  0.4960938     243
+    ## 20:     0       0  0.2903646     243
+    ## 21:     2       2  0.2473958     243
+    ## 22:     1       1  0.2421875     243
+
+We fit a final model with optimized hyperparameters to make predictions
+on new data.
 
 ``` r
-# optimal outcome
-result$value
+learner$param_set$values = instance$result_learner_param_vals
+learner$train(tsk("sonar"))
 ```
 
-    ##         y
-    ## 0.6178947
+## References
+
+<div id="refs" class="references hanging-indent">
+
+<div id="ref-jamieson_2016">
+
+Jamieson, Kevin, and Ameet Talwalkar. 2016. “Non-Stochastic Best Arm
+Identification and Hyperparameter Optimization.” In *Proceedings of the
+19th International Conference on Artificial Intelligence and
+Statistics*, edited by Arthur Gretton and Christian C. Robert,
+51:240–48. Proceedings of Machine Learning Research. Cadiz, Spain:
+PMLR. <http://proceedings.mlr.press/v51/jamieson16.html>.
+
+</div>
+
+<div id="ref-li_2018">
+
+Li, Lisha, Kevin Jamieson, Giulia DeSalvo, Afshin Rostamizadeh, and
+Ameet Talwalkar. 2018. “Hyperband: A Novel Bandit-Based Approach to
+Hyperparameter Optimization.” *Journal of Machine Learning Research* 18
+(185): 1–52. <https://jmlr.org/papers/v18/16-558.html>.
+
+</div>
+
+</div>

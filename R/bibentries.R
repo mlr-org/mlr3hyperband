@@ -1,6 +1,7 @@
 #' @importFrom utils bibentry
 bibentries = c(
     li_2018 = bibentry("article",
+      key     = "li_2018",
       author  = "Lisha Li and Kevin Jamieson and Giulia DeSalvo and Afshin Rostamizadeh and Ameet Talwalkar",
       title   = "Hyperband: A Novel Bandit-Based Approach to Hyperparameter Optimization",
       journal = "Journal of Machine Learning Research",
@@ -12,6 +13,7 @@ bibentries = c(
   ),
 
     jamieson_2016 = bibentry("InProceedings",
+      key       =    "jamieson_2016",
       title     = 	 "Non-stochastic Best Arm Identification and Hyperparameter Optimization",
       author    = 	 "Kevin Jamieson and Ameet Talwalkar",
       booktitle =    "Proceedings of the 19th International Conference on Artificial Intelligence and Statistics",
