@@ -36,6 +36,17 @@ Install the development version from GitHub:
 remotes::install_github("mlr-org/mlr3hyperband")
 ```
 
+## Resources
+
+The [gallery](https://mlr-org.com/gallery-all-optimization.html)
+features a series of case studies on Hyperband.
+
+  - [Tune](https://mlr-org.com/gallery/series/2023-01-15-hyperband-xgboost/)
+    the hyperparameters of XGBoost with Hyperband
+  - Use data
+    [subsampling](https://mlr-org.com/gallery/series/2023-01-16-hyperband-subsampling/)
+    and Hyperband to optimize a support vector machine.
+
 ## Examples
 
 We optimize the hyperparameters of an XGBoost model on the
