@@ -38,8 +38,8 @@ remotes::install_github("mlr-org/mlr3hyperband")
 
 ## Resources
 
-The [gallery](https://mlr-org.com/gallery-all-optimization.html)
-features a series of case studies on Hyperband.
+The [gallery](https://mlr-org.com/gallery.html) features a series of
+case studies on Hyperband.
 
   - [Tune](https://mlr-org.com/gallery/series/2023-01-15-hyperband-xgboost/)
     the hyperparameters of XGBoost with Hyperband
