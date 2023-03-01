@@ -6,7 +6,9 @@
 \alias{mlr3hyperband-package}
 \title{mlr3hyperband: Hyperband for 'mlr3'}
 \description{
-Implements hyperband method for hyperparameter tuning. Various termination criteria can be set and combined. The class 'AutoTuner' provides a convenient way to perform nested resampling in combination with 'mlr3'. The hyperband algorithm was proposed by Lisha Li, Kevin Jamieson, Giulia DeSalvo, Afshin Rostamizadeh and Ameet Talwalkar (2018) \href{https://arxiv.org/abs/1603.06560}{arXiv:1603.06560}.
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
+Successive Halving (Jamieson and Talwalkar (2016) \href{https://arxiv.org/abs/1502.07943}{arXiv:1502.07943}) and Hyperband (Li et al. 2018 \href{https://arxiv.org/abs/1603.06560}{arXiv:1603.06560}) optimization algorithm for the mlr3 ecosystem. The implementation in mlr3hyperband features improved scheduling and parallelizes the evaluation of configurations. The package includes tuners for hyperparameter optimization in mlr3tuning and optimizers for black-box optimization in bbotk.
 }
 \seealso{
 Useful links:

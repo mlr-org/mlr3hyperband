@@ -106,12 +106,11 @@ test_that("TunerSuccessiveHalving errors if not enough parameters are sampled", 
   sampler = Sampler1DRfun$new(learner$param_set$search_space()$params[["x"]], function(n) rbeta(n, 2, 5))
 
   expect_error(tune(
-    method = "successive_halving",
+    tnr( "successive_halving", sampler = sampler),
     task = tsk("pima"),
     learner = learner,
     resampling = rsmp("cv", folds = 3),
-    measures = msr("classif.ce"),
-    sampler = sampler),
+    measures = msr("classif.ce")),
     regexp = "set",
     fixed = TRUE
   )
@@ -129,12 +128,11 @@ test_that("TunerSuccessiveHalving errors if budget parameter is sampled", {
   ))
 
   expect_error(tune(
-    method = "successive_halving",
+    tnr( "successive_halving", sampler = sampler),
     task = tsk("pima"),
     learner = learner,
     resampling = rsmp("cv", folds = 3),
-    measures = msr("classif.ce"),
-    sampler = sampler),
+    measures = msr("classif.ce")),
     regexp = "set",
     fixed = TRUE
   )
@@ -147,7 +145,7 @@ test_that("TunerSuccessiveHalving errors if budget parameter is not numeric", {
   )
 
   expect_error(tune(
-    method = "successive_halving",
+    tnr( "successive_halving"),
     task = tsk("pima"),
     learner = learner,
     resampling = rsmp("cv", folds = 3),
@@ -164,7 +162,7 @@ test_that("TunerSuccessiveHalving errors if multiple budget parameters are set",
   )
 
   expect_error(tune(
-    method = "successive_halving",
+    tnr( "successive_halving"),
     task = tsk("pima"),
     learner = learner,
     resampling = rsmp("cv", folds = 3),
@@ -210,12 +208,11 @@ test_that("TunerSuccessiveHalving works with repetitions", {
   )
 
   instance = tune(
-    method = "successive_halving",
+    tnr( "successive_halving", repetitions = 2),
     task = tsk("pima"),
     learner = learner,
     resampling = rsmp("cv", folds = 3),
-    measures = msr("classif.ce"),
-    repetitions = 2)
+    measures = msr("classif.ce"))
 
   expect_equal(nrow(instance$archive$data), 62)
 })
@@ -227,7 +224,7 @@ test_that("TunerSuccessiveHalving terminates itself", {
   )
 
   instance = tune(
-    method = "successive_halving",
+    tnr( "successive_halving"),
     task = tsk("pima"),
     learner = learner,
     resampling = rsmp("cv", folds = 3),
@@ -243,13 +240,12 @@ test_that("TunerSuccessiveHalving works with infinite repetitions", {
   )
 
   instance = tune(
-    method = "successive_halving",
+    tnr( "successive_halving", repetitions = Inf),
     task = tsk("pima"),
     learner = learner,
     resampling = rsmp("cv", folds = 3),
     measures = msr("classif.ce"),
-    term_evals = 70,
-    repetitions = Inf)
+    term_evals = 70)
 
   expect_equal(nrow(instance$archive$data), 78)
 })

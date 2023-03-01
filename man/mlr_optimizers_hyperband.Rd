@@ -115,6 +115,15 @@ Hyperband uses a logger (as implemented in \CRANpkg{lgr}) from package
 Use \code{lgr::get_logger("bbotk")} to access and control the logger.
 }
 
+\section{Resources}{
+
+The \href{https://mlr-org.com/gallery-all-optimization.html}{gallery} features a collection of case studies and demos about optimization.
+\itemize{
+\item \href{https://mlr-org.com/gallery/series/2023-01-15-hyperband-xgboost/}{Tune} the hyperparameters of XGBoost with Hyperband
+\item Use data \href{https://mlr-org.com/gallery/series/2023-01-16-hyperband-subsampling/}{subsampling} and Hyperband to optimize a support vector machine.
+}
+}
+
 \examples{
 library(bbotk)
 library(data.table)

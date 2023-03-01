@@ -1,5 +1,6 @@
 #' @title Tuner Using the Hyperband Algorithm
 #'
+#' @include OptimizerHyperband.R
 #' @name mlr_tuners_hyperband
 #' @templateVar id hyperband
 #'
@@ -76,6 +77,7 @@
 #' To select a parallel backend, use the `plan()` function of the \CRANpkg{future} package.
 #'
 #' @template section_logging
+#' @inheritSection OptimizerHyperband Resources
 #'
 #' @source
 #' `r format_bib("li_2018")`

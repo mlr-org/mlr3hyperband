@@ -12,7 +12,7 @@
 #'   \donttest{
 #'   # hyperparameter tuning on the pima indians diabetes data set
 #'   instance = tune(
-#'     method = "<%= id %>",
+#'     tnr("<%= id %>"),
 #'     task = tsk("pima"),
 #'     learner = lrn("classif.xgboost", eval_metric = "logloss"),
 #'     resampling = rsmp("cv", folds = 3),

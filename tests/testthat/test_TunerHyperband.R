@@ -89,12 +89,11 @@ test_that("TunerHyperband errors if not enough parameters are sampled", {
   sampler = Sampler1DRfun$new(learner$param_set$search_space()$params[["x"]], function(n) rbeta(n, 2, 5))
 
   expect_error(tune(
-    method = "hyperband",
+    tnr( "hyperband", sampler = sampler),
     task = tsk("pima"),
     learner = learner,
     resampling = rsmp("cv", folds = 3),
-    measures = msr("classif.ce"),
-    sampler = sampler),
+    measures = msr("classif.ce")),
     regexp = "set",
     fixed = TRUE
   )
@@ -112,12 +111,11 @@ test_that("TunerHyperband errors if budget parameter is sampled", {
   ))
 
   expect_error(tune(
-    method = "hyperband",
+    tnr( "hyperband", sampler = sampler),
     task = tsk("pima"),
     learner = learner,
     resampling = rsmp("cv", folds = 3),
-    measures = msr("classif.ce"),
-    sampler = sampler),
+    measures = msr("classif.ce")),
     regexp = "set",
     fixed = TRUE
   )
@@ -130,7 +128,7 @@ test_that("TunerHyperband errors if budget parameter is not numeric", {
   )
 
   expect_error(tune(
-    method = "hyperband",
+    tnr( "hyperband"),
     task = tsk("pima"),
     learner = learner,
     resampling = rsmp("cv", folds = 3),
@@ -147,7 +145,7 @@ test_that("TunerHyperband errors if multiple budget parameters are set", {
   )
 
   expect_error(tune(
-    method = "hyperband",
+    tnr( "hyperband"),
     task = tsk("pima"),
     learner = learner,
     resampling = rsmp("cv", folds = 3),
@@ -195,12 +193,11 @@ test_that("TunerHyperband works with repetitions", {
   )
 
   instance = tune(
-    method = "hyperband",
+    tnr( "hyperband", repetitions = 2),
     task = tsk("pima"),
     learner = learner,
     resampling = rsmp("cv", folds = 3),
-    measures = msr("classif.ce"),
-    repetitions = 2)
+    measures = msr("classif.ce"))
 
   expect_equal(nrow(instance$archive$data), 144)
 })
@@ -212,7 +209,7 @@ test_that("TunerHyperband terminates itself", {
   )
 
   instance = tune(
-    method = "hyperband",
+    tnr( "hyperband"),
     task = tsk("pima"),
     learner = learner,
     resampling = rsmp("cv", folds = 3),
@@ -228,13 +225,12 @@ test_that("TunerHyperband works with infinite repetitions", {
   )
 
   instance = tune(
-    method = "hyperband",
+    tnr( "hyperband", repetitions = Inf),
     task = tsk("pima"),
     learner = learner,
     resampling = rsmp("cv", folds = 3),
     measures = msr("classif.ce"),
-    term_evals = 160,
-    repetitions = Inf)
+    term_evals = 160)
 
   expect_equal(nrow(instance$archive$data), 160)
 })

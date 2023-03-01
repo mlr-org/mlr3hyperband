@@ -68,6 +68,12 @@
 #' @template section_custom_sampler
 #' @template section_progress_bars
 #' @template section_logging
+#'
+#' @section Resources:
+#' The [gallery](https://mlr-org.com/gallery-all-optimization.html) features a collection of case studies and demos about optimization.
+#'
+#'  * [Tune](https://mlr-org.com/gallery/series/2023-01-15-hyperband-xgboost/) the hyperparameters of XGBoost with Hyperband
+#'  * Use data [subsampling](https://mlr-org.com/gallery/series/2023-01-16-hyperband-subsampling/) and Hyperband to optimize a support vector machine.
 #
 #' @source
 #' `r format_bib("li_2018")`
