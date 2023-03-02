@@ -24,13 +24,11 @@ test_tuner_hyperband = function(eta, learner, measures = msr("classif.ce"), samp
   r_max = search_space$upper[[budget_id]]
 
   instance = tune(
-    method = "hyperband",
+    tnr("hyperband", eta = eta, sampler = sampler),
     task = tsk("pima"),
     learner = learner,
     measures = measures,
     resampling = rsmp("holdout"),
-    eta = eta,
-    sampler = sampler
   )
 
   # compare brackets and stages of tuner to theoretical hyperband
@@ -61,15 +59,11 @@ test_tuner_successive_halving = function(n, eta, learner, measures = msr("classi
   r_max = search_space$upper[[budget_id]]
 
   instance = tune(
-    method = "successive_halving",
+    tnr("successive_halving", n = n, eta = eta, sampler = sampler, adjust_minimum_budget = adjust_minimum_budget),
     task = tsk("pima"),
     learner = learner,
     measures = measures,
-    resampling = rsmp("holdout"),
-    n = n,
-    eta = eta,
-    sampler = sampler,
-    adjust_minimum_budget = adjust_minimum_budget)
+    resampling = rsmp("holdout"))
 
     budget = as.data.table(instance$archive)[, budget_id, with = FALSE]
     n_configs = as.data.table(instance$archive)[, .N, by = "stage"]
