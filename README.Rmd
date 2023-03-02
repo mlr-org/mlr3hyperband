@@ -92,12 +92,11 @@ We use the `tune()` function to run the optimization.
 
 ```{r}
 instance = tune(
-  method = "hyperband",
+  tnr("hyperband", eta = 3),
   task = tsk("pima"),
   learner = learner,
   resampling = rsmp("cv", folds = 3),
-  measures = msr("classif.ce"),
-  eta = 3
+  measures = msr("classif.ce")
 )
 ```
 

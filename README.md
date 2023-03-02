@@ -22,6 +22,20 @@ hyperparameter optimization in
 [mlr3tuning](https://github.com/mlr-org/mlr3tuning) and optimizers for
 black-box optimization in [bbotk](https://github.com/mlr-org/bbotk).
 
+## Resources
+
+There are several sections about hyperparameter optimization in the
+[mlr3book](https://mlr3book.mlr-org.com).
+
+The [gallery](https://mlr-org.com/gallery.html) features a series of
+case studies on Hyperband.
+
+  - [Tune](https://mlr-org.com/gallery/series/2023-01-15-hyperband-xgboost/)
+    the hyperparameters of XGBoost with Hyperband
+  - Use data
+    [subsampling](https://mlr-org.com/gallery/series/2023-01-16-hyperband-subsampling/)
+    and Hyperband to optimize a support vector machine.
+
 ## Installation
 
 Install the last release from CRAN:
@@ -35,17 +49,6 @@ Install the development version from GitHub:
 ``` r
 remotes::install_github("mlr-org/mlr3hyperband")
 ```
-
-## Resources
-
-The [gallery](https://mlr-org.com/gallery.html) features a series of
-case studies on Hyperband.
-
-  - [Tune](https://mlr-org.com/gallery/series/2023-01-15-hyperband-xgboost/)
-    the hyperparameters of XGBoost with Hyperband
-  - Use data
-    [subsampling](https://mlr-org.com/gallery/series/2023-01-16-hyperband-subsampling/)
-    and Hyperband to optimize a support vector machine.
 
 ## Examples
 
@@ -74,12 +77,11 @@ We use the `tune()` function to run the optimization.
 
 ``` r
 instance = tune(
-  method = "hyperband",
+  tnr("hyperband", eta = 3),
   task = tsk("pima"),
   learner = learner,
   resampling = rsmp("cv", folds = 3),
-  measures = msr("classif.ce"),
-  eta = 3
+  measures = msr("classif.ce")
 )
 ```
 
