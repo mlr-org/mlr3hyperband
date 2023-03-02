@@ -38,3 +38,6 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
     }
   )
 )
+
+#' @include aaa.R
+tuners[["successive_halving"]] = TunerSuccessiveHalving

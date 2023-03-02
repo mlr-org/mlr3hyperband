@@ -197,3 +197,6 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
     }
   )
 )
+
+#' @include aaa.R
+optimizers[["hyperband"]] = OptimizerHyperband

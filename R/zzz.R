@@ -1,3 +1,4 @@
+#' @include aaa.R
 #' @import data.table
 #' @import checkmate
 #' @import paradox
@@ -8,17 +9,21 @@
 #' @importFrom R6 R6Class
 "_PACKAGE"
 
-.onLoad = function(libname, pkgname) { # nolint
+register_bbotk = function() {
   # nocov start
-  # add hyperband to tuner dictionary
-  x = utils::getFromNamespace("mlr_tuners", ns = "mlr3tuning")
-  x$add("hyperband", TunerHyperband)
-  x$add("successive_halving", TunerSuccessiveHalving)
-
-  # add hyperband to optimizer dictionary
   x = utils::getFromNamespace("mlr_optimizers", ns = "bbotk")
-  x$add("hyperband", OptimizerHyperband)
-  x$add("successive_halving", OptimizerSuccessiveHalving)
+  iwalk(optimizers, function(obj, nm) x$add(nm, obj))
+} # nocov end
+
+register_mlr3tuning = function() {
+  # nocov start
+  x = utils::getFromNamespace("mlr_tuners", ns = "mlr3tuning")
+  iwalk(tuners, function(obj, nm) x$add(nm, obj))
+} # nocov end
+
+.onLoad = function(libname, pkgname) { # nolint
+  register_namespace_callback(pkgname, "bbotk", register_bbotk)
+  register_namespace_callback(pkgname, "mlr3tuning", register_mlr3tuning)
 
   assign("lg", lgr::get_logger("bbotk"), envir = parent.env(environment()))
 
@@ -26,3 +31,8 @@
     lg$set_threshold("warn")
   }
 } # nocov end
+
+.onUnload = function(libpaths) { # nolint
+  walk(names(optimizers), function(id) bbotk::mlr_optimizers$remove(id))
+  walk(names(tuners), function(id) mlr3tuning::mlr_tuners$remove(id))
+}

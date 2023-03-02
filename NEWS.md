@@ -1,4 +1,8 @@
-# mlr3hyperband 0.4.4.9000
+# mlr3hyperband 0.4.5
+
+* fix: Unloading `mlr3hyperband` removes optimizers and tuners from the dictionaries.
+* docs: Update resources and descriptions.
+* test: Adapt to mlr3tuning 0.18.0.
 
 # mlr3hyperband 0.4.4
 
