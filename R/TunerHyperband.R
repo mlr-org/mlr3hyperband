@@ -39,3 +39,6 @@ TunerHyperband = R6Class("TunerHyperband",
     }
   )
 )
+
+#' @include aaa.R
+tuners[["hyperband"]] = TunerHyperband

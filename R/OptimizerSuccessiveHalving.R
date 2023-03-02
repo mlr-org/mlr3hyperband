@@ -177,3 +177,6 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
     }
   )
 )
+
+#' @include aaa.R
+optimizers[["successive_halving"]] = OptimizerSuccessiveHalving
