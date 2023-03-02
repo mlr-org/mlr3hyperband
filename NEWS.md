@@ -1,3 +1,5 @@
+# mlr3hyperband (development version)
+
 # mlr3hyperband 0.4.5
 
 * fix: Unloading `mlr3hyperband` removes optimizers and tuners from the dictionaries.
