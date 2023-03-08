@@ -1,5 +1,8 @@
 # mlr3hyperband (development version)
 
+* feat: `OptimizerHyperband` and `OptimizerSuccessiveHalving` multiple the number of configurations by the number of available cores.
+  This ensures that the number of configurations is not too small for parallelization.
+
 # mlr3hyperband 0.4.5
 
 * fix: Unloading `mlr3hyperband` removes optimizers and tuners from the dictionaries.

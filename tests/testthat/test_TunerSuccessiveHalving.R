@@ -280,3 +280,32 @@ test_that("TunerSuccessiveHalving works with r_max < n and adjust minimum budget
 test_that("TunerSuccessiveHalving man exists", {
   expect_man_exists(tnr("successive_halving")$man)
 })
+
+test_that("TunerSuccessiveHalving promotes the best configurations with multiple instances", {
+  skip_on_cran()
+
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 16, tags = "budget"))
+  )
+
+  with_future("multisession", {
+    instance = tune(
+      tnr("successive_halving", repetitions = 1, n = 16, eta = 2, sampler = SamplerDummy$new(learner$param_set$params[["x"]])),
+      task = tsk("pima"),
+      learner = learner,
+      resampling = rsmp("cv", folds = 3),
+      measures = msr("dummy", parameter_id = "x", minimize = FALSE))
+  }, workers = 2)
+
+  schedule = hyperband_schedule(1, 16, 2, n_instances = 2)[list(4), , on = "bracket"]
+
+  pwalk(schedule, function(stage, budget, n, ...) {
+    i = stage
+    dummy = instance$archive$data[list(i), dummy , on = "stage"]
+    n0 = schedule[list(0), n, on = "stage"]
+    ni = seq_len0(n0) / (n0 - 1)
+    expect_length(dummy, n)
+    expect_set_equal(dummy, tail(ni, n))
+  })
+})

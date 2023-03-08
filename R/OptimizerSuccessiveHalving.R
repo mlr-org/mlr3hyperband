@@ -99,7 +99,10 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
       eta = pars$eta
       sampler = pars$sampler
       search_space = inst$search_space
+      archive = inst$archive
       budget_id = search_space$ids(tags = "budget")
+      minimize = ifelse(archive$codomain$maximization_to_minimization == -1, TRUE, FALSE)
+      top_n =  if (archive$codomain$length == 1) "best" else "nds_selection"
 
       # check budget
       if (length(budget_id) != 1) stopf("Exactly one parameter must be tagged with 'budget'")
@@ -141,36 +144,34 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
       # increase r_min so that the last stage uses the maximum budget
       if (pars$adjust_minimum_budget) r_min = r * eta^-s_max
 
+      # run n instances of successive halving in parallel
+      n_instances = future::nbrOfWorkers()
+
+      # iterate the repetitions
+      # repetitions can be Inf
       repetition = 1
       while (repetition <= pars$repetitions) {
+        # sample initial configurations
+        xdt = sampler$sample(n * n_instances)$data
+        set(xdt, j = "repetition", value = repetition)
+
         # iterate stages
         for (i in 0:s_max) {
-          # number of configurations in stage
-          ni = floor(n * eta^(-i))
-          # budget of a single configuration in stage
-          ri = r_min * eta^i
+          if (i) {
+            # number of configurations in stage
+            ni = floor(n * eta^(-i)) * n_instances
 
-          if (search_space$class[[budget_id]] == "ParamInt") ri = round(ri)
-
-          if (i == 0) {
-            xdt = sampler$sample(ni)$data
-          } else {
-            # get performances of previous stage
-            archive = inst$archive
-
-            xdt = if (archive$codomain$length == 1) {
-              archive$best(batch = archive$n_batch, n_select = ni)
-            } else {
-              archive$nds_selection(batch = archive$n_batch, n_select = ni)
-            }
-            xdt = xdt[, archive$cols_x, with = FALSE]
+            # promote configurations
+            xdt = archive[[top_n]](archive$n_batch, ni)
           }
-          # increase budget and stage
+
+          # budget of a single configuration
+          ri = r_min * eta^i
+          if (search_space$class[[budget_id]] == "ParamInt") ri = round(ri)
           set(xdt, j = budget_id, value = ri)
           set(xdt, j = "stage", value = i)
-          set(xdt, j = "repetition", value = repetition)
 
-          inst$eval_batch(xdt)
+          inst$eval_batch(xdt[, c(archive$cols_x, "stage", "repetition"), with = FALSE])
         }
         repetition = repetition + 1
       }

@@ -103,13 +103,15 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
       eta = pars$eta
       sampler = pars$sampler
       search_space = inst$search_space
+      archive = inst$archive
       budget_id = search_space$ids(tags = "budget")
+      top_n =  if (archive$codomain$length == 1) "best" else "nds_selection"
 
       # check budget
       if (length(budget_id) != 1) stopf("Exactly one parameter must be tagged with 'budget'")
       assert_choice(search_space$class[[budget_id]], c("ParamInt", "ParamDbl"))
 
-      if (inst$archive$codomain$length > 1) require_namespaces("emoa")
+      if (archive$codomain$length > 1) require_namespaces("emoa")
 
       # sampler
       search_space_sampler = search_space$clone()$subset(setdiff(search_space$ids(), budget_id))
@@ -131,66 +133,48 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
       # R in the original paper
       r = r_max / r_min
 
-      # s_max + 1 is the number of brackets and the number stages of the first bracket
+      # s_max + 1 is the number of brackets and the number of stages of the first bracket
       s_max = floor(log(r, eta))
 
       # approximately the used budget of an entire bracket
       # B in the original paper
       budget = (s_max + 1) * r
 
-      # number of configurations in first stages
+      # number of configurations in the first stage
       n = ceiling((budget / r) * (eta^(0:s_max)) / ((0:s_max) + 1))
 
+      # run n instances of hyperband in parallel
+      n_instances = future::nbrOfWorkers()
+
+      # iterate the repetitions
+      # repetitions can be Inf
       repetition = 1
       while (repetition <= pars$repetitions) {
-        # original hyperband algorithm iterates over brackets
-        # this implementation iterates over stages with same budget
-        # the number of iterations (s_max + 1) remains the same in both implementations
+        # iterate the brackets
         for (s in s_max:0) {
-          # budget of a single configuration in the first stage (unscaled)
-          rs = r_min * r * eta^(-s)
-          # sample initial configurations of bracket
-          xdt = sampler$sample(n[s + 1])$data
-          set(xdt, j = budget_id, value = rs)
-          set(xdt, j = "stage", value = 0)
+          # sample initial configurations of the bracket
+          xdt = sampler$sample(n[s + 1] * n_instances)$data
           set(xdt, j = "bracket", value = s)
           set(xdt, j = "repetition", value = repetition)
 
-          # promote configurations of previous batch
-          if (s != s_max) {
-            archive = inst$archive
-            data = archive$data[batch_nr == archive$n_batch, ]
-            minimize = ifelse(archive$codomain$maximization_to_minimization == -1, TRUE, FALSE)
+          # iterate the stages
+          for (i in 0:s) {
+            if (i) {
+              # number of configurations to promote
+              ni = floor(n[s + 1] * eta^(-i)) * n_instances
 
-            # for each bracket, promote configurations of previous stage
-            xdt_promoted = map_dtr(s_max:(s + 1), function(i) {
+              # promote configurations
+              xdt = archive[[top_n]](archive$n_batch, ni)
+            }
 
-              # number of configuration to promote
-              ni = floor(n[i + 1] * eta^(-(i - s)))
+            # budget of a single configuration (unscaled)
+            ri = r_min * r * eta^(-s + i)
+            if (search_space$class[[budget_id]] == "ParamInt") ri = round(ri)
+            set(xdt, j = budget_id, value = ri)
+            set(xdt, j = "stage", value = i)
 
-              # get performances of previous stage
-              data_bracket = data[get("bracket") == i, ]
-              y = data_bracket[, archive$cols_y, with = FALSE]
-
-              # select best ni configurations
-              row_ids = if (archive$codomain$length == 1) {
-                head(order(unlist(y), decreasing = minimize), ni)
-              } else {
-                nds_selection(points = t(as.matrix(y)), n_select = ni, minimize = minimize)
-              }
-              data_bracket[row_ids, ]
-            })
-
-            # increase budget and stage
-            xdt_promoted = xdt_promoted[, c(inst$archive$cols_x, "stage", "bracket", "repetition"), with = FALSE]
-            set(xdt_promoted, j = budget_id, value = rs)
-            set(xdt_promoted, j = "stage", value = xdt_promoted[["stage"]] + 1)
-
-            xdt = rbindlist(list(xdt, xdt_promoted), use.names = TRUE)
+            inst$eval_batch(xdt[, c(archive$cols_x, "stage", "bracket", "repetition"), with = FALSE])
           }
-
-          if (search_space$class[[budget_id]] == "ParamInt") set(xdt, j = budget_id, value = round(xdt[[budget_id]]))
-          inst$eval_batch(xdt)
         }
         repetition = repetition + 1
       }

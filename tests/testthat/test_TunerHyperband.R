@@ -238,3 +238,59 @@ test_that("TunerHyperband works with infinite repetitions", {
 test_that("TunerHyperband man exists", {
   expect_man_exists(tnr("hyperband")$man)
 })
+
+test_that("TunerHyperband promotes the best configurations", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 16, tags = "budget"))
+  )
+
+  instance = tune(
+    tnr( "hyperband", repetitions = 1, sampler = SamplerDummy$new(learner$param_set$params[["x"]])),
+    task = tsk("pima"),
+    learner = learner,
+    resampling = rsmp("cv", folds = 3),
+    measures = msr("dummy", parameter_id = "x", minimize = FALSE))
+
+  schedule = hyperband_schedule(1, 16, 2)
+
+  pwalk(schedule, function(bracket, stage, budget, n) {
+    s = bracket
+    i = stage
+    dummy = instance$archive$data[list(s, i), dummy , on = c("bracket", "stage")]
+    n0 = schedule[list(s, 0), n, on = c("bracket", "stage")]
+    ni = seq_len0(n0) / (n0 - 1)
+    expect_length(dummy, n)
+    expect_set_equal(dummy, tail(ni, n))
+  })
+})
+
+test_that("TunerHyperband promotes the best configurations with multiple instances", {
+  skip_on_cran()
+
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 16, tags = "budget"))
+  )
+
+  with_future("multisession", {
+    instance = tune(
+      tnr( "hyperband", repetitions = 1, sampler = SamplerDummy$new(learner$param_set$params[["x"]])),
+      task = tsk("pima"),
+      learner = learner,
+      resampling = rsmp("cv", folds = 3),
+      measures = msr("dummy", parameter_id = "x", minimize = FALSE))
+  }, workers = 2)
+
+  schedule = hyperband_schedule(1, 16, 2, n_instances = 2)
+
+  pwalk(schedule, function(bracket, stage, budget, n) {
+    s = bracket
+    i = stage
+    dummy = instance$archive$data[list(s, i), dummy , on = c("bracket", "stage")]
+    n0 = schedule[list(s, 0), n, on = c("bracket", "stage")]
+    ni = seq_len0(n0) / (n0 - 1)
+    expect_length(dummy, n)
+    expect_set_equal(dummy, tail(ni, n))
+  })
+})

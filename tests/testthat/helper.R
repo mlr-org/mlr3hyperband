@@ -17,7 +17,7 @@ lapply(list.files(system.file("testthat", package = "mlr3tuning"), pattern = "^h
 #' @description
 #' Tests bracket and stages constructed by the tuner against the ones based on
 #' the original hyperband paper.
-test_tuner_hyperband = function(eta, learner, measures = msr("classif.ce"), sampler = NULL) {
+test_tuner_hyperband = function(eta, learner, measures = msr("classif.ce"), sampler = NULL, n_instances = 1) {
   search_space = learner$param_set$search_space()
   budget_id = search_space$ids(tags = "budget")
   r_min = search_space$lower[[budget_id]]
@@ -34,7 +34,7 @@ test_tuner_hyperband = function(eta, learner, measures = msr("classif.ce"), samp
   # compare brackets and stages of tuner to theoretical hyperband
   plan_tuner = as.data.table(instance$archive)[, .N, by = c("bracket", "stage", budget_id)]
   round = search_space$class[[budget_id]] == "ParamInt"
-  plan_hyperband = hyperband_schedule(r_min, r_max, eta, round)
+  plan_hyperband = hyperband_schedule(r_min, r_max, eta, n_instances = n_instances, round)
 
   expect_set_equal(plan_tuner$bracket, plan_hyperband$bracket)
   expect_set_equal(plan_tuner$stage, plan_hyperband$stage)
@@ -51,8 +51,7 @@ test_tuner_hyperband = function(eta, learner, measures = msr("classif.ce"), samp
 #' @description
 #' Tests budget and number of configs constructed by the tuner against supplied
 #' bounds
-test_tuner_successive_halving = function(n, eta, learner, measures = msr("classif.ce"), sampler = NULL,
-  adjust_minimum_budget = FALSE) {
+test_tuner_successive_halving = function(n, eta, learner, measures = msr("classif.ce"), sampler = NULL, adjust_minimum_budget = FALSE, n_instances = 1) {
   search_space = learner$param_set$search_space()
   budget_id = search_space$ids(tags = "budget")
   r_min = search_space$lower[[budget_id]]
@@ -72,7 +71,7 @@ test_tuner_successive_halving = function(n, eta, learner, measures = msr("classi
     expect_lte(max(budget), r_max)
     expect_gte(min(budget), r_min)
     # check number of configs
-    expect_lte(max(n_configs$N), n)
+    expect_lte(max(n_configs$N), n * n_instances)
 
     instance
 }
@@ -105,3 +104,24 @@ MeasureClassifDummy = R6Class("MeasureClassifDummy",
 )
 
 mlr_measures$add("dummy", MeasureClassifDummy)
+
+#' @title SamplerDummy
+#'
+#' @description
+#' Samples a sequence from 0 to n and scales it to the range of 0 to 1.
+#'
+#' @noRd
+SamplerDummy = R6Class("SamplerDummy", inherit = Sampler1D,
+  public = list(
+    #' @description
+    #' Creates a new instance of this [R6][R6::R6Class] class.
+    initialize = function(param) {
+      super$initialize(param)
+      assert_param(self$param, no_untyped = TRUE, must_bounded = TRUE)
+    }
+  ),
+
+  private = list(
+    .sample = function(n) private$as_dt_col(seq_len0(n) / (n - 1))
+  )
+)
