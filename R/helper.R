@@ -20,7 +20,7 @@ hyperband_schedule = function(r_min, r_max, eta, n_instances = 1, integer_budget
     nb = ceiling((b / r) * ((eta^s) / (s + 1)))
     rb = r * eta^(-s)
     map_dtr(0:s, function(i) {
-      ni = floor(nb * eta^(-i)) * n_instances
+      ni = ceiling(nb * eta^(-i)) * n_instances
       ri = r_min * rb * eta^i
       if (integer_budget) ri = round(ri)
       data.table(bracket = s, stage = i, budget = ri, n = ni)

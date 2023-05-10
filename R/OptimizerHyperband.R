@@ -161,7 +161,7 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
           for (i in 0:s) {
             if (i) {
               # number of configurations to promote
-              ni = floor(n[s + 1] * eta^(-i)) * n_instances
+              ni = ceiling(n[s + 1] * eta^(-i)) * n_instances
 
               # promote configurations
               xdt = archive[[top_n]](archive$n_batch, ni)
