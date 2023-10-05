@@ -1,4 +1,10 @@
 test_that("hotstart works with rush" {
+  skip_on_cran()
+  skip_on_ci()
+  skip_if_not_installed("mlr3learners")
+  skip_if_not_installed("xgboost")
+  library(mlr3learners) # nolint
+
   config = start_flush_redis()
   future::plan("multisession", workers = 2L)
   rush = Rush$new("test", config)
@@ -25,23 +31,26 @@ test_that("hotstart works with rush" {
   tuner = tnr("asha", eta = 3)
   tuner$optimize(instance)
 
-  rush$read_log()
-
-  con = file("log.txt")
-  write.table(rush$read_log()[, list(logger, msg)], con)
-
+  messages = rush$read_log()$msg
+  messages = messages[grep("Hotstart", messages)]
+  expect_true(length(messages) > 0)
 })
 
 test_that("hotstart works with rush and xgboost" {
-
+  skip_on_cran()
+  skip_on_ci()
+  skip_if_not_installed("mlr3learners")
+  skip_if_not_installed("xgboost")
+  library(mlr3learners) # nolint
 
   config = start_flush_redis()
   future::plan("multisession", workers = 2L)
   rush = Rush$new("test", config)
 
-  learner = lts(lrn("classif.xgboost"))
-
-  learner$param_set$set_values(nrounds = to_tune(p_int(1, 729, tags = "budget")))
+  learner = lrn("classif.xgboost",
+    nrounds   = to_tune(p_int(1, 16, tags = "budget")),
+    eta       = to_tune(1e-4, 1, logscale = TRUE),
+    max_depth = to_tune(1, 2))
 
   instance = ti(
     task = tsk("pima"),
@@ -53,14 +62,14 @@ test_that("hotstart works with rush and xgboost" {
     store_benchmark_result = FALSE,
     allow_hotstart = TRUE,
     rush = rush,
+    lgr_thresholds = c(rush = "debug", bbotk = "debug", mlr3 = "debug"),
     freeze_archive = FALSE
   )
 
-  rush$await_workers(2)
-
   tuner = tnr("asha", eta = 3)
-  tuner$optimize(instance)
+  expect_tuner$optimize(instance)
 
-  # FIXME: add test
-  unlist(as.data.table(instance$archive)$log)
+  messages = rush$read_log()$msg
+  messages = messages[grep("Hotstart", messages)]
+  expect_true(length(messages) > 0)
 })
