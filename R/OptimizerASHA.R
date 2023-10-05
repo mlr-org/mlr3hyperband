@@ -114,14 +114,14 @@ OptimizerASHA = R6Class("OptimizerASHA",
             if (s < 0 || !nrow(data)) {
               # no promotion possible
               # sample new configuration
-
-              lg$debug("%s samples a new configuration", formart(self))
-
               xdt = sampler$sample(1)$data
               if (integer_budget) r_min = as.integer(round(r_min))
               set(xdt, j = budget_id, value = r_min)
               set(xdt, j = "stage", value = 0L)
               set(xdt, j = "asha_id", value = uuid::UUIDgenerate())
+
+              lg$debug("%s samples a new configuration %s", format(self), as_short_string(as.list(xdt)))
+
               break
             }
 
