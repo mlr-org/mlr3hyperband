@@ -120,7 +120,7 @@ OptimizerASHA = R6Class("OptimizerASHA",
               set(xdt, j = "stage", value = 0L)
               set(xdt, j = "asha_id", value = uuid::UUIDgenerate())
 
-              lg$debug("%s samples a new configuration %s", format(self), as_short_string(as.list(xdt)))
+              lg$debug("%s samples a new configuration %s.", format(self), as_short_string(as.list(xdt)))
 
               break
             }
@@ -150,14 +150,17 @@ OptimizerASHA = R6Class("OptimizerASHA",
             # promote configuration
             if (length(promotable_asha_ids)) {
 
-              lg$debug("%s promotes a configuration from stage %i", format(self), s)
+              lg$debug("%s promotes a configuration from stage %i.", format(self), s)
 
               ri = r_min * eta^(s + 1)
               if (integer_budget) ri = as.integer(round(ri))
               xdt = candidates[list(promotable_asha_ids[1]), c(archive$cols_x, "asha_id", "worker_id"), on = "asha_id", with = FALSE]
               set(xdt, j = budget_id, value = ri)
               set(xdt, j = "stage", value = s + 1)
-              if (allow_hotstart) setnames(xdt, "worker_id", "priority_id") else xdt[, worker_id := NULL]
+              if (allow_hotstart) {
+                lg$debug("%s requests hotstart.", format(self))
+                setnames(xdt, "worker_id", "priority_id")
+              } else xdt[, worker_id := NULL]
               break
             }
           }
