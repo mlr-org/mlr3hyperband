@@ -1,5 +1,7 @@
 # mlr3hyperband (development version)
 
+* Compatibility with upcoming 'paradox' release.
+
 # mlr3hyperband 0.4.5
 
 * fix: Unloading `mlr3hyperband` removes optimizers and tuners from the dictionaries.
