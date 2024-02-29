@@ -74,7 +74,7 @@ test_that("TunerHyperband works with custom sampler", {
     iter = to_tune(p_int(1, 4, tags = "budget"))
   )
 
-  sampler = Sampler1DRfun$new(learner$param_set$search_space()$params[["x"]], function(n) rbeta(n, 2, 5))
+  sampler = Sampler1DRfun$new(learner$param_set$search_space()$params[["x"]] %??% learner$param_set$search_space()$subset("x"), function(n) rbeta(n, 2, 5))
 
   test_tuner_hyperband(eta = 2, learner, sampler = sampler)
 })
@@ -86,7 +86,7 @@ test_that("TunerHyperband errors if not enough parameters are sampled", {
     iter = to_tune(p_int(1, 4, tags = "budget"))
   )
 
-  sampler = Sampler1DRfun$new(learner$param_set$search_space()$params[["x"]], function(n) rbeta(n, 2, 5))
+  sampler = Sampler1DRfun$new(learner$param_set$search_space()$params[["x"]] %??% learner$param_set$search_space()$subset("x"), function(n) rbeta(n, 2, 5))
 
   expect_error(tune(
     tnr( "hyperband", sampler = sampler),
@@ -106,8 +106,8 @@ test_that("TunerHyperband errors if budget parameter is sampled", {
   )
 
   sampler = SamplerJointIndep$new(list(
-    Sampler1DRfun$new(learner$param_set$search_space()$params[["x"]], function(n) rbeta(n, 2, 5)),
-    Sampler1D$new(learner$param_set$search_space()$params[["iter"]])
+    Sampler1DRfun$new(learner$param_set$search_space()$params[["x"]] %??% learner$param_set$search_space()$subset("x"), function(n) rbeta(n, 2, 5)),
+    Sampler1D$new(learner$param_set$search_space()$params[["iter"]] %??% learner$param_set$search_space()$subset("iter"))
   ))
 
   expect_error(tune(
