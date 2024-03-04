@@ -1,6 +1,6 @@
-# mlr3hyperband (development version)
+# mlr3hyperband 0.5.0
 
-* Compatibility with upcoming 'paradox' release.
+* compatibility: Work with new paradox version 1.0.0
 
 # mlr3hyperband 0.4.5
 
