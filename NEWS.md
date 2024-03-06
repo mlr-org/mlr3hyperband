@@ -1,3 +1,5 @@
+# mlr3hyperband (development version)
+
 # mlr3hyperband 0.5.0
 
 * compatibility: Work with new paradox version 1.0.0
