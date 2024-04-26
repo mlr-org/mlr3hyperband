@@ -5,6 +5,7 @@ library(mlr3misc)
 library(mlr3pipelines)
 library(paradox)
 library(R6)
+library(rush)
 
 lapply(list.files(system.file("testthat", package = "mlr3"), pattern = "^helper.*\\.[rR]$", full.names = TRUE), source)
 lapply(list.files(system.file("testthat", package = "mlr3tuning"), pattern = "^helper.*\\.[rR]$", full.names = TRUE), source)
@@ -105,3 +106,11 @@ MeasureClassifDummy = R6Class("MeasureClassifDummy",
 )
 
 mlr_measures$add("dummy", MeasureClassifDummy)
+
+start_flush_redis = function() {
+  future::plan("sequential")
+  config = redux::redis_config()
+  r = redux::hiredis(config)
+  r$FLUSHDB()
+  config
+}
