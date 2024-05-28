@@ -26,7 +26,7 @@
 #' @export
 #' @template example_tuner
 TunerHyperband = R6Class("TunerHyperband",
-  inherit = TunerFromOptimizer,
+  inherit = TunerBatchFromOptimizerBatch,
   public = list(
 
     #' @description

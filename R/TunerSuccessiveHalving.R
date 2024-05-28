@@ -25,7 +25,7 @@
 #' @export
 #' @template example_tuner
 TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
-  inherit = TunerFromOptimizer,
+  inherit = TunerBatchFromOptimizerBatch,
   public = list(
 
     #' @description

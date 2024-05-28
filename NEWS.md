@@ -1,5 +1,7 @@
 # mlr3hyperband (development version)
 
+* compatibility; Work with new bbotk 0.9.0 and mlr3tuning 0.21.0
+
 # mlr3hyperband 0.5.0
 
 * compatibility: Work with new paradox version 1.0.0
