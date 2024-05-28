@@ -73,7 +73,7 @@
 #' @export
 #' @template example_optimizer
 OptimizerHyperband = R6Class("OptimizerHyperband",
-  inherit = Optimizer,
+  inherit = OptimizerBatch,
   public = list(
 
     #' @description

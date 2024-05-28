@@ -66,7 +66,7 @@
 #' @export
 #' @template example_optimizer
 OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
-  inherit = Optimizer,
+  inherit = OptimizerBatch,
   public = list(
 
     #' @description
