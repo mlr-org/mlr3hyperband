@@ -55,7 +55,7 @@ hyperband_n_configs = function(r_min, r_max, eta) {
 #' @template param_r_max
 #' @template param_eta
 #' @template param_integer_budget
-#' 
+#'
 #' @return `integer(1)`
 #' @export
 hyperband_budget = function(r_min, r_max, eta, integer_budget = FALSE) {
