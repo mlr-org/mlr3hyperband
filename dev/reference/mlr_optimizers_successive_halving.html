@@ -104,7 +104,7 @@ This sometimes results in the minimum budget having to be slightly adjusted by t
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Hyperparameter Optimization with Successive Halving</h1>
-      <small class="dont-index">Source: <a href="https://github.com/mlr-org/mlr3hyperband/blob/HEAD/R/OptimizerSuccessiveHalving.R" class="external-link"><code>R/OptimizerSuccessiveHalving.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/mlr-org/mlr3hyperband/blob/HEAD/R/OptimizerBatchSuccessiveHalving.R" class="external-link"><code>R/OptimizerBatchSuccessiveHalving.R</code></a></small>
       <div class="d-none name"><code>mlr_optimizers_successive_halving.Rd</code></div>
     </div>
 
@@ -216,7 +216,7 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
     </div>
     <div class="section level2">
     <h2 id="super-classes">Super classes<a class="anchor" aria-label="anchor" href="#super-classes"></a></h2>
-    <p><code><a href="https://bbotk.mlr-org.com/reference/Optimizer.html" class="external-link">bbotk::Optimizer</a></code> -&gt; <code><a href="https://bbotk.mlr-org.com/reference/OptimizerBatch.html" class="external-link">bbotk::OptimizerBatch</a></code> -&gt; <code>OptimizerSuccessiveHalving</code></p>
+    <p><code><a href="https://bbotk.mlr-org.com/reference/Optimizer.html" class="external-link">bbotk::Optimizer</a></code> -&gt; <code><a href="https://bbotk.mlr-org.com/reference/OptimizerBatch.html" class="external-link">bbotk::OptimizerBatch</a></code> -&gt; <code>OptimizerBatchSuccessiveHalving</code></p>
     </div>
     <div class="section level2">
     <h2 id="methods">Methods<a class="anchor" aria-label="anchor" href="#methods"></a></h2>
@@ -224,25 +224,25 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
 <div class="section">
 <h3 id="public-methods">Public methods<a class="anchor" aria-label="anchor" href="#public-methods"></a></h3>
 
-<ul><li><p><a href="#method-OptimizerSuccessiveHalving-new"><code>OptimizerSuccessiveHalving$new()</code></a></p></li>
-<li><p><a href="#method-OptimizerSuccessiveHalving-clone"><code>OptimizerSuccessiveHalving$clone()</code></a></p></li>
+<ul><li><p><a href="#method-OptimizerBatchSuccessiveHalving-new"><code>OptimizerBatchSuccessiveHalving$new()</code></a></p></li>
+<li><p><a href="#method-OptimizerBatchSuccessiveHalving-clone"><code>OptimizerBatchSuccessiveHalving$clone()</code></a></p></li>
 </ul></div><p><details open><summary>Inherited methods</summary><ul><li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="format"><a href="https://bbotk.mlr-org.com/reference/Optimizer.html#method-format"><code>bbotk::Optimizer$format()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="help"><a href="https://bbotk.mlr-org.com/reference/Optimizer.html#method-help"><code>bbotk::Optimizer$help()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="print"><a href="https://bbotk.mlr-org.com/reference/Optimizer.html#method-print"><code>bbotk::Optimizer$print()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="bbotk" data-topic="OptimizerBatch" data-id="optimize"><a href="https://bbotk.mlr-org.com/reference/OptimizerBatch.html#method-optimize"><code>bbotk::OptimizerBatch$optimize()</code></a></span></li>
-</ul></details></p><hr><a id="method-OptimizerSuccessiveHalving-new"></a><div class="section">
+</ul></details></p><hr><a id="method-OptimizerBatchSuccessiveHalving-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Creates a new instance of this <a href="https://r6.r-lib.org/reference/R6Class.html" class="external-link">R6</a> class.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/mlr_optimizers_successive_halving.html">OptimizerSuccessiveHalving</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/mlr_optimizers_successive_halving.html">OptimizerBatchSuccessiveHalving</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 
-</div><p></p><hr><a id="method-OptimizerSuccessiveHalving-clone"></a><div class="section">
+</div><p></p><hr><a id="method-OptimizerBatchSuccessiveHalving-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OptimizerSuccessiveHalving</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OptimizerBatchSuccessiveHalving</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -340,37 +340,37 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             x1         x2 fidelity stage repetition          y</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               timestamp batch_nr x_domain_x1 x_domain_x2 x_domain_fidelity</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  &lt;POSc&gt;    &lt;int&gt;       &lt;num&gt;       &lt;num&gt;             &lt;num&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1: 2024-05-28 19:09:31        1  -2.8202623   6.2590489              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2: 2024-05-28 19:09:31        1   7.8157583   2.0711226              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3: 2024-05-28 19:09:31        1  -1.8027603   1.2126744              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4: 2024-05-28 19:09:31        1  -1.8453389   9.8397394              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5: 2024-05-28 19:09:31        1  -4.4071897   9.0300579              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6: 2024-05-28 19:09:31        1   9.1716220   9.8549374              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7: 2024-05-28 19:09:31        1  -1.3260802   4.9397575              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8: 2024-05-28 19:09:31        1   6.7168385  14.6921133              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9: 2024-05-28 19:09:31        1  -0.6764425  10.7277920              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10: 2024-05-28 19:09:31        1   8.1303687  13.0894546              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11: 2024-05-28 19:09:31        1  -0.5637486  14.7492562              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12: 2024-05-28 19:09:31        1   9.7528811   3.2784449              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13: 2024-05-28 19:09:31        1   3.8475633   9.9679510              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14: 2024-05-28 19:09:31        1   6.3873757   5.8434606              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15: 2024-05-28 19:09:31        1   7.5411296   0.6909546              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16: 2024-05-28 19:09:31        1   6.4422920   9.2537184              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17: 2024-05-28 19:09:31        2  -1.8453389   9.8397394              0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18: 2024-05-28 19:09:31        2  -2.8202623   6.2590489              0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19: 2024-05-28 19:09:31        2  -1.3260802   4.9397575              0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20: 2024-05-28 19:09:31        2  -4.4071897   9.0300579              0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21: 2024-05-28 19:09:31        2  -0.6764425  10.7277920              0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22: 2024-05-28 19:09:31        2   7.5411296   0.6909546              0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23: 2024-05-28 19:09:31        2   7.8157583   2.0711226              0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24: 2024-05-28 19:09:31        2  -1.8027603   1.2126744              0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25: 2024-05-28 19:09:31        3  -1.8453389   9.8397394              0.04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26: 2024-05-28 19:09:31        3  -2.8202623   6.2590489              0.04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27: 2024-05-28 19:09:31        3  -1.3260802   4.9397575              0.04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28: 2024-05-28 19:09:31        3  -4.4071897   9.0300579              0.04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29: 2024-05-28 19:09:31        4  -1.8453389   9.8397394              0.08</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30: 2024-05-28 19:09:31        4  -2.8202623   6.2590489              0.08</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31: 2024-05-28 19:09:32        5  -1.8453389   9.8397394              0.16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1: 2024-06-21 10:47:56        1  -2.8202623   6.2590489              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2: 2024-06-21 10:47:56        1   7.8157583   2.0711226              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3: 2024-06-21 10:47:56        1  -1.8027603   1.2126744              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4: 2024-06-21 10:47:56        1  -1.8453389   9.8397394              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5: 2024-06-21 10:47:56        1  -4.4071897   9.0300579              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6: 2024-06-21 10:47:56        1   9.1716220   9.8549374              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7: 2024-06-21 10:47:56        1  -1.3260802   4.9397575              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8: 2024-06-21 10:47:56        1   6.7168385  14.6921133              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9: 2024-06-21 10:47:56        1  -0.6764425  10.7277920              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10: 2024-06-21 10:47:56        1   8.1303687  13.0894546              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11: 2024-06-21 10:47:56        1  -0.5637486  14.7492562              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12: 2024-06-21 10:47:56        1   9.7528811   3.2784449              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13: 2024-06-21 10:47:56        1   3.8475633   9.9679510              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14: 2024-06-21 10:47:56        1   6.3873757   5.8434606              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15: 2024-06-21 10:47:56        1   7.5411296   0.6909546              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16: 2024-06-21 10:47:56        1   6.4422920   9.2537184              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17: 2024-06-21 10:47:56        2  -1.8453389   9.8397394              0.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18: 2024-06-21 10:47:56        2  -2.8202623   6.2590489              0.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19: 2024-06-21 10:47:56        2  -1.3260802   4.9397575              0.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20: 2024-06-21 10:47:56        2  -4.4071897   9.0300579              0.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21: 2024-06-21 10:47:56        2  -0.6764425  10.7277920              0.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22: 2024-06-21 10:47:56        2   7.5411296   0.6909546              0.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23: 2024-06-21 10:47:56        2   7.8157583   2.0711226              0.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24: 2024-06-21 10:47:56        2  -1.8027603   1.2126744              0.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25: 2024-06-21 10:47:56        3  -1.8453389   9.8397394              0.04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26: 2024-06-21 10:47:56        3  -2.8202623   6.2590489              0.04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27: 2024-06-21 10:47:56        3  -1.3260802   4.9397575              0.04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28: 2024-06-21 10:47:56        3  -4.4071897   9.0300579              0.04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29: 2024-06-21 10:47:56        4  -1.8453389   9.8397394              0.08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30: 2024-06-21 10:47:56        4  -2.8202623   6.2590489              0.08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31: 2024-06-21 10:47:56        5  -1.8453389   9.8397394              0.16</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               timestamp batch_nr x_domain_x1 x_domain_x2 x_domain_fidelity</span>
 </code></pre></div>
     </div>

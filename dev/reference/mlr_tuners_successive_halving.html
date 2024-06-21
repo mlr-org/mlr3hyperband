@@ -104,7 +104,7 @@ This sometimes results in the minimum budget having to be slightly adjusted by t
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Hyperparameter Tuning with Successive Halving</h1>
-      <small class="dont-index">Source: <a href="https://github.com/mlr-org/mlr3hyperband/blob/HEAD/R/TunerSuccessiveHalving.R" class="external-link"><code>R/TunerSuccessiveHalving.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/mlr-org/mlr3hyperband/blob/HEAD/R/TunerBatchSuccessiveHalving.R" class="external-link"><code>R/TunerBatchSuccessiveHalving.R</code></a></small>
       <div class="d-none name"><code>mlr_tuners_successive_halving.Rd</code></div>
     </div>
 
@@ -133,7 +133,7 @@ In Gretton A, Robert CC (eds.), <em>Proceedings of the 19th International Confer
 
 <p>This <a href="https://mlr3tuning.mlr-org.com/reference/Tuner.html" class="external-link">Tuner</a> can be instantiated via the <a href="https://mlr3misc.mlr-org.com/reference/Dictionary.html" class="external-link">dictionary</a>
 <a href="https://mlr3tuning.mlr-org.com/reference/mlr_tuners.html" class="external-link">mlr_tuners</a> or with the associated sugar function <code><a href="https://mlr3tuning.mlr-org.com/reference/tnr.html" class="external-link">tnr()</a></code>:</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>TunerSuccessiveHalving<span class="sc">$</span><span class="fu">new</span>()</span>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>TunerBatchSuccessiveHalving<span class="sc">$</span><span class="fu">new</span>()</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>mlr_tuners<span class="sc">$</span><span class="fu">get</span>(<span class="st">"successive_halving"</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">tnr</span>(<span class="st">"successive_halving"</span>)</span></code></pre><p></p></div>
     </div>
@@ -234,7 +234,7 @@ Repetition index. Start counting at 1.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="super-classes">Super classes<a class="anchor" aria-label="anchor" href="#super-classes"></a></h2>
-    <p><code><a href="https://mlr3tuning.mlr-org.com/reference/Tuner.html" class="external-link">mlr3tuning::Tuner</a></code> -&gt; <code><a href="https://mlr3tuning.mlr-org.com/reference/TunerBatch.html" class="external-link">mlr3tuning::TunerBatch</a></code> -&gt; <code><a href="https://mlr3tuning.mlr-org.com/reference/TunerBatchFromOptimizerBatch.html" class="external-link">mlr3tuning::TunerBatchFromOptimizerBatch</a></code> -&gt; <code>TunerSuccessiveHalving</code></p>
+    <p><code><a href="https://mlr3tuning.mlr-org.com/reference/Tuner.html" class="external-link">mlr3tuning::Tuner</a></code> -&gt; <code><a href="https://mlr3tuning.mlr-org.com/reference/TunerBatch.html" class="external-link">mlr3tuning::TunerBatch</a></code> -&gt; <code><a href="https://mlr3tuning.mlr-org.com/reference/TunerBatchFromOptimizerBatch.html" class="external-link">mlr3tuning::TunerBatchFromOptimizerBatch</a></code> -&gt; <code>TunerBatchSuccessiveHalving</code></p>
     </div>
     <div class="section level2">
     <h2 id="methods">Methods<a class="anchor" aria-label="anchor" href="#methods"></a></h2>
@@ -242,25 +242,25 @@ Repetition index. Start counting at 1.</p></li>
 <div class="section">
 <h3 id="public-methods">Public methods<a class="anchor" aria-label="anchor" href="#public-methods"></a></h3>
 
-<ul><li><p><a href="#method-TunerSuccessiveHalving-new"><code>TunerSuccessiveHalving$new()</code></a></p></li>
-<li><p><a href="#method-TunerSuccessiveHalving-clone"><code>TunerSuccessiveHalving$clone()</code></a></p></li>
+<ul><li><p><a href="#method-TunerBatchSuccessiveHalving-new"><code>TunerBatchSuccessiveHalving$new()</code></a></p></li>
+<li><p><a href="#method-TunerBatchSuccessiveHalving-clone"><code>TunerBatchSuccessiveHalving$clone()</code></a></p></li>
 </ul></div><p><details open><summary>Inherited methods</summary><ul><li><span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="format"><a href="https://mlr3tuning.mlr-org.com/reference/Tuner.html#method-format"><code>mlr3tuning::Tuner$format()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="help"><a href="https://mlr3tuning.mlr-org.com/reference/Tuner.html#method-help"><code>mlr3tuning::Tuner$help()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="print"><a href="https://mlr3tuning.mlr-org.com/reference/Tuner.html#method-print"><code>mlr3tuning::Tuner$print()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="mlr3tuning" data-topic="TunerBatchFromOptimizerBatch" data-id="optimize"><a href="https://mlr3tuning.mlr-org.com/reference/TunerBatchFromOptimizerBatch.html#method-optimize"><code>mlr3tuning::TunerBatchFromOptimizerBatch$optimize()</code></a></span></li>
-</ul></details></p><hr><a id="method-TunerSuccessiveHalving-new"></a><div class="section">
+</ul></details></p><hr><a id="method-TunerBatchSuccessiveHalving-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Creates a new instance of this <a href="https://r6.r-lib.org/reference/R6Class.html" class="external-link">R6</a> class.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/mlr_tuners_successive_halving.html">TunerSuccessiveHalving</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/mlr_tuners_successive_halving.html">TunerBatchSuccessiveHalving</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 
-</div><p></p><hr><a id="method-TunerSuccessiveHalving-clone"></a><div class="section">
+</div><p></p><hr><a id="method-TunerBatchSuccessiveHalving-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">TunerSuccessiveHalving</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">TunerBatchSuccessiveHalving</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
