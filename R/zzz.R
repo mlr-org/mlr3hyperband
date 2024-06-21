@@ -36,3 +36,5 @@ register_mlr3tuning = function() {
   walk(names(optimizers), function(id) bbotk::mlr_optimizers$remove(id))
   walk(names(tuners), function(id) mlr3tuning::mlr_tuners$remove(id))
 }
+
+leanify_package()
