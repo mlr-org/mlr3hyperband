@@ -1,4 +1,4 @@
-test_that("TunerSuccessiveHalving works", {
+test_that("TunerBatchSuccessiveHalving works", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 16, tags = "budget"))
@@ -7,7 +7,7 @@ test_that("TunerSuccessiveHalving works", {
   test_tuner_successive_halving(n = 16, eta = 2, learner)
 })
 
-test_that("TunerSuccessiveHalving works with minimum budget > 1", {
+test_that("TunerBatchSuccessiveHalving works with minimum budget > 1", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(2, 8, tags = "budget"))
@@ -16,7 +16,7 @@ test_that("TunerSuccessiveHalving works with minimum budget > 1", {
   test_tuner_successive_halving(n = 16, eta = 2, learner)
 })
 
-test_that("TunerSuccessiveHalving rounds budget", {
+test_that("TunerBatchSuccessiveHalving rounds budget", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 7, tags = "budget"))
@@ -25,7 +25,7 @@ test_that("TunerSuccessiveHalving rounds budget", {
   test_tuner_successive_halving(n = 16, eta = 2, learner)
 })
 
-test_that("TunerSuccessiveHalving works with eta = 2.5", {
+test_that("TunerBatchSuccessiveHalving works with eta = 2.5", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 8, tags = "budget"))
@@ -34,7 +34,7 @@ test_that("TunerSuccessiveHalving works with eta = 2.5", {
   test_tuner_successive_halving(n = 16, eta = 2.5, learner)
 })
 
-test_that("TunerSuccessiveHalving adjusts minimum budget", {
+test_that("TunerBatchSuccessiveHalving adjusts minimum budget", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 30, tags = "budget"))
@@ -52,7 +52,7 @@ test_that("TunerSuccessiveHalving adjusts minimum budget", {
   expect_equal(max(instance$archive$data$iter), 27)
 })
 
-test_that("TunerSuccessiveHalving works with xgboost", {
+test_that("TunerBatchSuccessiveHalving works with xgboost", {
   skip_if_not_installed("mlr3learners")
   skip_if_not_installed("xgboost")
   library(mlr3learners) # nolint
@@ -65,7 +65,7 @@ test_that("TunerSuccessiveHalving works with xgboost", {
   test_tuner_successive_halving(n = 16, eta = 2, learner)
 })
 
-test_that("TunerSuccessiveHalving works with subsampling", {
+test_that("TunerBatchSuccessiveHalving works with subsampling", {
   skip_if_not_installed("mlr3pipelines")
   library(mlr3pipelines)
 
@@ -76,7 +76,7 @@ test_that("TunerSuccessiveHalving works with subsampling", {
   test_tuner_successive_halving(n = 81, eta = 3, graph_learner)
 })
 
-test_that("TunerSuccessiveHalving works with multi-crit", {
+test_that("TunerBatchSuccessiveHalving works with multi-crit", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 4, tags = "budget"))
@@ -85,7 +85,7 @@ test_that("TunerSuccessiveHalving works with multi-crit", {
   test_tuner_successive_halving(n = 16, eta = 2, learner, measures = msrs(c("classif.ce", "classif.acc")))
 })
 
-test_that("TunerSuccessiveHalving works with custom sampler", {
+test_that("TunerBatchSuccessiveHalving works with custom sampler", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 4, tags = "budget"))
@@ -96,7 +96,7 @@ test_that("TunerSuccessiveHalving works with custom sampler", {
   test_tuner_successive_halving(n = 16, eta = 2, learner, sampler = sampler)
 })
 
-test_that("TunerSuccessiveHalving errors if not enough parameters are sampled", {
+test_that("TunerBatchSuccessiveHalving errors if not enough parameters are sampled", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     message_train = to_tune(),
@@ -116,7 +116,7 @@ test_that("TunerSuccessiveHalving errors if not enough parameters are sampled", 
   )
 })
 
-test_that("TunerSuccessiveHalving errors if budget parameter is sampled", {
+test_that("TunerBatchSuccessiveHalving errors if budget parameter is sampled", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 4, tags = "budget"))
@@ -138,7 +138,7 @@ test_that("TunerSuccessiveHalving errors if budget parameter is sampled", {
   )
 })
 
-test_that("TunerSuccessiveHalving errors if budget parameter is not numeric", {
+test_that("TunerBatchSuccessiveHalving errors if budget parameter is not numeric", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     predict_missing_type = to_tune(p_fct(levels = c("na", "omit"), tags = "budget"))
@@ -155,7 +155,7 @@ test_that("TunerSuccessiveHalving errors if budget parameter is not numeric", {
   )
 })
 
-test_that("TunerSuccessiveHalving errors if multiple budget parameters are set", {
+test_that("TunerBatchSuccessiveHalving errors if multiple budget parameters are set", {
   learner = lrn("classif.debug",
     x  = to_tune(p_dbl(0, 1, tags = "budget")),
     iter = to_tune(p_int(1, 16, tags = "budget"))
@@ -172,7 +172,7 @@ test_that("TunerSuccessiveHalving errors if multiple budget parameters are set",
   )
 })
 
-test_that("TunerSuccessiveHalving minimizes measure", {
+test_that("TunerBatchSuccessiveHalving minimizes measure", {
   learner = lrn("classif.debug",
     x = to_tune(),
     iter = to_tune(p_int(1, 16, tags = "budget"))
@@ -182,7 +182,7 @@ test_that("TunerSuccessiveHalving minimizes measure", {
   expect_equal(min(instance$archive$data[stage == 0, dummy]), instance$archive$data[stage == 4, dummy])
 })
 
-test_that("TunerSuccessiveHalving maximizes measure", {
+test_that("TunerBatchSuccessiveHalving maximizes measure", {
   learner = lrn("classif.debug",
     x = to_tune(),
     iter = to_tune(p_int(1, 16, tags = "budget"))
@@ -192,7 +192,7 @@ test_that("TunerSuccessiveHalving maximizes measure", {
   expect_equal(max(instance$archive$data[stage == 0, dummy]), instance$archive$data[stage == 4, dummy])
 })
 
-test_that("TunerSuccessiveHalving works with single budget value", {
+test_that("TunerBatchSuccessiveHalving works with single budget value", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 1, tags = "budget"))
@@ -201,7 +201,7 @@ test_that("TunerSuccessiveHalving works with single budget value", {
   test_tuner_successive_halving(n = 16, eta = 2, learner)
 })
 
-test_that("TunerSuccessiveHalving works with repetitions", {
+test_that("TunerBatchSuccessiveHalving works with repetitions", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 16, tags = "budget"))
@@ -217,7 +217,7 @@ test_that("TunerSuccessiveHalving works with repetitions", {
   expect_equal(nrow(instance$archive$data), 62)
 })
 
-test_that("TunerSuccessiveHalving terminates itself", {
+test_that("TunerBatchSuccessiveHalving terminates itself", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 16, tags = "budget"))
@@ -233,7 +233,7 @@ test_that("TunerSuccessiveHalving terminates itself", {
   expect_equal(nrow(instance$archive$data), 31)
 })
 
-test_that("TunerSuccessiveHalving works with infinite repetitions", {
+test_that("TunerBatchSuccessiveHalving works with infinite repetitions", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 16, tags = "budget"))
@@ -250,7 +250,7 @@ test_that("TunerSuccessiveHalving works with infinite repetitions", {
   expect_equal(nrow(instance$archive$data), 78)
 })
 
-test_that("TunerSuccessiveHalving works with r_max > n", {
+test_that("TunerBatchSuccessiveHalving works with r_max > n", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 17, tags = "budget"))
@@ -259,7 +259,7 @@ test_that("TunerSuccessiveHalving works with r_max > n", {
   test_tuner_successive_halving(n = 16, eta = 2, learner)
 })
 
-test_that("TunerSuccessiveHalving works with r_max < n", {
+test_that("TunerBatchSuccessiveHalving works with r_max < n", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 15, tags = "budget"))
@@ -268,7 +268,7 @@ test_that("TunerSuccessiveHalving works with r_max < n", {
   test_tuner_successive_halving(n = 16, eta = 2, learner)
 })
 
-test_that("TunerSuccessiveHalving works with r_max < n and adjust minimum budget", {
+test_that("TunerBatchSuccessiveHalving works with r_max < n and adjust minimum budget", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 15, tags = "budget"))
@@ -277,6 +277,6 @@ test_that("TunerSuccessiveHalving works with r_max < n and adjust minimum budget
   test_tuner_successive_halving(n = 16, eta = 2, learner, adjust_minimum_budget = TRUE)
 })
 
-test_that("TunerSuccessiveHalving man exists", {
+test_that("TunerBatchSuccessiveHalving man exists", {
   expect_man_exists(tnr("successive_halving")$man)
 })

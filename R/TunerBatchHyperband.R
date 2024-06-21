@@ -1,6 +1,6 @@
 #' @title Tuner Using the Hyperband Algorithm
 #'
-#' @include OptimizerHyperband.R
+#' @include OptimizerBatchHyperband.R
 #' @name mlr_tuners_hyperband
 #' @templateVar id hyperband
 #'
@@ -25,7 +25,7 @@
 #'
 #' @export
 #' @template example_tuner
-TunerHyperband = R6Class("TunerHyperband",
+TunerBatchHyperband = R6Class("TunerBatchHyperband",
   inherit = TunerBatchFromOptimizerBatch,
   public = list(
 
@@ -33,7 +33,7 @@ TunerHyperband = R6Class("TunerHyperband",
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
       super$initialize(
-        optimizer = OptimizerHyperband$new(),
+        optimizer = OptimizerBatchHyperband$new(),
         man = "mlr3hyperband::mlr_tuners_hyperband"
       )
     }
@@ -41,4 +41,4 @@ TunerHyperband = R6Class("TunerHyperband",
 )
 
 #' @include aaa.R
-tuners[["hyperband"]] = TunerHyperband
+tuners[["hyperband"]] = TunerBatchHyperband

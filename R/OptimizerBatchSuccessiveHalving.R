@@ -65,7 +65,7 @@
 #'
 #' @export
 #' @template example_optimizer
-OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
+OptimizerBatchSuccessiveHalving = R6Class("OptimizerBatchSuccessiveHalving",
   inherit = OptimizerBatch,
   public = list(
 
@@ -179,4 +179,4 @@ OptimizerSuccessiveHalving = R6Class("OptimizerSuccessiveHalving",
 )
 
 #' @include aaa.R
-optimizers[["successive_halving"]] = OptimizerSuccessiveHalving
+optimizers[["successive_halving"]] = OptimizerBatchSuccessiveHalving
