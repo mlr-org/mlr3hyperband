@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Successive Halving (Jamieson and Talwalkar (2016) \href{https://arxiv.org/abs/1502.07943}{arXiv:1502.07943}) and Hyperband (Li et al. 2018 \href{https://arxiv.org/abs/1603.06560}{arXiv:1603.06560}) optimization algorithm for the mlr3 ecosystem. The implementation in mlr3hyperband features improved scheduling and parallelizes the evaluation of configurations. The package includes tuners for hyperparameter optimization in mlr3tuning and optimizers for black-box optimization in bbotk.
+Successive Halving (Jamieson and Talwalkar (2016) \doi{10.48550/arXiv.1502.07943}) and Hyperband (Li et al. 2018 \doi{10.48550/arXiv.1603.06560}) optimization algorithm for the mlr3 ecosystem. The implementation in mlr3hyperband features improved scheduling and parallelizes the evaluation of configurations. The package includes tuners for hyperparameter optimization in mlr3tuning and optimizers for black-box optimization in bbotk.
 }
 \seealso{
 Useful links:
