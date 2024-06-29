@@ -32,8 +32,8 @@ This sometimes results in the minimum budget having to be slightly adjusted by t
 }
 \section{Dictionary}{
 
-This \link{Tuner} can be instantiated via the \link[mlr3misc:Dictionary]{dictionary}
-\link{mlr_tuners} or with the associated sugar function \code{\link[=tnr]{tnr()}}:
+This \link[mlr3tuning:Tuner]{mlr3tuning::Tuner} can be instantiated via the \link[mlr3misc:Dictionary]{dictionary}
+\link[mlr3tuning:mlr_tuners]{mlr3tuning::mlr_tuners} or with the associated sugar function \code{\link[mlr3tuning:tnr]{mlr3tuning::tnr()}}:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{TunerBatchSuccessiveHalving$new()
 mlr_tuners$get("successive_halving")
@@ -69,7 +69,7 @@ sampler = SamplerJointIndep$new(list(
 \section{Progress Bars}{
 
 \verb{$optimize()} supports progress bars via the package \CRANpkg{progressr}
-combined with a \link{Terminator}. Simply wrap the function in
+combined with a \link[bbotk:Terminator]{bbotk::Terminator}. Simply wrap the function in
 \code{progressr::with_progress()} to enable them. We recommend to use package
 \CRANpkg{progress} as backend; enable with \code{progressr::handlers("progress")}.
 }
