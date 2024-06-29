@@ -159,7 +159,7 @@ OptimizerBatchHyperband = R6Class("OptimizerBatchHyperband",
           # promote configurations of previous batch
           if (s != s_max) {
             archive = inst$archive
-            data = archive$data[batch_nr == archive$n_batch, ]
+            data = archive$data[archive$n_batch, , on = "batch_nr"]
             minimize = ifelse(archive$codomain$maximization_to_minimization == -1, TRUE, FALSE)
 
             # for each bracket, promote configurations of previous stage
