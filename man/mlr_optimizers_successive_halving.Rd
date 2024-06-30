@@ -41,8 +41,8 @@ The \href{https://mlr-org.com/gallery-all-optimization.html}{gallery} features a
 
 \section{Dictionary}{
 
-This \link{Optimizer} can be instantiated via the \link[mlr3misc:Dictionary]{dictionary}
-\link{mlr_optimizers} or with the associated sugar function \code{\link[=opt]{opt()}}:
+This \link[bbotk:Optimizer]{bbotk::Optimizer} can be instantiated via the \link[mlr3misc:Dictionary]{dictionary}
+\link[bbotk:mlr_optimizers]{bbotk::mlr_optimizers} or with the associated sugar function \code{\link[bbotk:opt]{bbotk::opt()}}:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{mlr_optimizers$get("successive_halving")
 opt("successive_halving")
@@ -99,7 +99,7 @@ sampler = SamplerJointIndep$new(list(
 \section{Progress Bars}{
 
 \verb{$optimize()} supports progress bars via the package \CRANpkg{progressr}
-combined with a \link{Terminator}. Simply wrap the function in
+combined with a \link[bbotk:Terminator]{bbotk::Terminator}. Simply wrap the function in
 \code{progressr::with_progress()} to enable them. We recommend to use package
 \CRANpkg{progress} as backend; enable with \code{progressr::handlers("progress")}.
 }
