@@ -24,7 +24,7 @@ in_ir_in_ir_in_ir_in_ir_i
 s is the bracket number, i is the stage number, n_i is the number of configurations and r_i is the budget allocated to a single configuration.
 The budget hyperparameter must be tagged with "budget" in the search space.
 The minimum budget (r_min) which is allocated in the base stage of the most explorative bracket, is set by the lower bound of the budget parameter.
-The upper bound defines the maximum budget (r_max) which is allocated to the candidates in the last stages.'><title>Optimizer Using the Hyperband Algorithm — mlr_optimizers_hyperband • mlr3hyperband</title><!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png"><link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png"><link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png"><link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png"><link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png"><link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png"><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Roboto-0.4.8/font.css" rel="stylesheet"><link href="../deps/JetBrains_Mono-0.4.8/font.css" rel="stylesheet"><link href="../deps/Roboto_Slab-0.4.8/font.css" rel="stylesheet"><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Optimizer Using the Hyperband Algorithm — mlr_optimizers_hyperband"><meta property="og:description" content='Optimizer using the Hyperband (HB) algorithm.
+The upper bound defines the maximum budget (r_max) which is allocated to the candidates in the last stages.'><title>Optimizer Using the Hyperband Algorithm — mlr_optimizers_hyperband • mlr3hyperband</title><!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png"><link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png"><link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png"><link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png"><link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png"><link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png"><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Roboto-0.4.9/font.css" rel="stylesheet"><link href="../deps/JetBrains_Mono-0.4.9/font.css" rel="stylesheet"><link href="../deps/Roboto_Slab-0.4.9/font.css" rel="stylesheet"><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Optimizer Using the Hyperband Algorithm — mlr_optimizers_hyperband"><meta property="og:description" content='Optimizer using the Hyperband (HB) algorithm.
 HB runs the Successive Halving Algorithm (SHA) with different numbers of stating configurations.
 The algorithm is initialized with the same parameters as Successive Halving but without n.
 Each run of Successive Halving is called a bracket and starts with a different budget r_0.
@@ -56,11 +56,11 @@ The upper bound defines the maximum budget (r_max) which is allocated to the can
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light" data-bs-theme="light"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">mlr3hyperband</a>
 
-    <small class="nav-text text-default me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
+    <small class="nav-text text-default me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.6.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -120,7 +120,7 @@ The upper bound defines the maximum budget (r_max) which is allocated to the can
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Optimizer Using the Hyperband Algorithm</h1>
-      <small class="dont-index">Source: <a href="https://github.com/mlr-org/mlr3hyperband/blob/HEAD/R/OptimizerHyperband.R" class="external-link"><code>R/OptimizerHyperband.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/mlr-org/mlr3hyperband/blob/HEAD/R/OptimizerBatchHyperband.R" class="external-link"><code>R/OptimizerBatchHyperband.R</code></a></small>
       <div class="d-none name"><code>mlr_optimizers_hyperband.Rd</code></div>
     </div>
 
@@ -161,8 +161,8 @@ The upper bound defines the maximum budget (<code>r_max</code>) which is allocat
     <h2 id="dictionary">Dictionary<a class="anchor" aria-label="anchor" href="#dictionary"></a></h2>
     
 
-<p>This <a href="https://bbotk.mlr-org.com/reference/Optimizer.html" class="external-link">Optimizer</a> can be instantiated via the <a href="https://mlr3misc.mlr-org.com/reference/Dictionary.html" class="external-link">dictionary</a>
-<a href="https://bbotk.mlr-org.com/reference/mlr_optimizers.html" class="external-link">mlr_optimizers</a> or with the associated sugar function <code><a href="https://bbotk.mlr-org.com/reference/opt.html" class="external-link">opt()</a></code>:</p>
+<p>This <a href="https://bbotk.mlr-org.com/reference/Optimizer.html" class="external-link">bbotk::Optimizer</a> can be instantiated via the <a href="https://mlr3misc.mlr-org.com/reference/Dictionary.html" class="external-link">dictionary</a>
+<a href="https://bbotk.mlr-org.com/reference/mlr_optimizers.html" class="external-link">bbotk::mlr_optimizers</a> or with the associated sugar function <code><a href="https://bbotk.mlr-org.com/reference/opt.html" class="external-link">bbotk::opt()</a></code>:</p>
 <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>mlr_optimizers<span class="sc">$</span><span class="fu">get</span>(<span class="st">"hyperband"</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">opt</span>(<span class="st">"hyperband"</span>)</span></code></pre><p></p></div>
     </div>
@@ -219,7 +219,7 @@ A custom sampler may look like this (the full example is given in the
     
 
 <p><code>$optimize()</code> supports progress bars via the package <a href="https://CRAN.R-project.org/package=progressr" class="external-link"><span class="pkg">progressr</span></a>
-combined with a <a href="https://bbotk.mlr-org.com/reference/Terminator.html" class="external-link">Terminator</a>. Simply wrap the function in
+combined with a <a href="https://bbotk.mlr-org.com/reference/Terminator.html" class="external-link">bbotk::Terminator</a>. Simply wrap the function in
 <code>progressr::with_progress()</code> to enable them. We recommend to use package
 <a href="https://CRAN.R-project.org/package=progress" class="external-link"><span class="pkg">progress</span></a> as backend; enable with <code>progressr::handlers("progress")</code>.</p>
     </div>
@@ -232,8 +232,8 @@ combined with a <a href="https://bbotk.mlr-org.com/reference/Terminator.html" cl
 Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
     </div>
     <div class="section level2">
-    <h2 id="super-class">Super class<a class="anchor" aria-label="anchor" href="#super-class"></a></h2>
-    <p><code><a href="https://bbotk.mlr-org.com/reference/Optimizer.html" class="external-link">bbotk::Optimizer</a></code> -&gt; <code>OptimizerHyperband</code></p>
+    <h2 id="super-classes">Super classes<a class="anchor" aria-label="anchor" href="#super-classes"></a></h2>
+    <p><code><a href="https://bbotk.mlr-org.com/reference/Optimizer.html" class="external-link">bbotk::Optimizer</a></code> -&gt; <code><a href="https://bbotk.mlr-org.com/reference/OptimizerBatch.html" class="external-link">bbotk::OptimizerBatch</a></code> -&gt; <code>OptimizerBatchHyperband</code></p>
     </div>
     <div class="section level2">
     <h2 id="methods">Methods<a class="anchor" aria-label="anchor" href="#methods"></a></h2>
@@ -241,25 +241,25 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
 <div class="section">
 <h3 id="public-methods">Public methods<a class="anchor" aria-label="anchor" href="#public-methods"></a></h3>
 
-<ul><li><p><a href="#method-OptimizerHyperband-new"><code>OptimizerHyperband$new()</code></a></p></li>
-<li><p><a href="#method-OptimizerHyperband-clone"><code>OptimizerHyperband$clone()</code></a></p></li>
+<ul><li><p><a href="#method-OptimizerBatchHyperband-new"><code>OptimizerBatchHyperband$new()</code></a></p></li>
+<li><p><a href="#method-OptimizerBatchHyperband-clone"><code>OptimizerBatchHyperband$clone()</code></a></p></li>
 </ul></div><p><details open><summary>Inherited methods</summary><ul><li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="format"><a href="https://bbotk.mlr-org.com/reference/Optimizer.html#method-format"><code>bbotk::Optimizer$format()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="help"><a href="https://bbotk.mlr-org.com/reference/Optimizer.html#method-help"><code>bbotk::Optimizer$help()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="optimize"><a href="https://bbotk.mlr-org.com/reference/Optimizer.html#method-optimize"><code>bbotk::Optimizer$optimize()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="print"><a href="https://bbotk.mlr-org.com/reference/Optimizer.html#method-print"><code>bbotk::Optimizer$print()</code></a></span></li>
-</ul></details></p><hr><a id="method-OptimizerHyperband-new"></a><div class="section">
+<li><span class="pkg-link" data-pkg="bbotk" data-topic="OptimizerBatch" data-id="optimize"><a href="https://bbotk.mlr-org.com/reference/OptimizerBatch.html#method-optimize"><code>bbotk::OptimizerBatch$optimize()</code></a></span></li>
+</ul></details></p><hr><a id="method-OptimizerBatchHyperband-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Creates a new instance of this <a href="https://r6.r-lib.org/reference/R6Class.html" class="external-link">R6</a> class.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/mlr_optimizers_hyperband.html">OptimizerHyperband</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/mlr_optimizers_hyperband.html">OptimizerBatchHyperband</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 
-</div><p></p><hr><a id="method-OptimizerHyperband-clone"></a><div class="section">
+</div><p></p><hr><a id="method-OptimizerBatchHyperband-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OptimizerHyperband</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OptimizerBatchHyperband</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -303,6 +303,7 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
 <span class="r-in"><span>  search_space <span class="op">=</span> <span class="va">search_space</span>,</span></span>
 <span class="r-in"><span>  terminator <span class="op">=</span> <span class="fu"><a href="https://bbotk.mlr-org.com/reference/trm.html" class="external-link">trm</a></span><span class="op">(</span><span class="st">"evals"</span>, n_evals <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> OptimInstanceSingleCrit is deprecated. Use OptimInstanceBatchSingleCrit instead.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">optimizer</span> <span class="op">=</span> <span class="fu"><a href="https://bbotk.mlr-org.com/reference/opt.html" class="external-link">opt</a></span><span class="op">(</span><span class="st">"hyperband"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -320,7 +321,6 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># all evaluations</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/as.data.table.html" class="external-link">as.data.table</a></span><span class="op">(</span><span class="va">instance</span><span class="op">$</span><span class="va">archive</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Index: &lt;batch_nr&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              x1         x2 fidelity stage bracket repetition          y</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;num&gt;      &lt;num&gt;    &lt;num&gt; &lt;num&gt;   &lt;int&gt;      &lt;num&gt;      &lt;num&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1: -3.78874794  8.9439418 0.015625     0       6          1  14.781959</span>
@@ -390,70 +390,70 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              x1         x2 fidelity stage bracket repetition          y</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               timestamp batch_nr x_domain_x1 x_domain_x2 x_domain_fidelity</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  &lt;POSc&gt;    &lt;int&gt;       &lt;num&gt;       &lt;num&gt;             &lt;num&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1: 2024-03-06 08:49:01        1 -3.78874794   8.9439418          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2: 2024-03-06 08:49:01        1  7.51499556   2.8727705          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3: 2024-03-06 08:49:01        1  4.01141329  14.2164591          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4: 2024-03-06 08:49:01        1 -2.64187338   8.1372061          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5: 2024-03-06 08:49:01        1 -4.88900838   8.1690509          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6: 2024-03-06 08:49:01        1  1.99590246   4.1789573          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7: 2024-03-06 08:49:01        1  2.46666083   6.7005370          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8: 2024-03-06 08:49:01        1 -0.65349133   5.5726678          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9: 2024-03-06 08:49:01        1  5.99322981   0.4209146          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10: 2024-03-06 08:49:01        1  6.58782267   6.9898079          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11: 2024-03-06 08:49:01        1  8.11900991   5.8504708          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12: 2024-03-06 08:49:01        1 -2.37589060   0.3009783          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13: 2024-03-06 08:49:01        1 -4.48638001   5.6545639          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14: 2024-03-06 08:49:01        1 -0.19421404   8.3986926          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15: 2024-03-06 08:49:01        1  1.03492358  12.8562538          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16: 2024-03-06 08:49:01        1 -2.06495248   5.7721457          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17: 2024-03-06 08:49:01        1  1.05307176   7.9187555          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18: 2024-03-06 08:49:01        1 -4.04507814   9.0095629          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19: 2024-03-06 08:49:01        1  0.83051970   3.9205704          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20: 2024-03-06 08:49:01        1  9.63321753   4.3507524          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21: 2024-03-06 08:49:01        1 -0.65161557   7.2011276          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22: 2024-03-06 08:49:01        1  5.17570641  13.8000832          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23: 2024-03-06 08:49:01        1  6.02979398   6.0108028          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24: 2024-03-06 08:49:01        1 -2.06064900   3.1975907          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25: 2024-03-06 08:49:01        1  9.70809512  10.0765022          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26: 2024-03-06 08:49:01        1  6.12282294   0.8792117          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27: 2024-03-06 08:49:01        1 -4.22830586  14.9560370          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28: 2024-03-06 08:49:01        1  2.95318695   2.2355320          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29: 2024-03-06 08:49:01        1  5.43735818   7.7783495          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30: 2024-03-06 08:49:01        1  5.32834005  12.6918008          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31: 2024-03-06 08:49:01        1 -4.53154512  10.7740459          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32: 2024-03-06 08:49:01        1 -1.61656198   3.6197103          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33: 2024-03-06 08:49:01        1 -0.48753791   8.2056505          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34: 2024-03-06 08:49:01        1  4.54698422  12.5220272          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35: 2024-03-06 08:49:01        1  2.18536825   0.4193404          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36: 2024-03-06 08:49:01        1  1.48256887   7.0407645          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37: 2024-03-06 08:49:01        1  5.59650757  12.0852005          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38: 2024-03-06 08:49:01        1  9.22864864  12.2107697          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39: 2024-03-06 08:49:01        1 -2.29491848   6.0586650          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40: 2024-03-06 08:49:01        1 -1.74650185   3.2764651          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41: 2024-03-06 08:49:01        1  5.20244376   6.2754210          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42: 2024-03-06 08:49:01        1  2.48268416  10.0330612          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43: 2024-03-06 08:49:01        1  4.62519023   7.6147542          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44: 2024-03-06 08:49:01        1  4.90426524   9.9053896          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45: 2024-03-06 08:49:01        1 -3.55963763   7.6768697          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46: 2024-03-06 08:49:01        1  6.48400246  12.5332866          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47: 2024-03-06 08:49:01        1  6.54512206  10.6317174          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48: 2024-03-06 08:49:01        1  9.86068468  13.1130891          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49: 2024-03-06 08:49:01        1  9.55781354   0.1721931          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50: 2024-03-06 08:49:01        1  0.83774141  13.3237435          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51: 2024-03-06 08:49:01        1  1.91779697  14.9452038          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 52: 2024-03-06 08:49:01        1 -0.27137371   7.5028725          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53: 2024-03-06 08:49:01        1 -2.37986159   5.3845054          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54: 2024-03-06 08:49:01        1  2.97360311  11.6236953          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55: 2024-03-06 08:49:01        1  2.40455524   8.7671288          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 56: 2024-03-06 08:49:01        1  6.68962939   9.5096456          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 57: 2024-03-06 08:49:01        1 -1.93732486  12.8799923          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 58: 2024-03-06 08:49:01        1  5.70095918   8.5034151          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59: 2024-03-06 08:49:01        1 -4.02175832   3.7949553          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 60: 2024-03-06 08:49:01        1  0.31310198  13.7820482          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 61: 2024-03-06 08:49:01        1  7.37799132  13.0102531          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 62: 2024-03-06 08:49:01        1 -0.89272632   3.7280805          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 63: 2024-03-06 08:49:01        1  3.55067427   6.0432182          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 64: 2024-03-06 08:49:01        1  0.03578621  11.5444526          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1: 2024-06-30 09:53:08        1 -3.78874794   8.9439418          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2: 2024-06-30 09:53:08        1  7.51499556   2.8727705          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3: 2024-06-30 09:53:08        1  4.01141329  14.2164591          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4: 2024-06-30 09:53:08        1 -2.64187338   8.1372061          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5: 2024-06-30 09:53:08        1 -4.88900838   8.1690509          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6: 2024-06-30 09:53:08        1  1.99590246   4.1789573          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7: 2024-06-30 09:53:08        1  2.46666083   6.7005370          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8: 2024-06-30 09:53:08        1 -0.65349133   5.5726678          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9: 2024-06-30 09:53:08        1  5.99322981   0.4209146          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10: 2024-06-30 09:53:08        1  6.58782267   6.9898079          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11: 2024-06-30 09:53:08        1  8.11900991   5.8504708          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12: 2024-06-30 09:53:08        1 -2.37589060   0.3009783          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13: 2024-06-30 09:53:08        1 -4.48638001   5.6545639          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14: 2024-06-30 09:53:08        1 -0.19421404   8.3986926          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15: 2024-06-30 09:53:08        1  1.03492358  12.8562538          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16: 2024-06-30 09:53:08        1 -2.06495248   5.7721457          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17: 2024-06-30 09:53:08        1  1.05307176   7.9187555          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18: 2024-06-30 09:53:08        1 -4.04507814   9.0095629          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19: 2024-06-30 09:53:08        1  0.83051970   3.9205704          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20: 2024-06-30 09:53:08        1  9.63321753   4.3507524          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21: 2024-06-30 09:53:08        1 -0.65161557   7.2011276          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22: 2024-06-30 09:53:08        1  5.17570641  13.8000832          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23: 2024-06-30 09:53:08        1  6.02979398   6.0108028          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24: 2024-06-30 09:53:08        1 -2.06064900   3.1975907          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25: 2024-06-30 09:53:08        1  9.70809512  10.0765022          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26: 2024-06-30 09:53:08        1  6.12282294   0.8792117          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27: 2024-06-30 09:53:08        1 -4.22830586  14.9560370          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28: 2024-06-30 09:53:08        1  2.95318695   2.2355320          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29: 2024-06-30 09:53:08        1  5.43735818   7.7783495          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30: 2024-06-30 09:53:08        1  5.32834005  12.6918008          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31: 2024-06-30 09:53:08        1 -4.53154512  10.7740459          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32: 2024-06-30 09:53:08        1 -1.61656198   3.6197103          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33: 2024-06-30 09:53:08        1 -0.48753791   8.2056505          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34: 2024-06-30 09:53:08        1  4.54698422  12.5220272          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35: 2024-06-30 09:53:08        1  2.18536825   0.4193404          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36: 2024-06-30 09:53:08        1  1.48256887   7.0407645          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37: 2024-06-30 09:53:08        1  5.59650757  12.0852005          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38: 2024-06-30 09:53:08        1  9.22864864  12.2107697          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39: 2024-06-30 09:53:08        1 -2.29491848   6.0586650          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40: 2024-06-30 09:53:08        1 -1.74650185   3.2764651          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41: 2024-06-30 09:53:08        1  5.20244376   6.2754210          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42: 2024-06-30 09:53:08        1  2.48268416  10.0330612          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43: 2024-06-30 09:53:08        1  4.62519023   7.6147542          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44: 2024-06-30 09:53:08        1  4.90426524   9.9053896          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45: 2024-06-30 09:53:08        1 -3.55963763   7.6768697          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46: 2024-06-30 09:53:08        1  6.48400246  12.5332866          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47: 2024-06-30 09:53:08        1  6.54512206  10.6317174          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48: 2024-06-30 09:53:08        1  9.86068468  13.1130891          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49: 2024-06-30 09:53:08        1  9.55781354   0.1721931          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50: 2024-06-30 09:53:08        1  0.83774141  13.3237435          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51: 2024-06-30 09:53:08        1  1.91779697  14.9452038          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52: 2024-06-30 09:53:08        1 -0.27137371   7.5028725          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53: 2024-06-30 09:53:08        1 -2.37986159   5.3845054          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54: 2024-06-30 09:53:08        1  2.97360311  11.6236953          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55: 2024-06-30 09:53:08        1  2.40455524   8.7671288          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 56: 2024-06-30 09:53:08        1  6.68962939   9.5096456          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 57: 2024-06-30 09:53:08        1 -1.93732486  12.8799923          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 58: 2024-06-30 09:53:08        1  5.70095918   8.5034151          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59: 2024-06-30 09:53:08        1 -4.02175832   3.7949553          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 60: 2024-06-30 09:53:08        1  0.31310198  13.7820482          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 61: 2024-06-30 09:53:08        1  7.37799132  13.0102531          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 62: 2024-06-30 09:53:08        1 -0.89272632   3.7280805          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 63: 2024-06-30 09:53:08        1  3.55067427   6.0432182          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 64: 2024-06-30 09:53:08        1  0.03578621  11.5444526          0.015625</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               timestamp batch_nr x_domain_x1 x_domain_x2 x_domain_fidelity</span>
 </code></pre></div>
     </div>
@@ -462,11 +462,11 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Marc Becker, Sebastian Gruber, Jakob Richter, Julia Moosbauer, Bernd Bischl.</p>
+  <p>Developed by Marc Becker, Sebastian Gruber, Jakob Richter, Julia Moosbauer, Bernd Bischl.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
 </div>
 
     </footer></div>
