@@ -44,7 +44,7 @@ This sometimes results in the minimum budget having to be slightly adjusted by t
     
     <a class="navbar-brand me-2" href="../index.html">mlr3hyperband</a>
 
-    <small class="nav-text text-default me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.5.0.9000</small>
+    <small class="nav-text text-default me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.6.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -138,8 +138,8 @@ In Gretton A, Robert CC (eds.), <em>Proceedings of the 19th International Confer
     <h2 id="dictionary">Dictionary<a class="anchor" aria-label="anchor" href="#dictionary"></a></h2>
     
 
-<p>This <a href="https://bbotk.mlr-org.com/reference/Optimizer.html" class="external-link">Optimizer</a> can be instantiated via the <a href="https://mlr3misc.mlr-org.com/reference/Dictionary.html" class="external-link">dictionary</a>
-<a href="https://bbotk.mlr-org.com/reference/mlr_optimizers.html" class="external-link">mlr_optimizers</a> or with the associated sugar function <code><a href="https://bbotk.mlr-org.com/reference/opt.html" class="external-link">opt()</a></code>:</p>
+<p>This <a href="https://bbotk.mlr-org.com/reference/Optimizer.html" class="external-link">bbotk::Optimizer</a> can be instantiated via the <a href="https://mlr3misc.mlr-org.com/reference/Dictionary.html" class="external-link">dictionary</a>
+<a href="https://bbotk.mlr-org.com/reference/mlr_optimizers.html" class="external-link">bbotk::mlr_optimizers</a> or with the associated sugar function <code><a href="https://bbotk.mlr-org.com/reference/opt.html" class="external-link">bbotk::opt()</a></code>:</p>
 <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>mlr_optimizers<span class="sc">$</span><span class="fu">get</span>(<span class="st">"successive_halving"</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">opt</span>(<span class="st">"successive_halving"</span>)</span></code></pre><p></p></div>
     </div>
@@ -202,7 +202,7 @@ A custom sampler may look like this (the full example is given in the
     
 
 <p><code>$optimize()</code> supports progress bars via the package <a href="https://CRAN.R-project.org/package=progressr" class="external-link"><span class="pkg">progressr</span></a>
-combined with a <a href="https://bbotk.mlr-org.com/reference/Terminator.html" class="external-link">Terminator</a>. Simply wrap the function in
+combined with a <a href="https://bbotk.mlr-org.com/reference/Terminator.html" class="external-link">bbotk::Terminator</a>. Simply wrap the function in
 <code>progressr::with_progress()</code> to enable them. We recommend to use package
 <a href="https://CRAN.R-project.org/package=progress" class="external-link"><span class="pkg">progress</span></a> as backend; enable with <code>progressr::handlers("progress")</code>.</p>
     </div>
@@ -340,37 +340,37 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             x1         x2 fidelity stage repetition          y</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               timestamp batch_nr x_domain_x1 x_domain_x2 x_domain_fidelity</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  &lt;POSc&gt;    &lt;int&gt;       &lt;num&gt;       &lt;num&gt;             &lt;num&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1: 2024-06-21 10:50:07        1  -2.8202623   6.2590489              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2: 2024-06-21 10:50:07        1   7.8157583   2.0711226              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3: 2024-06-21 10:50:07        1  -1.8027603   1.2126744              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4: 2024-06-21 10:50:07        1  -1.8453389   9.8397394              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5: 2024-06-21 10:50:07        1  -4.4071897   9.0300579              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6: 2024-06-21 10:50:07        1   9.1716220   9.8549374              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7: 2024-06-21 10:50:07        1  -1.3260802   4.9397575              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8: 2024-06-21 10:50:07        1   6.7168385  14.6921133              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9: 2024-06-21 10:50:07        1  -0.6764425  10.7277920              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10: 2024-06-21 10:50:07        1   8.1303687  13.0894546              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11: 2024-06-21 10:50:07        1  -0.5637486  14.7492562              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12: 2024-06-21 10:50:07        1   9.7528811   3.2784449              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13: 2024-06-21 10:50:07        1   3.8475633   9.9679510              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14: 2024-06-21 10:50:07        1   6.3873757   5.8434606              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15: 2024-06-21 10:50:07        1   7.5411296   0.6909546              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16: 2024-06-21 10:50:07        1   6.4422920   9.2537184              0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17: 2024-06-21 10:50:07        2  -1.8453389   9.8397394              0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18: 2024-06-21 10:50:07        2  -2.8202623   6.2590489              0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19: 2024-06-21 10:50:07        2  -1.3260802   4.9397575              0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20: 2024-06-21 10:50:07        2  -4.4071897   9.0300579              0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21: 2024-06-21 10:50:07        2  -0.6764425  10.7277920              0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22: 2024-06-21 10:50:07        2   7.5411296   0.6909546              0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23: 2024-06-21 10:50:07        2   7.8157583   2.0711226              0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24: 2024-06-21 10:50:07        2  -1.8027603   1.2126744              0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25: 2024-06-21 10:50:07        3  -1.8453389   9.8397394              0.04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26: 2024-06-21 10:50:07        3  -2.8202623   6.2590489              0.04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27: 2024-06-21 10:50:07        3  -1.3260802   4.9397575              0.04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28: 2024-06-21 10:50:07        3  -4.4071897   9.0300579              0.04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29: 2024-06-21 10:50:07        4  -1.8453389   9.8397394              0.08</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30: 2024-06-21 10:50:07        4  -2.8202623   6.2590489              0.08</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31: 2024-06-21 10:50:07        5  -1.8453389   9.8397394              0.16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1: 2024-06-30 09:54:59        1  -2.8202623   6.2590489              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2: 2024-06-30 09:54:59        1   7.8157583   2.0711226              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3: 2024-06-30 09:54:59        1  -1.8027603   1.2126744              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4: 2024-06-30 09:54:59        1  -1.8453389   9.8397394              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5: 2024-06-30 09:54:59        1  -4.4071897   9.0300579              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6: 2024-06-30 09:54:59        1   9.1716220   9.8549374              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7: 2024-06-30 09:54:59        1  -1.3260802   4.9397575              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8: 2024-06-30 09:54:59        1   6.7168385  14.6921133              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9: 2024-06-30 09:54:59        1  -0.6764425  10.7277920              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10: 2024-06-30 09:54:59        1   8.1303687  13.0894546              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11: 2024-06-30 09:54:59        1  -0.5637486  14.7492562              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12: 2024-06-30 09:54:59        1   9.7528811   3.2784449              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13: 2024-06-30 09:54:59        1   3.8475633   9.9679510              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14: 2024-06-30 09:54:59        1   6.3873757   5.8434606              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15: 2024-06-30 09:54:59        1   7.5411296   0.6909546              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16: 2024-06-30 09:54:59        1   6.4422920   9.2537184              0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17: 2024-06-30 09:54:59        2  -1.8453389   9.8397394              0.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18: 2024-06-30 09:54:59        2  -2.8202623   6.2590489              0.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19: 2024-06-30 09:54:59        2  -1.3260802   4.9397575              0.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20: 2024-06-30 09:54:59        2  -4.4071897   9.0300579              0.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21: 2024-06-30 09:54:59        2  -0.6764425  10.7277920              0.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22: 2024-06-30 09:54:59        2   7.5411296   0.6909546              0.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23: 2024-06-30 09:54:59        2   7.8157583   2.0711226              0.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24: 2024-06-30 09:54:59        2  -1.8027603   1.2126744              0.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25: 2024-06-30 09:54:59        3  -1.8453389   9.8397394              0.04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26: 2024-06-30 09:54:59        3  -2.8202623   6.2590489              0.04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27: 2024-06-30 09:54:59        3  -1.3260802   4.9397575              0.04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28: 2024-06-30 09:54:59        3  -4.4071897   9.0300579              0.04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29: 2024-06-30 09:54:59        4  -1.8453389   9.8397394              0.08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30: 2024-06-30 09:54:59        4  -2.8202623   6.2590489              0.08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31: 2024-06-30 09:54:59        5  -1.8453389   9.8397394              0.16</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               timestamp batch_nr x_domain_x1 x_domain_x2 x_domain_fidelity</span>
 </code></pre></div>
     </div>

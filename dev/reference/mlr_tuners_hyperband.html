@@ -60,7 +60,7 @@ The upper bound defines the maximum budget (r_max) which is allocated to the can
     
     <a class="navbar-brand me-2" href="../index.html">mlr3hyperband</a>
 
-    <small class="nav-text text-default me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.5.0.9000</small>
+    <small class="nav-text text-default me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.6.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -154,8 +154,8 @@ The upper bound defines the maximum budget (<code>r_max</code>) which is allocat
     <h2 id="dictionary">Dictionary<a class="anchor" aria-label="anchor" href="#dictionary"></a></h2>
     
 
-<p>This <a href="https://mlr3tuning.mlr-org.com/reference/Tuner.html" class="external-link">Tuner</a> can be instantiated via the <a href="https://mlr3misc.mlr-org.com/reference/Dictionary.html" class="external-link">dictionary</a>
-<a href="https://mlr3tuning.mlr-org.com/reference/mlr_tuners.html" class="external-link">mlr_tuners</a> or with the associated sugar function <code><a href="https://mlr3tuning.mlr-org.com/reference/tnr.html" class="external-link">tnr()</a></code>:</p>
+<p>This <a href="https://mlr3tuning.mlr-org.com/reference/Tuner.html" class="external-link">mlr3tuning::Tuner</a> can be instantiated via the <a href="https://mlr3misc.mlr-org.com/reference/Dictionary.html" class="external-link">dictionary</a>
+<a href="https://mlr3tuning.mlr-org.com/reference/mlr_tuners.html" class="external-link">mlr3tuning::mlr_tuners</a> or with the associated sugar function <code><a href="https://mlr3tuning.mlr-org.com/reference/tnr.html" class="external-link">mlr3tuning::tnr()</a></code>:</p>
 <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>TunerBatchHyperband<span class="sc">$</span><span class="fu">new</span>()</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>mlr_tuners<span class="sc">$</span><span class="fu">get</span>(<span class="st">"hyperband"</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">tnr</span>(<span class="st">"hyperband"</span>)</span></code></pre><p></p></div>
@@ -190,7 +190,7 @@ A custom sampler may look like this (the full example is given in the
     
 
 <p><code>$optimize()</code> supports progress bars via the package <a href="https://CRAN.R-project.org/package=progressr" class="external-link"><span class="pkg">progressr</span></a>
-combined with a <a href="https://bbotk.mlr-org.com/reference/Terminator.html" class="external-link">Terminator</a>. Simply wrap the function in
+combined with a <a href="https://bbotk.mlr-org.com/reference/Terminator.html" class="external-link">bbotk::Terminator</a>. Simply wrap the function in
 <code>progressr::with_progress()</code> to enable them. We recommend to use package
 <a href="https://CRAN.R-project.org/package=progress" class="external-link"><span class="pkg">progress</span></a> as backend; enable with <code>progressr::handlers("progress")</code>.</p>
     </div>
@@ -325,7 +325,7 @@ Repetition index. Start counting at 1.</p></li>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required namespace: xgboost</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    nrounds       eta booster learner_param_vals  x_domain classif.ce</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;num&gt;     &lt;num&gt;  &lt;char&gt;             &lt;list&gt;    &lt;list&gt;      &lt;num&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1:       8 0.1537639    dart          &lt;list[7]&gt; &lt;list[3]&gt;  0.2304688</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:       8 0.1537639    dart          &lt;list[6]&gt; &lt;list[3]&gt;  0.2304688</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
