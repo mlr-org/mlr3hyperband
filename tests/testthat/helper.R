@@ -77,6 +77,39 @@ test_tuner_successive_halving = function(n, eta, learner, measures = msr("classi
     instance
 }
 
+#' @title Test Tuner Async Successive Halving
+#'
+#' @noRd
+#'
+#' @description
+#' Tests budget and number of configs constructed by the tuner against supplied bounds
+test_tuner_async_successive_halving = function(eta, learner, measures = msr("classif.ce"), sampler = NULL, n_workers = 2) {
+  flush_redis()
+  rush::rush_plan(n_workers = n_workers)
+
+  search_space = learner$param_set$search_space()
+  budget_id = search_space$ids(tags = "budget")
+  r_min = search_space$lower[[budget_id]]
+  r_max = search_space$upper[[budget_id]]
+
+  instance = tune(
+    tnr("async_successive_halving", eta = eta, sampler = sampler),
+    task = tsk("pima"),
+    learner = learner,
+    measures = measures,
+    resampling = rsmp("cv", folds = 5),
+    terminator = trm("evals", n_evals = 20))
+
+
+  budget = as.data.table(instance$archive)[, budget_id, with = FALSE]
+
+  # check bounds of budget
+  expect_lte(max(budget), r_max)
+  expect_gte(min(budget), r_min)
+
+  instance
+}
+
 #' @title MeasureClassifBudget
 #'
 #' @noRd
@@ -106,15 +139,19 @@ MeasureClassifDummy = R6Class("MeasureClassifDummy",
 
 mlr_measures$add("dummy", MeasureClassifDummy)
 
-expect_rush_reset = function(rush, type = "kill") {
-  processes = rush$processes
-  rush$reset(type = type)
-  expect_list(rush$connector$command(c("KEYS", "*")), len = 0)
-  walk(processes, function(p) p$kill())
-}
-
 flush_redis = function() {
   config = redux::redis_config()
   r = redux::hiredis(config)
   r$FLUSHDB()
+}
+
+expect_rush_reset = function(rush, type = "kill") {
+  processes = rush$processes
+  rush$reset(type = type)
+  Sys.sleep(1)
+  keys = rush$connector$command(c("KEYS", "*"))
+  if (!test_list(keys, len = 0)) {
+    stopf("Found keys in redis after reset: %s", keys)
+  }
+  walk(processes, function(p) p$kill())
 }

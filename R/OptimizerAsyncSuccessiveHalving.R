@@ -1,4 +1,39 @@
+#' @title Asynchronous Hyperparameter Optimization with Successive Halving
+#'
+#' @name mlr_optimizers_async_successive_halving
+#' @templateVar id async_successive_halving
+#'
+#' @description
+#' `OptimizerAsync` class that implements the Asynchronous Successive Halving Algorithm (ASHA).
+#' This class implements the asynchronous version of [OptimizerBatchSuccessiveHalving].
+#' Running SHA asynchronously reduces the parallelization overhead drastically.
+#'
+#' @template section_dictionary_optimizers
+#'
+#' @section Parameters:
+#' \describe{
+#' \item{`eta`}{`numeric(1)`\cr
+#'   With every stage, the budget is increased by a factor of `eta` and only the best `1 / eta` configurations are promoted to the next stage.
+#'   Non-integer values are supported, but `eta` is not allowed to be less or equal to 1.}
+#' \item{`sampler`}{[paradox::Sampler]\cr
+#'   Object defining how the samples of the parameter space should be drawn.
+#'   The default is uniform sampling.}
+#' }
+#'
+#' @section Archive:
+#' The [bbotk::Archive] holds the following additional columns that are specific to SHA:
+#'   * `stage` (`integer(1))`\cr
+#'     Stage index. Starts counting at 0.
+#'   * `asha_id` (`character(1))`\cr
+#'     Unique identifier for each configuration across stages.
+#'
+#' @template section_custom_sampler
+#'
+#' @source
+#' `r format_bib("li_2020")`
+#'
 #' @export
+#' @template example_optimizer
 OptimizerAsyncSuccessiveHalving = R6Class("OptimizerAsyncSuccessiveHalving",
   inherit = OptimizerAsync,
 
@@ -49,9 +84,10 @@ OptimizerAsyncSuccessiveHalving = R6Class("OptimizerAsyncSuccessiveHalving",
       # sampler
       search_space_sampler = search_space$clone()$subset(setdiff(search_space$ids(), budget_id))
       private$.sampler = if (is.null(sampler)) {
-        sampler = SamplerUnif$new(search_space_sampler)
+        SamplerUnif$new(search_space_sampler)
       } else {
         assert_set_equal(sampler$param_set$ids(), search_space_sampler$ids())
+        sampler
       }
 
       # function to select the n best configurations
@@ -114,35 +150,39 @@ OptimizerAsyncSuccessiveHalving = R6Class("OptimizerAsyncSuccessiveHalving",
         # evaluate
         get_private(inst)$.eval_point(xs)
 
-        # iterate stages
-        for (s in seq(s_max)) {
-          # fetch finished points of current stage
-          data_stage = archive$finished_data[list(s), , on = "stage"]
+        # s_max is 0 if r_min == r_max
+        if (s_max > 0) {
+          # iterate stages
+          for (s in seq(s_max)) {
+            # fetch finished points of current stage
+            data_stage = archive$finished_data[list(s), , on = "stage"]
 
-          # how many configurations can be promoted to the next stage
-          # at least one configuration must be promotable
-          n_promotable = max(floor(nrow(data_stage) / eta), 1)
+            # how many configurations can be promoted to the next stage
+            # at least one configuration must be promotable
+            n_promotable = max(floor(nrow(data_stage) / eta), 1)
 
-          lg$debug("%i promotable configurations in stage %i", n_promotable, s)
+            lg$debug("%i promotable configurations in stage %i", n_promotable, s)
 
-          # get the n best configurations of the current stage
-          candidates = private$.top_n(data_stage, archive$cols_y, n_promotable, direction)
+            # get the n best configurations of the current stage
+            candidates = private$.top_n(data_stage, archive$cols_y, n_promotable, direction)
 
-          # if xs is not among the best configurations of the current stage draw a new random configuration
-          if (asha_id %nin% candidates$asha_id) {
-            lg$debug("Configuration %s is not promotable to stage %i", asha_id, s + 1)
-            break
+            # if xs is not among the best configurations of the current stage draw a new random configuration
+            if (asha_id %nin% candidates$asha_id) {
+              lg$debug("Configuration %s is not promotable to stage %i", asha_id, s + 1)
+              break
+            }
+
+            lg$debug("Configuration %s is promotable to stage %i", asha_id, s + 1)
+
+            # increase budget of xs
+            rs = r_min * eta^s
+            if (inst$search_space$class[[budget_id]] == "ParamInt") rs = round(rs)
+            xs[[budget_id]] = rs
+            xs$stage = s + 1
+
+            # evaluate
+            get_private(inst)$.eval_point(xs)
           }
-
-          lg$debug("Configuration %s is promotable to stage %i", asha_id, s + 1)
-
-          # increase budget of xs
-          rs = r_min * eta^s
-          xs[[budget_id]] = rs
-          xs$stage = s + 1
-
-          # evaluate
-          get_private(inst)$.eval_point(xs)
         }
       }
     }

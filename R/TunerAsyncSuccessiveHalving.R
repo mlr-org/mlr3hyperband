@@ -1,4 +1,21 @@
+#' @title Asynchronous Hyperparameter Tuning with Successive Halving
+#'
+#' @include OptimizerAsyncSuccessiveHalving.R
+#' @name mlr_tuners_async_successive_halving
+#' @templateVar id async_successive_halving
+#'
+#' @inherit mlr_optimizers_async_successive_halving description
+#' @template section_dictionary_tuners
+#' @inheritSection mlr_optimizers_async_successive_halving Parameters
+#' @inheritSection mlr_optimizers_async_successive_halving Archive
+#' @template section_subsample_budget
+#' @template section_custom_sampler
+#'
+#' @source
+#' `r format_bib("li_2020")`
+#'
 #' @export
+#' @template example_tuner
 TunerAsyncSuccessiveHalving = R6Class("TunerAsyncSuccessiveHalving",
   inherit = TunerAsyncFromOptimizerAsync,
   public = list(

@@ -1,5 +1,7 @@
 # mlr3hyperband (development version)
 
+* feat: Add `OptimizerAsyncSuccessiveHalving` optimizer.
+
 # mlr3hyperband 0.6.0
 
 * compatibility; Work with new bbotk 1.0.0 and mlr3tuning 1.0.0
