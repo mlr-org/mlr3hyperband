@@ -193,7 +193,7 @@ test_that("TunerAsyncSuccessiveHalving minimizes measure", {
   perf_2 = instance$archive$data[6, dummy]
 
   # if the performance of second configuration in the first stage is better than the first configuration it must be promoted to the next stage
-  if (perf_2 > perf_1) {
+  if (perf_2 < perf_1) {
     expect_equal(instance$archive$data[7, stage], 2)
   } else {
     expect_equal(instance$archive$data[7, stage], 1)
@@ -229,7 +229,7 @@ test_that("TunerAsyncSuccessiveHalving works with single budget value", {
     iter = to_tune(p_int(1, 1, tags = "budget"))
   )
 
-  instance = test_tuner_async_successive_halving(n = 16, eta = 2, learner)
+  instance = test_tuner_async_successive_halving(eta = 2, learner)
   expect_rush_reset(instance$rush)
 })
 
