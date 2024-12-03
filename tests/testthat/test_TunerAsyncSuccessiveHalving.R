@@ -1,3 +1,6 @@
+skip_on_cran()
+skip_if_not_installed("rush")
+
 test_that("TunerAsyncSuccessiveHalving works", {
   learner = lrn("classif.debug",
     x  = to_tune(),
