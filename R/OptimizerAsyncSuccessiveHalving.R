@@ -32,7 +32,6 @@
 #' `r format_bib("li_2020")`
 #'
 #' @export
-#' @template example_optimizer
 OptimizerAsyncSuccessiveHalving = R6Class("OptimizerAsyncSuccessiveHalving",
   inherit = OptimizerAsync,
 
@@ -142,7 +141,7 @@ OptimizerAsyncSuccessiveHalving = R6Class("OptimizerAsyncSuccessiveHalving",
         xs = transpose_list(xdt)[[1]]
 
         # add unique id across stages, stage number, and budget
-        asha_id = uuid::UUIDgenerate()
+        asha_id = UUIDgenerate()
         xs = c(xs, list(asha_id = asha_id, stage = 1))
         xs[[budget_id]] = private$.r_min
 

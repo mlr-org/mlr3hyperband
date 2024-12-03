@@ -15,7 +15,6 @@
 #' `r format_bib("li_2020")`
 #'
 #' @export
-#' @template example_tuner
 TunerAsyncSuccessiveHalving = R6Class("TunerAsyncSuccessiveHalving",
   inherit = TunerAsyncFromOptimizerAsync,
   public = list(
