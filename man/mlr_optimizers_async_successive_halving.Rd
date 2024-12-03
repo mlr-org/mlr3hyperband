@@ -11,7 +11,7 @@ In Dhillon I, Papailiopoulos D, Sze V (eds.), \emph{Proceedings of Machine Learn
 \url{https://proceedings.mlsys.org/paper_files/paper/2020/hash/a06f20b349c6cf09a6b171c71b88bbfc-Abstract.html}.
 }
 \description{
-\code{OptimizerAsync} class that implements the Asynchronous Successive Halving Algorithm (ASHA).
+\code{OptimizerAsyncSuccessiveHalving} class that implements the Asynchronous Successive Halving Algorithm (ASHA).
 This class implements the asynchronous version of \link{OptimizerBatchSuccessiveHalving}.
 Running SHA asynchronously reduces the parallelization overhead drastically.
 }

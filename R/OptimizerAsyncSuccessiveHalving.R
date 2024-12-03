@@ -4,7 +4,7 @@
 #' @templateVar id async_successive_halving
 #'
 #' @description
-#' `OptimizerAsync` class that implements the Asynchronous Successive Halving Algorithm (ASHA).
+#' `OptimizerAsyncSuccessiveHalving` class that implements the Asynchronous Successive Halving Algorithm (ASHA).
 #' This class implements the asynchronous version of [OptimizerBatchSuccessiveHalving].
 #' Running SHA asynchronously reduces the parallelization overhead drastically.
 #'
