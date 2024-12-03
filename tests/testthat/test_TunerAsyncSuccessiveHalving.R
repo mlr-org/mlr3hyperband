@@ -12,7 +12,7 @@ test_that("TunerAsyncSuccessiveHalving works", {
   expect_rush_reset(instance$rush)
 })
 
-Test_that("TunerAsyncSuccessiveHalving works with minimum budget > 1", {
+test_that("TunerAsyncSuccessiveHalving works with minimum budget > 1", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(2, 8, tags = "budget"))
