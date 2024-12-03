@@ -1,12 +1,12 @@
 #' @title Optimizer Using the Hyperband Algorithm
 
-#' @include OptimizerSuccessiveHalving.R
+#' @include OptimizerBatchSuccessiveHalving.R
 #' @name mlr_optimizers_hyperband
 #' @templateVar id hyperband
 #'
 #' @description
 #' Optimizer using the Hyperband (HB) algorithm.
-#' HB runs the [Successive Halving Algorithm][OptimizerSuccessiveHalving] (SHA) with different numbers of stating configurations.
+#' HB runs the [Successive Halving Algorithm][OptimizerBatchSuccessiveHalving] (SHA) with different numbers of stating configurations.
 #' The algorithm is initialized with the same parameters as Successive Halving but without `n`.
 #' Each run of Successive Halving is called a bracket and starts with a different budget `r_0`.
 #' A smaller starting budget means that more configurations can be tried out.
@@ -72,8 +72,8 @@
 #'
 #' @export
 #' @template example_optimizer
-OptimizerHyperband = R6Class("OptimizerHyperband",
-  inherit = Optimizer,
+OptimizerBatchHyperband = R6Class("OptimizerBatchHyperband",
+  inherit = OptimizerBatch,
   public = list(
 
     #' @description
@@ -159,7 +159,7 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
           # promote configurations of previous batch
           if (s != s_max) {
             archive = inst$archive
-            data = archive$data[batch_nr == archive$n_batch, ]
+            data = archive$data[list(archive$n_batch), , on = "batch_nr"]
             minimize = ifelse(archive$codomain$maximization_to_minimization == -1, TRUE, FALSE)
 
             # for each bracket, promote configurations of previous stage
@@ -199,4 +199,4 @@ OptimizerHyperband = R6Class("OptimizerHyperband",
 )
 
 #' @include aaa.R
-optimizers[["hyperband"]] = OptimizerHyperband
+optimizers[["hyperband"]] = OptimizerBatchHyperband

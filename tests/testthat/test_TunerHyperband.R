@@ -1,4 +1,4 @@
-test_that("TunerHyperband works", {
+test_that("TunerBatchHyperband works", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 4, tags = "budget"))
@@ -7,7 +7,7 @@ test_that("TunerHyperband works", {
   test_tuner_hyperband(eta = 2, learner)
 })
 
-test_that("TunerHyperband works with minimum budget > 1", {
+test_that("TunerBatchHyperband works with minimum budget > 1", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(2, 8, tags = "budget"))
@@ -16,7 +16,7 @@ test_that("TunerHyperband works with minimum budget > 1", {
   test_tuner_hyperband(eta = 2, learner)
 })
 
-test_that("TunerHyperband rounds budget", {
+test_that("TunerBatchHyperband rounds budget", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 7, tags = "budget"))
@@ -25,7 +25,7 @@ test_that("TunerHyperband rounds budget", {
   test_tuner_hyperband(eta = 2, learner)
 })
 
-test_that("TunerHyperband works with eta = 2.5", {
+test_that("TunerBatchHyperband works with eta = 2.5", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 8, tags = "budget"))
@@ -34,7 +34,7 @@ test_that("TunerHyperband works with eta = 2.5", {
   test_tuner_hyperband(eta = 2.5, learner)
 })
 
-test_that("TunerHyperband works with xgboost", {
+test_that("TunerBatchHyperband works with xgboost", {
   skip_if_not_installed("mlr3learners")
   skip_if_not_installed("xgboost")
   library(mlr3learners) # nolint
@@ -47,7 +47,7 @@ test_that("TunerHyperband works with xgboost", {
   test_tuner_hyperband(eta = 2, learner)
 })
 
-test_that("TunerHyperband works with subsampling", {
+test_that("TunerBatchHyperband works with subsampling", {
   skip_if_not_installed("mlr3pipelines")
   library(mlr3pipelines)
 
@@ -58,7 +58,7 @@ test_that("TunerHyperband works with subsampling", {
   test_tuner_hyperband(eta = 3, graph_learner)
 })
 
-test_that("TunerHyperband works works with multi-crit", {
+test_that("TunerBatchHyperband works works with multi-crit", {
   skip_if_not_installed("emoa")
   learner = lrn("classif.debug",
     x  = to_tune(),
@@ -68,7 +68,7 @@ test_that("TunerHyperband works works with multi-crit", {
   test_tuner_hyperband(eta = 2, learner, measures = msrs(c("classif.ce", "classif.acc")))
 })
 
-test_that("TunerHyperband works with custom sampler", {
+test_that("TunerBatchHyperband works with custom sampler", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 4, tags = "budget"))
@@ -79,7 +79,7 @@ test_that("TunerHyperband works with custom sampler", {
   test_tuner_hyperband(eta = 2, learner, sampler = sampler)
 })
 
-test_that("TunerHyperband errors if not enough parameters are sampled", {
+test_that("TunerBatchHyperband errors if not enough parameters are sampled", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     message_train = to_tune(),
@@ -99,7 +99,7 @@ test_that("TunerHyperband errors if not enough parameters are sampled", {
   )
 })
 
-test_that("TunerHyperband errors if budget parameter is sampled", {
+test_that("TunerBatchHyperband errors if budget parameter is sampled", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 4, tags = "budget"))
@@ -121,7 +121,7 @@ test_that("TunerHyperband errors if budget parameter is sampled", {
   )
 })
 
-test_that("TunerHyperband errors if budget parameter is not numeric", {
+test_that("TunerBatchHyperband errors if budget parameter is not numeric", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     predict_missing_type = to_tune(p_fct(levels = c("na", "omit"), tags = "budget"))
@@ -138,7 +138,7 @@ test_that("TunerHyperband errors if budget parameter is not numeric", {
   )
 })
 
-test_that("TunerHyperband errors if multiple budget parameters are set", {
+test_that("TunerBatchHyperband errors if multiple budget parameters are set", {
   learner = lrn("classif.debug",
     x  = to_tune(p_dbl(0, 1, tags = "budget")),
     iter = to_tune(p_int(1, 16, tags = "budget"))
@@ -155,7 +155,7 @@ test_that("TunerHyperband errors if multiple budget parameters are set", {
   )
 })
 
-test_that("TunerHyperband minimizes measure", {
+test_that("TunerBatchHyperband minimizes measure", {
   learner = lrn("classif.debug",
     x = to_tune(),
     iter = to_tune(p_int(1, 16, tags = "budget"))
@@ -166,7 +166,7 @@ test_that("TunerHyperband minimizes measure", {
     instance$archive$data[bracket == 4 & stage == 4, dummy])
 })
 
-test_that("TunerHyperband maximizes measure", {
+test_that("TunerBatchHyperband maximizes measure", {
   learner = lrn("classif.debug",
     x = to_tune(),
     iter = to_tune(p_int(1, 16, tags = "budget"))
@@ -177,7 +177,7 @@ test_that("TunerHyperband maximizes measure", {
     instance$archive$data[bracket == 4 & stage == 4, dummy])
 })
 
-test_that("TunerHyperband works with single budget value", {
+test_that("TunerBatchHyperband works with single budget value", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 1, tags = "budget"))
@@ -186,7 +186,7 @@ test_that("TunerHyperband works with single budget value", {
   test_tuner_hyperband(eta = 2, learner)
 })
 
-test_that("TunerHyperband works with repetitions", {
+test_that("TunerBatchHyperband works with repetitions", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 16, tags = "budget"))
@@ -202,7 +202,7 @@ test_that("TunerHyperband works with repetitions", {
   expect_equal(nrow(instance$archive$data), 144)
 })
 
-test_that("TunerHyperband terminates itself", {
+test_that("TunerBatchHyperband terminates itself", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 16, tags = "budget"))
@@ -218,7 +218,7 @@ test_that("TunerHyperband terminates itself", {
   expect_equal(nrow(instance$archive$data), 72)
 })
 
-test_that("TunerHyperband works with infinite repetitions", {
+test_that("TunerBatchHyperband works with infinite repetitions", {
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 16, tags = "budget"))
@@ -235,6 +235,6 @@ test_that("TunerHyperband works with infinite repetitions", {
   expect_equal(nrow(instance$archive$data), 160)
 })
 
-test_that("TunerHyperband man exists", {
+test_that("TunerBatchHyperband man exists", {
   expect_man_exists(tnr("hyperband")$man)
 })

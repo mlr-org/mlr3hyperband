@@ -1,5 +1,9 @@
 # mlr3hyperband (development version)
 
+# mlr3hyperband 0.6.0
+
+* compatibility; Work with new bbotk 1.0.0 and mlr3tuning 1.0.0
+
 # mlr3hyperband 0.5.0
 
 * compatibility: Work with new paradox version 1.0.0
@@ -12,7 +16,7 @@
 
 # mlr3hyperband 0.4.4
 
-* fix: Remove `emoa` from required packages of `OptimizerSuccessiveHalving`.
+* fix: Remove `emoa` from required packages of `OptimizerBatchSuccessiveHalving`.
 
 # mlr3hyperband 0.4.3
 
@@ -30,7 +34,7 @@
 
 # mlr3hyperband 0.4.0
 
-* feat: New `adjust_minimum_budget` flag in  `OptimizerSuccessiveHalving`. The
+* feat: New `adjust_minimum_budget` flag in  `OptimizerBatchSuccessiveHalving`. The
   minimum budget is adjusted in the base stage to use the maximum budget in last
   stage.
 * feat: New `repetitions` parameter to specify the exact number of repetitions.
@@ -38,7 +42,7 @@
 
 # mlr3hyperband 0.3.0
 
-* feat: `TunerHyperband` evaluates configurations of same budget across
+* feat: `TunerBatchHyperband` evaluates configurations of same budget across
   brackets in parallel now.
 * feat: New `repeats` parameter to repeat runs of successive halving and
   hyperband until termination.
@@ -46,7 +50,7 @@
 
 # mlr3hyperband 0.2.0
 
-* feat: New `OptimizerHyperband` and `OptimizerSuccessiveHalving` optimizers.
+* feat: New `OptimizerBatchHyperband` and `OptimizerBatchSuccessiveHalving` optimizers.
 
 # mlr3hyperband 0.1.2
 

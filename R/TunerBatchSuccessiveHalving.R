@@ -1,6 +1,6 @@
 #' @title Hyperparameter Tuning with Successive Halving
 #'
-#' @include OptimizerSuccessiveHalving.R
+#' @include OptimizerBatchSuccessiveHalving.R
 #' @name mlr_tuners_successive_halving
 #' @templateVar id successive_halving
 #'
@@ -24,15 +24,15 @@
 #'
 #' @export
 #' @template example_tuner
-TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
-  inherit = TunerFromOptimizer,
+TunerBatchSuccessiveHalving = R6Class("TunerBatchSuccessiveHalving",
+  inherit = TunerBatchFromOptimizerBatch,
   public = list(
 
     #' @description
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
       super$initialize(
-        optimizer = OptimizerSuccessiveHalving$new(),
+        optimizer = OptimizerBatchSuccessiveHalving$new(),
         man = "mlr3hyperband::mlr_tuners_hyperband"
       )
     }
@@ -40,4 +40,4 @@ TunerSuccessiveHalving = R6Class("TunerSuccessiveHalving",
 )
 
 #' @include aaa.R
-tuners[["successive_halving"]] = TunerSuccessiveHalving
+tuners[["successive_halving"]] = TunerBatchSuccessiveHalving
