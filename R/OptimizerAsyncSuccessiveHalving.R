@@ -133,7 +133,9 @@ OptimizerAsyncSuccessiveHalving = R6Class("OptimizerAsyncSuccessiveHalving",
       s_max = private$.s_max
       eta = self$param_set$values$eta
       budget_id = inst$search_space$ids(tags = "budget")
-      direction = inst$archive$codomain$maximization_to_minimization
+      direction = inst$archive$codomain$direction
+
+      data.table::setDTthreads(1)
 
       while (!inst$is_terminated) {
         # sample new point xs
