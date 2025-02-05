@@ -154,6 +154,8 @@ OptimizerAsyncSuccessiveHalving = R6Class("OptimizerAsyncSuccessiveHalving",
         if (s_max > 0) {
           # iterate stages
           for (s in seq(s_max)) {
+            lg$debug("Fetching results from other workers")
+
             # fetch finished points of current stage
             data_stage = archive$finished_data[list(s), , on = "stage"]
 
