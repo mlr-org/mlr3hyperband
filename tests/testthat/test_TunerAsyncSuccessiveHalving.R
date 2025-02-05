@@ -258,26 +258,24 @@ test_that("TunerAsyncSuccessiveHalving2 works", {
 
 
 test_that("TunerAsyncSuccessiveHalving2 works", {
-
   flush_redis()
+  rush::rush_plan(n_workers = 2)
 
   options(bbotk_local = TRUE)
-  lgr::get_logger("bbotk")$set_threshold("debug")
-
   learner = lrn("classif.debug",
     x  = to_tune(),
-    iter = to_tune(p_int(1, 16, tags = "budget")),
+    iter = to_tune(p_int(9, 2187, tags = "budget")),
     predict_type = "prob"
   )
 
 
   instance = tune(
-    tnr("async_successive_halving2", eta = 2),
+    tnr("async_successive_halving2", eta = 3),
     task = tsk("pima"),
     learner = learner,
     measures = msr("classif.ce"),
-    resampling = rsmp("cv", folds = 5),
-    terminator = trm("evals", n_evals = 20))
+    resampling = rsmp("holdout"),
+    terminator = trm("evals", n_evals = 10))
 
   expect_rush_reset(instance$rush)
 })

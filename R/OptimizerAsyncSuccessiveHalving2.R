@@ -82,7 +82,10 @@ OptimizerAsyncSuccessiveHalving2 = R6Class("OptimizerAsyncSuccessiveHalving2",
 
       # number of stages if each configuration in the first stage uses the minimum budget
       # and each configuration in the last stage uses no more than maximum budget
-      private$.s_max = floor(log(r, eta))
+      s_max = log(r, eta)
+      # floor(s_max) does not work due to floating point arithmetic
+      if (r_min * eta^s_max > r_max) s_max = s_max - 1
+      private$.s_max = s_max
 
       optimize_async_default(inst, self)
     }
