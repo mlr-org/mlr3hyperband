@@ -233,3 +233,51 @@ test_that("TunerAsyncSuccessiveHalving works with single budget value", {
   expect_rush_reset(instance$rush)
 })
 
+
+test_that("TunerAsyncSuccessiveHalving2 works", {
+  flush_redis()
+  rush::rush_plan(n_workers = 2)
+
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 16, tags = "budget")),
+    predict_type = "prob"
+  )
+
+
+  instance = tune(
+    tnr("async_successive_halving2", eta = 2),
+    task = tsk("pima"),
+    learner = learner,
+    measures = msr("classif.auc"),
+    resampling = rsmp("cv", folds = 5),
+    terminator = trm("evals", n_evals = 20))
+
+  expect_rush_reset(instance$rush)
+})
+
+
+test_that("TunerAsyncSuccessiveHalving2 works", {
+
+  flush_redis()
+
+  options(bbotk_local = TRUE)
+  lgr::get_logger("bbotk")$set_threshold("debug")
+
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 16, tags = "budget")),
+    predict_type = "prob"
+  )
+
+
+  instance = tune(
+    tnr("async_successive_halving2", eta = 2),
+    task = tsk("pima"),
+    learner = learner,
+    measures = msr("classif.ce"),
+    resampling = rsmp("cv", folds = 5),
+    terminator = trm("evals", n_evals = 20))
+
+  expect_rush_reset(instance$rush)
+})
