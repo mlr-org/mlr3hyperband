@@ -12,6 +12,17 @@ test_that("TunerAsyncSuccessiveHalving works", {
   expect_rush_reset(instance$rush)
 })
 
+test_that("TunerAsyncSuccessiveHalving works with eta = 3", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(1, 2187, tags = "budget"))
+  )
+
+  instance = test_tuner_async_successive_halving(eta = 3, learner)
+
+  expect_rush_reset(instance$rush)
+})
+
 test_that("TunerAsyncSuccessiveHalving works with minimum budget > 1", {
   learner = lrn("classif.debug",
     x  = to_tune(),
@@ -19,6 +30,17 @@ test_that("TunerAsyncSuccessiveHalving works with minimum budget > 1", {
   )
 
   instance = test_tuner_async_successive_halving(eta = 2, learner)
+  expect_rush_reset(instance$rush)
+})
+
+test_that("TunerAsyncSuccessiveHalving works with minimum budget > 1 and eta = 3", {
+  learner = lrn("classif.debug",
+    x  = to_tune(),
+    iter = to_tune(p_int(9, 2187, tags = "budget"))
+  )
+
+  instance = test_tuner_async_successive_halving(eta = 3, learner)
+
   expect_rush_reset(instance$rush)
 })
 
@@ -233,49 +255,12 @@ test_that("TunerAsyncSuccessiveHalving works with single budget value", {
   expect_rush_reset(instance$rush)
 })
 
-
-test_that("TunerAsyncSuccessiveHalving2 works", {
-  flush_redis()
-  rush::rush_plan(n_workers = 2)
-
+test_that("TunerAsynSuccessiveHalving works with multi-crit", {
   learner = lrn("classif.debug",
     x  = to_tune(),
-    iter = to_tune(p_int(1, 16, tags = "budget")),
-    predict_type = "prob"
+    iter = to_tune(p_int(1, 4, tags = "budget"))
   )
 
-
-  instance = tune(
-    tnr("async_successive_halving2", eta = 2),
-    task = tsk("pima"),
-    learner = learner,
-    measures = msr("classif.auc"),
-    resampling = rsmp("cv", folds = 5),
-    terminator = trm("evals", n_evals = 20))
-
-  expect_rush_reset(instance$rush)
-})
-
-
-test_that("TunerAsyncSuccessiveHalving2 works", {
-  flush_redis()
-  rush::rush_plan(n_workers = 2)
-
-  options(bbotk_local = TRUE)
-  learner = lrn("classif.debug",
-    x  = to_tune(),
-    iter = to_tune(p_int(9, 2187, tags = "budget")),
-    predict_type = "prob"
-  )
-
-
-  instance = tune(
-    tnr("async_successive_halving2", eta = 3),
-    task = tsk("pima"),
-    learner = learner,
-    measures = msr("classif.ce"),
-    resampling = rsmp("holdout"),
-    terminator = trm("evals", n_evals = 10))
-
+  instance = test_tuner_async_successive_halving(eta = 2, learner, measures = msrs(c("classif.ce", "classif.acc")))
   expect_rush_reset(instance$rush)
 })
