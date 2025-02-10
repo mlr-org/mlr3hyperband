@@ -174,7 +174,7 @@ OptimizerBatchHyperband = R6Class("OptimizerBatchHyperband",
 
               # select best ni configurations
               row_ids = if (archive$codomain$length == 1) {
-                head(order(unlist(y), decreasing = minimize), ni)
+                head(order(unlist(y), decreasing = !minimize), ni)
               } else {
                 nds_selection(points = t(as.matrix(y)), n_select = ni, minimize = minimize)
               }
