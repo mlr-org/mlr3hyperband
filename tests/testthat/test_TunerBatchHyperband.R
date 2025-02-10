@@ -65,7 +65,10 @@ test_that("TunerBatchHyperband works works with multi-crit", {
     iter = to_tune(p_int(1, 4, tags = "budget"))
   )
 
-  test_tuner_hyperband(eta = 2, learner, measures = msrs(c("classif.ce", "classif.acc")))
+  instance = test_tuner_hyperband(eta = 2, learner, measures = msrs(c("classif.ce", "classif.acc")))
+
+  expect_subset(min(instance$archive$data$classif.ce), instance$result$classif.ce)
+  expect_subset(max(instance$archive$data$classif.acc), instance$result$classif.acc)
 })
 
 test_that("TunerBatchHyperband works with custom sampler", {

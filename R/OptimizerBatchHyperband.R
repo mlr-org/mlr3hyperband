@@ -160,7 +160,7 @@ OptimizerBatchHyperband = R6Class("OptimizerBatchHyperband",
           if (s != s_max) {
             archive = inst$archive
             data = archive$data[list(archive$n_batch), , on = "batch_nr"]
-            minimize = ifelse(archive$codomain$maximization_to_minimization == -1, TRUE, FALSE)
+            minimize = archive$codomain$direction == 1
 
             # for each bracket, promote configurations of previous stage
             xdt_promoted = map_dtr(s_max:(s + 1), function(i) {
@@ -174,7 +174,7 @@ OptimizerBatchHyperband = R6Class("OptimizerBatchHyperband",
 
               # select best ni configurations
               row_ids = if (archive$codomain$length == 1) {
-                head(order(unlist(y), decreasing = minimize), ni)
+                head(order(unlist(y), decreasing = !minimize), ni)
               } else {
                 nds_selection(points = t(as.matrix(y)), n_select = ni, minimize = minimize)
               }
