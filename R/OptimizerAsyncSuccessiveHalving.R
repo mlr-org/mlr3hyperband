@@ -273,9 +273,4 @@ optimize_asha_single =  function(inst, self, private) {
       }
     }
   }
-
-  # remove leaderboards
-  walk(seq(s_max + 1), function(s) {
-    r$DEL(sprintf("%s:stage_%i", network_id, s))
-  })
 }
