@@ -147,6 +147,7 @@ OptimizerAsyncSuccessiveHalving = R6Class("OptimizerAsyncSuccessiveHalving",
 
 mlr_optimizers$add("async_successive_halving", OptimizerAsyncSuccessiveHalving)
 
+# the multi-crit version fetches all results from Redis and applies non-dominated sorting to select the best configurations
 optimize_asha_multi = function(inst, self, private) {
   archive = inst$archive
   r_min = private$.r_min
@@ -174,8 +175,8 @@ optimize_asha_multi = function(inst, self, private) {
       for (s in seq(s_max)) {
         lg$debug("Fetching results from other workers")
 
-        # fetch finished points of current stage
-        data_stage = archive$finished_data[list(s), , on = "stage"]
+        # fetch results and subset to current stage
+        data_stage = archive$rush$fetch_finished_tasks(fields = c("ys", "xs_extra"))[list(s), , on = "stage"]
 
         # how many configurations can be promoted to the next stage
         # at least one configuration must be promotable
@@ -207,6 +208,8 @@ optimize_asha_multi = function(inst, self, private) {
   }
 }
 
+# the single-crit version fetches no results from Redis but uses sorted sets to get the rank of the current configuration
+# this has almost no overhead compared to fetching the results and doing the ranking in R
 optimize_asha_single =  function(inst, self, private) {
   archive = inst$archive
   r_min = private$.r_min
