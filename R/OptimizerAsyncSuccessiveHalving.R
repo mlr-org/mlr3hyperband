@@ -176,7 +176,8 @@ optimize_asha_multi = function(inst, self, private) {
         lg$debug("Fetching results from other workers")
 
         # fetch results and subset to current stage
-        data_stage = archive$rush$fetch_finished_tasks(fields = c("ys", "xs_extra"))[list(s), , on = "stage"]
+        browser()
+        data_stage = archive$rush$fetch_finished_tasks(fields = c("ys", "ys_extra"))[list(s), , on = "stage"]
 
         # how many configurations can be promoted to the next stage
         # at least one configuration must be promotable
