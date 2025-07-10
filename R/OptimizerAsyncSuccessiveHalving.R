@@ -58,11 +58,11 @@ OptimizerAsyncSuccessiveHalving = R6Class("OptimizerAsyncSuccessiveHalving",
     },
 
     #' @description
-    #' Performs the optimization on a [OptimInstanceAsyncSingleCrit] or [OptimInstanceAsyncMultiCrit] until termination.
-    #' The single evaluations will be written into the [ArchiveAsync].
+    #' Performs the optimization on a [bbotk::OptimInstanceAsyncSingleCrit] or [bbotk::OptimInstanceAsyncMultiCrit] until termination.
+    #' The single evaluations will be written into the [bbotk::ArchiveAsync].
     #' The result will be written into the instance object.
     #'
-    #' @param inst ([OptimInstanceAsyncSingleCrit] | [OptimInstanceAsyncMultiCrit]).
+    #' @param inst ([bbotk::OptimInstanceAsyncSingleCrit] | [bbotk::OptimInstanceAsyncMultiCrit]).
     #'
     #' @return [data.table::data.table()]
     optimize = function(inst) {

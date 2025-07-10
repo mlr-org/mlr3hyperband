@@ -97,8 +97,8 @@ Creates a new instance of this \link[R6:R6Class]{R6} class.
 \if{html}{\out{<a id="method-OptimizerAsyncSuccessiveHalving-optimize"></a>}}
 \if{latex}{\out{\hypertarget{method-OptimizerAsyncSuccessiveHalving-optimize}{}}}
 \subsection{Method \code{optimize()}}{
-Performs the optimization on a \link{OptimInstanceAsyncSingleCrit} or \link{OptimInstanceAsyncMultiCrit} until termination.
-The single evaluations will be written into the \link{ArchiveAsync}.
+Performs the optimization on a \link[bbotk:OptimInstanceAsyncSingleCrit]{bbotk::OptimInstanceAsyncSingleCrit} or \link[bbotk:OptimInstanceAsyncMultiCrit]{bbotk::OptimInstanceAsyncMultiCrit} until termination.
+The single evaluations will be written into the \link[bbotk:ArchiveAsync]{bbotk::ArchiveAsync}.
 The result will be written into the instance object.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{OptimizerAsyncSuccessiveHalving$optimize(inst)}\if{html}{\out{</div>}}
@@ -107,7 +107,7 @@ The result will be written into the instance object.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{inst}}{(\link{OptimInstanceAsyncSingleCrit} | \link{OptimInstanceAsyncMultiCrit}).}
+\item{\code{inst}}{(\link[bbotk:OptimInstanceAsyncSingleCrit]{bbotk::OptimInstanceAsyncSingleCrit} | \link[bbotk:OptimInstanceAsyncMultiCrit]{bbotk::OptimInstanceAsyncMultiCrit}).}
 }
 \if{html}{\out{</div>}}
 }
