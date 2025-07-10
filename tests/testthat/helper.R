@@ -85,7 +85,8 @@ test_tuner_successive_halving = function(n, eta, learner, measures = msr("classi
 #' Tests budget and number of configs constructed by the tuner against supplied bounds
 test_tuner_async_successive_halving = function(eta, learner, measures = msr("classif.ce"), sampler = NULL, n_workers = 2) {
   flush_redis()
-  rush::rush_plan(n_workers = n_workers)
+  mirai::daemons(n_workers)
+  rush::rush_plan(n_workers = n_workers, worker_type = "remote")
 
   search_space = learner$param_set$search_space()
   budget_id = search_space$ids(tags = "budget")
@@ -138,6 +139,16 @@ MeasureClassifDummy = R6Class("MeasureClassifDummy",
 )
 
 mlr_measures$add("dummy", MeasureClassifDummy)
+
+expect_rush_reset = function(rush, type = "kill") {
+  rush$reset(type = type)
+  Sys.sleep(1)
+  keys = rush$connector$command(c("KEYS", "*"))
+  if (!test_list(keys, len = 0)) {
+    stopf("Found keys in redis after reset: %s", keys)
+  }
+  mirai::daemons(0)
+}
 
 flush_redis = function() {
   config = redux::redis_config()
