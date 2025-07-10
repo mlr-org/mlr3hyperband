@@ -33,7 +33,7 @@
 
     <a class="navbar-brand me-2" href="index.html">mlr3hyperband</a>
 
-    <small class="nav-text text-default me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.6.0.9000</small>
+    <small class="nav-text text-default me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,6 +88,7 @@
 <a href="https://mlr-org.com/gallery/series/2023-01-15-hyperband-xgboost/" class="external-link">Tune</a> the hyperparameters of XGBoost with Hyperband</li>
 <li>Use data <a href="https://mlr-org.com/gallery/series/2023-01-16-hyperband-subsampling/" class="external-link">subsampling</a> and Hyperband to optimize a support vector machine.</li>
 </ul>
+<p>The website features a benchmark about the performance of <a href="https://mlr-org.com/benchmarks/benchmarks_async.html" class="external-link">asynchronous successive halving</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -97,7 +98,7 @@
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"mlr3hyperband"</span><span class="op">)</span></span></code></pre></div>
 <p>Install the development version from GitHub:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"mlr-org/mlr3hyperband"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"mlr-org/mlr3hyperband"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
@@ -129,24 +130,24 @@
 <p>The instance contains the best-performing hyperparameter configuration.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">instance</span><span class="op">$</span><span class="va">result</span></span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="do">##    nrounds       eta max_depth colsample_bytree colsample_bylevel    lambda     alpha subsample</span></span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="do">## 1:      27 -2.102951         3        0.7175178         0.5419011 -5.390012 -4.696385  0.193622</span></span>
+<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="do">##         alpha colsample_bylevel colsample_bytree       eta     lambda max_depth nrounds subsample</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="do">## 1: 0.08577605         0.5570915        0.7090864 -2.191256 -0.2623144         5      81 0.4919964</span></span>
 <span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="do">## 3 variables not shown: [learner_param_vals, x_domain, classif.ce]</span></span></code></pre></div>
 <p>The archive contains all evaluated hyperparameter configurations. Hyperband adds the <code>"stage"</code> and <code>"braket"</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/as.data.table.html" class="external-link">as.data.table</a></span><span class="op">(</span><span class="va">instance</span><span class="op">$</span><span class="va">archive</span><span class="op">)</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">stage</span>, <span class="va">bracket</span>, <span class="va">classif.ce</span>, <span class="va">nrounds</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="do">##     stage bracket classif.ce nrounds</span></span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="do">##  1:     0       2  0.3489583      27</span></span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="do">##  2:     0       2  0.2434896      27</span></span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="do">##  3:     0       2  0.2591146      27</span></span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="do">##  4:     0       2  0.3489583      27</span></span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="do">##  5:     0       2  0.5052083      27</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="do">##  1:     0       2  0.2682292      27</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="do">##  2:     0       2  0.5117188      27</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="do">##  3:     0       2  0.5013021      27</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="do">##  4:     0       2  0.2708333      27</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="do">##  5:     0       2  0.3072917      27</span></span>
 <span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="do">## ---                                 </span></span>
-<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="do">## 18:     0       0  0.2434896     243</span></span>
-<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="do">## 19:     0       0  0.4960938     243</span></span>
-<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="do">## 20:     0       0  0.2903646     243</span></span>
-<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="do">## 21:     2       2  0.2473958     243</span></span>
-<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="do">## 22:     1       1  0.2421875     243</span></span></code></pre></div>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="do">## 18:     0       0  0.2395833     243</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="do">## 19:     0       0  0.2565104     243</span></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="do">## 20:     0       0  0.2434896     243</span></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="do">## 21:     2       2  0.2565104     243</span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="do">## 22:     1       1  0.2539062     243</span></span></code></pre></div>
 <p>We fit a final model with optimized hyperparameters to make predictions on new data.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">learner</span><span class="op">$</span><span class="va">param_set</span><span class="op">$</span><span class="va">values</span> <span class="op">=</span> <span class="va">instance</span><span class="op">$</span><span class="va">result_learner_param_vals</span></span>
@@ -155,12 +156,12 @@
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references hanging-indent">
-<div id="ref-jamieson_2016">
-<p>Jamieson, Kevin, and Ameet Talwalkar. 2016. “Non-Stochastic Best Arm Identification and Hyperparameter Optimization.” In <em>Proceedings of the 19th International Conference on Artificial Intelligence and Statistics</em>, edited by Arthur Gretton and Christian C. Robert, 51:240–48. Proceedings of Machine Learning Research. Cadiz, Spain: PMLR. <a href="http://proceedings.mlr.press/v51/jamieson16.html" class="external-link uri">http://proceedings.mlr.press/v51/jamieson16.html</a>.</p>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-jamieson_2016" class="csl-entry">
+Jamieson, Kevin, and Ameet Talwalkar. 2016. “Non-Stochastic Best Arm Identification and Hyperparameter Optimization.” In <em>Proceedings of the 19th International Conference on Artificial Intelligence and Statistics</em>, edited by Arthur Gretton and Christian C. Robert, 51:240–48. Proceedings of Machine Learning Research. Cadiz, Spain: PMLR. <a href="http://proceedings.mlr.press/v51/jamieson16.html" class="external-link uri">http://proceedings.mlr.press/v51/jamieson16.html</a>.
 </div>
-<div id="ref-li_2018">
-<p>Li, Lisha, Kevin Jamieson, Giulia DeSalvo, Afshin Rostamizadeh, and Ameet Talwalkar. 2018. “Hyperband: A Novel Bandit-Based Approach to Hyperparameter Optimization.” <em>Journal of Machine Learning Research</em> 18 (185): 1–52. <a href="https://jmlr.org/papers/v18/16-558.html" class="external-link uri">https://jmlr.org/papers/v18/16-558.html</a>.</p>
+<div id="ref-li_2018" class="csl-entry">
+Li, Lisha, Kevin Jamieson, Giulia DeSalvo, Afshin Rostamizadeh, and Ameet Talwalkar. 2018. “Hyperband: A Novel Bandit-Based Approach to Hyperparameter Optimization.” <em>Journal of Machine Learning Research</em> 18 (185): 1–52. <a href="https://jmlr.org/papers/v18/16-558.html" class="external-link uri">https://jmlr.org/papers/v18/16-558.html</a>.
 </div>
 </div>
 </div>
@@ -205,7 +206,6 @@
 <ul class="list-unstyled">
 <li><a href="https://github.com/mlr-org/mlr3hyperband/actions/workflows/r-cmd-check.yml" class="external-link"><img src="https://github.com/mlr-org/mlr3hyperband/actions/workflows/r-cmd-check.yml/badge.svg" alt="r-cmd-check"></a></li>
 <li><a href="https://cran.r-project.org/package=mlr3hyperband" class="external-link"><img src="https://www.r-pkg.org/badges/version-ago/mlr3hyperband" alt="CRAN Status"></a></li>
-<li><a href="https://stackoverflow.com/questions/tagged/mlr3" class="external-link"><img src="https://img.shields.io/badge/stackoverflow-mlr3-orange.svg" alt="StackOverflow"></a></li>
 <li><a href="https://lmmisld-lmu-stats-slds.srv.mwn.de/mlr_invite/" class="external-link"><img src="https://img.shields.io/badge/chat-mattermost-orange.svg" alt="Mattermost"></a></li>
 </ul>
 </div>
