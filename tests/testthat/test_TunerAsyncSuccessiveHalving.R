@@ -137,6 +137,8 @@ test_that("TunerAsyncSuccessiveHalving errors if not enough parameters are sampl
     regexp = "set",
     fixed = TRUE
   )
+
+  mirai::daemons(0)
 })
 
 test_that("TunerAsyncSuccessiveHalving errors if budget parameter is sampled", {
@@ -163,6 +165,8 @@ test_that("TunerAsyncSuccessiveHalving errors if budget parameter is sampled", {
     regexp = "set",
     fixed = TRUE
   )
+
+  mirai::daemons(0)
 })
 
 test_that("TunerAsyncSuccessiveHalving errors if budget parameter is not numeric", {
@@ -184,6 +188,8 @@ test_that("TunerAsyncSuccessiveHalving errors if budget parameter is not numeric
     regexp = "set",
     fixed = TRUE
   )
+
+  mirai::daemons(0)
 })
 
 test_that("TunerAsyncSuccessiveHalving errors if multiple budget parameters are set", {
@@ -205,6 +211,8 @@ test_that("TunerAsyncSuccessiveHalving errors if multiple budget parameters are 
     regexp = "tagged ",
     fixed = TRUE
   )
+
+  mirai::daemons(0)
 })
 
 test_that("TunerAsyncSuccessiveHalving minimizes measure", {
