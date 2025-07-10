@@ -117,7 +117,8 @@ test_that("TunerAsyncSuccessiveHalving works with custom sampler", {
 
 test_that("TunerAsyncSuccessiveHalving errors if not enough parameters are sampled", {
   flush_redis()
-  rush::rush_plan(n_workers = 2)
+  mirai::daemons(2)
+  rush::rush_plan(n_workers = 2, worker_type = "remote")
 
   learner = lrn("classif.debug",
     x  = to_tune(),
@@ -140,7 +141,8 @@ test_that("TunerAsyncSuccessiveHalving errors if not enough parameters are sampl
 
 test_that("TunerAsyncSuccessiveHalving errors if budget parameter is sampled", {
   flush_redis()
-  rush::rush_plan(n_workers = 2)
+  mirai::daemons(2)
+  rush::rush_plan(n_workers = 2, worker_type = "remote")
 
   learner = lrn("classif.debug",
     x  = to_tune(),
@@ -165,7 +167,8 @@ test_that("TunerAsyncSuccessiveHalving errors if budget parameter is sampled", {
 
 test_that("TunerAsyncSuccessiveHalving errors if budget parameter is not numeric", {
   flush_redis()
-  rush::rush_plan(n_workers = 2)
+  mirai::daemons(2)
+  rush::rush_plan(n_workers = 2, worker_type = "remote")
 
   learner = lrn("classif.debug",
     x  = to_tune(),
@@ -185,7 +188,8 @@ test_that("TunerAsyncSuccessiveHalving errors if budget parameter is not numeric
 
 test_that("TunerAsyncSuccessiveHalving errors if multiple budget parameters are set", {
   flush_redis()
-  rush::rush_plan(n_workers = 2)
+  mirai::daemons(2)
+  rush::rush_plan(n_workers = 2, worker_type = "remote")
 
   learner = lrn("classif.debug",
     x  = to_tune(p_dbl(0, 1, tags = "budget")),
