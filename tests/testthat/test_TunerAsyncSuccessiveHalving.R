@@ -44,7 +44,7 @@ test_that("TunerAsyncSuccessiveHalving rounds budget", {
   )
 
   instance = test_tuner_async_successive_halving(eta = 2, learner)
-  expect_integerish(instance$archive$data$iter)
+  expect_integerish(as.data.table(instance$archive)$iter)
 })
 
 test_that("TunerAsyncSuccessiveHalving works with eta = 2.5", {
@@ -54,7 +54,7 @@ test_that("TunerAsyncSuccessiveHalving works with eta = 2.5", {
   )
 
   instance = test_tuner_async_successive_halving(eta = 2.5, learner)
-  expect_integerish(instance$archive$data$iter)
+  expect_integerish(as.data.table(instance$archive)$iter)
 })
 
 test_that("TunerAsyncSuccessiveHalving works with xgboost", {
@@ -215,14 +215,15 @@ test_that("TunerAsyncSuccessiveHalving minimizes measure", {
 
   Sys.sleep(1)
 
-  perf_1 = instance$archive$data[1, dummy]
-  perf_2 = instance$archive$data[6, dummy]
+  data = as.data.table(instance$archive)
+  perf_1 = data[1, dummy]
+  perf_2 = data[6, dummy]
 
   # if the performance of second configuration in the first stage is better than the first configuration it must be promoted to the next stage
   if (perf_2 < perf_1) {
-    expect_equal(instance$archive$data[7, stage], 2)
+    expect_equal(data[7, stage], 2)
   } else {
-    expect_equal(instance$archive$data[7, stage], 1)
+    expect_equal(data[7, stage], 1)
   }
 })
 
@@ -236,14 +237,15 @@ test_that("TunerAsyncSuccessiveHalving maximizes measure", {
 
   Sys.sleep(1)
 
-  perf_1 = instance$archive$data[1, dummy]
-  perf_2 = instance$archive$data[6, dummy]
+  data = as.data.table(instance$archive)
+  perf_1 = data[1, dummy]
+  perf_2 = data[6, dummy]
 
   # if the performance of second configuration in the first stage is better than the first configuration it must be promoted to the next stage
   if (perf_2 > perf_1) {
-    expect_equal(instance$archive$data[7, stage], 2)
+    expect_equal(data[7, stage], 2)
   } else {
-    expect_equal(instance$archive$data[7, stage], 1)
+    expect_equal(data[7, stage], 1)
   }
 })
 

@@ -85,10 +85,7 @@ test_tuner_successive_halving = function(n, eta, learner, measures = msr("classi
 #' Tests budget and number of configs constructed by the tuner against supplied bounds
 test_tuner_async_successive_halving = function(eta, learner, measures = msr("classif.ce"), sampler = NULL, n_workers = 2) {
   rush = start_rush(n_workers = n_workers)
-  on.exit({
-    rush$reset()
-    mirai::daemons(0)
-  })
+  on.exit(mirai::daemons(0))
 
   search_space = learner$param_set$search_space()
   budget_id = search_space$ids(tags = "budget")
