@@ -83,10 +83,7 @@ test_tuner_successive_halving = function(n, eta, learner, measures = msr("classi
 #'
 #' @description
 #' Tests budget and number of configs constructed by the tuner against supplied bounds
-test_tuner_async_successive_halving = function(eta, learner, measures = msr("classif.ce"), sampler = NULL, n_workers = 2) {
-  rush = start_rush(n_workers = n_workers)
-  on.exit(mirai::daemons(0))
-
+test_tuner_async_successive_halving = function(eta, learner, measures = msr("classif.ce"), sampler = NULL, n_workers = 2, rush = NULL) {
   search_space = learner$param_set$search_space()
   budget_id = search_space$ids(tags = "budget")
   r_min = search_space$lower[[budget_id]]
@@ -104,8 +101,8 @@ test_tuner_async_successive_halving = function(eta, learner, measures = msr("cla
   budget = as.data.table(instance$archive)[, budget_id, with = FALSE]
 
   # check bounds of budget
-  expect_lte(max(budget), r_max)
-  expect_gte(min(budget), r_min)
+  testthat::expect_lte(max(budget), r_max)
+  testthat::expect_gte(min(budget), r_min)
 
   instance
 }

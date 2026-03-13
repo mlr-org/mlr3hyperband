@@ -2,58 +2,94 @@ skip_if_not_installed("rush")
 skip_if_no_redis()
 
 test_that("TunerAsyncSuccessiveHalving works", {
+  rush = start_rush()
+    on.exit({
+    rush$reset()
+    mirai::daemons(0)
+  })
+
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 16, tags = "budget"))
   )
 
-  instance = test_tuner_async_successive_halving(eta = 2, learner)
+  instance = test_tuner_async_successive_halving(eta = 2, learner, rush = rush)
 })
 
 test_that("TunerAsyncSuccessiveHalving works with eta = 3", {
+  rush = start_rush()
+  on.exit({
+    rush$reset()
+    mirai::daemons(0)
+  })
+
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 2187, tags = "budget"))
   )
 
-  instance = test_tuner_async_successive_halving(eta = 3, learner)
+  instance = test_tuner_async_successive_halving(eta = 3, learner, rush = rush)
 })
 
 test_that("TunerAsyncSuccessiveHalving works with minimum budget > 1", {
+  rush = start_rush()
+  on.exit({
+    rush$reset()
+    mirai::daemons(0)
+  })
+
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(2, 8, tags = "budget"))
   )
 
-  instance = test_tuner_async_successive_halving(eta = 2, learner)
+  instance = test_tuner_async_successive_halving(eta = 2, learner, rush = rush)
 })
 
 test_that("TunerAsyncSuccessiveHalving works with minimum budget > 1 and eta = 3", {
+  rush = start_rush()
+  on.exit({
+    rush$reset()
+    mirai::daemons(0)
+  })
+
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(9, 2187, tags = "budget"))
   )
 
-  instance = test_tuner_async_successive_halving(eta = 3, learner)
+  instance = test_tuner_async_successive_halving(eta = 3, learner, rush = rush)
 })
 
 test_that("TunerAsyncSuccessiveHalving rounds budget", {
+  rush = start_rush()
+  on.exit({
+    rush$reset()
+    mirai::daemons(0)
+  })
+
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 7, tags = "budget"))
   )
 
-  instance = test_tuner_async_successive_halving(eta = 2, learner)
+  instance = test_tuner_async_successive_halving(eta = 2, learner, rush = rush)
   expect_integerish(as.data.table(instance$archive)$iter)
 })
 
 test_that("TunerAsyncSuccessiveHalving works with eta = 2.5", {
+  rush = start_rush()
+  on.exit({
+    rush$reset()
+    mirai::daemons(0)
+  })
+
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 8, tags = "budget"))
   )
 
-  instance = test_tuner_async_successive_halving(eta = 2.5, learner)
+  instance = test_tuner_async_successive_halving(eta = 2.5, learner, rush = rush)
   expect_integerish(as.data.table(instance$archive)$iter)
 })
 
@@ -62,35 +98,59 @@ test_that("TunerAsyncSuccessiveHalving works with xgboost", {
   skip_if_not_installed("xgboost")
   library(mlr3learners) # nolint
 
+  rush = start_rush()
+  on.exit({
+    rush$reset()
+    mirai::daemons(0)
+  })
+
   learner = lrn("classif.xgboost",
     nrounds   = to_tune(p_int(1, 16, tags = "budget")),
     eta       = to_tune(1e-4, 1, logscale = TRUE),
     max_depth = to_tune(1, 2))
 
-  instance = test_tuner_async_successive_halving(eta = 2, learner)
+  instance = test_tuner_async_successive_halving(eta = 2, learner, rush = rush)
 })
 
 test_that("TunerAsyncSuccessiveHalving works with subsampling", {
   skip_if_not_installed("mlr3pipelines")
   library(mlr3pipelines)
 
+  rush = start_rush()
+  on.exit({
+    rush$reset()
+    mirai::daemons(0)
+  })
+
   graph_learner = as_learner(po("subsample") %>>% lrn("classif.debug"))
   graph_learner$param_set$values$classif.debug.x = to_tune()
   graph_learner$param_set$values$subsample.frac = to_tune(p_dbl(lower = 1/9, upper = 1, tags = "budget"))
 
-  instance = test_tuner_async_successive_halving(eta = 3, graph_learner)
+  instance = test_tuner_async_successive_halving(eta = 3, graph_learner, rush = rush)
 })
 
 test_that("TunerAsyncSuccessiveHalving works with multi-crit", {
+  rush = start_rush()
+  on.exit({
+    rush$reset()
+    mirai::daemons(0)
+  })
+
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 4, tags = "budget"))
   )
 
-  instance = test_tuner_async_successive_halving(eta = 2, learner, measures = msrs(c("classif.ce", "classif.acc")))
+  instance = test_tuner_async_successive_halving(eta = 2, learner, measures = msrs(c("classif.ce", "classif.acc")), rush = rush)
 })
 
 test_that("TunerAsyncSuccessiveHalving works with custom sampler", {
+  rush = start_rush()
+  on.exit({
+    rush$reset()
+    mirai::daemons(0)
+  })
+
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 4, tags = "budget"))
@@ -98,7 +158,7 @@ test_that("TunerAsyncSuccessiveHalving works with custom sampler", {
 
   sampler = Sampler1DRfun$new(learner$param_set$search_space()$subset("x"), function(n) rbeta(n, 2, 5))
 
-  instance = test_tuner_async_successive_halving(eta = 2, learner, sampler = sampler)
+  instance = test_tuner_async_successive_halving(eta = 2, learner, sampler = sampler, rush = rush)
 })
 
 test_that("TunerAsyncSuccessiveHalving errors if not enough parameters are sampled", {
@@ -206,12 +266,18 @@ test_that("TunerAsyncSuccessiveHalving errors if multiple budget parameters are 
 })
 
 test_that("TunerAsyncSuccessiveHalving minimizes measure", {
+  rush = start_rush(n_workers = 1)
+  on.exit({
+    rush$reset()
+    mirai::daemons(0)
+  })
+
   learner = lrn("classif.debug",
     x = to_tune(),
     iter = to_tune(p_int(1, 16, tags = "budget"))
   )
 
-  instance = test_tuner_async_successive_halving(eta = 2, learner, measures = msr("dummy", parameter_id = "x", minimize = TRUE), n_workers = 1)
+  instance = test_tuner_async_successive_halving(eta = 2, learner, measures = msr("dummy", parameter_id = "x", minimize = TRUE), n_workers = 1, rush = rush)
 
   Sys.sleep(1)
 
@@ -228,12 +294,18 @@ test_that("TunerAsyncSuccessiveHalving minimizes measure", {
 })
 
 test_that("TunerAsyncSuccessiveHalving maximizes measure", {
+  rush = start_rush(n_workers = 1)
+  on.exit({
+    rush$reset()
+    mirai::daemons(0)
+  })
+
   learner = lrn("classif.debug",
     x = to_tune(),
     iter = to_tune(p_int(1, 16, tags = "budget"))
   )
 
-  instance = test_tuner_async_successive_halving(eta = 2, learner, measures = msr("dummy", parameter_id = "x", minimize = FALSE), n_workers = 1)
+  instance = test_tuner_async_successive_halving(eta = 2, learner, measures = msr("dummy", parameter_id = "x", minimize = FALSE), n_workers = 1, rush = rush)
 
   Sys.sleep(1)
 
@@ -250,19 +322,31 @@ test_that("TunerAsyncSuccessiveHalving maximizes measure", {
 })
 
 test_that("TunerAsyncSuccessiveHalving works with single budget value", {
+  rush = start_rush()
+  on.exit({
+    rush$reset()
+    mirai::daemons(0)
+  })
+
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 1, tags = "budget"))
   )
 
-  instance = test_tuner_async_successive_halving(eta = 2, learner)
+  instance = test_tuner_async_successive_halving(eta = 2, learner, rush = rush)
 })
 
 test_that("TunerAsynSuccessiveHalving works with multi-crit", {
+  rush = start_rush()
+  on.exit({
+    rush$reset()
+    mirai::daemons(0)
+  })
+
   learner = lrn("classif.debug",
     x  = to_tune(),
     iter = to_tune(p_int(1, 4, tags = "budget"))
   )
 
-  instance = test_tuner_async_successive_halving(eta = 2, learner, measures = msrs(c("classif.ce", "classif.acc")))
+  instance = test_tuner_async_successive_halving(eta = 2, learner, measures = msrs(c("classif.ce", "classif.acc")), rush = rush)
 })
