@@ -74,7 +74,7 @@ Rscript -e "devtools::check()"
 - Every user-facing function should be exported and have roxygen2 documentation.
 - Wrap roxygen comments at 120 characters.
 - Write one sentence per line.
-- If a sentence exceeds the limit, break at a comma or other appropriate point.
+- If a sentence exceeds the limit, break at a comma, "and", "or", "but", or other appropriate point.
 - Internal functions should not have roxygen documentation.
 - Always re-document the package after changing a roxygen2 comment.
 - Don’t hand-edit generated artifacts: `man/`, or `NAMESPACE`.

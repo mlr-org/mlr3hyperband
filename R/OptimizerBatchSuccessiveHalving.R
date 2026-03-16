@@ -5,7 +5,9 @@
 #'
 #' @description
 #' Optimizer using the Successive Halving Algorithm (SHA).
-#' SHA is initialized with the number of starting configurations `n`, the proportion of configurations discarded in each stage `eta`, and the minimum `r_min` and maximum `_max` budget of a single evaluation.
+#' SHA is initialized with the number of starting configurations `n`,
+#' the proportion of configurations discarded in each stage `eta`,
+#' and the minimum `r_min` and maximum `_max` budget of a single evaluation.
 #' The algorithm starts by sampling `n` random configurations and allocating the minimum budget `r_min` to them.
 #' The configurations are evaluated and `1 / eta` of the worst-performing configurations are discarded.
 #' The remaining configurations are promoted to the next stage and evaluated on a larger budget.
@@ -18,16 +20,20 @@
 #' |   2 |     2 |     4 |
 #' |   3 |     1 |     8 |
 #'
-#' `i` is the stage number, `n_i` is the number of configurations and `r_i` is the budget allocated to a single configuration.
+#' `i` is the stage number, `n_i` is the number of configurations, and
+#' `r_i` is the budget allocated to a single configuration.
 #'
 #' The number of stages is calculated so that each stage consumes approximately the same budget.
 #' This sometimes results in the minimum budget having to be slightly adjusted by the algorithm.
 #'
 #' @section Resources:
-#' The [gallery](https://mlr-org.com/gallery-all-optimization.html) features a collection of case studies and demos about optimization.
+#' The [gallery](https://mlr-org.com/gallery-all-optimization.html) features a collection of case studies and
+#' demos about optimization.
 #'
-#'  * [Tune](https://mlr-org.com/gallery/series/2023-01-15-hyperband-xgboost/) the hyperparameters of XGBoost with Hyperband (Hyperband can be easily swapped with SHA).
-#'  * Use data [subsampling](https://mlr-org.com/gallery/series/2023-01-16-hyperband-subsampling/) and Hyperband to optimize a support vector machine.
+#'  * [Tune](https://mlr-org.com/gallery/series/2023-01-15-hyperband-xgboost/) the hyperparameters of XGBoost with
+#'    Hyperband (Hyperband can be easily swapped with SHA).
+#'  * Use data [subsampling](https://mlr-org.com/gallery/series/2023-01-16-hyperband-subsampling/) and
+#'    Hyperband to optimize a support vector machine.
 #'
 #' @template section_dictionary_optimizers
 #'
@@ -36,7 +42,8 @@
 #' \item{`n`}{`integer(1)`\cr
 #'   Number of configurations in the base stage.}
 #' \item{`eta`}{`numeric(1)`\cr
-#'   With every stage, the budget is increased by a factor of `eta` and only the best `1 / eta` configurations are promoted to the next stage.
+#'   With every stage, the budget is increased by a factor of `eta` and
+#'   only the best `1 / eta` configurations are promoted to the next stage.
 #'   Non-integer values are supported, but `eta` is not allowed to be less or equal to 1.}
 #' \item{`sampler`}{[paradox::Sampler]\cr
 #'   Object defining how the samples of the parameter space should be drawn.
@@ -46,7 +53,8 @@
 #'   Otherwise, optimization is stopped after `repetitions` runs of SHA.
 #'   The [bbotk::Terminator] might stop the optimization before all repetitions are executed.}
 #' \item{`adjust_minimum_budget`}{`logical(1)`\cr
-#'   If `TRUE`, the minimum budget is increased so that the last stage uses the maximum budget defined in the search space.}
+#'   If `TRUE`, the minimum budget is increased so that the last stage uses the maximum budget defined in
+#'   the search space.}
 #' }
 #'
 #' @section Archive:
