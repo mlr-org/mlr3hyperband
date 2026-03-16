@@ -1,4 +1,3 @@
-library(mlr3)
 old_opts = options(
   warnPartialMatchArgs = TRUE,
   warnPartialMatchAttr = TRUE,
@@ -10,6 +9,4 @@ old_opts = lapply(old_opts, function(x) if (is.null(x)) FALSE else x)
 
 lg_mlr3 = lgr::get_logger("mlr3")
 old_threshold_mlr3 = lg_mlr3$threshold
-lg_mlr3$set_threshold("warn")
-
-set.seed(123)
+lg_mlr3$set_threshold(0L)
