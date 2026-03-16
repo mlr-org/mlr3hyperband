@@ -73,6 +73,7 @@
 #'
 #' @export
 #' @template example_optimizer
+# nolint next
 OptimizerBatchSuccessiveHalving = R6Class(
   "OptimizerBatchSuccessiveHalving",
   inherit = OptimizerBatch,

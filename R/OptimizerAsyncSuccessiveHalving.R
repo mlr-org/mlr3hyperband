@@ -33,6 +33,7 @@
 #' `r format_bib("li_2020")`
 #'
 #' @export
+# nolint next
 OptimizerAsyncSuccessiveHalving = R6Class(
   "OptimizerAsyncSuccessiveHalving",
   inherit = OptimizerAsync,
