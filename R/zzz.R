@@ -23,7 +23,8 @@ register_mlr3tuning = function() {
   iwalk(tuners, function(obj, nm) x$add(nm, obj))
 } # nocov end
 
-.onLoad = function(libname, pkgname) { # nolint
+.onLoad = function(libname, pkgname) {
+  # nolint
   register_namespace_callback(pkgname, "bbotk", register_bbotk)
   register_namespace_callback(pkgname, "mlr3tuning", register_mlr3tuning)
 
@@ -34,7 +35,8 @@ register_mlr3tuning = function() {
   }
 } # nocov end
 
-.onUnload = function(libpaths) { # nolint
+.onUnload = function(libpaths) {
+  # nolint
   walk(names(optimizers), function(id) bbotk::mlr_optimizers$remove(id))
   walk(names(tuners), function(id) mlr3tuning::mlr_tuners$remove(id))
 }

@@ -72,18 +72,21 @@
 #'
 #' @export
 #' @template example_optimizer
-OptimizerBatchHyperband = R6Class("OptimizerBatchHyperband",
+OptimizerBatchHyperband = R6Class(
+  "OptimizerBatchHyperband",
   inherit = OptimizerBatch,
   public = list(
-
     #' @description
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
+      # nolint start
+      # fmt: skip
       param_set = ps(
         eta     = p_dbl(lower = 1.0001, tags = "required"),
         sampler = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)),
         repetitions = p_int(lower = 1L, default = 1, special_vals = list(Inf))
       )
+      # nolint end
       param_set$values = list(eta = 2, sampler = NULL, repetitions = 1)
 
       super$initialize(
@@ -106,10 +109,14 @@ OptimizerBatchHyperband = R6Class("OptimizerBatchHyperband",
       budget_id = search_space$ids(tags = "budget")
 
       # check budget
-      if (length(budget_id) != 1) stopf("Exactly one parameter must be tagged with 'budget'")
+      if (length(budget_id) != 1) {
+        stopf("Exactly one parameter must be tagged with 'budget'")
+      }
       assert_choice(search_space$class[[budget_id]], c("ParamInt", "ParamDbl"))
 
-      if (inst$archive$codomain$length > 1) require_namespaces("emoa")
+      if (inst$archive$codomain$length > 1) {
+        require_namespaces("emoa")
+      }
 
       # sampler
       search_space_sampler = search_space$clone()$subset(setdiff(search_space$ids(), budget_id))
@@ -164,7 +171,6 @@ OptimizerBatchHyperband = R6Class("OptimizerBatchHyperband",
 
             # for each bracket, promote configurations of previous stage
             xdt_promoted = map_dtr(s_max:(s + 1), function(i) {
-
               # number of configuration to promote
               ni = floor(n[i + 1] * eta^(-(i - s)))
 
@@ -189,7 +195,9 @@ OptimizerBatchHyperband = R6Class("OptimizerBatchHyperband",
             xdt = rbindlist(list(xdt, xdt_promoted), use.names = TRUE)
           }
 
-          if (search_space$class[[budget_id]] == "ParamInt") set(xdt, j = budget_id, value = round(xdt[[budget_id]]))
+          if (search_space$class[[budget_id]] == "ParamInt") {
+            set(xdt, j = budget_id, value = round(xdt[[budget_id]]))
+          }
           inst$eval_batch(xdt)
         }
         repetition = repetition + 1

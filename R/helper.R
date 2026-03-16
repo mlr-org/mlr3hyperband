@@ -21,7 +21,9 @@ hyperband_schedule = function(r_min, r_max, eta, integer_budget = FALSE) {
     map_dtr(0:s, function(i) {
       ni = floor(nb * eta^(-i))
       ri = r_min * rb * eta^i
-      if (integer_budget) ri = round(ri)
+      if (integer_budget) {
+        ri = round(ri)
+      }
       data.table(bracket = s, stage = i, budget = ri, n = ni)
     })
   })

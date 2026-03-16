@@ -65,13 +65,15 @@
 #'
 #' @export
 #' @template example_optimizer
-OptimizerBatchSuccessiveHalving = R6Class("OptimizerBatchSuccessiveHalving",
+OptimizerBatchSuccessiveHalving = R6Class(
+  "OptimizerBatchSuccessiveHalving",
   inherit = OptimizerBatch,
   public = list(
-
     #' @description
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
+      # nolint start
+      # fmt: skip
       param_set = ps(
         n           = p_int(lower = 1, default = 16),
         eta         = p_dbl(lower = 1.0001, default = 2),
@@ -79,6 +81,7 @@ OptimizerBatchSuccessiveHalving = R6Class("OptimizerBatchSuccessiveHalving",
         repetitions = p_int(lower = 1L, default = 1, special_vals = list(Inf)),
         adjust_minimum_budget = p_lgl(default = FALSE)
       )
+      # nolint end
       param_set$values = list(n = 16L, eta = 2L, sampler = NULL, repetitions = 1, adjust_minimum_budget = FALSE)
 
       super$initialize(
@@ -102,11 +105,15 @@ OptimizerBatchSuccessiveHalving = R6Class("OptimizerBatchSuccessiveHalving",
       budget_id = search_space$ids(tags = "budget")
 
       # check budget
-      if (length(budget_id) != 1) stopf("Exactly one parameter must be tagged with 'budget'")
+      if (length(budget_id) != 1) {
+        stopf("Exactly one parameter must be tagged with 'budget'")
+      }
       assert_choice(search_space$class[[budget_id]], c("ParamInt", "ParamDbl"))
 
       # required for calculation of hypervolume
-      if (inst$archive$codomain$length > 1) require_namespaces("emoa")
+      if (inst$archive$codomain$length > 1) {
+        require_namespaces("emoa")
+      }
 
       # sampler
       search_space_sampler = search_space$clone()$subset(setdiff(search_space$ids(), budget_id))
@@ -139,7 +146,9 @@ OptimizerBatchSuccessiveHalving = R6Class("OptimizerBatchSuccessiveHalving",
       s_max = min(sr, sn)
 
       # increase r_min so that the last stage uses the maximum budget
-      if (pars$adjust_minimum_budget) r_min = r * eta^-s_max
+      if (pars$adjust_minimum_budget) {
+        r_min = r * eta^-s_max
+      }
 
       repetition = 1
       while (repetition <= pars$repetitions) {
@@ -150,7 +159,9 @@ OptimizerBatchSuccessiveHalving = R6Class("OptimizerBatchSuccessiveHalving",
           # budget of a single configuration in stage
           ri = r_min * eta^i
 
-          if (search_space$class[[budget_id]] == "ParamInt") ri = round(ri)
+          if (search_space$class[[budget_id]] == "ParamInt") {
+            ri = round(ri)
+          }
 
           if (i == 0) {
             xdt = sampler$sample(ni)$data

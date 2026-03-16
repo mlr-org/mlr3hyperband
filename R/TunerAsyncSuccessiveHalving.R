@@ -15,10 +15,10 @@
 #' `r format_bib("li_2020")`
 #'
 #' @export
-TunerAsyncSuccessiveHalving = R6Class("TunerAsyncSuccessiveHalving",
+TunerAsyncSuccessiveHalving = R6Class(
+  "TunerAsyncSuccessiveHalving",
   inherit = TunerAsyncFromOptimizerAsync,
   public = list(
-
     #' @description
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
