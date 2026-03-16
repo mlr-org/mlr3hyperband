@@ -28,13 +28,3 @@ start_rush = function(n_workers = 2, worker_type = "remote") {
 
   rush
 }
-
-wait_for_results = function(rush, n, timeout = 10) {
-  start_time = Sys.time()
-  while (rush$n_finished_tasks() < n) {
-    Sys.sleep(0.1)
-    if (Sys.time() - start_time > timeout) {
-      stop("Timeout waiting for results")
-    }
-  }
-}

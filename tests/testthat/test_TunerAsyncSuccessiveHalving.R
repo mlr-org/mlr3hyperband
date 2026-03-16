@@ -279,8 +279,6 @@ test_that("TunerAsyncSuccessiveHalving minimizes measure", {
 
   instance = test_tuner_async_successive_halving(eta = 2, learner, measures = msr("dummy", parameter_id = "x", minimize = TRUE), n_workers = 1, rush = rush)
 
-  wait_for_results(rush, 6)
-
   data = as.data.table(instance$archive)
   perf_1 = data[1, dummy]
   perf_2 = data[6, dummy]
@@ -306,8 +304,6 @@ test_that("TunerAsyncSuccessiveHalving maximizes measure", {
   )
 
   instance = test_tuner_async_successive_halving(eta = 2, learner, measures = msr("dummy", parameter_id = "x", minimize = FALSE), n_workers = 1, rush = rush)
-
-  wait_for_results(rush, 6)
 
   data = as.data.table(instance$archive)
   perf_1 = data[1, dummy]
