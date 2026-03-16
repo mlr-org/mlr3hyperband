@@ -283,7 +283,8 @@ test_that("TunerAsyncSuccessiveHalving minimizes measure", {
   perf_1 = data[1, dummy]
   perf_2 = data[6, dummy]
 
-  # if the performance of second configuration in the first stage is better than the first configuration it must be promoted to the next stage
+  # if the performance of second configuration in the first stage is better
+  # than the first configuration it must be promoted to the next stage
   if (perf_2 < perf_1) {
     expect_equal(data[7, stage], 2)
   } else {
