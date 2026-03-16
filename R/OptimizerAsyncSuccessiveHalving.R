@@ -12,7 +12,8 @@
 #' @section Parameters:
 #' \describe{
 #' \item{`eta`}{`numeric(1)`\cr
-#'   With every stage, the budget is increased by a factor of `eta` and only the best `1 / eta` configurations are promoted to the next stage.
+#'   With every stage, the budget is increased by a factor of `eta` and
+#'   only the best `1 / eta` configurations are promoted to the next stage.
 #'   Non-integer values are supported, but `eta` is not allowed to be less or equal to 1.}
 #' \item{`sampler`}{[paradox::Sampler]\cr
 #'   Object defining how the samples of the parameter space should be drawn.
@@ -32,17 +33,21 @@
 #' `r format_bib("li_2020")`
 #'
 #' @export
-OptimizerAsyncSuccessiveHalving = R6Class("OptimizerAsyncSuccessiveHalving",
+# nolint next
+OptimizerAsyncSuccessiveHalving = R6Class(
+  "OptimizerAsyncSuccessiveHalving",
   inherit = OptimizerAsync,
 
   public = list(
-
     #' @description
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
+      # nolint start
+      # fmt: skip
       param_set = ps(
         eta     = p_dbl(lower = 1.0001, default = 2),
         sampler = p_uty(custom_check = crate({function(x) check_r6(x, "Sampler", null.ok = TRUE)})))
+      # nolint end
 
       param_set$values = list(eta = 2, sampler = NULL)
 
@@ -58,7 +63,8 @@ OptimizerAsyncSuccessiveHalving = R6Class("OptimizerAsyncSuccessiveHalving",
     },
 
     #' @description
-    #' Performs the optimization on a [bbotk::OptimInstanceAsyncSingleCrit] or [bbotk::OptimInstanceAsyncMultiCrit] until termination.
+    #' Performs the optimization on a [bbotk::OptimInstanceAsyncSingleCrit] or
+    #' [bbotk::OptimInstanceAsyncMultiCrit] until termination.
     #' The single evaluations will be written into the [bbotk::ArchiveAsync].
     #' The result will be written into the instance object.
     #'
@@ -73,11 +79,15 @@ OptimizerAsyncSuccessiveHalving = R6Class("OptimizerAsyncSuccessiveHalving",
       budget_id = search_space$ids(tags = "budget")
 
       # check budget
-      if (length(budget_id) != 1) stopf("Exactly one parameter must be tagged with 'budget'")
+      if (length(budget_id) != 1) {
+        stopf("Exactly one parameter must be tagged with 'budget'")
+      }
       assert_choice(search_space$class[[budget_id]], c("ParamInt", "ParamDbl"))
 
       # required for calculation of hypervolume
-      if (inst$archive$codomain$length > 1) require_namespaces("emoa")
+      if (inst$archive$codomain$length > 1) {
+        require_namespaces("emoa")
+      }
 
       # sampler
       search_space_sampler = search_space$clone()$subset(setdiff(search_space$ids(), budget_id))
@@ -116,12 +126,22 @@ OptimizerAsyncSuccessiveHalving = R6Class("OptimizerAsyncSuccessiveHalving",
       # number of stages if each configuration in the first stage uses the minimum budget
       # and each configuration in the last stage uses no more than maximum budget
       s_max = ceiling(log(r, eta))
-      # using ceiling can produce one stage too much but floor can produce one stage too few due to floating point errors
+      # using ceiling can produce one stage too much but
+      # floor can produce one stage too few due to floating point errors
       # thus we need to check that the last stage is not over the maximum budget
-      if (r_min * eta^s_max > r_max) s_max = s_max - 1
+      if (r_min * eta^s_max > r_max) {
+        s_max = s_max - 1
+      }
       private$.s_max = s_max
 
-      lg$info("Starting successive halving with eta = %g and %i stages from %g to %g %s", eta, private$.s_max + 1, r_min, r_min * eta^s_max, budget_id)
+      lg$info(
+        "Starting successive halving with eta = %g and %i stages from %g to %g %s",
+        eta,
+        private$.s_max + 1,
+        r_min,
+        r_min * eta^s_max,
+        budget_id
+      )
 
       optimize_async_default(inst, self)
     }
@@ -147,7 +167,8 @@ OptimizerAsyncSuccessiveHalving = R6Class("OptimizerAsyncSuccessiveHalving",
 
 mlr_optimizers$add("async_successive_halving", OptimizerAsyncSuccessiveHalving)
 
-# the multi-crit version fetches all results from Redis and applies non-dominated sorting to select the best configurations
+# the multi-crit version fetches all results from Redis and
+# applies non-dominated sorting to select the best configurations
 optimize_asha_multi = function(inst, self, private) {
   archive = inst$archive
   r_min = private$.r_min
@@ -197,7 +218,9 @@ optimize_asha_multi = function(inst, self, private) {
 
         # increase budget of xs
         rs = r_min * eta^s
-        if (inst$search_space$class[[budget_id]] == "ParamInt") rs = round(rs)
+        if (inst$search_space$class[[budget_id]] == "ParamInt") {
+          rs = round(rs)
+        }
         xs[[budget_id]] = rs
         xs$stage = s + 1
 
@@ -208,10 +231,10 @@ optimize_asha_multi = function(inst, self, private) {
   }
 }
 
-# the single-crit version fetches no results from Redis but uses sorted sets to get the rank of the current configuration
+# the single-crit version fetches no results from Redis but
+# uses sorted sets to get the rank of the current configuration
 # this has almost no overhead compared to fetching the results and doing the ranking in R
-optimize_asha_single =  function(inst, self, private) {
-  archive = inst$archive
+optimize_asha_single = function(inst, self, private) {
   r_min = private$.r_min
   s_max = private$.s_max
   eta = self$param_set$values$eta
@@ -264,7 +287,9 @@ optimize_asha_single =  function(inst, self, private) {
 
         # increase budget of xs
         rs = r_min * eta^s
-        if (inst$search_space$class[[budget_id]] == "ParamInt") rs = round(rs)
+        if (inst$search_space$class[[budget_id]] == "ParamInt") {
+          rs = round(rs)
+        }
         xs[[budget_id]] = rs
         xs$stage = s + 1
 

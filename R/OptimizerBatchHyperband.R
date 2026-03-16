@@ -6,16 +6,20 @@
 #'
 #' @description
 #' Optimizer using the Hyperband (HB) algorithm.
-#' HB runs the [Successive Halving Algorithm][OptimizerBatchSuccessiveHalving] (SHA) with different numbers of stating configurations.
+#' HB runs the [Successive Halving Algorithm][OptimizerBatchSuccessiveHalving] (SHA) with
+#' different numbers of stating configurations.
 #' The algorithm is initialized with the same parameters as Successive Halving but without `n`.
 #' Each run of Successive Halving is called a bracket and starts with a different budget `r_0`.
 #' A smaller starting budget means that more configurations can be tried out.
 #' The most explorative bracket allocated the minimum budget `r_min`.
 #' The next bracket increases the starting budget by a factor of `eta`.
-#' In each bracket, the starting budget increases further until the last bracket `s = 0` essentially performs a random search with the full budget `r_max`.
+#' In each bracket, the starting budget increases further
+#' until the last bracket `s = 0` essentially performs a random search with the full budget `r_max`.
 #' The number of brackets `s_max + 1` is calculated with `s_max = log(r_min / r_max)(eta)`.
-#' Under the condition that `r_0` increases by `eta` with each bracket, `r_min` sometimes has to be adjusted slightly in order not to use more than `r_max` resources in the last bracket.
-#' The number of configurations in the base stages is calculated so that each bracket uses approximately the same amount of budget.
+#' Under the condition that `r_0` increases by `eta` with each bracket,
+#' `r_min` sometimes has to be adjusted slightly in order not to use more than `r_max` resources in the last bracket.
+#' The number of configurations in the base stages is calculated so that each bracket uses approximately the same
+#' amount of budget.
 #' The following table shows a full run of HB with `eta = 2`, `r_min = 1` and `r_max = 8`.
 #'
 #' | `s` |     |       |     3 |     |       |     2 |     |       |     1 |     |       |     0 |
@@ -26,24 +30,30 @@
 #' |   2 |     |     2 |     4 |     |     1 |     8 |     |       |       |     |       |       |
 #' |   3 |     |     1 |     8 |     |       |       |     |       |       |     |       |       |
 #'
-#' `s` is the bracket number, `i` is the stage number, `n_i` is the number of configurations and `r_i` is the budget allocated to a single configuration.
+#' `s` is the bracket number, `i` is the stage number, `n_i` is the number of configurations,
+#' and `r_i` is the budget allocated to a single configuration.
 #'
 #' The budget hyperparameter must be tagged with `"budget"` in the search space.
-#' The minimum budget (`r_min`) which is allocated in the base stage of the most explorative bracket, is set by the lower bound of the budget parameter.
+#' The minimum budget (`r_min`), which is allocated in the base stage of the most explorative bracket,
+#' is set by the lower bound of the budget parameter.
 #' The upper bound defines the maximum budget (`r_max`) which is allocated to the candidates in the last stages.
 #'
 #' @section Resources:
-#' The [gallery](https://mlr-org.com/gallery-all-optimization.html) features a collection of case studies and demos about optimization.
+#' The [gallery](https://mlr-org.com/gallery-all-optimization.html) features a collection of case studies and
+#' demos about optimization.
 #'
-#'  * [Tune](https://mlr-org.com/gallery/series/2023-01-15-hyperband-xgboost/) the hyperparameters of XGBoost with Hyperband.
-#'  * Use data [subsampling](https://mlr-org.com/gallery/series/2023-01-16-hyperband-subsampling/) and Hyperband to optimize a support vector machine.
+#'  * [Tune](https://mlr-org.com/gallery/series/2023-01-15-hyperband-xgboost/) the hyperparameters of XGBoost
+#'    with Hyperband.
+#'  * Use data [subsampling](https://mlr-org.com/gallery/series/2023-01-16-hyperband-subsampling/) and
+#'    Hyperband to optimize a support vector machine.
 #'
 #' @template section_dictionary_optimizers
 #'
 #' @section Parameters:
 #' \describe{
 #' \item{`eta`}{`numeric(1)`\cr
-#'   With every stage, the budget is increased by a factor of `eta` and only the best `1 / eta` points are promoted to the next stage.
+#'   With every stage, the budget is increased by a factor of `eta` and
+#'   only the best `1 / eta` points are promoted to the next stage.
 #'   Non-integer values are supported, but `eta` is not allowed to be less or equal to 1.}
 #' \item{`sampler`}{[paradox::Sampler]\cr
 #'   Object defining how the samples of the parameter space should be drawn in the base stage of each bracket.
@@ -72,18 +82,21 @@
 #'
 #' @export
 #' @template example_optimizer
-OptimizerBatchHyperband = R6Class("OptimizerBatchHyperband",
+OptimizerBatchHyperband = R6Class(
+  "OptimizerBatchHyperband",
   inherit = OptimizerBatch,
   public = list(
-
     #' @description
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {
+      # nolint start
+      # fmt: skip
       param_set = ps(
         eta     = p_dbl(lower = 1.0001, tags = "required"),
         sampler = p_uty(custom_check = function(x) check_r6(x, "Sampler", null.ok = TRUE)),
         repetitions = p_int(lower = 1L, default = 1, special_vals = list(Inf))
       )
+      # nolint end
       param_set$values = list(eta = 2, sampler = NULL, repetitions = 1)
 
       super$initialize(
@@ -106,10 +119,14 @@ OptimizerBatchHyperband = R6Class("OptimizerBatchHyperband",
       budget_id = search_space$ids(tags = "budget")
 
       # check budget
-      if (length(budget_id) != 1) stopf("Exactly one parameter must be tagged with 'budget'")
+      if (length(budget_id) != 1) {
+        stopf("Exactly one parameter must be tagged with 'budget'")
+      }
       assert_choice(search_space$class[[budget_id]], c("ParamInt", "ParamDbl"))
 
-      if (inst$archive$codomain$length > 1) require_namespaces("emoa")
+      if (inst$archive$codomain$length > 1) {
+        require_namespaces("emoa")
+      }
 
       # sampler
       search_space_sampler = search_space$clone()$subset(setdiff(search_space$ids(), budget_id))
@@ -164,7 +181,6 @@ OptimizerBatchHyperband = R6Class("OptimizerBatchHyperband",
 
             # for each bracket, promote configurations of previous stage
             xdt_promoted = map_dtr(s_max:(s + 1), function(i) {
-
               # number of configuration to promote
               ni = floor(n[i + 1] * eta^(-(i - s)))
 
@@ -189,7 +205,9 @@ OptimizerBatchHyperband = R6Class("OptimizerBatchHyperband",
             xdt = rbindlist(list(xdt, xdt_promoted), use.names = TRUE)
           }
 
-          if (search_space$class[[budget_id]] == "ParamInt") set(xdt, j = budget_id, value = round(xdt[[budget_id]]))
+          if (search_space$class[[budget_id]] == "ParamInt") {
+            set(xdt, j = budget_id, value = round(xdt[[budget_id]]))
+          }
           inst$eval_batch(xdt)
         }
         repetition = repetition + 1

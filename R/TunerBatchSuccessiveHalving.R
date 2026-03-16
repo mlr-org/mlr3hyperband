@@ -24,10 +24,10 @@
 #'
 #' @export
 #' @template example_tuner
-TunerBatchSuccessiveHalving = R6Class("TunerBatchSuccessiveHalving",
+TunerBatchSuccessiveHalving = R6Class(
+  "TunerBatchSuccessiveHalving",
   inherit = TunerBatchFromOptimizerBatch,
   public = list(
-
     #' @description
     #' Creates a new instance of this [R6][R6::R6Class] class.
     initialize = function() {

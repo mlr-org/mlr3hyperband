@@ -1,6 +1,8 @@
 skip_if_not_installed("emoa")
 
 test_that("nds_selection works", {
+  # fmt: skip
+  # nolint start
   points = matrix(
     c( # front 1
       # emoa puts always Inf weight on boundary points, so they always survive
@@ -37,7 +39,8 @@ test_that("nds_selection works", {
     "7" = "1234567",
     # all candidates survive
     "8" = "12345678"
-    )
+  )
+  # nolint end
 
   for (i in 1:8) {
     for (j in c(-1, 1)) {
@@ -53,9 +56,9 @@ test_that("nds_selection works", {
   points_max2d = points * (to_minimize * 2 - 1)
 
   for (i in 1:8) {
-      res = replicate(100, nds_selection(points_max2d, i, minimize = to_minimize), simplify = FALSE)
-      res = sapply(res, paste, collapse = "")
-      res = unique(res)
-      expect_set_equal(res, results[[i]])
+    res = replicate(100, nds_selection(points_max2d, i, minimize = to_minimize), simplify = FALSE)
+    res = sapply(res, paste, collapse = "")
+    res = unique(res)
+    expect_set_equal(res, results[[i]])
   }
 })

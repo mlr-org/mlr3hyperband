@@ -6,7 +6,10 @@ library(paradox)
 library(R6)
 
 lapply(list.files(system.file("testthat", package = "mlr3"), pattern = "^helper.*\\.[rR]$", full.names = TRUE), source)
-lapply(list.files(system.file("testthat", package = "mlr3tuning"), pattern = "^helper.*\\.[rR]$", full.names = TRUE), source)
+lapply(
+  list.files(system.file("testthat", package = "mlr3tuning"), pattern = "^helper.*\\.[rR]$", full.names = TRUE),
+  source
+)
 # nolint end
 
 #' @title Test Tuner Hyperband
@@ -50,8 +53,14 @@ test_tuner_hyperband = function(eta, learner, measures = msr("classif.ce"), samp
 #' @description
 #' Tests budget and number of configs constructed by the tuner against supplied
 #' bounds
-test_tuner_successive_halving = function(n, eta, learner, measures = msr("classif.ce"), sampler = NULL,
-  adjust_minimum_budget = FALSE) {
+test_tuner_successive_halving = function(
+  n,
+  eta,
+  learner,
+  measures = msr("classif.ce"),
+  sampler = NULL,
+  adjust_minimum_budget = FALSE
+) {
   search_space = learner$param_set$search_space()
   budget_id = search_space$ids(tags = "budget")
   r_min = search_space$lower[[budget_id]]
@@ -62,18 +71,19 @@ test_tuner_successive_halving = function(n, eta, learner, measures = msr("classi
     task = tsk("pima"),
     learner = learner,
     measures = measures,
-    resampling = rsmp("holdout"))
+    resampling = rsmp("holdout")
+  )
 
-    budget = as.data.table(instance$archive)[, budget_id, with = FALSE]
-    n_configs = as.data.table(instance$archive)[, .N, by = "stage"]
+  budget = as.data.table(instance$archive)[, budget_id, with = FALSE]
+  n_configs = as.data.table(instance$archive)[, .N, by = "stage"]
 
-    # check bounds of budget
-    expect_lte(max(budget), r_max)
-    expect_gte(min(budget), r_min)
-    # check number of configs
-    expect_lte(max(n_configs$N), n)
+  # check bounds of budget
+  testthat::expect_lte(max(budget), r_max)
+  testthat::expect_gte(min(budget), r_min)
+  # check number of configs
+  testthat::expect_lte(max(n_configs$N), n)
 
-    instance
+  instance
 }
 
 #' @title Test Tuner Async Successive Halving
@@ -82,7 +92,14 @@ test_tuner_successive_halving = function(n, eta, learner, measures = msr("classi
 #'
 #' @description
 #' Tests budget and number of configs constructed by the tuner against supplied bounds
-test_tuner_async_successive_halving = function(eta, learner, measures = msr("classif.ce"), sampler = NULL, n_workers = 2, rush = NULL) {
+test_tuner_asha = function(
+  eta,
+  learner,
+  measures = msr("classif.ce"),
+  sampler = NULL,
+  n_workers = 2,
+  rush = NULL
+) {
   search_space = learner$param_set$search_space()
   budget_id = search_space$ids(tags = "budget")
   r_min = search_space$lower[[budget_id]]
@@ -95,7 +112,8 @@ test_tuner_async_successive_halving = function(eta, learner, measures = msr("cla
     measures = measures,
     resampling = rsmp("cv", folds = 5),
     terminator = trm("evals", n_evals = 20),
-    rush = rush)
+    rush = rush
+  )
 
   budget = as.data.table(instance$archive)[, budget_id, with = FALSE]
 
@@ -109,7 +127,8 @@ test_tuner_async_successive_halving = function(eta, learner, measures = msr("cla
 #' @title MeasureClassifBudget
 #'
 #' @noRd
-MeasureClassifDummy = R6Class("MeasureClassifDummy",
+MeasureClassifDummy = R6Class(
+  "MeasureClassifDummy",
   inherit = MeasureClassif,
   public = list(
     parameter_id = NULL,
@@ -134,5 +153,3 @@ MeasureClassifDummy = R6Class("MeasureClassifDummy",
 )
 
 mlr_measures$add("dummy", MeasureClassifDummy)
-
-
