@@ -28,7 +28,8 @@ register_mlr3tuning = function() {
   register_namespace_callback(pkgname, "bbotk", register_bbotk)
   register_namespace_callback(pkgname, "mlr3tuning", register_mlr3tuning)
 
-  assign("lg", lgr::get_logger("bbotk"), envir = parent.env(environment()))
+  lg = lgr::get_logger("mlr3/bbotk")
+  assign("lg", lg, envir = parent.env(environment()))
 
   if (Sys.getenv("IN_PKGDOWN") == "true") {
     lg$set_threshold("warn")

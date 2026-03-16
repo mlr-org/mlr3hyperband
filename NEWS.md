@@ -1,5 +1,9 @@
 # mlr3hyperband (development version)
 
+* feat: The mlr3 ecosystem has a base logger now which is named `mlr3`.
+  The `mlr3/bbotk` logger is a child of the `mlr3` logger and is used for logging messages from the `bbotk`, `mlr3tuning` and `mlr3hyperband` package.
+* compatibility: Compatible with `rush` 1.0.0.
+
 # mlr3hyperband 1.0.0
 
 * feat: Add `OptimizerAsyncSuccessiveHalving` optimizer.
