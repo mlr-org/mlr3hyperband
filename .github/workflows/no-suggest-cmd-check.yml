@@ -1,7 +1,15 @@
-# r cmd check workflow of the mlr3 ecosystem v0.2.0
+# R CMD check workflow without suggested packages v0.4.0
+# Without `cache: false` packages can leak from the cache of the previous workflow runs
+# You can remove the `services.redis` section if the package does not require `rush` for the tests
 # https://github.com/mlr-org/actions
 on:
   workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: 'Run the build with tmate debugging enabled'
+        required: false
+        default: false
   push:
     branches:
       - main
@@ -12,13 +20,24 @@ on:
 name: no-suggest-cmd-check
 
 jobs:
-  r-cmd-check:
+  no-suggest-cmd-check:
     runs-on: ${{ matrix.config.os }}
+    services:
+      redis:
+        image: redis
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
 
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      RUSH_TEST_USE_REDIS: true
 
     strategy:
       fail-fast: false
@@ -27,7 +46,7 @@ jobs:
           - {os: ubuntu-latest,   r: 'release'}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
 
       - uses: r-lib/actions/setup-pandoc@v2
 
@@ -35,19 +54,22 @@ jobs:
         with:
           r-version: ${{ matrix.config.r }}
 
-      - uses: supercharge/redis-github-action@1.7.0
-        with:
-          redis-version: 7
-
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
             any::rcmdcheck
+            any::testthat
+            any::knitr
+            any::rmarkdown
           needs: check
           dependencies: '"hard"'
+          cache: false
+
+      - uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+        with:
+          limit-access-to-actor: true
 
       - uses: r-lib/actions/check-r-package@v2
         with:
           args: 'c("--no-manual", "--as-cran")'
-          error-on: '"note"'
-
