@@ -2,6 +2,8 @@
 
 ## mlr3hyperband (development version)
 
+## mlr3hyperband 1.1.0
+
 - feat: The mlr3 ecosystem has a base logger now which is named `mlr3`.
   The `mlr3/bbotk` logger is a child of the `mlr3` logger and is used
   for logging messages from the `bbotk`, `mlr3tuning` and

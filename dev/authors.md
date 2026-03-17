@@ -20,13 +20,13 @@ Source:
 [`DESCRIPTION`](https://github.com/mlr-org/mlr3hyperband/blob/main/DESCRIPTION)
 
 Becker M, Gruber S, Richter J, Moosbauer J, Bischl B (2026).
-*mlr3hyperband: Hyperband for 'mlr3'*. R package version 1.0.0.9000,
+*mlr3hyperband: Hyperband for 'mlr3'*. R package version 1.1.0.9000,
 <https://mlr3hyperband.mlr-org.com>.
 
     @Manual{,
       title = {mlr3hyperband: Hyperband for 'mlr3'},
       author = {Marc Becker and Sebastian Gruber and Jakob Richter and Julia Moosbauer and Bernd Bischl},
       year = {2026},
-      note = {R package version 1.0.0.9000},
+      note = {R package version 1.1.0.9000},
       url = {https://mlr3hyperband.mlr-org.com},
     }
