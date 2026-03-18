@@ -1,2 +1,2 @@
 options(old_opts)
-lg_mlr3$set_threshold(old_threshold_mlr3)
+lg$set_threshold(old_threshold)
