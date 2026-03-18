@@ -2,7 +2,12 @@
 
 ## mlr3hyperband (development version)
 
+- Minimum required version of `rush` is now 1.0.0. Removed all
+  compatibility workarounds for older versions.
+
 ## mlr3hyperband 1.1.0
+
+CRAN release: 2026-03-17
 
 - feat: The mlr3 ecosystem has a base logger now which is named `mlr3`.
   The `mlr3/bbotk` logger is a child of the `mlr3` logger and is used
