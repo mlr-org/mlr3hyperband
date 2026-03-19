@@ -81,13 +81,14 @@ Use structured error/warning functions from mlr3misc: `error_config()`, `error_i
 - New learners must pass `run_autotest()` and `run_paramtest()`.
 - Use shared assertion helpers: `expect_learner()`, `expect_task()`, `expect_resampling()`, `expect_measure()`, `expect_prediction()`.
 - Shared test infrastructure lives in `inst/testthat/` and is sourced by extension packages too.
+- Use `skip_if_not_installed(<package_name>)` to skip tests that require suggested packages.
 
 ### Documentation
 
 - Every user-facing function should be exported and have roxygen2 documentation.
 - Wrap roxygen comments at 120 characters.
 - Write one sentence per line.
-- If a sentence exceeds the limit, break at a comma or other appropriate point.
+- If a sentence exceeds the limit, break at a comma, "and", "or", "but", or other appropriate point.
 - Internal functions should not have roxygen documentation.
 - Whenever you add a new (non-internal) documentation topic, also add the topic to `_pkgdown.yml`.
 - Always re-document the package after changing a roxygen2 comment.
@@ -97,6 +98,7 @@ Use structured error/warning functions from mlr3misc: `error_config()`, `error_i
 - Bibliographic references go in `R/bibentries.R` and are cited with `` `r format_bib("key")` ``.
 - Man page names for dictionary objects follow `mlr_learners_classif.rpart`, `mlr_tasks_iris`, etc.
 - When you write examples, make sure they work.
+- Wrap examples that use suggested packages in `if (mlr3misc::require_namespaces(<package_name>, quietly = TRUE)) {..}` blocks.
 
 ### `NEWS.md`
 
