@@ -35,12 +35,14 @@ halving](https://mlr-org.com/benchmarks/benchmarks_async.html).
 Install the last release from CRAN:
 
 ``` r
+
 install.packages("mlr3hyperband")
 ```
 
 Install the development version from GitHub:
 
 ``` r
+
 pak::pak("mlr-org/mlr3hyperband")
 ```
 
@@ -52,6 +54,7 @@ set. The number of boosting rounds `nrounds` is the fidelity parameter.
 We tag this parameter with `"budget"` in the search space.
 
 ``` r
+
 library(mlr3hyperband)
 library(mlr3learners)
 
@@ -72,6 +75,7 @@ We use the
 to run the optimization.
 
 ``` r
+
 instance = tune(
   tnr("hyperband", eta = 3),
   task = tsk("pima"),
@@ -84,6 +88,7 @@ instance = tune(
 The instance contains the best-performing hyperparameter configuration.
 
 ``` r
+
 instance$result
 ```
 
@@ -97,6 +102,7 @@ The archive contains all evaluated hyperparameter configurations.
 Hyperband adds the `"stage"` and `"braket"`.
 
 ``` r
+
 as.data.table(instance$archive)[, .(stage, bracket, classif.ce, nrounds)]
 ```
 
@@ -119,6 +125,7 @@ We fit a final model with optimized hyperparameters to make predictions
 on new data.
 
 ``` r
+
 learner$param_set$values = instance$result_learner_param_vals
 learner$train(tsk("sonar"))
 ```
