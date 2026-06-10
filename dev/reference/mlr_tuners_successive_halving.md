@@ -241,5 +241,5 @@ if(requireNamespace("xgboost")) {
 }
 #>    nrounds       eta booster learner_param_vals  x_domain classif.ce
 #>      <num>     <num>  <char>             <list>    <list>      <num>
-#> 1:       4 0.3454555  gbtree          <list[7]> <list[3]>  0.2408854
+#> 1:       4 0.3454555  gbtree          <list[8]> <list[3]>  0.2408854
 ```
