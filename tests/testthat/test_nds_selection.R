@@ -23,17 +23,17 @@ test_that("nds_selection works", {
 
   # list of possible results for each n_select value
   results = list(
-    # Point 3 is ommitted first, followed by point 2. Then, 1 or 4 survives randomly.
+    # Point 3 is omitted first, followed by point 2. Then, 1 or 4 survives randomly.
     "1" = c("1", "4"),
-    # Point 3 is ommitted first, followed by point 2. 1 and 4 survive both.
+    # Point 3 is omitted first, followed by point 2. 1 and 4 survive both.
     "2" = "14",
-    # Point 3 is ommited first, so points 1, 2, and 4 survive
+    # Point 3 is omitted first, so points 1, 2, and 4 survive
     "3" = "124",
     # All points out of front 1 survive
     "4" = "1234",
-    # Out of front 2, points 5 is ommitted first, then, either 5 or 7 are sampled randomly
+    # Out of front 2, points 5 is omitted first, then, either 5 or 7 are sampled randomly
     "5" = c("12345", "12347"),
-    # Out of front 2, points 5 is ommitted first, and 5 and 7 survive
+    # Out of front 2, points 5 is omitted first, and 5 and 7 survive
     "6" = "123457",
     # Whole front 2 survives
     "7" = "1234567",
