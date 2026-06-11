@@ -24,6 +24,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Marc Becker \email{marcbecker@posteo.de} (\href{https://orcid.org/0000-0002-8115-0400}{ORCID})
   \item Sebastian Gruber \email{gruber_sebastian@t-online.de} (\href{https://orcid.org/0000-0002-8544-3470}{ORCID})
   \item Jakob Richter \email{jakob1richter@gmail.com} (\href{https://orcid.org/0000-0003-4481-5554}{ORCID})
   \item Julia Moosbauer \email{ju.moosbauer@googlemail.com} (\href{https://orcid.org/0000-0002-0000-9297}{ORCID})

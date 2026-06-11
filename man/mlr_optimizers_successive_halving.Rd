@@ -12,7 +12,9 @@ In Gretton A, Robert CC (eds.), \emph{Proceedings of the 19th International Conf
 }
 \description{
 Optimizer using the Successive Halving Algorithm (SHA).
-SHA is initialized with the number of starting configurations \code{n}, the proportion of configurations discarded in each stage \code{eta}, and the minimum \code{r_min} and maximum \verb{_max} budget of a single evaluation.
+SHA is initialized with the number of starting configurations \code{n},
+the proportion of configurations discarded in each stage \code{eta},
+and the minimum \code{r_min} and maximum \verb{_max} budget of a single evaluation.
 The algorithm starts by sampling \code{n} random configurations and allocating the minimum budget \code{r_min} to them.
 The configurations are evaluated and \code{1 / eta} of the worst-performing configurations are discarded.
 The remaining configurations are promoted to the next stage and evaluated on a larger budget.
@@ -25,17 +27,21 @@ The following table is the stage layout for \code{eta = 2}, \code{r_min = 1} and
 }
 
 
-\code{i} is the stage number, \code{n_i} is the number of configurations and \code{r_i} is the budget allocated to a single configuration.
+\code{i} is the stage number, \code{n_i} is the number of configurations, and
+\code{r_i} is the budget allocated to a single configuration.
 
 The number of stages is calculated so that each stage consumes approximately the same budget.
 This sometimes results in the minimum budget having to be slightly adjusted by the algorithm.
 }
 \section{Resources}{
 
-The \href{https://mlr-org.com/gallery-all-optimization.html}{gallery} features a collection of case studies and demos about optimization.
+The \href{https://mlr-org.com/gallery-all-optimization.html}{gallery} features a collection of case studies and
+demos about optimization.
 \itemize{
-\item \href{https://mlr-org.com/gallery/series/2023-01-15-hyperband-xgboost/}{Tune} the hyperparameters of XGBoost with Hyperband (Hyperband can be easily swapped with SHA).
-\item Use data \href{https://mlr-org.com/gallery/series/2023-01-16-hyperband-subsampling/}{subsampling} and Hyperband to optimize a support vector machine.
+\item \href{https://mlr-org.com/gallery/series/2023-01-15-hyperband-xgboost/}{Tune} the hyperparameters of XGBoost with
+Hyperband (Hyperband can be easily swapped with SHA).
+\item Use data \href{https://mlr-org.com/gallery/series/2023-01-16-hyperband-subsampling/}{subsampling} and
+Hyperband to optimize a support vector machine.
 }
 }
 
@@ -55,7 +61,8 @@ opt("successive_halving")
 \item{\code{n}}{\code{integer(1)}\cr
 Number of configurations in the base stage.}
 \item{\code{eta}}{\code{numeric(1)}\cr
-With every stage, the budget is increased by a factor of \code{eta} and only the best \code{1 / eta} configurations are promoted to the next stage.
+With every stage, the budget is increased by a factor of \code{eta} and
+only the best \code{1 / eta} configurations are promoted to the next stage.
 Non-integer values are supported, but \code{eta} is not allowed to be less or equal to 1.}
 \item{\code{sampler}}{\link[paradox:Sampler]{paradox::Sampler}\cr
 Object defining how the samples of the parameter space should be drawn.
@@ -65,7 +72,8 @@ If \code{1} (default), optimization is stopped once all stages are evaluated.
 Otherwise, optimization is stopped after \code{repetitions} runs of SHA.
 The \link[bbotk:Terminator]{bbotk::Terminator} might stop the optimization before all repetitions are executed.}
 \item{\code{adjust_minimum_budget}}{\code{logical(1)}\cr
-If \code{TRUE}, the minimum budget is increased so that the last stage uses the maximum budget defined in the search space.}
+If \code{TRUE}, the minimum budget is increased so that the last stage uses the maximum budget defined in
+the search space.}
 }
 }
 
@@ -155,46 +163,48 @@ as.data.table(instance$archive)
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-OptimizerBatchSuccessiveHalving-new}{\code{OptimizerBatchSuccessiveHalving$new()}}
-\item \href{#method-OptimizerBatchSuccessiveHalving-clone}{\code{OptimizerBatchSuccessiveHalving$clone()}}
+  \itemize{
+    \item \href{#method-OptimizerBatchSuccessiveHalving-initialize}{\code{OptimizerBatchSuccessiveHalving$new()}}
+    \item \href{#method-OptimizerBatchSuccessiveHalving-clone}{\code{OptimizerBatchSuccessiveHalving$clone()}}
+  }
 }
-}
-\if{html}{\out{
-<details open><summary>Inherited methods</summary>
+\if{html}{\out{<details open><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="format"><a href='../../bbotk/html/Optimizer.html#method-Optimizer-format'><code>bbotk::Optimizer$format()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="help"><a href='../../bbotk/html/Optimizer.html#method-Optimizer-help'><code>bbotk::Optimizer$help()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="print"><a href='../../bbotk/html/Optimizer.html#method-Optimizer-print'><code>bbotk::Optimizer$print()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="bbotk" data-topic="OptimizerBatch" data-id="optimize"><a href='../../bbotk/html/OptimizerBatch.html#method-OptimizerBatch-optimize'><code>bbotk::OptimizerBatch$optimize()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="format"><a href='../../bbotk/html/Optimizer.html#method-Optimizer-format'><code>bbotk::Optimizer$format()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="help"><a href='../../bbotk/html/Optimizer.html#method-Optimizer-help'><code>bbotk::Optimizer$help()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="print"><a href='../../bbotk/html/Optimizer.html#method-Optimizer-print'><code>bbotk::Optimizer$print()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="bbotk" data-topic="OptimizerBatch" data-id="optimize"><a href='../../bbotk/html/OptimizerBatch.html#method-OptimizerBatch-optimize'><code>bbotk::OptimizerBatch$optimize()</code></a></span></li>
 </ul>
-</details>
-}}
+</details>}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-OptimizerBatchSuccessiveHalving-new"></a>}}
-\if{latex}{\out{\hypertarget{method-OptimizerBatchSuccessiveHalving-new}{}}}
-\subsection{Method \code{new()}}{
-Creates a new instance of this \link[R6:R6Class]{R6} class.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OptimizerBatchSuccessiveHalving$new()}\if{html}{\out{</div>}}
+\if{html}{\out{<a id="method-OptimizerBatchSuccessiveHalving-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-OptimizerBatchSuccessiveHalving-initialize}{}}}
+\subsection{\code{OptimizerBatchSuccessiveHalving$new()}}{
+  Creates a new instance of this \link[R6:R6Class]{R6} class.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OptimizerBatchSuccessiveHalving$new()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OptimizerBatchSuccessiveHalving-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-OptimizerBatchSuccessiveHalving-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OptimizerBatchSuccessiveHalving$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{OptimizerBatchSuccessiveHalving$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OptimizerBatchSuccessiveHalving$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }
