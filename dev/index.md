@@ -99,7 +99,7 @@ instance$result
 ```
 
 The archive contains all evaluated hyperparameter configurations.
-Hyperband adds the `"stage"` and `"braket"`.
+Hyperband adds the `"stage"` and `"bracket"`.
 
 ``` r
 

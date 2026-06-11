@@ -133,7 +133,7 @@
 <div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="do">##         alpha colsample_bylevel colsample_bytree       eta     lambda max_depth nrounds subsample</span></span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="do">## 1: 0.08577605         0.5570915        0.7090864 -2.191256 -0.2623144         5      81 0.4919964</span></span>
 <span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="do">## 3 variables not shown: [learner_param_vals, x_domain, classif.ce]</span></span></code></pre></div>
-<p>The archive contains all evaluated hyperparameter configurations. Hyperband adds the <code>"stage"</code> and <code>"braket"</code>.</p>
+<p>The archive contains all evaluated hyperparameter configurations. Hyperband adds the <code>"stage"</code> and <code>"bracket"</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/as.data.table.html" class="external-link">as.data.table</a></span><span class="op">(</span><span class="va">instance</span><span class="op">$</span><span class="va">archive</span><span class="op">)</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">stage</span>, <span class="va">bracket</span>, <span class="va">classif.ce</span>, <span class="va">nrounds</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="do">##     stage bracket classif.ce nrounds</span></span>
