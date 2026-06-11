@@ -30,14 +30,14 @@ with `eta = 2`, `r_min = 1` and `r_max = 8`.
 | 3   |     | 1     | 8     |     |       |       |     |       |       |     |       |       |
 
 `s` is the bracket number, `i` is the stage number, `n_i` is the number
-of configurations and `r_i` is the budget allocated to a single
+of configurations, and `r_i` is the budget allocated to a single
 configuration.
 
 The budget hyperparameter must be tagged with `"budget"` in the search
-space. The minimum budget (`r_min`) which is allocated in the base stage
-of the most explorative bracket, is set by the lower bound of the budget
-parameter. The upper bound defines the maximum budget (`r_max`) which is
-allocated to the candidates in the last stages.
+space. The minimum budget (`r_min`), which is allocated in the base
+stage of the most explorative bracket, is set by the lower bound of the
+budget parameter. The upper bound defines the maximum budget (`r_max`)
+which is allocated to the candidates in the last stages.
 
 ## Source
 
@@ -175,7 +175,7 @@ holds the following additional columns that are specific to HB:
 
 ### Public methods
 
-- [`TunerBatchHyperband$new()`](#method-TunerBatchHyperband-new)
+- [`TunerBatchHyperband$new()`](#method-TunerBatchHyperband-initialize)
 
 - [`TunerBatchHyperband$clone()`](#method-TunerBatchHyperband-clone)
 
@@ -188,7 +188,7 @@ Inherited methods
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `TunerBatchHyperband$new()`
 
 Creates a new instance of this
 [R6](https://r6.r-lib.org/reference/R6Class.html) class.
@@ -199,7 +199,7 @@ Creates a new instance of this
 
 ------------------------------------------------------------------------
 
-### Method `clone()`
+### `TunerBatchHyperband$clone()`
 
 The objects of this class are cloneable with this method.
 

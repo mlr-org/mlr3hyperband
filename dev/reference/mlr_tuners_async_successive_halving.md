@@ -92,7 +92,7 @@ holds the following additional columns that are specific to SHA:
 
 ### Public methods
 
-- [`TunerAsyncSuccessiveHalving$new()`](#method-TunerAsyncSuccessiveHalving-new)
+- [`TunerAsyncSuccessiveHalving$new()`](#method-TunerAsyncSuccessiveHalving-initialize)
 
 - [`TunerAsyncSuccessiveHalving$clone()`](#method-TunerAsyncSuccessiveHalving-clone)
 
@@ -105,7 +105,7 @@ Inherited methods
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `TunerAsyncSuccessiveHalving$new()`
 
 Creates a new instance of this
 [R6](https://r6.r-lib.org/reference/R6Class.html) class.
@@ -116,7 +116,7 @@ Creates a new instance of this
 
 ------------------------------------------------------------------------
 
-### Method `clone()`
+### `TunerAsyncSuccessiveHalving$clone()`
 
 The objects of this class are cloneable with this method.
 

@@ -6,16 +6,20 @@
     }
   };
 </script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/Roboto-0.4.10/font.css" rel="stylesheet"><link href="../deps/JetBrains_Mono-0.4.10/font.css" rel="stylesheet"><link href="../deps/Roboto_Slab-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Optimizer Using the Hyperband Algorithm — mlr_optimizers_hyperband"><meta name="description" content='Optimizer using the Hyperband (HB) algorithm.
-HB runs the Successive Halving Algorithm (SHA) with different numbers of stating configurations.
+HB runs the Successive Halving Algorithm (SHA) with
+different numbers of stating configurations.
 The algorithm is initialized with the same parameters as Successive Halving but without n.
 Each run of Successive Halving is called a bracket and starts with a different budget r_0.
 A smaller starting budget means that more configurations can be tried out.
 The most explorative bracket allocated the minimum budget r_min.
 The next bracket increases the starting budget by a factor of eta.
-In each bracket, the starting budget increases further until the last bracket s = 0 essentially performs a random search with the full budget r_max.
+In each bracket, the starting budget increases further
+until the last bracket s = 0 essentially performs a random search with the full budget r_max.
 The number of brackets s_max + 1 is calculated with s_max = log(r_min / r_max)(eta).
-Under the condition that r_0 increases by eta with each bracket, r_min sometimes has to be adjusted slightly in order not to use more than r_max resources in the last bracket.
-The number of configurations in the base stages is calculated so that each bracket uses approximately the same amount of budget.
+Under the condition that r_0 increases by eta with each bracket,
+r_min sometimes has to be adjusted slightly in order not to use more than r_max resources in the last bracket.
+The number of configurations in the base stages is calculated so that each bracket uses approximately the same
+amount of budget.
 The following table shows a full run of HB with eta = 2, r_min = 1 and r_max = 8.
 s3210
 in_ir_in_ir_in_ir_in_ir_i
@@ -27,20 +31,26 @@ in_ir_in_ir_in_ir_in_ir_i
 
 
 
-s is the bracket number, i is the stage number, n_i is the number of configurations and r_i is the budget allocated to a single configuration.
+s is the bracket number, i is the stage number, n_i is the number of configurations,
+and r_i is the budget allocated to a single configuration.
 The budget hyperparameter must be tagged with "budget" in the search space.
-The minimum budget (r_min) which is allocated in the base stage of the most explorative bracket, is set by the lower bound of the budget parameter.
+The minimum budget (r_min), which is allocated in the base stage of the most explorative bracket,
+is set by the lower bound of the budget parameter.
 The upper bound defines the maximum budget (r_max) which is allocated to the candidates in the last stages.'><meta property="og:description" content='Optimizer using the Hyperband (HB) algorithm.
-HB runs the Successive Halving Algorithm (SHA) with different numbers of stating configurations.
+HB runs the Successive Halving Algorithm (SHA) with
+different numbers of stating configurations.
 The algorithm is initialized with the same parameters as Successive Halving but without n.
 Each run of Successive Halving is called a bracket and starts with a different budget r_0.
 A smaller starting budget means that more configurations can be tried out.
 The most explorative bracket allocated the minimum budget r_min.
 The next bracket increases the starting budget by a factor of eta.
-In each bracket, the starting budget increases further until the last bracket s = 0 essentially performs a random search with the full budget r_max.
+In each bracket, the starting budget increases further
+until the last bracket s = 0 essentially performs a random search with the full budget r_max.
 The number of brackets s_max + 1 is calculated with s_max = log(r_min / r_max)(eta).
-Under the condition that r_0 increases by eta with each bracket, r_min sometimes has to be adjusted slightly in order not to use more than r_max resources in the last bracket.
-The number of configurations in the base stages is calculated so that each bracket uses approximately the same amount of budget.
+Under the condition that r_0 increases by eta with each bracket,
+r_min sometimes has to be adjusted slightly in order not to use more than r_max resources in the last bracket.
+The number of configurations in the base stages is calculated so that each bracket uses approximately the same
+amount of budget.
 The following table shows a full run of HB with eta = 2, r_min = 1 and r_max = 8.
 s3210
 in_ir_in_ir_in_ir_in_ir_i
@@ -52,9 +62,11 @@ in_ir_in_ir_in_ir_in_ir_i
 
 
 
-s is the bracket number, i is the stage number, n_i is the number of configurations and r_i is the budget allocated to a single configuration.
+s is the bracket number, i is the stage number, n_i is the number of configurations,
+and r_i is the budget allocated to a single configuration.
 The budget hyperparameter must be tagged with "budget" in the search space.
-The minimum budget (r_min) which is allocated in the base stage of the most explorative bracket, is set by the lower bound of the budget parameter.
+The minimum budget (r_min), which is allocated in the base stage of the most explorative bracket,
+is set by the lower bound of the budget parameter.
 The upper bound defines the maximum budget (r_max) which is allocated to the candidates in the last stages.'><meta property="og:image" content="https://mlr3hyperband.mlr-org.com/logo.png"><meta name="robots" content="noindex"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
@@ -100,19 +112,25 @@ The upper bound defines the maximum budget (r_max) which is allocated to the can
 
     <div class="ref-description section level2">
     <p>Optimizer using the Hyperband (HB) algorithm.
-HB runs the <a href="mlr_optimizers_successive_halving.html">Successive Halving Algorithm</a> (SHA) with different numbers of stating configurations.
+HB runs the <a href="mlr_optimizers_successive_halving.html">Successive Halving Algorithm</a> (SHA) with
+different numbers of stating configurations.
 The algorithm is initialized with the same parameters as Successive Halving but without <code>n</code>.
 Each run of Successive Halving is called a bracket and starts with a different budget <code>r_0</code>.
 A smaller starting budget means that more configurations can be tried out.
 The most explorative bracket allocated the minimum budget <code>r_min</code>.
 The next bracket increases the starting budget by a factor of <code>eta</code>.
-In each bracket, the starting budget increases further until the last bracket <code>s = 0</code> essentially performs a random search with the full budget <code>r_max</code>.
+In each bracket, the starting budget increases further
+until the last bracket <code>s = 0</code> essentially performs a random search with the full budget <code>r_max</code>.
 The number of brackets <code>s_max + 1</code> is calculated with <code>s_max = log(r_min / r_max)(eta)</code>.
-Under the condition that <code>r_0</code> increases by <code>eta</code> with each bracket, <code>r_min</code> sometimes has to be adjusted slightly in order not to use more than <code>r_max</code> resources in the last bracket.
-The number of configurations in the base stages is calculated so that each bracket uses approximately the same amount of budget.
-The following table shows a full run of HB with <code>eta = 2</code>, <code>r_min = 1</code> and <code>r_max = 8</code>.</p><table class="table table"><tr><td><code>s</code></td><td></td><td></td><td>3</td><td></td><td></td><td>2</td><td></td><td></td><td>1</td><td></td><td></td><td>0</td></tr><tr><td><code>i</code></td><td></td><td><code>n_i</code></td><td><code>r_i</code></td><td></td><td><code>n_i</code></td><td><code>r_i</code></td><td></td><td><code>n_i</code></td><td><code>r_i</code></td><td></td><td><code>n_i</code></td><td><code>r_i</code></td></tr><tr><td>0</td><td></td><td>8</td><td>1</td><td></td><td>6</td><td>2</td><td></td><td>4</td><td>4</td><td></td><td>8</td><td>4</td></tr><tr><td>1</td><td></td><td>4</td><td>2</td><td></td><td>3</td><td>4</td><td></td><td>2</td><td>8</td><td></td><td></td><td></td></tr><tr><td>2</td><td></td><td>2</td><td>4</td><td></td><td>1</td><td>8</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>3</td><td></td><td>1</td><td>8</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></table><p><code>s</code> is the bracket number, <code>i</code> is the stage number, <code>n_i</code> is the number of configurations and <code>r_i</code> is the budget allocated to a single configuration.</p>
+Under the condition that <code>r_0</code> increases by <code>eta</code> with each bracket,
+<code>r_min</code> sometimes has to be adjusted slightly in order not to use more than <code>r_max</code> resources in the last bracket.
+The number of configurations in the base stages is calculated so that each bracket uses approximately the same
+amount of budget.
+The following table shows a full run of HB with <code>eta = 2</code>, <code>r_min = 1</code> and <code>r_max = 8</code>.</p><table class="table table"><tr><td><code>s</code></td><td></td><td></td><td>3</td><td></td><td></td><td>2</td><td></td><td></td><td>1</td><td></td><td></td><td>0</td></tr><tr><td><code>i</code></td><td></td><td><code>n_i</code></td><td><code>r_i</code></td><td></td><td><code>n_i</code></td><td><code>r_i</code></td><td></td><td><code>n_i</code></td><td><code>r_i</code></td><td></td><td><code>n_i</code></td><td><code>r_i</code></td></tr><tr><td>0</td><td></td><td>8</td><td>1</td><td></td><td>6</td><td>2</td><td></td><td>4</td><td>4</td><td></td><td>8</td><td>4</td></tr><tr><td>1</td><td></td><td>4</td><td>2</td><td></td><td>3</td><td>4</td><td></td><td>2</td><td>8</td><td></td><td></td><td></td></tr><tr><td>2</td><td></td><td>2</td><td>4</td><td></td><td>1</td><td>8</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>3</td><td></td><td>1</td><td>8</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></table><p><code>s</code> is the bracket number, <code>i</code> is the stage number, <code>n_i</code> is the number of configurations,
+and <code>r_i</code> is the budget allocated to a single configuration.</p>
 <p>The budget hyperparameter must be tagged with <code>"budget"</code> in the search space.
-The minimum budget (<code>r_min</code>) which is allocated in the base stage of the most explorative bracket, is set by the lower bound of the budget parameter.
+The minimum budget (<code>r_min</code>), which is allocated in the base stage of the most explorative bracket,
+is set by the lower bound of the budget parameter.
 The upper bound defines the maximum budget (<code>r_max</code>) which is allocated to the candidates in the last stages.</p>
     </div>
 
@@ -128,8 +146,11 @@ The upper bound defines the maximum budget (<code>r_max</code>) which is allocat
     <h2 id="resources">Resources<a class="anchor" aria-label="anchor" href="#resources"></a></h2>
 
 
-<p>The <a href="https://mlr-org.com/gallery-all-optimization.html" class="external-link">gallery</a> features a collection of case studies and demos about optimization.</p><ul><li><p><a href="https://mlr-org.com/gallery/series/2023-01-15-hyperband-xgboost/" class="external-link">Tune</a> the hyperparameters of XGBoost with Hyperband.</p></li>
-<li><p>Use data <a href="https://mlr-org.com/gallery/series/2023-01-16-hyperband-subsampling/" class="external-link">subsampling</a> and Hyperband to optimize a support vector machine.</p></li>
+<p>The <a href="https://mlr-org.com/gallery-all-optimization.html" class="external-link">gallery</a> features a collection of case studies and
+demos about optimization.</p><ul><li><p><a href="https://mlr-org.com/gallery/series/2023-01-15-hyperband-xgboost/" class="external-link">Tune</a> the hyperparameters of XGBoost
+with Hyperband.</p></li>
+<li><p>Use data <a href="https://mlr-org.com/gallery/series/2023-01-16-hyperband-subsampling/" class="external-link">subsampling</a> and
+Hyperband to optimize a support vector machine.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="dictionary">Dictionary<a class="anchor" aria-label="anchor" href="#dictionary"></a></h2>
@@ -146,7 +167,8 @@ The upper bound defines the maximum budget (<code>r_max</code>) which is allocat
 
 <dl><dt><code>eta</code></dt>
 <dd><p><code>numeric(1)</code><br>
-With every stage, the budget is increased by a factor of <code>eta</code> and only the best <code>1 / eta</code> points are promoted to the next stage.
+With every stage, the budget is increased by a factor of <code>eta</code> and
+only the best <code>1 / eta</code> points are promoted to the next stage.
 Non-integer values are supported, but <code>eta</code> is not allowed to be less or equal to 1.</p></dd>
 
 <dt><code>sampler</code></dt>
@@ -214,29 +236,27 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
 
 <div class="section">
 <h3 id="public-methods">Public methods<a class="anchor" aria-label="anchor" href="#public-methods"></a></h3>
-
-<ul><li><p><a href="#method-OptimizerBatchHyperband-new"><code>OptimizerBatchHyperband$new()</code></a></p></li>
+<p></p><ul><li><p><a href="#method-OptimizerBatchHyperband-initialize"><code>OptimizerBatchHyperband$new()</code></a></p></li>
 <li><p><a href="#method-OptimizerBatchHyperband-clone"><code>OptimizerBatchHyperband$clone()</code></a></p></li>
 </ul></div><p><details open><summary>Inherited methods</summary><ul><li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="format"><a href="https://bbotk.mlr-org.com/reference/Optimizer.html#method-format"><code>bbotk::Optimizer$format()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="help"><a href="https://bbotk.mlr-org.com/reference/Optimizer.html#method-help"><code>bbotk::Optimizer$help()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="print"><a href="https://bbotk.mlr-org.com/reference/Optimizer.html#method-print"><code>bbotk::Optimizer$print()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="bbotk" data-topic="OptimizerBatch" data-id="optimize"><a href="https://bbotk.mlr-org.com/reference/OptimizerBatch.html#method-optimize"><code>bbotk::OptimizerBatch$optimize()</code></a></span></li>
-</ul></details></p><hr><a id="method-OptimizerBatchHyperband-new"></a><div class="section">
-<h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
+  <li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="help"><a href="https://bbotk.mlr-org.com/reference/Optimizer.html#method-help"><code>bbotk::Optimizer$help()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="print"><a href="https://bbotk.mlr-org.com/reference/Optimizer.html#method-print"><code>bbotk::Optimizer$print()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="bbotk" data-topic="OptimizerBatch" data-id="optimize"><a href="https://bbotk.mlr-org.com/reference/OptimizerBatch.html#method-optimize"><code>bbotk::OptimizerBatch$optimize()</code></a></span></li>
+</ul></details></p><hr><a id="method-OptimizerBatchHyperband-initialize"></a><div class="section">
+<h3 id="optimizerbatchhyperband-new-"><code>OptimizerBatchHyperband$new()</code><a class="anchor" aria-label="anchor" href="#optimizerbatchhyperband-new-"></a></h3>
 <p>Creates a new instance of this <a href="https://r6.r-lib.org/reference/R6Class.html" class="external-link">R6</a> class.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/mlr_optimizers_hyperband.html">OptimizerBatchHyperband</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
+</div>
 
-</div><p></p><hr><a id="method-OptimizerBatchHyperband-clone"></a><div class="section">
-<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
+<p></p><hr><a id="method-OptimizerBatchHyperband-clone"></a><div class="section">
+<h3 id="optimizerbatchhyperband-clone-"><code>OptimizerBatchHyperband$clone()</code><a class="anchor" aria-label="anchor" href="#optimizerbatchhyperband-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OptimizerBatchHyperband</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
@@ -246,6 +266,7 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
 </div>
 
 </div>
+
 
     </div>
 
@@ -370,70 +391,70 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;num&gt;      &lt;num&gt;    &lt;num&gt; &lt;num&gt;   &lt;int&gt;      &lt;num&gt;      &lt;num&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               timestamp batch_nr x_domain_x1 x_domain_x2 x_domain_fidelity</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  &lt;POSc&gt;    &lt;int&gt;       &lt;num&gt;       &lt;num&gt;             &lt;num&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1: 2026-06-11 10:45:41        1 -3.78874794   8.9439418          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2: 2026-06-11 10:45:41        1  7.51499556   2.8727705          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3: 2026-06-11 10:45:41        1  4.01141329  14.2164591          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4: 2026-06-11 10:45:41        1 -2.64187338   8.1372061          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5: 2026-06-11 10:45:41        1 -4.88900838   8.1690509          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6: 2026-06-11 10:45:41        1  1.99590246   4.1789573          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7: 2026-06-11 10:45:41        1  2.46666083   6.7005370          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8: 2026-06-11 10:45:41        1 -0.65349133   5.5726678          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9: 2026-06-11 10:45:41        1  5.99322981   0.4209146          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10: 2026-06-11 10:45:41        1  6.58782267   6.9898079          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11: 2026-06-11 10:45:41        1  8.11900991   5.8504708          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12: 2026-06-11 10:45:41        1 -2.37589060   0.3009783          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13: 2026-06-11 10:45:41        1 -4.48638001   5.6545639          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14: 2026-06-11 10:45:41        1 -0.19421404   8.3986926          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15: 2026-06-11 10:45:41        1  1.03492358  12.8562538          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16: 2026-06-11 10:45:41        1 -2.06495248   5.7721457          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17: 2026-06-11 10:45:41        1  1.05307176   7.9187555          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18: 2026-06-11 10:45:41        1 -4.04507814   9.0095629          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19: 2026-06-11 10:45:41        1  0.83051970   3.9205704          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20: 2026-06-11 10:45:41        1  9.63321753   4.3507524          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21: 2026-06-11 10:45:41        1 -0.65161557   7.2011276          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22: 2026-06-11 10:45:41        1  5.17570641  13.8000832          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23: 2026-06-11 10:45:41        1  6.02979398   6.0108028          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24: 2026-06-11 10:45:41        1 -2.06064900   3.1975907          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25: 2026-06-11 10:45:41        1  9.70809512  10.0765022          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26: 2026-06-11 10:45:41        1  6.12282294   0.8792117          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27: 2026-06-11 10:45:41        1 -4.22830586  14.9560370          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28: 2026-06-11 10:45:41        1  2.95318695   2.2355320          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29: 2026-06-11 10:45:41        1  5.43735818   7.7783495          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30: 2026-06-11 10:45:41        1  5.32834005  12.6918008          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31: 2026-06-11 10:45:41        1 -4.53154512  10.7740459          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32: 2026-06-11 10:45:41        1 -1.61656198   3.6197103          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33: 2026-06-11 10:45:41        1 -0.48753791   8.2056505          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34: 2026-06-11 10:45:41        1  4.54698422  12.5220272          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35: 2026-06-11 10:45:41        1  2.18536825   0.4193404          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36: 2026-06-11 10:45:41        1  1.48256887   7.0407645          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37: 2026-06-11 10:45:41        1  5.59650757  12.0852005          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38: 2026-06-11 10:45:41        1  9.22864864  12.2107697          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39: 2026-06-11 10:45:41        1 -2.29491848   6.0586650          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40: 2026-06-11 10:45:41        1 -1.74650185   3.2764651          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41: 2026-06-11 10:45:41        1  5.20244376   6.2754210          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42: 2026-06-11 10:45:41        1  2.48268416  10.0330612          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43: 2026-06-11 10:45:41        1  4.62519023   7.6147542          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44: 2026-06-11 10:45:41        1  4.90426524   9.9053896          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45: 2026-06-11 10:45:41        1 -3.55963763   7.6768697          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46: 2026-06-11 10:45:41        1  6.48400246  12.5332866          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47: 2026-06-11 10:45:41        1  6.54512206  10.6317174          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48: 2026-06-11 10:45:41        1  9.86068468  13.1130891          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49: 2026-06-11 10:45:41        1  9.55781354   0.1721931          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50: 2026-06-11 10:45:41        1  0.83774141  13.3237435          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51: 2026-06-11 10:45:41        1  1.91779697  14.9452038          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 52: 2026-06-11 10:45:41        1 -0.27137371   7.5028725          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53: 2026-06-11 10:45:41        1 -2.37986159   5.3845054          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54: 2026-06-11 10:45:41        1  2.97360311  11.6236953          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55: 2026-06-11 10:45:41        1  2.40455524   8.7671288          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 56: 2026-06-11 10:45:41        1  6.68962939   9.5096456          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 57: 2026-06-11 10:45:41        1 -1.93732486  12.8799923          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 58: 2026-06-11 10:45:41        1  5.70095918   8.5034151          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59: 2026-06-11 10:45:41        1 -4.02175832   3.7949553          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 60: 2026-06-11 10:45:41        1  0.31310198  13.7820482          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 61: 2026-06-11 10:45:41        1  7.37799132  13.0102531          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 62: 2026-06-11 10:45:41        1 -0.89272632   3.7280805          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 63: 2026-06-11 10:45:41        1  3.55067427   6.0432182          0.015625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 64: 2026-06-11 10:45:41        1  0.03578621  11.5444526          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1: 2026-06-11 10:48:50        1 -3.78874794   8.9439418          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2: 2026-06-11 10:48:50        1  7.51499556   2.8727705          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3: 2026-06-11 10:48:50        1  4.01141329  14.2164591          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4: 2026-06-11 10:48:50        1 -2.64187338   8.1372061          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5: 2026-06-11 10:48:50        1 -4.88900838   8.1690509          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6: 2026-06-11 10:48:50        1  1.99590246   4.1789573          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7: 2026-06-11 10:48:50        1  2.46666083   6.7005370          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8: 2026-06-11 10:48:50        1 -0.65349133   5.5726678          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9: 2026-06-11 10:48:50        1  5.99322981   0.4209146          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10: 2026-06-11 10:48:50        1  6.58782267   6.9898079          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11: 2026-06-11 10:48:50        1  8.11900991   5.8504708          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12: 2026-06-11 10:48:50        1 -2.37589060   0.3009783          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13: 2026-06-11 10:48:50        1 -4.48638001   5.6545639          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14: 2026-06-11 10:48:50        1 -0.19421404   8.3986926          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15: 2026-06-11 10:48:50        1  1.03492358  12.8562538          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16: 2026-06-11 10:48:50        1 -2.06495248   5.7721457          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17: 2026-06-11 10:48:50        1  1.05307176   7.9187555          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18: 2026-06-11 10:48:50        1 -4.04507814   9.0095629          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19: 2026-06-11 10:48:50        1  0.83051970   3.9205704          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20: 2026-06-11 10:48:50        1  9.63321753   4.3507524          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21: 2026-06-11 10:48:50        1 -0.65161557   7.2011276          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22: 2026-06-11 10:48:50        1  5.17570641  13.8000832          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23: 2026-06-11 10:48:50        1  6.02979398   6.0108028          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24: 2026-06-11 10:48:50        1 -2.06064900   3.1975907          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25: 2026-06-11 10:48:50        1  9.70809512  10.0765022          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26: 2026-06-11 10:48:50        1  6.12282294   0.8792117          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27: 2026-06-11 10:48:50        1 -4.22830586  14.9560370          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28: 2026-06-11 10:48:50        1  2.95318695   2.2355320          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29: 2026-06-11 10:48:50        1  5.43735818   7.7783495          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30: 2026-06-11 10:48:50        1  5.32834005  12.6918008          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31: 2026-06-11 10:48:50        1 -4.53154512  10.7740459          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32: 2026-06-11 10:48:50        1 -1.61656198   3.6197103          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33: 2026-06-11 10:48:50        1 -0.48753791   8.2056505          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34: 2026-06-11 10:48:50        1  4.54698422  12.5220272          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35: 2026-06-11 10:48:50        1  2.18536825   0.4193404          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36: 2026-06-11 10:48:50        1  1.48256887   7.0407645          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37: 2026-06-11 10:48:50        1  5.59650757  12.0852005          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38: 2026-06-11 10:48:50        1  9.22864864  12.2107697          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39: 2026-06-11 10:48:50        1 -2.29491848   6.0586650          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40: 2026-06-11 10:48:50        1 -1.74650185   3.2764651          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41: 2026-06-11 10:48:50        1  5.20244376   6.2754210          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42: 2026-06-11 10:48:50        1  2.48268416  10.0330612          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43: 2026-06-11 10:48:50        1  4.62519023   7.6147542          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44: 2026-06-11 10:48:50        1  4.90426524   9.9053896          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45: 2026-06-11 10:48:50        1 -3.55963763   7.6768697          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46: 2026-06-11 10:48:50        1  6.48400246  12.5332866          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47: 2026-06-11 10:48:50        1  6.54512206  10.6317174          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48: 2026-06-11 10:48:50        1  9.86068468  13.1130891          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49: 2026-06-11 10:48:50        1  9.55781354   0.1721931          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50: 2026-06-11 10:48:50        1  0.83774141  13.3237435          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51: 2026-06-11 10:48:50        1  1.91779697  14.9452038          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52: 2026-06-11 10:48:50        1 -0.27137371   7.5028725          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53: 2026-06-11 10:48:50        1 -2.37986159   5.3845054          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54: 2026-06-11 10:48:50        1  2.97360311  11.6236953          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55: 2026-06-11 10:48:50        1  2.40455524   8.7671288          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 56: 2026-06-11 10:48:50        1  6.68962939   9.5096456          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 57: 2026-06-11 10:48:50        1 -1.93732486  12.8799923          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 58: 2026-06-11 10:48:50        1  5.70095918   8.5034151          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59: 2026-06-11 10:48:50        1 -4.02175832   3.7949553          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 60: 2026-06-11 10:48:50        1  0.31310198  13.7820482          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 61: 2026-06-11 10:48:50        1  7.37799132  13.0102531          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 62: 2026-06-11 10:48:50        1 -0.89272632   3.7280805          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 63: 2026-06-11 10:48:50        1  3.55067427   6.0432182          0.015625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 64: 2026-06-11 10:48:50        1  0.03578621  11.5444526          0.015625</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               timestamp batch_nr x_domain_x1 x_domain_x2 x_domain_fidelity</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  &lt;POSc&gt;    &lt;int&gt;       &lt;num&gt;       &lt;num&gt;             &lt;num&gt;</span>
 </code></pre></div>

@@ -6,7 +6,9 @@
     }
   };
 </script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/Roboto-0.4.10/font.css" rel="stylesheet"><link href="../deps/JetBrains_Mono-0.4.10/font.css" rel="stylesheet"><link href="../deps/Roboto_Slab-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Hyperparameter Tuning with Successive Halving — mlr_tuners_successive_halving"><meta name="description" content="Optimizer using the Successive Halving Algorithm (SHA).
-SHA is initialized with the number of starting configurations n, the proportion of configurations discarded in each stage eta, and the minimum r_min and maximum _max budget of a single evaluation.
+SHA is initialized with the number of starting configurations n,
+the proportion of configurations discarded in each stage eta,
+and the minimum r_min and maximum _max budget of a single evaluation.
 The algorithm starts by sampling n random configurations and allocating the minimum budget r_min to them.
 The configurations are evaluated and 1 / eta of the worst-performing configurations are discarded.
 The remaining configurations are promoted to the next stage and evaluated on a larger budget.
@@ -20,10 +22,13 @@ in_ir_i
 
 
 
-i is the stage number, n_i is the number of configurations and r_i is the budget allocated to a single configuration.
+i is the stage number, n_i is the number of configurations, and
+r_i is the budget allocated to a single configuration.
 The number of stages is calculated so that each stage consumes approximately the same budget.
 This sometimes results in the minimum budget having to be slightly adjusted by the algorithm."><meta property="og:description" content="Optimizer using the Successive Halving Algorithm (SHA).
-SHA is initialized with the number of starting configurations n, the proportion of configurations discarded in each stage eta, and the minimum r_min and maximum _max budget of a single evaluation.
+SHA is initialized with the number of starting configurations n,
+the proportion of configurations discarded in each stage eta,
+and the minimum r_min and maximum _max budget of a single evaluation.
 The algorithm starts by sampling n random configurations and allocating the minimum budget r_min to them.
 The configurations are evaluated and 1 / eta of the worst-performing configurations are discarded.
 The remaining configurations are promoted to the next stage and evaluated on a larger budget.
@@ -37,7 +42,8 @@ in_ir_i
 
 
 
-i is the stage number, n_i is the number of configurations and r_i is the budget allocated to a single configuration.
+i is the stage number, n_i is the number of configurations, and
+r_i is the budget allocated to a single configuration.
 The number of stages is calculated so that each stage consumes approximately the same budget.
 This sometimes results in the minimum budget having to be slightly adjusted by the algorithm."><meta property="og:image" content="https://mlr3hyperband.mlr-org.com/logo.png"><meta name="robots" content="noindex"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -84,11 +90,14 @@ This sometimes results in the minimum budget having to be slightly adjusted by t
 
     <div class="ref-description section level2">
     <p>Optimizer using the Successive Halving Algorithm (SHA).
-SHA is initialized with the number of starting configurations <code>n</code>, the proportion of configurations discarded in each stage <code>eta</code>, and the minimum <code>r_min</code> and maximum <code>_max</code> budget of a single evaluation.
+SHA is initialized with the number of starting configurations <code>n</code>,
+the proportion of configurations discarded in each stage <code>eta</code>,
+and the minimum <code>r_min</code> and maximum <code>_max</code> budget of a single evaluation.
 The algorithm starts by sampling <code>n</code> random configurations and allocating the minimum budget <code>r_min</code> to them.
 The configurations are evaluated and <code>1 / eta</code> of the worst-performing configurations are discarded.
 The remaining configurations are promoted to the next stage and evaluated on a larger budget.
-The following table is the stage layout for <code>eta = 2</code>, <code>r_min = 1</code> and <code>r_max = 8</code>.</p><table class="table table"><tr><td><code>i</code></td><td><code>n_i</code></td><td><code>r_i</code></td></tr><tr><td>0</td><td>8</td><td>1</td></tr><tr><td>1</td><td>4</td><td>2</td></tr><tr><td>2</td><td>2</td><td>4</td></tr><tr><td>3</td><td>1</td><td>8</td></tr></table><p><code>i</code> is the stage number, <code>n_i</code> is the number of configurations and <code>r_i</code> is the budget allocated to a single configuration.</p>
+The following table is the stage layout for <code>eta = 2</code>, <code>r_min = 1</code> and <code>r_max = 8</code>.</p><table class="table table"><tr><td><code>i</code></td><td><code>n_i</code></td><td><code>r_i</code></td></tr><tr><td>0</td><td>8</td><td>1</td></tr><tr><td>1</td><td>4</td><td>2</td></tr><tr><td>2</td><td>2</td><td>4</td></tr><tr><td>3</td><td>1</td><td>8</td></tr></table><p><code>i</code> is the stage number, <code>n_i</code> is the number of configurations, and
+<code>r_i</code> is the budget allocated to a single configuration.</p>
 <p>The number of stages is calculated so that each stage consumes approximately the same budget.
 This sometimes results in the minimum budget having to be slightly adjusted by the algorithm.</p>
     </div>
@@ -164,8 +173,11 @@ Use <code>lgr::get_logger("bbotk")</code> to access and control the logger.</p>
     <h2 id="resources">Resources<a class="anchor" aria-label="anchor" href="#resources"></a></h2>
 
 
-<p>The <a href="https://mlr-org.com/gallery-all-optimization.html" class="external-link">gallery</a> features a collection of case studies and demos about optimization.</p><ul><li><p><a href="https://mlr-org.com/gallery/series/2023-01-15-hyperband-xgboost/" class="external-link">Tune</a> the hyperparameters of XGBoost with Hyperband (Hyperband can be easily swapped with SHA).</p></li>
-<li><p>Use data <a href="https://mlr-org.com/gallery/series/2023-01-16-hyperband-subsampling/" class="external-link">subsampling</a> and Hyperband to optimize a support vector machine.</p></li>
+<p>The <a href="https://mlr-org.com/gallery-all-optimization.html" class="external-link">gallery</a> features a collection of case studies and
+demos about optimization.</p><ul><li><p><a href="https://mlr-org.com/gallery/series/2023-01-15-hyperband-xgboost/" class="external-link">Tune</a> the hyperparameters of XGBoost with
+Hyperband (Hyperband can be easily swapped with SHA).</p></li>
+<li><p>Use data <a href="https://mlr-org.com/gallery/series/2023-01-16-hyperband-subsampling/" class="external-link">subsampling</a> and
+Hyperband to optimize a support vector machine.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="parameters">Parameters<a class="anchor" aria-label="anchor" href="#parameters"></a></h2>
@@ -177,7 +189,8 @@ Number of configurations in the base stage.</p></dd>
 
 <dt><code>eta</code></dt>
 <dd><p><code>numeric(1)</code><br>
-With every stage, the budget is increased by a factor of <code>eta</code> and only the best <code>1 / eta</code> configurations are promoted to the next stage.
+With every stage, the budget is increased by a factor of <code>eta</code> and
+only the best <code>1 / eta</code> configurations are promoted to the next stage.
 Non-integer values are supported, but <code>eta</code> is not allowed to be less or equal to 1.</p></dd>
 
 <dt><code>sampler</code></dt>
@@ -193,7 +206,8 @@ The <a href="https://bbotk.mlr-org.com/reference/Terminator.html" class="externa
 
 <dt><code>adjust_minimum_budget</code></dt>
 <dd><p><code>logical(1)</code><br>
-If <code>TRUE</code>, the minimum budget is increased so that the last stage uses the maximum budget defined in the search space.</p></dd>
+If <code>TRUE</code>, the minimum budget is increased so that the last stage uses the maximum budget defined in
+the search space.</p></dd>
 
 
 </dl></div>
@@ -215,29 +229,27 @@ Repetition index. Start counting at 1.</p></li>
 
 <div class="section">
 <h3 id="public-methods">Public methods<a class="anchor" aria-label="anchor" href="#public-methods"></a></h3>
-
-<ul><li><p><a href="#method-TunerBatchSuccessiveHalving-new"><code>TunerBatchSuccessiveHalving$new()</code></a></p></li>
+<p></p><ul><li><p><a href="#method-TunerBatchSuccessiveHalving-initialize"><code>TunerBatchSuccessiveHalving$new()</code></a></p></li>
 <li><p><a href="#method-TunerBatchSuccessiveHalving-clone"><code>TunerBatchSuccessiveHalving$clone()</code></a></p></li>
 </ul></div><p><details open><summary>Inherited methods</summary><ul><li><span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="format"><a href="https://mlr3tuning.mlr-org.com/reference/Tuner.html#method-format"><code>mlr3tuning::Tuner$format()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="help"><a href="https://mlr3tuning.mlr-org.com/reference/Tuner.html#method-help"><code>mlr3tuning::Tuner$help()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="print"><a href="https://mlr3tuning.mlr-org.com/reference/Tuner.html#method-print"><code>mlr3tuning::Tuner$print()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="mlr3tuning" data-topic="TunerBatchFromOptimizerBatch" data-id="optimize"><a href="https://mlr3tuning.mlr-org.com/reference/TunerBatchFromOptimizerBatch.html#method-optimize"><code>mlr3tuning::TunerBatchFromOptimizerBatch$optimize()</code></a></span></li>
-</ul></details></p><hr><a id="method-TunerBatchSuccessiveHalving-new"></a><div class="section">
-<h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
+  <li><span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="help"><a href="https://mlr3tuning.mlr-org.com/reference/Tuner.html#method-help"><code>mlr3tuning::Tuner$help()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="print"><a href="https://mlr3tuning.mlr-org.com/reference/Tuner.html#method-print"><code>mlr3tuning::Tuner$print()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="mlr3tuning" data-topic="TunerBatchFromOptimizerBatch" data-id="optimize"><a href="https://mlr3tuning.mlr-org.com/reference/TunerBatchFromOptimizerBatch.html#method-optimize"><code>mlr3tuning::TunerBatchFromOptimizerBatch$optimize()</code></a></span></li>
+</ul></details></p><hr><a id="method-TunerBatchSuccessiveHalving-initialize"></a><div class="section">
+<h3 id="tunerbatchsuccessivehalving-new-"><code>TunerBatchSuccessiveHalving$new()</code><a class="anchor" aria-label="anchor" href="#tunerbatchsuccessivehalving-new-"></a></h3>
 <p>Creates a new instance of this <a href="https://r6.r-lib.org/reference/R6Class.html" class="external-link">R6</a> class.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/mlr_tuners_successive_halving.html">TunerBatchSuccessiveHalving</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
+</div>
 
-</div><p></p><hr><a id="method-TunerBatchSuccessiveHalving-clone"></a><div class="section">
-<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
+<p></p><hr><a id="method-TunerBatchSuccessiveHalving-clone"></a><div class="section">
+<h3 id="tunerbatchsuccessivehalving-clone-"><code>TunerBatchSuccessiveHalving$clone()</code><a class="anchor" aria-label="anchor" href="#tunerbatchsuccessivehalving-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">TunerBatchSuccessiveHalving</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
@@ -247,6 +259,7 @@ Repetition index. Start counting at 1.</p></li>
 </div>
 
 </div>
+
 
     </div>
 

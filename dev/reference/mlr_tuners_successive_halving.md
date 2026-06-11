@@ -19,8 +19,8 @@ a larger budget. The following table is the stage layout for `eta = 2`,
 | 2   | 2     | 4     |
 | 3   | 1     | 8     |
 
-`i` is the stage number, `n_i` is the number of configurations and `r_i`
-is the budget allocated to a single configuration.
+`i` is the stage number, `n_i` is the number of configurations, and
+`r_i` is the budget allocated to a single configuration.
 
 The number of stages is calculated so that each stage consumes
 approximately the same budget. This sometimes results in the minimum
@@ -172,7 +172,7 @@ holds the following additional columns that are specific to SHA:
 
 ### Public methods
 
-- [`TunerBatchSuccessiveHalving$new()`](#method-TunerBatchSuccessiveHalving-new)
+- [`TunerBatchSuccessiveHalving$new()`](#method-TunerBatchSuccessiveHalving-initialize)
 
 - [`TunerBatchSuccessiveHalving$clone()`](#method-TunerBatchSuccessiveHalving-clone)
 
@@ -185,7 +185,7 @@ Inherited methods
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `TunerBatchSuccessiveHalving$new()`
 
 Creates a new instance of this
 [R6](https://r6.r-lib.org/reference/R6Class.html) class.
@@ -196,7 +196,7 @@ Creates a new instance of this
 
 ------------------------------------------------------------------------
 
-### Method `clone()`
+### `TunerBatchSuccessiveHalving$clone()`
 
 The objects of this class are cloneable with this method.
 
