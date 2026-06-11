@@ -12,16 +12,20 @@ Li L, Jamieson K, DeSalvo G, Rostamizadeh A, Talwalkar A (2018).
 }
 \description{
 Optimizer using the Hyperband (HB) algorithm.
-HB runs the \link[=OptimizerBatchSuccessiveHalving]{Successive Halving Algorithm} (SHA) with different numbers of stating configurations.
+HB runs the \link[=OptimizerBatchSuccessiveHalving]{Successive Halving Algorithm} (SHA) with
+different numbers of stating configurations.
 The algorithm is initialized with the same parameters as Successive Halving but without \code{n}.
 Each run of Successive Halving is called a bracket and starts with a different budget \code{r_0}.
 A smaller starting budget means that more configurations can be tried out.
 The most explorative bracket allocated the minimum budget \code{r_min}.
 The next bracket increases the starting budget by a factor of \code{eta}.
-In each bracket, the starting budget increases further until the last bracket \code{s = 0} essentially performs a random search with the full budget \code{r_max}.
+In each bracket, the starting budget increases further
+until the last bracket \code{s = 0} essentially performs a random search with the full budget \code{r_max}.
 The number of brackets \code{s_max + 1} is calculated with \code{s_max = log(r_min / r_max)(eta)}.
-Under the condition that \code{r_0} increases by \code{eta} with each bracket, \code{r_min} sometimes has to be adjusted slightly in order not to use more than \code{r_max} resources in the last bracket.
-The number of configurations in the base stages is calculated so that each bracket uses approximately the same amount of budget.
+Under the condition that \code{r_0} increases by \code{eta} with each bracket,
+\code{r_min} sometimes has to be adjusted slightly in order not to use more than \code{r_max} resources in the last bracket.
+The number of configurations in the base stages is calculated so that each bracket uses approximately the same
+amount of budget.
 The following table shows a full run of HB with \code{eta = 2}, \code{r_min = 1} and \code{r_max = 8}.\tabular{rlrrlrrlrrlrr}{
    \code{s} \tab  \tab  \tab 3 \tab  \tab  \tab 2 \tab  \tab  \tab 1 \tab  \tab  \tab 0 \cr
    \code{i} \tab  \tab \code{n_i} \tab \code{r_i} \tab  \tab \code{n_i} \tab \code{r_i} \tab  \tab \code{n_i} \tab \code{r_i} \tab  \tab \code{n_i} \tab \code{r_i} \cr
@@ -32,18 +36,23 @@ The following table shows a full run of HB with \code{eta = 2}, \code{r_min = 1}
 }
 
 
-\code{s} is the bracket number, \code{i} is the stage number, \code{n_i} is the number of configurations and \code{r_i} is the budget allocated to a single configuration.
+\code{s} is the bracket number, \code{i} is the stage number, \code{n_i} is the number of configurations,
+and \code{r_i} is the budget allocated to a single configuration.
 
 The budget hyperparameter must be tagged with \code{"budget"} in the search space.
-The minimum budget (\code{r_min}) which is allocated in the base stage of the most explorative bracket, is set by the lower bound of the budget parameter.
+The minimum budget (\code{r_min}), which is allocated in the base stage of the most explorative bracket,
+is set by the lower bound of the budget parameter.
 The upper bound defines the maximum budget (\code{r_max}) which is allocated to the candidates in the last stages.
 }
 \section{Resources}{
 
-The \href{https://mlr-org.com/gallery-all-optimization.html}{gallery} features a collection of case studies and demos about optimization.
+The \href{https://mlr-org.com/gallery-all-optimization.html}{gallery} features a collection of case studies and
+demos about optimization.
 \itemize{
-\item \href{https://mlr-org.com/gallery/series/2023-01-15-hyperband-xgboost/}{Tune} the hyperparameters of XGBoost with Hyperband.
-\item Use data \href{https://mlr-org.com/gallery/series/2023-01-16-hyperband-subsampling/}{subsampling} and Hyperband to optimize a support vector machine.
+\item \href{https://mlr-org.com/gallery/series/2023-01-15-hyperband-xgboost/}{Tune} the hyperparameters of XGBoost
+with Hyperband.
+\item Use data \href{https://mlr-org.com/gallery/series/2023-01-16-hyperband-subsampling/}{subsampling} and
+Hyperband to optimize a support vector machine.
 }
 }
 
@@ -61,7 +70,8 @@ opt("hyperband")
 
 \describe{
 \item{\code{eta}}{\code{numeric(1)}\cr
-With every stage, the budget is increased by a factor of \code{eta} and only the best \code{1 / eta} points are promoted to the next stage.
+With every stage, the budget is increased by a factor of \code{eta} and
+only the best \code{1 / eta} points are promoted to the next stage.
 Non-integer values are supported, but \code{eta} is not allowed to be less or equal to 1.}
 \item{\code{sampler}}{\link[paradox:Sampler]{paradox::Sampler}\cr
 Object defining how the samples of the parameter space should be drawn in the base stage of each bracket.
@@ -161,46 +171,48 @@ as.data.table(instance$archive)
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-OptimizerBatchHyperband-new}{\code{OptimizerBatchHyperband$new()}}
-\item \href{#method-OptimizerBatchHyperband-clone}{\code{OptimizerBatchHyperband$clone()}}
+  \itemize{
+    \item \href{#method-OptimizerBatchHyperband-initialize}{\code{OptimizerBatchHyperband$new()}}
+    \item \href{#method-OptimizerBatchHyperband-clone}{\code{OptimizerBatchHyperband$clone()}}
+  }
 }
-}
-\if{html}{\out{
-<details open><summary>Inherited methods</summary>
+\if{html}{\out{<details open><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="format"><a href='../../bbotk/html/Optimizer.html#method-Optimizer-format'><code>bbotk::Optimizer$format()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="help"><a href='../../bbotk/html/Optimizer.html#method-Optimizer-help'><code>bbotk::Optimizer$help()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="print"><a href='../../bbotk/html/Optimizer.html#method-Optimizer-print'><code>bbotk::Optimizer$print()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="bbotk" data-topic="OptimizerBatch" data-id="optimize"><a href='../../bbotk/html/OptimizerBatch.html#method-OptimizerBatch-optimize'><code>bbotk::OptimizerBatch$optimize()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="format"><a href='../../bbotk/html/Optimizer.html#method-Optimizer-format'><code>bbotk::Optimizer$format()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="help"><a href='../../bbotk/html/Optimizer.html#method-Optimizer-help'><code>bbotk::Optimizer$help()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="print"><a href='../../bbotk/html/Optimizer.html#method-Optimizer-print'><code>bbotk::Optimizer$print()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="bbotk" data-topic="OptimizerBatch" data-id="optimize"><a href='../../bbotk/html/OptimizerBatch.html#method-OptimizerBatch-optimize'><code>bbotk::OptimizerBatch$optimize()</code></a></span></li>
 </ul>
-</details>
-}}
+</details>}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-OptimizerBatchHyperband-new"></a>}}
-\if{latex}{\out{\hypertarget{method-OptimizerBatchHyperband-new}{}}}
-\subsection{Method \code{new()}}{
-Creates a new instance of this \link[R6:R6Class]{R6} class.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OptimizerBatchHyperband$new()}\if{html}{\out{</div>}}
+\if{html}{\out{<a id="method-OptimizerBatchHyperband-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-OptimizerBatchHyperband-initialize}{}}}
+\subsection{\code{OptimizerBatchHyperband$new()}}{
+  Creates a new instance of this \link[R6:R6Class]{R6} class.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OptimizerBatchHyperband$new()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OptimizerBatchHyperband-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-OptimizerBatchHyperband-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OptimizerBatchHyperband$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{OptimizerBatchHyperband$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OptimizerBatchHyperband$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

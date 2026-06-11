@@ -28,8 +28,8 @@ tnr("async_successive_halving")
 \section{Subsample Budget}{
 
 If the learner lacks a natural budget parameter,
-\link[mlr3pipelines:mlr_pipeops_subsample]{mlr3pipelines::PipeOpSubsample} can be applied to use the subsampling rate
-as budget parameter. The resulting \link[mlr3pipelines:mlr_learners_graph]{mlr3pipelines::GraphLearner} is fitted on
+\link[mlr3pipelines:PipeOpSubsample]{mlr3pipelines::PipeOpSubsample} can be applied to use the subsampling rate
+as budget parameter. The resulting \link[mlr3pipelines:GraphLearner]{mlr3pipelines::GraphLearner} is fitted on
 small proportions of the \link[mlr3:Task]{mlr3::Task} in the first stage, and on the complete
 task in last stage.
 }
@@ -54,7 +54,8 @@ sampler = SamplerJointIndep$new(list(
 
 \describe{
 \item{\code{eta}}{\code{numeric(1)}\cr
-With every stage, the budget is increased by a factor of \code{eta} and only the best \code{1 / eta} configurations are promoted to the next stage.
+With every stage, the budget is increased by a factor of \code{eta} and
+only the best \code{1 / eta} configurations are promoted to the next stage.
 Non-integer values are supported, but \code{eta} is not allowed to be less or equal to 1.}
 \item{\code{sampler}}{\link[paradox:Sampler]{paradox::Sampler}\cr
 Object defining how the samples of the parameter space should be drawn.
@@ -78,46 +79,48 @@ Unique identifier for each configuration across stages.
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-TunerAsyncSuccessiveHalving-new}{\code{TunerAsyncSuccessiveHalving$new()}}
-\item \href{#method-TunerAsyncSuccessiveHalving-clone}{\code{TunerAsyncSuccessiveHalving$clone()}}
+  \itemize{
+    \item \href{#method-TunerAsyncSuccessiveHalving-initialize}{\code{TunerAsyncSuccessiveHalving$new()}}
+    \item \href{#method-TunerAsyncSuccessiveHalving-clone}{\code{TunerAsyncSuccessiveHalving$clone()}}
+  }
 }
-}
-\if{html}{\out{
-<details open><summary>Inherited methods</summary>
+\if{html}{\out{<details open><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="format"><a href='../../mlr3tuning/html/Tuner.html#method-Tuner-format'><code>mlr3tuning::Tuner$format()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="help"><a href='../../mlr3tuning/html/Tuner.html#method-Tuner-help'><code>mlr3tuning::Tuner$help()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="print"><a href='../../mlr3tuning/html/Tuner.html#method-Tuner-print'><code>mlr3tuning::Tuner$print()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="mlr3tuning" data-topic="TunerAsyncFromOptimizerAsync" data-id="optimize"><a href='../../mlr3tuning/html/TunerAsyncFromOptimizerAsync.html#method-TunerAsyncFromOptimizerAsync-optimize'><code>mlr3tuning::TunerAsyncFromOptimizerAsync$optimize()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="format"><a href='../../mlr3tuning/html/Tuner.html#method-Tuner-format'><code>mlr3tuning::Tuner$format()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="help"><a href='../../mlr3tuning/html/Tuner.html#method-Tuner-help'><code>mlr3tuning::Tuner$help()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="mlr3tuning" data-topic="Tuner" data-id="print"><a href='../../mlr3tuning/html/Tuner.html#method-Tuner-print'><code>mlr3tuning::Tuner$print()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="mlr3tuning" data-topic="TunerAsyncFromOptimizerAsync" data-id="optimize"><a href='../../mlr3tuning/html/TunerAsyncFromOptimizerAsync.html#method-TunerAsyncFromOptimizerAsync-optimize'><code>mlr3tuning::TunerAsyncFromOptimizerAsync$optimize()</code></a></span></li>
 </ul>
-</details>
-}}
+</details>}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-TunerAsyncSuccessiveHalving-new"></a>}}
-\if{latex}{\out{\hypertarget{method-TunerAsyncSuccessiveHalving-new}{}}}
-\subsection{Method \code{new()}}{
-Creates a new instance of this \link[R6:R6Class]{R6} class.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TunerAsyncSuccessiveHalving$new()}\if{html}{\out{</div>}}
+\if{html}{\out{<a id="method-TunerAsyncSuccessiveHalving-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-TunerAsyncSuccessiveHalving-initialize}{}}}
+\subsection{\code{TunerAsyncSuccessiveHalving$new()}}{
+  Creates a new instance of this \link[R6:R6Class]{R6} class.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{TunerAsyncSuccessiveHalving$new()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-TunerAsyncSuccessiveHalving-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-TunerAsyncSuccessiveHalving-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TunerAsyncSuccessiveHalving$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{TunerAsyncSuccessiveHalving$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{TunerAsyncSuccessiveHalving$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

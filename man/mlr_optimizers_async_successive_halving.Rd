@@ -28,7 +28,8 @@ opt("async_successive_halving")
 
 \describe{
 \item{\code{eta}}{\code{numeric(1)}\cr
-With every stage, the budget is increased by a factor of \code{eta} and only the best \code{1 / eta} configurations are promoted to the next stage.
+With every stage, the budget is increased by a factor of \code{eta} and
+only the best \code{1 / eta} configurations are promoted to the next stage.
 Non-integer values are supported, but \code{eta} is not allowed to be less or equal to 1.}
 \item{\code{sampler}}{\link[paradox:Sampler]{paradox::Sampler}\cr
 Object defining how the samples of the parameter space should be drawn.
@@ -68,68 +69,73 @@ sampler = SamplerJointIndep$new(list(
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-OptimizerAsyncSuccessiveHalving-new}{\code{OptimizerAsyncSuccessiveHalving$new()}}
-\item \href{#method-OptimizerAsyncSuccessiveHalving-optimize}{\code{OptimizerAsyncSuccessiveHalving$optimize()}}
-\item \href{#method-OptimizerAsyncSuccessiveHalving-clone}{\code{OptimizerAsyncSuccessiveHalving$clone()}}
+  \itemize{
+    \item \href{#method-OptimizerAsyncSuccessiveHalving-initialize}{\code{OptimizerAsyncSuccessiveHalving$new()}}
+    \item \href{#method-OptimizerAsyncSuccessiveHalving-optimize}{\code{OptimizerAsyncSuccessiveHalving$optimize()}}
+    \item \href{#method-OptimizerAsyncSuccessiveHalving-clone}{\code{OptimizerAsyncSuccessiveHalving$clone()}}
+  }
 }
-}
-\if{html}{\out{
-<details open><summary>Inherited methods</summary>
+\if{html}{\out{<details open><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="format"><a href='../../bbotk/html/Optimizer.html#method-Optimizer-format'><code>bbotk::Optimizer$format()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="help"><a href='../../bbotk/html/Optimizer.html#method-Optimizer-help'><code>bbotk::Optimizer$help()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="print"><a href='../../bbotk/html/Optimizer.html#method-Optimizer-print'><code>bbotk::Optimizer$print()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="format"><a href='../../bbotk/html/Optimizer.html#method-Optimizer-format'><code>bbotk::Optimizer$format()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="help"><a href='../../bbotk/html/Optimizer.html#method-Optimizer-help'><code>bbotk::Optimizer$help()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="bbotk" data-topic="Optimizer" data-id="print"><a href='../../bbotk/html/Optimizer.html#method-Optimizer-print'><code>bbotk::Optimizer$print()</code></a></span></li>
 </ul>
-</details>
-}}
+</details>}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-OptimizerAsyncSuccessiveHalving-new"></a>}}
-\if{latex}{\out{\hypertarget{method-OptimizerAsyncSuccessiveHalving-new}{}}}
-\subsection{Method \code{new()}}{
-Creates a new instance of this \link[R6:R6Class]{R6} class.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OptimizerAsyncSuccessiveHalving$new()}\if{html}{\out{</div>}}
+\if{html}{\out{<a id="method-OptimizerAsyncSuccessiveHalving-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-OptimizerAsyncSuccessiveHalving-initialize}{}}}
+\subsection{\code{OptimizerAsyncSuccessiveHalving$new()}}{
+  Creates a new instance of this \link[R6:R6Class]{R6} class.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OptimizerAsyncSuccessiveHalving$new()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OptimizerAsyncSuccessiveHalving-optimize"></a>}}
 \if{latex}{\out{\hypertarget{method-OptimizerAsyncSuccessiveHalving-optimize}{}}}
-\subsection{Method \code{optimize()}}{
-Performs the optimization on a \link[bbotk:OptimInstanceAsyncSingleCrit]{bbotk::OptimInstanceAsyncSingleCrit} or \link[bbotk:OptimInstanceAsyncMultiCrit]{bbotk::OptimInstanceAsyncMultiCrit} until termination.
+\subsection{\code{OptimizerAsyncSuccessiveHalving$optimize()}}{
+  Performs the optimization on a \link[bbotk:OptimInstanceAsyncSingleCrit]{bbotk::OptimInstanceAsyncSingleCrit} or
+\link[bbotk:OptimInstanceAsyncMultiCrit]{bbotk::OptimInstanceAsyncMultiCrit} until termination.
 The single evaluations will be written into the \link[bbotk:ArchiveAsync]{bbotk::ArchiveAsync}.
 The result will be written into the instance object.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OptimizerAsyncSuccessiveHalving$optimize(inst)}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OptimizerAsyncSuccessiveHalving$optimize(inst)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{inst}}{(\link[bbotk:OptimInstanceAsyncSingleCrit]{bbotk::OptimInstanceAsyncSingleCrit} | \link[bbotk:OptimInstanceAsyncMultiCrit]{bbotk::OptimInstanceAsyncMultiCrit}).}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    \code{\link[data.table:data.table]{data.table::data.table()}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{inst}}{(\link[bbotk:OptimInstanceAsyncSingleCrit]{bbotk::OptimInstanceAsyncSingleCrit} | \link[bbotk:OptimInstanceAsyncMultiCrit]{bbotk::OptimInstanceAsyncMultiCrit}).}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-\code{\link[data.table:data.table]{data.table::data.table()}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OptimizerAsyncSuccessiveHalving-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-OptimizerAsyncSuccessiveHalving-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OptimizerAsyncSuccessiveHalving$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{OptimizerAsyncSuccessiveHalving$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OptimizerAsyncSuccessiveHalving$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }
