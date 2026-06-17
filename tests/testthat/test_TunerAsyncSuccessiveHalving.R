@@ -273,16 +273,20 @@ test_that("TunerAsyncSuccessiveHalving minimizes measure", {
     rush = rush
   )
 
-  data = as.data.table(instance$archive)
-  perf_1 = data[1, dummy]
-  perf_2 = data[6, dummy]
+  # only consider finished evaluations ordered by completion time
+  # a still running evaluation would otherwise add a row with missing values
+  data = instance$archive$finished_data[order(timestamp_ys)]
 
-  # if the performance of second configuration in the first stage is better
-  # than the first configuration it must be promoted to the next stage
-  if (perf_2 < perf_1) {
-    expect_equal(data[7, stage], 2)
+  # with a single worker the first sampled configuration is always promoted through all stages
+  # the second configuration in the first stage is promoted to the next stage
+  # exactly when it minimizes the measure better than the first configuration
+  stage_1 = data[stage == 1]
+  promoted = stage_1$asha_id[2] %in% data[stage == 2, asha_id]
+
+  if (stage_1$dummy[2] < stage_1$dummy[1]) {
+    expect_true(promoted)
   } else {
-    expect_equal(data[7, stage], 1)
+    expect_false(promoted)
   }
 })
 
@@ -303,16 +307,20 @@ test_that("TunerAsyncSuccessiveHalving maximizes measure", {
     rush = rush
   )
 
-  data = as.data.table(instance$archive)
-  perf_1 = data[1, dummy]
-  perf_2 = data[6, dummy]
+  # only consider finished evaluations ordered by completion time
+  # a still running evaluation would otherwise add a row with missing values
+  data = instance$archive$finished_data[order(timestamp_ys)]
 
-  # if the performance of second configuration in the first stage is better than the first configuration
-  # it must be promoted to the next stage
-  if (perf_2 > perf_1) {
-    expect_equal(data[7, stage], 2)
+  # with a single worker the first sampled configuration is always promoted through all stages
+  # the second configuration in the first stage is promoted to the next stage
+  # exactly when it maximizes the measure better than the first configuration
+  stage_1 = data[stage == 1]
+  promoted = stage_1$asha_id[2] %in% data[stage == 2, asha_id]
+
+  if (stage_1$dummy[2] > stage_1$dummy[1]) {
+    expect_true(promoted)
   } else {
-    expect_equal(data[7, stage], 1)
+    expect_false(promoted)
   }
 })
 
