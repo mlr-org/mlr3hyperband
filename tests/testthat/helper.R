@@ -27,7 +27,7 @@ test_tuner_hyperband = function(eta, learner, measures = msr("classif.ce"), samp
 
   instance = tune(
     tnr("hyperband", eta = eta, sampler = sampler),
-    task = tsk("pima"),
+    task = tsk("sonar"),
     learner = learner,
     measures = measures,
     resampling = rsmp("holdout"),
@@ -68,7 +68,7 @@ test_tuner_successive_halving = function(
 
   instance = tune(
     tnr("successive_halving", n = n, eta = eta, sampler = sampler, adjust_minimum_budget = adjust_minimum_budget),
-    task = tsk("pima"),
+    task = tsk("sonar"),
     learner = learner,
     measures = measures,
     resampling = rsmp("holdout")
@@ -107,7 +107,7 @@ test_tuner_asha = function(
 
   instance = tune(
     tnr("async_successive_halving", eta = eta, sampler = sampler),
-    task = tsk("pima"),
+    task = tsk("sonar"),
     learner = learner,
     measures = measures,
     resampling = rsmp("cv", folds = 5),
