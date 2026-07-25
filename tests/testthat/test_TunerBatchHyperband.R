@@ -80,7 +80,7 @@ test_that("TunerBatchHyperband errors if not enough parameters are sampled", {
   expect_error(
     tune(
       tnr("hyperband", sampler = sampler),
-      task = tsk("pima"),
+      task = tsk("sonar"),
       learner = learner,
       resampling = rsmp("cv", folds = 3),
       measures = msr("classif.ce")
@@ -106,7 +106,7 @@ test_that("TunerBatchHyperband errors if budget parameter is sampled", {
   expect_error(
     tune(
       tnr("hyperband", sampler = sampler),
-      task = tsk("pima"),
+      task = tsk("sonar"),
       learner = learner,
       resampling = rsmp("cv", folds = 3),
       measures = msr("classif.ce")
@@ -126,7 +126,7 @@ test_that("TunerBatchHyperband errors if budget parameter is not numeric", {
   expect_error(
     tune(
       tnr("hyperband"),
-      task = tsk("pima"),
+      task = tsk("sonar"),
       learner = learner,
       resampling = rsmp("cv", folds = 3),
       measures = msr("classif.ce")
@@ -146,7 +146,7 @@ test_that("TunerBatchHyperband errors if multiple budget parameters are set", {
   expect_error(
     tune(
       tnr("hyperband"),
-      task = tsk("pima"),
+      task = tsk("sonar"),
       learner = learner,
       resampling = rsmp("cv", folds = 3),
       measures = msr("classif.ce")
@@ -187,7 +187,7 @@ test_that("TunerBatchHyperband works with repetitions", {
 
   instance = tune(
     tnr("hyperband", repetitions = 2),
-    task = tsk("pima"),
+    task = tsk("sonar"),
     learner = learner,
     resampling = rsmp("cv", folds = 3),
     measures = msr("classif.ce")
@@ -201,7 +201,7 @@ test_that("TunerBatchHyperband terminates itself", {
 
   instance = tune(
     tnr("hyperband"),
-    task = tsk("pima"),
+    task = tsk("sonar"),
     learner = learner,
     resampling = rsmp("cv", folds = 3),
     measures = msr("classif.ce")
@@ -215,7 +215,7 @@ test_that("TunerBatchHyperband works with infinite repetitions", {
 
   instance = tune(
     tnr("hyperband", repetitions = Inf),
-    task = tsk("pima"),
+    task = tsk("sonar"),
     learner = learner,
     resampling = rsmp("cv", folds = 3),
     measures = msr("classif.ce"),

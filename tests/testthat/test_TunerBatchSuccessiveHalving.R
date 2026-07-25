@@ -90,7 +90,7 @@ test_that("TunerBatchSuccessiveHalving errors if not enough parameters are sampl
   expect_error(
     tune(
       tnr("successive_halving", sampler = sampler),
-      task = tsk("pima"),
+      task = tsk("sonar"),
       learner = learner,
       resampling = rsmp("cv", folds = 3),
       measures = msr("classif.ce")
@@ -116,7 +116,7 @@ test_that("TunerBatchSuccessiveHalving errors if budget parameter is sampled", {
   expect_error(
     tune(
       tnr("successive_halving", sampler = sampler),
-      task = tsk("pima"),
+      task = tsk("sonar"),
       learner = learner,
       resampling = rsmp("cv", folds = 3),
       measures = msr("classif.ce")
@@ -136,7 +136,7 @@ test_that("TunerBatchSuccessiveHalving errors if budget parameter is not numeric
   expect_error(
     tune(
       tnr("successive_halving"),
-      task = tsk("pima"),
+      task = tsk("sonar"),
       learner = learner,
       resampling = rsmp("cv", folds = 3),
       measures = msr("classif.ce")
@@ -156,7 +156,7 @@ test_that("TunerBatchSuccessiveHalving errors if multiple budget parameters are 
   expect_error(
     tune(
       tnr("successive_halving"),
-      task = tsk("pima"),
+      task = tsk("sonar"),
       learner = learner,
       resampling = rsmp("cv", folds = 3),
       measures = msr("classif.ce")
@@ -201,7 +201,7 @@ test_that("TunerBatchSuccessiveHalving works with repetitions", {
 
   instance = tune(
     tnr("successive_halving", repetitions = 2),
-    task = tsk("pima"),
+    task = tsk("sonar"),
     learner = learner,
     resampling = rsmp("cv", folds = 3),
     measures = msr("classif.ce")
@@ -215,7 +215,7 @@ test_that("TunerBatchSuccessiveHalving terminates itself", {
 
   instance = tune(
     tnr("successive_halving"),
-    task = tsk("pima"),
+    task = tsk("sonar"),
     learner = learner,
     resampling = rsmp("cv", folds = 3),
     measures = msr("classif.ce")
@@ -229,7 +229,7 @@ test_that("TunerBatchSuccessiveHalving works with infinite repetitions", {
 
   instance = tune(
     tnr("successive_halving", repetitions = Inf),
-    task = tsk("pima"),
+    task = tsk("sonar"),
     learner = learner,
     resampling = rsmp("cv", folds = 3),
     measures = msr("classif.ce"),
