@@ -227,10 +227,10 @@ if(requireNamespace("xgboost")) {
   )
 
   # \donttest{
-  # hyperparameter tuning on the pima indians diabetes data set
+  # hyperparameter tuning on the sonar data set
   instance = tune(
     tnr("hyperband"),
-    task = tsk("pima"),
+    task = tsk("sonar"),
     learner = lrn("classif.xgboost", eval_metric = "logloss"),
     resampling = rsmp("cv", folds = 3),
     measures = msr("classif.ce"),
@@ -245,5 +245,5 @@ if(requireNamespace("xgboost")) {
 #> Loading required namespace: xgboost
 #>    nrounds       eta booster learner_param_vals  x_domain classif.ce
 #>      <num>     <num>  <char>             <list>    <list>      <num>
-#> 1:       8 0.3758337  gbtree          <list[8]> <list[3]>  0.2317708
+#> 1:      16 0.6480828  gbtree          <list[8]> <list[3]>  0.1681159
 ```

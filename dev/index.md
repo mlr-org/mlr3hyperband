@@ -78,7 +78,7 @@ to run the optimization.
 
 instance = tune(
   tnr("hyperband", eta = 3),
-  task = tsk("pima"),
+  task = tsk("sonar"),
   learner = learner,
   resampling = rsmp("cv", folds = 3),
   measures = msr("classif.ce")
