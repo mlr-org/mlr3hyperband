@@ -78,7 +78,7 @@ look like this (the full example is given in the *examples* section):
 
 ### Public methods
 
-- [`OptimizerAsyncSuccessiveHalving$new()`](#method-OptimizerAsyncSuccessiveHalving-new)
+- [`OptimizerAsyncSuccessiveHalving$new()`](#method-OptimizerAsyncSuccessiveHalving-initialize)
 
 - [`OptimizerAsyncSuccessiveHalving$optimize()`](#method-OptimizerAsyncSuccessiveHalving-optimize)
 
@@ -92,7 +92,7 @@ Inherited methods
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `OptimizerAsyncSuccessiveHalving$new()`
 
 Creates a new instance of this
 [R6](https://r6.r-lib.org/reference/R6Class.html) class.
@@ -103,7 +103,7 @@ Creates a new instance of this
 
 ------------------------------------------------------------------------
 
-### Method [`optimize()`](https://rdrr.io/r/stats/optimize.html)
+### `OptimizerAsyncSuccessiveHalving$optimize()`
 
 Performs the optimization on a
 [bbotk::OptimInstanceAsyncSingleCrit](https://bbotk.mlr-org.com/reference/OptimInstanceAsyncSingleCrit.html)
@@ -131,7 +131,7 @@ The result will be written into the instance object.
 
 ------------------------------------------------------------------------
 
-### Method `clone()`
+### `OptimizerAsyncSuccessiveHalving$clone()`
 
 The objects of this class are cloneable with this method.
 
