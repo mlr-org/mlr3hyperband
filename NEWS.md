@@ -1,4 +1,4 @@
-# mlr3hyperband (development version)
+# mlr3hyperband 1.1.1
 
 * refactor: Minimum required version of `rush` is now 1.0.0.
   Removed all compatibility workarounds for older versions.
