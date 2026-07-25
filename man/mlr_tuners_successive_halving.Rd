@@ -147,10 +147,10 @@ if(requireNamespace("xgboost")) {
   )
 
   \donttest{
-  # hyperparameter tuning on the pima indians diabetes data set
+  # hyperparameter tuning on the sonar data set
   instance = tune(
     tnr("successive_halving"),
-    task = tsk("pima"),
+    task = tsk("sonar"),
     learner = lrn("classif.xgboost", eval_metric = "logloss"),
     resampling = rsmp("cv", folds = 3),
     measures = msr("classif.ce"),

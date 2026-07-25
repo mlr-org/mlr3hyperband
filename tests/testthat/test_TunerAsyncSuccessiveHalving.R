@@ -158,7 +158,7 @@ test_that("TunerAsyncSuccessiveHalving errors if not enough parameters are sampl
   expect_error(
     tune(
       tnr("async_successive_halving", sampler = sampler),
-      task = tsk("pima"),
+      task = tsk("sonar"),
       learner = learner,
       resampling = rsmp("cv", folds = 3),
       measures = msr("classif.ce"),
@@ -191,7 +191,7 @@ test_that("TunerAsyncSuccessiveHalving errors if budget parameter is sampled", {
   expect_error(
     tune(
       tnr("async_successive_halving", sampler = sampler),
-      task = tsk("pima"),
+      task = tsk("sonar"),
       learner = learner,
       resampling = rsmp("cv", folds = 3),
       measures = msr("classif.ce"),
@@ -218,7 +218,7 @@ test_that("TunerAsyncSuccessiveHalving errors if budget parameter is not numeric
   expect_error(
     tune(
       tnr("async_successive_halving"),
-      task = tsk("pima"),
+      task = tsk("sonar"),
       learner = learner,
       resampling = rsmp("cv", folds = 3),
       measures = msr("classif.ce"),
@@ -245,7 +245,7 @@ test_that("TunerAsyncSuccessiveHalving errors if multiple budget parameters are 
   expect_error(
     tune(
       tnr("async_successive_halving"),
-      task = tsk("pima"),
+      task = tsk("sonar"),
       learner = learner,
       resampling = rsmp("cv", folds = 3),
       measures = msr("classif.ce"),
