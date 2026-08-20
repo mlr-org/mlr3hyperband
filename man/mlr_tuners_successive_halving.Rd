@@ -7,7 +7,7 @@
 \source{
 Jamieson K, Talwalkar A (2016).
 \dQuote{Non-stochastic Best Arm Identification and Hyperparameter Optimization.}
-In Gretton A, Robert CC (eds.), \emph{Proceedings of the 19th International Conference on Artificial Intelligence and Statistics}, volume 51 series Proceedings of Machine Learning Research, 240-248.
+In Gretton A, Robert CC (eds.), \emph{Proceedings of the 19th International Conference on Artificial Intelligence and Statistics}, volume 51 of \emph{Proceedings of Machine Learning Research}, 240-248.
 \url{http://proceedings.mlr.press/v51/jamieson16.html}.
 }
 \description{
