@@ -31,8 +31,8 @@ budget having to be slightly adjusted by the algorithm.
 Jamieson K, Talwalkar A (2016). “Non-stochastic Best Arm Identification
 and Hyperparameter Optimization.” In Gretton A, Robert CC (eds.),
 *Proceedings of the 19th International Conference on Artificial
-Intelligence and Statistics*, volume 51 series Proceedings of Machine
-Learning Research, 240-248.
+Intelligence and Statistics*, volume 51 of *Proceedings of Machine
+Learning Research*, 240-248.
 [http://proceedings.mlr.press/v51/jamieson16.html](http://proceedings.mlr.press/v51/jamieson16.md).
 
 ## Dictionary

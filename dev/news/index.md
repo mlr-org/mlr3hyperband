@@ -4,6 +4,8 @@
 
 ## mlr3hyperband 1.1.1
 
+CRAN release: 2026-07-25
+
 - refactor: Minimum required version of `rush` is now 1.0.0. Removed all
   compatibility workarounds for older versions.
 - compatibility: mlr3 1.7.2
